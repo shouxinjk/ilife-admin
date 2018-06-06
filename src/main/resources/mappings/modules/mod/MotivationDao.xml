@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.MotivationDao">
+    
+	<sql id="motivationColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.category_id AS "motivationCategory.id",
+		c.name AS "motivationCategory.name",
+		a.phase_id AS "phase.id",
+		p.name AS "phase.name",
+		a.percentage AS "percentage",
+		a.expr_trigger AS "exprTrigger",
+		a.expression AS "expression",
+		a.expr_duration AS "exprDuration",
+		(SELECT group_concat(name) FROM mod_item_category WHERE motivation_ids like concat('%',a.id,'%')) AS "exprItem",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="motivationJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_motivation_category c ON c.id = a.category_id
+		LEFT JOIN mod_phase p ON p.id = a.phase_id
+	</sql>
+    
+	<select id="get" resultType="Motivation">
+		SELECT 
+			<include refid="motivationColumns"/>
+		FROM mod_motivation a
+		<include refid="motivationJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Motivation">
+		SELECT 
+			<include refid="motivationColumns"/>
+		FROM mod_motivation a
+		<include refid="motivationJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="motivationCategory != null and motivationCategory.id != null and motivationCategory.id != ''">
+				AND a.category_id = #{motivationCategory.id}
+			</if>
+			<if test="phase != null and phase.id != null and phase.id != ''">
+				AND a.phase_id = #{phase.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Motivation">
+		SELECT 
+			<include refid="motivationColumns"/>
+		FROM mod_motivation a
+		<include refid="motivationJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_motivation(
+			id,
+			name,
+			category_id,
+			phase_id,
+			percentage,
+			expr_trigger,
+			expression,
+			expr_duration,
+			expr_item,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{motivationCategory.id},
+			#{phase.id},
+			#{percentage},
+			#{exprTrigger},
+			#{expression},
+			#{exprDuration},
+			#{exprItem},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_motivation SET 	
+			name = #{name},
+			category_id = #{motivationCategory.id},
+			phase_id = #{phase.id},
+			percentage = #{percentage},
+			expr_trigger = #{exprTrigger},
+			expression = #{expression},
+			expr_duration = #{exprDuration},
+			expr_item = #{exprItem},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_motivation SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<select id="getMotivationNames" resultType="String">
+		SELECT group_concat(name) 
+		FROM mod_motivation 
+		WHERE #{motivationIds} like concat('%',id,'%')
+	</select>
+</mapper>

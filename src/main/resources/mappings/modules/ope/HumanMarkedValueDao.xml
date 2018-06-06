@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.ope.dao.HumanMarkedValueDao">
+    
+	<sql id="humanMarkedValueColumns">
+		a.id AS "id",
+		a.dimension AS "dimension",
+		a.value AS "value",
+		a.person_id AS "person.id",
+		pe.nickname AS "person.nickname",
+		a.item_id AS "item.id",
+		it.name AS "item.name",
+		a.measure_id AS "measure.id",
+		me.name AS "measure.name",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="humanMarkedValueJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN ope_person pe ON pe.id = a.person_id
+		LEFT JOIN ope_item it ON it.id = a.item_id
+		LEFT JOIN mod_measure me ON me.id = a.measure_id
+	</sql>
+    
+	<select id="get" resultType="HumanMarkedValue">
+		SELECT 
+			<include refid="humanMarkedValueColumns"/>
+		FROM ope_human_marked_value a
+		<include refid="humanMarkedValueJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="HumanMarkedValue">
+		SELECT 
+			<include refid="humanMarkedValueColumns"/>
+		FROM ope_human_marked_value a
+		<include refid="humanMarkedValueJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="HumanMarkedValue">
+		SELECT 
+			<include refid="humanMarkedValueColumns"/>
+		FROM ope_human_marked_value a
+		<include refid="humanMarkedValueJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO ope_human_marked_value(
+			id,
+			dimension,
+			value,
+			person_id,
+			item_id,
+			measure_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{dimension},
+			#{value},
+			#{person.id},
+			#{item.id},
+			#{measure.id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE ope_human_marked_value SET 	
+			dimension = #{dimension},
+			value = #{value},
+			person_id = #{person.id},
+			item_id = #{item.id},
+			measure_id = #{measure.id},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE ope_human_marked_value SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

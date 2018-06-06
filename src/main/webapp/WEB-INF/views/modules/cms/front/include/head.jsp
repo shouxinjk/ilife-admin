@@ -8,7 +8,7 @@
 	<script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
 	<!--[if lte IE 6]><link href="${ctxStatic}/bootstrap/bsie/css/bootstrap-ie6.min.css" type="text/css" rel="stylesheet" />
 	<script src="${ctxStatic}/bootstrap/bsie/js/bootstrap-ie.min.js" type="text/javascript"></script><![endif]-->
-	<link href="${ctxStatic}/common/jeesite.min.css" type="text/css" rel="stylesheet" />
+	<link href="${ctxStatic}/common/iLife.min.css" type="text/css" rel="stylesheet" />
 	<link href="${ctxStaticTheme}/style.css" type="text/css" rel="stylesheet" />
 	<script src="${ctxStaticTheme}/script.js" type="text/javascript"></script>
 </c:if>

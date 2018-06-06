@@ -26,7 +26,7 @@ referenced as the Software version or revision number, or the combination of bot
 
 "Release Date" shall mean the day that CKSource started distributing a Release.
 
-"Product" shall mean a single computer program or one or more jeesites ("Program")
+"Product" shall mean a single computer program or one or more iLifes ("Program")
 (i) owned by You, or (ii) to which the owner grants You the permission to act in
 behalf of the owner for the purposes of this Agreement. A Program family or a
 group of Programs does not constitute a Product for the scope of this Agreement.
@@ -51,9 +51,9 @@ end-users for production usage. Maintenance activities performed on Production
 Websites, excluding software development activities related to the Software,
 are not considered Development Activities.
 
-"Hostname" shall mean a unique name by which a jeesite is reachable in a network.
-This includes, but is not limited to, a jeesite IP address. (For example, if a
-jeesite is reachable by the Internet address "http://www.example.com/", the
+"Hostname" shall mean a unique name by which a iLife is reachable in a network.
+This includes, but is not limited to, a iLife IP address. (For example, if a
+iLife is reachable by the Internet address "http://www.example.com/", the
 Hostname is "www.example.com".)
 
 "Legal Entity" shall mean the union of the acting entity and all other entities
@@ -100,7 +100,7 @@ CKFinder may be assembled with the Product and redistributed in respect of one
 and only one of the following models ("License Models") of Your choice:
 
 a) ("Website") Assembling the Software into a Product distributed as a single
-jeesite ("Site"). The Site URL ("URL") must be specified at the moment of the
+iLife ("Site"). The Site URL ("URL") must be specified at the moment of the
 purchase. The license will not be valid for sub-domains of the specified URL.
 This license includes 5 Developer licenses that cover Development Activities
 exclusively related to the Site.

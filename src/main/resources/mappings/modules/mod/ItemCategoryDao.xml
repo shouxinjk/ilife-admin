@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.ItemCategoryDao">
+    
+	<sql id="itemCategoryColumns">
+		a.id AS "id",
+		a.parent_id AS "parent.id",
+		p.name AS "parent.name",
+		a.parent_ids AS "parentIds",
+		a.name AS "name",
+		a.motivation_ids AS "motivationIds",
+		a.occasion_ids AS "occasionIds",
+		a.expression_desc AS "expressionDesc",
+		a.expression AS "expression",
+		a.outline_template AS "outlineTemplate",
+		a.scenario_id AS "scenarioId",
+		a.sort AS "sort",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="itemCategoryJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_item_category p ON p.id = a.parent_id
+	</sql>
+    
+	<select id="get" resultType="ItemCategory">
+		SELECT 
+			<include refid="itemCategoryColumns"/>
+		FROM mod_item_category a
+		<include refid="itemCategoryJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ItemCategory">
+		SELECT 
+			<include refid="itemCategoryColumns"/>
+		FROM mod_item_category a
+		<include refid="itemCategoryJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ItemCategory">
+		SELECT 
+			<include refid="itemCategoryColumns"/>
+		FROM mod_item_category a
+		<include refid="itemCategoryJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_item_category(
+			id,
+			parent_id,
+			parent_ids,
+			name,
+			motivation_ids,
+			occasion_ids,
+			expression_desc,
+			expression,
+			outline_template,
+			scenario_id,
+			sort,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{parent.id},
+			#{parentIds},
+			#{name},
+			#{motivationIds},
+			#{occasionIds},
+			#{expressionDesc},
+			#{expression},
+			#{outlineTemplate},
+			#{scenarioId},
+			#{sort},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_item_category SET 	
+			parent_id = #{parent.id},
+			parent_ids = #{parentIds},
+			name = #{name},
+			motivation_ids = #{motivationIds},
+			occasion_ids = #{occasionIds},
+			expression_desc = #{expressionDesc},
+			expression = #{expression},
+			outline_template = #{outlineTemplate},
+			scenario_id = #{scenarioId},
+			sort=#{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_item_category SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id} OR parent_ids LIKE 
+			<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+			<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</update>
+	
+	<select id="findByParentIdsLike" resultType="ItemCategory">
+		SELECT 
+			<include refid="itemCategoryColumns"/>
+		FROM mod_item_category a
+		<include refid="itemCategoryJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} 
+			AND a.parent_ids LIKE #{parentIds}
+					
+		</where>		
+		order by a.sort
+	</select>
+	
+	<update id="updateParentIds">
+		UPDATE mod_item_category SET 
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds}
+		WHERE id = #{id}
+	</update>
+	
+	<select id="getItemCategoryNames" resultType="String">
+		SELECT group_concat(name) 
+		FROM mod_item_category 
+		WHERE #{itemCategoryIds} like concat('%',id,'%') AND id !='1'
+	</select>
+	
+</mapper>

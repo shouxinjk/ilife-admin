@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.PersonaDao">
+    
+	<sql id="personaColumns">
+		a.id AS "id",
+		a.parent_id AS "parent.id",
+		p.name AS "parent.name",
+		a.parent_ids AS "parentIds",
+		a.phase_id AS "phase.id",
+		ph.name AS "phase.name",
+		a.hierarchy_id AS "hierarchy.id",
+		h.name AS "hierarchy.name",
+		a.zeta AS "zeta",
+		a.eta AS "eta",
+		a.theta AS "theta",
+		a.lambda AS "lambda",
+		a.logo AS "logo",
+		a.description AS "description",
+		a.alpha AS "alpha",
+		a.beta AS "beta",
+		a.gamma AS "gamma",
+		a.delte AS "delte",
+		a.epsilon AS "epsilon",
+		a.name AS "name",
+		a.expression AS "expression",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="personaJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_persona p ON p.id = a.parent_id
+		LEFT JOIN mod_phase ph ON ph.id = a.phase_id
+		LEFT JOIN mod_hierarchy h ON h.id = a.hierarchy_id
+	</sql>
+    
+	<select id="get" resultType="Persona">
+		SELECT 
+			<include refid="personaColumns"/>
+		FROM mod_persona a
+		<include refid="personaJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Persona">
+		SELECT 
+			<include refid="personaColumns"/>
+		FROM mod_persona a
+		<include refid="personaJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="parent!=null and parent.id != null and parent.id != ''">
+				AND a.parent_id = #{parent.id}
+			</if>
+			<if test="phase!=null and phase.id != null and phase.id != ''">
+				AND a.phase_id = #{phase.id}
+			</if>
+			<if test="hierarchy!=null and hierarchy.id != null and hierarchy.id != ''">
+				AND a.hierarchy_id = #{hierarchy.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Persona">
+		SELECT 
+			<include refid="personaColumns"/>
+		FROM mod_persona a
+		<include refid="personaJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_persona(
+			id,
+			parent_id,
+			parent_ids,
+			phase_id,
+			hierarchy_id,
+			zeta,
+			eta,
+			theta,
+			lambda,
+			logo,
+			description,
+			alpha,
+			beta,
+			gamma,
+			delte,
+			epsilon,
+			name,
+			expression,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{parent.id},
+			#{parentIds},
+			#{phase.id},
+			#{hierarchy.id},
+			#{zeta},
+			#{eta},
+			#{theta},
+			#{lambda},
+			#{logo},
+			#{description},
+			#{alpha},
+			#{beta},
+			#{gamma},
+			#{delte},
+			#{epsilon},
+			#{name},
+			#{expression},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_persona SET 	
+			parent_id = #{parent.id},
+			parent_ids = #{parentIds},
+			phase_id = #{phase.id},
+			hierarchy_id = #{hierarchy.id},
+			zeta = #{zeta},
+			eta = #{eta},
+			theta = #{theta},
+			lambda = #{lambda},
+			logo = #{logo},
+			description = #{description},
+			alpha = #{alpha},
+			beta = #{beta},
+			gamma = #{gamma},
+			delte = #{delte},
+			epsilon = #{epsilon},
+			name = #{name},
+			expression = #{expression},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_persona SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id} OR parent_ids LIKE 
+		<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+		<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
+		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</update>
+	
+	<select id="findByParentIdsLike" resultType="Persona">
+		SELECT 
+			<include refid="personaColumns"/>
+		FROM mod_persona a
+		<include refid="personaJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.parent_ids LIKE #{parentIds}
+		</where>		
+		order by a.create_by ASC
+	</select>
+	
+	<update id="updateParentIds">
+		UPDATE mod_persona SET 
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds}
+		WHERE id = #{id}
+	</update>
+</mapper>

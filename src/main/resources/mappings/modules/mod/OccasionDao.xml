@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.OccasionDao">
+    
+	<sql id="occasionColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.category_id AS "occasionCategory.id",
+		oc.name AS "occasionCategory.name",
+		a.expr_user AS "exprUser",
+		(SELECT group_concat(name) FROM mod_item_category WHERE occasion_ids like concat('%',a.id,'%')) AS "exprItem",
+		a.expr_trigger AS "exprTrigger",
+		a.expression AS "expression",
+		a.expr_duration AS "exprDuration",
+		a.trigger_direction AS "triggerDirection",
+		a.trigger_type AS "triggerType",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="occasionJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_occasion_category oc ON oc.id = a.category_id
+	</sql>
+    
+	<select id="get" resultType="Occasion">
+		SELECT 
+			<include refid="occasionColumns"/>
+		FROM mod_occasion a
+		<include refid="occasionJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Occasion">
+		SELECT 
+			<include refid="occasionColumns"/>
+		FROM mod_occasion a
+		<include refid="occasionJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="occasionCategory != null and occasionCategory.id != null and occasionCategory.id != ''">
+				AND a.category_id =#{occasionCategory.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Occasion">
+		SELECT 
+			<include refid="occasionColumns"/>
+		FROM mod_occasion a
+		<include refid="occasionJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_occasion(
+			id,
+			name,
+			category_id,
+			expr_user,
+			expr_item,
+			expr_trigger,
+			expression,
+			expr_duration,
+			trigger_direction,
+			trigger_type,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{occasionCategory.id},
+			#{exprUser},
+			#{exprItem},
+			#{exprTrigger},
+			#{expression},
+			#{exprDuration},
+			#{triggerDirection},
+			#{triggerType},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_occasion SET 	
+			name = #{name},
+			category_id = #{occasionCategory.id},
+			expr_user = #{exprUser},
+			expr_item = #{exprItem},
+			expr_trigger = #{exprTrigger},
+			expression = #{expression},
+			expr_duration = #{exprDuration},
+			trigger_direction=#{triggerDirection},
+			trigger_type=#{triggerType},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_occasion SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<select id="getOccasionNames" resultType="String">
+		SELECT group_concat(name) 
+		FROM mod_occasion 
+		WHERE #{occasionIds} like concat('%',id,'%')
+	</select>
+</mapper>

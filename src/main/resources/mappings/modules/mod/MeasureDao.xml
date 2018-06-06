@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.MeasureDao">
+    
+	<sql id="measureColumns">
+		a.id AS "id",
+		a.category AS "category.id",
+		c.name AS "category.name",
+		a.dimension AS "dimension",
+		a.property AS "property",
+		a.name AS "name",
+		a.percentage AS "percentage",
+		a.control_value AS "controlValue",
+		a.default_score AS "defaultScore",
+		a.default_level AS "defaultLevel",
+		a.type AS "type",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="measureJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_item_category c ON c.id = a.category
+	</sql>
+    
+	<select id="get" resultType="Measure">
+		SELECT 
+			<include refid="measureColumns"/>
+		FROM mod_measure a
+		<include refid="measureJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Measure">
+		SELECT 
+			<include refid="measureColumns"/>
+		FROM mod_measure a
+		<include refid="measureJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="category != null and category.id != null and category.id != ''">
+				AND a.category = #{category.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND (a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+					OR a.property LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+					OR a.dimension LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+					)
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Measure">
+		SELECT 
+			<include refid="measureColumns"/>
+		FROM mod_measure a
+		<include refid="measureJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_measure(
+			id,
+			category,
+			dimension,
+			property,
+			name,
+			percentage,
+			control_value,
+			default_score,
+			default_level,
+			type,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{category.id},
+			#{dimension},
+			#{property},
+			#{name},
+			#{percentage},
+			#{controlValue},
+			#{defaultScore},
+			#{defaultLevel},
+			#{type},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_measure SET 	
+			category = #{category.id},
+			dimension = #{dimension},
+			property = #{property},
+			name = #{name},
+			percentage = #{percentage},
+			control_value = #{controlValue},
+			default_score = #{defaultScore},
+			default_level = #{defaultLevel},
+			type = #{type},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_measure SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

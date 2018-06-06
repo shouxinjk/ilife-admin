@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.ope.dao.PerformanceDao">
+    
+	<sql id="performanceColumns">
+		a.id AS "id",
+		a.measure_id AS "measure.id",
+		m.name AS "measure.name",
+		a.marked_value AS "markedValue",
+		a.original_value AS "originalValue",
+		a.normalized_value AS "normalizedValue",
+		a.control_value AS "controlValue",
+		a.level AS "level",
+		a.dimension AS "dimension",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="performanceJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_measure m ON m.id = a.measure_id
+	</sql>
+    
+	<select id="get" resultType="Performance">
+		SELECT 
+			<include refid="performanceColumns"/>
+		FROM ope_performance a
+		<include refid="performanceJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Performance">
+		SELECT 
+			<include refid="performanceColumns"/>
+		FROM ope_performance a
+		<include refid="performanceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Performance">
+		SELECT 
+			<include refid="performanceColumns"/>
+		FROM ope_performance a
+		<include refid="performanceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO ope_performance(
+			id,
+			measure_id,
+			marked_value,
+			original_value,
+			normalized_value,
+			control_value,
+			level,
+			dimension,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{measure.id},
+			#{markedValue},
+			#{originalValue},
+			#{normalizedValue},
+			#{controlValue},
+			#{level},
+			#{dimension},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE ope_performance SET 	
+			measure_id = #{measure.id},
+			marked_value = #{markedValue},
+			original_value = #{originalValue},
+			normalized_value = #{normalizedValue},
+			control_value = #{controlValue},
+			level = #{level},
+			dimension = #{dimension},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE ope_performance SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

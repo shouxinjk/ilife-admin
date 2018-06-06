@@ -1,29 +1,29 @@
-# JeeSite 企业信息化快速开发平台
+# iLife 企业信息化快速开发平台
 
 ## 平台简介
 
-JeeSite是基于多个优秀的开源项目，高度整合封装而成的高效，高性能，强安全性的**开源**Java EE快速开发平台。
+iLife是基于多个优秀的开源项目，高度整合封装而成的高效，高性能，强安全性的**开源**Java EE快速开发平台。
 
-JeeSite是您快速完成项目的最佳基础平台解决方案，JeeSite是您想学习Java平台的最佳学习案例，JeeSite还是接私活的最佳助手。
+iLife是您快速完成项目的最佳基础平台解决方案，iLife是您想学习Java平台的最佳学习案例，iLife还是接私活的最佳助手。
 
-JeeSite是在Spring Framework基础上搭建的一个Java基础开发平台，以Spring MVC为模型视图控制器，MyBatis为数据访问层，
+iLife是在Spring Framework基础上搭建的一个Java基础开发平台，以Spring MVC为模型视图控制器，MyBatis为数据访问层，
 Apache Shiro为权限授权层，Ehcahe对常用数据进行缓存，Activit为工作流引擎。是JavaEE界的最佳整合。
 
-JeeSite主要定位于企业信息化领域，已内置企业信息化系统的基础功能和高效的**代码生成**工具，
+iLife主要定位于企业信息化领域，已内置企业信息化系统的基础功能和高效的**代码生成**工具，
 包括：系统权限组件、数据权限组件、数据字典组件、核心工具组件、视图操作组件、工作流组件、代码生成等。
 前端界面风格采用了结构简单、性能优良、页面美观大气的Twitter Bootstrap页面展示框架。
 采用分层设计、双重验证、提交数据安全编码、密码加密、访问验证、数据权限验证。
 使用Maven做项目管理，提高项目的易开发性、扩展性。
 
-JeeSite目前包括以下四大模块，系统管理（SYS）模块、
+iLife目前包括以下四大模块，系统管理（SYS）模块、
 内容管理（CMS）模块、在线办公（OA）模块、代码生成（GEN）模块。 **系统管理模块** ，包括企业组织架构（用户管理、机构管理、区域管理）、
 菜单管理、角色权限管理、字典管理等功能； **内容管理模块** ，包括内容管理（文章、链接），栏目管理、站点管理、
 公共留言、文件管理、前端网站展示等功能； **在线办公模块** ，提供简单的请假流程实例；**代码生成模块** ，完成重复的工作。
 
-JeeSite 提供了常用工具进行封装，包括日志工具、缓存工具、服务器端验证、数据字典、当前组织机构数据
+iLife 提供了常用工具进行封装，包括日志工具、缓存工具、服务器端验证、数据字典、当前组织机构数据
 （用户、机构、区域）以及其它常用小工具等。另外还提供一个强大的在线 **代码生成** 工具，
 此工具提供简单的单表、一对多、树结构功能的生成，如果对外观要求不是很高，生成的功能就可以用了。
-如果你使用了JeeSite基础框架，就可以很高效的快速开发出，优秀的信息管理系统。
+如果你使用了iLife基础框架，就可以很高效的快速开发出，优秀的信息管理系统。
 
 ## 内置功能
 
@@ -37,7 +37,7 @@ JeeSite 提供了常用工具进行封装，包括日志工具、缓存工具、
 8.	连接池监视：监视当期系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈。
 9.	工作流引擎：实现业务工单流转、在线流程设计器。
 
-## 为何选择JeeSite
+## 为何选择iLife
 
 1. 使用 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) 协议，源代码完全开源，无商业限制。
 2. 使用目前主流的Java EE开发框架，简单易学，学习成本低。
@@ -100,12 +100,12 @@ JeeSite 提供了常用工具进行封装，包括日志工具、缓存工具、
 
 ## 演示地址
 
-* <http://demo.jeesite.com/jeesite>  &nbsp; 用户名：thinkgem &nbsp; 密码：admin
+* <http://demo.iLife.com/iLife>  &nbsp; 用户名：thinkgem &nbsp; 密码：admin
 
 ## 快速体验
 
 1. 具备运行环境：JDK1.6+、Maven3.0+、MySql5+或Oracle10g+。
-2. 修改src\main\resources\jeesite.properties文件中的数据库设置参数。
+2. 修改src\main\resources\iLife.properties文件中的数据库设置参数。
 3. 根据修改参数创建对应MySql或Oracle数据库用户和参数。
 4. 运行bin\init-db.bat脚本，即可导入表结构及演示数据(linux操作系统：在控制台中切换至项目根目录，运行命令：mvn antrun:run -Pinit-db)
 5. 运行bin\run-tomcat7.bat或bin\run-jetty.bat，启动Web服务器（第一次运行，需要下载依赖jar包，请耐心等待）。
@@ -119,16 +119,16 @@ JeeSite 提供了常用工具进行封装，包括日志工具、缓存工具、
 
 ## 更多文档
 
-* <https://github.com/thinkgem/jeesite/tree/master/doc>
+* <https://github.com/thinkgem/iLife/tree/master/doc>
 
 ## 如何交流、反馈、参与贡献？
 
 * QQ Group：127515876 &nbsp; 209330483 &nbsp; 223507718 &nbsp; 苹果版QQ若不能加入请使用手机QQ最新版
 * E-mail：thinkgem@163.com
-* GitHub：<https://github.com/thinkgem/jeesite>
-* 开源中国：<http://git.oschina.net/thinkgem/jeesite>
-* 官方网址：<http://jeesite.com>  论坛：<http://bbs.jeesite.com>
-* 支持JeeSite发展：（加我好友）支付宝：thinkgem@163.com &nbsp; 微信：thinkgem
+* GitHub：<https://github.com/thinkgem/iLife>
+* 开源中国：<http://git.oschina.net/thinkgem/iLife>
+* 官方网址：<http://iLife.com>  论坛：<http://bbs.iLife.com>
+* 支持iLife发展：（加我好友）支付宝：thinkgem@163.com &nbsp; 微信：thinkgem
 
 一个人的个人能力再强，也无法战胜一个团队，希望兄弟姐妹的支持，能够贡献出自己的部分代码，参与进来共同完善它(^_^)。
 
@@ -143,7 +143,7 @@ JeeSite 提供了常用工具进行封装，包括日志工具、缓存工具、
 3. **在延伸的代码中（修改和有源代码衍生的代码中）需要带有原来代码中的协议，商标，专利声明和其他原来作者规定需要包含的说明。**
 4. 如果再发布的产品中包含一个Notice文件，则在Notice文件中需要带有Apache Licence。你可以在Notice中增加自己的许可，但不可以表现为对Apache Licence构成更改。
 5. Apache Licence也是对商业应用友好的许可。使用者也可以在需要的时候修改代码来满足需要并作为开源或商业产品发布/销售
-6. 你可以二次包装出售，**但还请保留文件中的版权和作者信息**，并在你的产品说明中注明JeeSite。
+6. 你可以二次包装出售，**但还请保留文件中的版权和作者信息**，并在你的产品说明中注明iLife。
 7. 你可以以任何方式获得，你可以修改包名或类名，**但还请保留文件中的版权和作者信息**。
 
 ##为何使用MyBatis
@@ -157,10 +157,10 @@ JeeSite 提供了常用工具进行封装，包括日志工具、缓存工具、
 * 性能方面：由于Hibernate比较难以掌握，性能方面也成为了Hibernate的问题瓶颈，当然如果你对Hibernate非常熟，
 Hibernate性能上定不是问题。但对于大多数情况下，真正掌握Hibernate的人少之又少，然而的也就造就了项目风险加大。
 
-* 多数据库支持：有些人说MyBatis对多数据库支持困难，我认为这个不是问题，虽说目前JeeSite仅提供对MySql或Oracle
+* 多数据库支持：有些人说MyBatis对多数据库支持困难，我认为这个不是问题，虽说目前iLife仅提供对MySql或Oracle
 数据库的支持，但对于支持其它数据库的改动也不是很麻烦，SQL是被专门写在XML中，对于大多数SQL来说都是通用的，
 对于不同的数据库可通过dbName区分和修改各别的SQL片段即可。
 
 上述纯属个人观点，欢迎指正（thinkgem@163.com）。
 
-如果你仍然喜欢Hibernate，请点击[下载JeeSite Hibernate版本](https://github.com/thinkgem/jeesite/tree/master_hibernate)。
+如果你仍然喜欢Hibernate，请点击[下载iLife Hibernate版本](https://github.com/thinkgem/iLife/tree/master_hibernate)。

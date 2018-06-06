@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.HierarchyDao">
+    
+	<sql id="hierarchyColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.society_level AS "societyLevel",
+		a.society_score AS "societyScore",
+		a.culture_level AS "cultureLevel",
+		a.culture_score AS "cultureScore",
+		a.expression AS "expression",
+		a.matrix AS "matrix",
+		a.economy_level AS "economyLevel",
+		a.economy_score AS "economyScore",
+		a.description AS "description",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="hierarchyJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+	</sql>
+    
+	<select id="get" resultType="Hierarchy">
+		SELECT 
+			<include refid="hierarchyColumns"/>
+		FROM mod_hierarchy a
+		<include refid="hierarchyJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Hierarchy">
+		SELECT 
+			<include refid="hierarchyColumns"/>
+		FROM mod_hierarchy a
+		<include refid="hierarchyJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Hierarchy">
+		SELECT 
+			<include refid="hierarchyColumns"/>
+		FROM mod_hierarchy a
+		<include refid="hierarchyJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_hierarchy(
+			id,
+			name,
+			society_level,
+			society_score,
+			culture_level,
+			culture_score,
+			expression,
+			matrix,
+			economy_level,
+			economy_score,
+			description,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{societyLevel},
+			#{societyScore},
+			#{cultureLevel},
+			#{cultureScore},
+			#{expression},
+			#{matrix},
+			#{economyLevel},
+			#{economyScore},
+			#{description},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_hierarchy SET 	
+			name = #{name},
+			society_level = #{societyLevel},
+			society_score = #{societyScore},
+			culture_level = #{cultureLevel},
+			culture_score = #{cultureScore},
+			expression = #{expression},
+			matrix = #{matrix},
+			economy_level = #{economyLevel},
+			economy_score = #{economyScore},
+			description = #{description},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_hierarchy SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

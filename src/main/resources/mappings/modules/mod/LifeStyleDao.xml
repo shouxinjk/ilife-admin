@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.LifeStyleDao">
+    
+	<sql id="lifeStyleColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.parent_id AS "parent.id",
+		p.name AS "parent.name",
+		a.parent_ids AS "parentIds",
+		a.sort AS "sort",
+		a.alpha AS "alpha",
+		a.beta AS "beta",
+		a.gamma AS "gamma",
+		a.delte AS "delte",
+		a.epsilon AS "epsilon",
+		a.zeta AS "zeta",
+		a.eta AS "eta",
+		a.theta AS "theta",
+		a.lambda AS "lambda",
+		a.phase_id AS "phase.id",
+		ph.name AS "phase.name",
+		a.hierarchy_id AS "hierarchy.id",
+		hi.name AS "hierarchy.name",
+		a.persona_id AS "persona.id",
+		pe.name AS "persona.name",
+		a.motivation_ids AS "motivationIds",
+		a.occasion_ids AS "occasionIds",
+		a.item_category_ids AS "itemCategoryIds",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="lifeStyleJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_life_style p ON p.id = a.parent_id
+		LEFT JOIN mod_phase ph ON ph.id = a.phase_id
+		LEFT JOIN mod_hierarchy hi ON hi.id = a.hierarchy_id
+		LEFT JOIN mod_persona pe ON pe.id = a.persona_id
+	</sql>
+    
+	<select id="get" resultType="LifeStyle">
+		SELECT 
+			<include refid="lifeStyleColumns"/>
+		FROM mod_life_style a
+		<include refid="lifeStyleJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="LifeStyle">
+		SELECT 
+			<include refid="lifeStyleColumns"/>
+		FROM mod_life_style a
+		<include refid="lifeStyleJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="LifeStyle">
+		SELECT 
+			<include refid="lifeStyleColumns"/>
+		FROM mod_life_style a
+		<include refid="lifeStyleJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_life_style(
+			id,
+			name,
+			parent_id,
+			parent_ids,
+			sort,
+			alpha,
+			beta,
+			gamma,
+			delte,
+			epsilon,
+			zeta,
+			eta,
+			theta,
+			lambda,
+			phase_id,
+			hierarchy_id,
+			persona_id,
+			motivation_ids,
+			occasion_ids,
+			item_category_ids,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{parent.id},
+			#{parentIds},
+			#{sort},
+			#{alpha},
+			#{beta},
+			#{gamma},
+			#{delte},
+			#{epsilon},
+			#{zeta},
+			#{eta},
+			#{theta},
+			#{lambda},
+			#{phase.id},
+			#{hierarchy.id},
+			#{persona.id},
+			#{motivationIds},
+			#{occasionIds},
+			#{itemCategoryIds},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_life_style SET 	
+			name = #{name},
+			parent_id = #{parent.id},
+			parent_ids = #{parentIds},
+			sort=#{sort},
+			alpha = #{alpha},
+			beta = #{beta},
+			gamma = #{gamma},
+			delte = #{delte},
+			epsilon = #{epsilon},
+			zeta = #{zeta},
+			eta = #{eta},
+			theta = #{theta},
+			lambda = #{lambda},
+			phase_id = #{phase.id},
+			hierarchy_id = #{hierarchy.id},
+			persona_id = #{persona.id},
+			motivation_ids = #{motivationIds},
+			occasion_ids = #{occasionIds},
+			item_category_ids = #{itemCategoryIds},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_life_style SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id} OR parent_ids LIKE 
+			<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+			<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</update>
+	
+		<select id="findByParentIdsLike" resultType="LifeStyle">
+		SELECT 
+			<include refid="lifeStyleColumns"/>
+		FROM mod_life_style a
+		<include refid="lifeStyleJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} 
+			AND a.parent_ids LIKE #{parentIds}
+		</where>		
+		order by a.sort
+	</select>
+	
+	<update id="updateParentIds">
+		UPDATE mod_life_style SET 
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds}
+		WHERE id = #{id}
+	</update>
+</mapper>
