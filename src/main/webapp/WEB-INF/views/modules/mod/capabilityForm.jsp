@@ -42,6 +42,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">资本标注：</label>
+			<div class="controls">
+				<form:input path="capabilityName" htmlEscape="false" class="input-xlarge  number"/>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">描述值：</label>
 			<div class="controls">
 				<form:input path="descValue" htmlEscape="false" class="input-xlarge  number"/>

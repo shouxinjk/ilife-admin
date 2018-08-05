@@ -37,7 +37,7 @@
 			<label class="control-label">分类：</label>
 			<div class="controls">
 				 <sys:treeselect id="tagCategory" name="tagCategory.id" value="${tags.tagCategory.id}" labelName="tagCategory.name" labelValue="${tags.tagCategory.name}"
-					title="分类" url="/mod/tagCategory/treeData" cssClass="required"/>
+					title="分类" url="/mod/tagCategory/treeData" cssClass="required" disabled="disabled"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>	
@@ -50,13 +50,25 @@
 		<div class="control-group">
 			<label class="control-label">表达式：</label>
 			<div class="controls">
-				<form:input path="expression" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:textarea path="expression" htmlEscape="false" rows="5" maxlength="200" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">类型：</label>
 			<div class="controls">
 				<form:input path="type" htmlEscape="false" maxlength="10" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">判定规则：</label>
+			<div class="controls">
+				<form:textarea path="ruleOfJudgment" htmlEscape="false" rows="5" maxlength="200" class="input-xlarge"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Key：</label>
+			<div class="controls">
+				<form:textarea path="tagKey" htmlEscape="false" rows="5" maxlength="200" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="form-actions">

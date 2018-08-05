@@ -19,6 +19,8 @@ public class OccasionCategory extends TreeEntity<OccasionCategory> {
 	
 	private static final long serialVersionUID = 1L;
 	private String module="occasionCategory";		// name
+	private String triggerDirection; //内在/外在
+	private String triggerType;//主动被动
 	
 	public OccasionCategory() {
 		super();
@@ -45,7 +47,23 @@ public class OccasionCategory extends TreeEntity<OccasionCategory> {
 		this.module = module;
 	}
 
-	public static void sortList(List<OccasionCategory> list, List<OccasionCategory> sourcelist, String parentId,boolean cascade){
+	public String getTriggerDirection() {
+		return triggerDirection;
+	}
+
+	public void setTriggerDirection(String triggerDirection) {
+		this.triggerDirection = triggerDirection;
+	}
+
+	public String getTriggerType() {
+		return triggerType;
+	}
+
+	public void setTriggerType(String triggerType) {
+		this.triggerType = triggerType;
+	}
+
+	public static void sortList(List<OccasionCategory> list, List<OccasionCategory> sourcelist, String parentId, boolean cascade){
 		for (int i=0; i<sourcelist.size(); i++){
 			OccasionCategory e = sourcelist.get(i);
 			if (e.getParent()!=null && e.getParent().getId()!=null

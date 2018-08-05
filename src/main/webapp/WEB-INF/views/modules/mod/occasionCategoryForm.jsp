@@ -48,6 +48,18 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">内在/外在：</label>
+			<div class="controls">
+				<form:radiobuttons path="triggerDirection" items="${fns:getDictList('insideOrOutside')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">主动/被动：</label>
+			<div class="controls">
+				<form:radiobuttons path="triggerType" items="${fns:getDictList('activeOrPassive')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">排序:</label>
 			<div class="controls">
 				<form:input path="sort" htmlEscape="false" maxlength="11" class="required digits"/>

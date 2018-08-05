@@ -41,10 +41,13 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+
 		<div class="control-group">
 			<label class="control-label">维度：</label>
 			<div class="controls">
-				<form:input path="dimension" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+				<sys:treeselect id="itemDimension" name="itemDimension.id" value="${measure.itemDimension.id}" labelName="itemDimension.name" labelValue="${measure.itemDimension.name}"
+								title="维度" url="/mod/itemDimension/treeData"  notAllowSelectRoot="true" cssClass="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">

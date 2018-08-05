@@ -52,13 +52,13 @@
 					${hierarchy.name}
 				</a></td>
 				<td>
-					${hierarchy.economyLevel}(${hierarchy.economyScore })
+					${hierarchy.economyLevel}(${hierarchy.economyScoreMin } - ${hierarchy.economyScoreMax })
 				</td>
 				<td>
-					${hierarchy.cultureLevel}(${hierarchy.cultureScore })
+					${hierarchy.cultureLevel}(${hierarchy.cultureScoreMin } - ${hierarchy.cultureScoreMax })
 				</td>
 				<td>
-					${hierarchy.societyLevel}(${hierarchy.societyScore })
+					${hierarchy.societyLevel}(${hierarchy.societyScoreMin } - ${hierarchy.societyScoreMax })
 				</td>
 				<td>
 					${hierarchy.expression}

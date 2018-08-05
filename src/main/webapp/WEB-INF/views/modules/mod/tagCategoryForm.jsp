@@ -37,7 +37,7 @@
 			<label class="control-label">上级分类:</label>
 			<div class="controls">
 				<sys:treeselect id="parent" name="parent.id" value="${tagCategory.parent.id}" labelName="parent.name" labelValue="${tagCategory.parent.name}"
-					title="父级编号" url="/mod/tagCategory/treeData" extId="${tagCategory.id}" cssClass="" allowClear="true"/>
+					title="父级编号" url="/mod/tagCategory/treeData" extId="${tagCategory.id}" disabled="disabled" cssClass="" allowClear="true"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -52,13 +52,22 @@
 				<form:radiobuttons path="isexclusive" items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">类型：</label>
-			<div class="controls">
-				<form:input path="type" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+		<c:if test="${tagCategory.parent.id eq null}">
+			<div class="control-group">
+				<label class="control-label">类型：</label>
+				<div class="controls">
+					<form:input path="type" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+				</div>
 			</div>
-		</div>
-		
+		</c:if>
+		<c:if test="${tagCategory.parent.id ne null}">
+			<div class="control-group">
+				<label class="control-label">类型：</label>
+				<div class="controls">
+					<form:input path="type" htmlEscape="false" maxlength="100" class="input-xlarge "  disabled="true"/>
+				</div>
+			</div>
+		</c:if>
 		<div class="control-group">
 			<label class="control-label">排序（升序）：</label>
 			<div class="controls">

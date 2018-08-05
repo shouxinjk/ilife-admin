@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pcitech.iLife.modules.mod.entity.*;
+import com.pcitech.iLife.modules.mod.service.*;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +28,6 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
-import com.pcitech.iLife.modules.mod.entity.ItemCategory;
-import com.pcitech.iLife.modules.mod.entity.LifeStyle;
-import com.pcitech.iLife.modules.mod.entity.Persona;
-import com.pcitech.iLife.modules.mod.entity.Phase;
-import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
-import com.pcitech.iLife.modules.mod.service.LifeStyleService;
-import com.pcitech.iLife.modules.mod.service.MotivationService;
-import com.pcitech.iLife.modules.mod.service.OccasionService;
 
 /**
  * VALS模型Controller
@@ -52,7 +46,17 @@ public class LifeStyleController extends BaseController {
 	private MotivationService motivationService;
 	@Autowired
 	private OccasionService occasionService;
-	
+	@Autowired
+	private LifeStyleCategoryService lifeStyleCategoryService;
+
+	@RequiresPermissions("mod:lifeStyle:view")
+	@RequestMapping(value = "index")
+	public String index(Model model) {
+		model.addAttribute("url","mod/lifeStyle");
+		model.addAttribute("title","VALS模型");
+		return "treeData/index";
+	}
+
 	@ModelAttribute
 	public LifeStyle get(@RequestParam(required=false) String id) {
 		LifeStyle entity = null;
@@ -67,9 +71,10 @@ public class LifeStyleController extends BaseController {
 	
 	@RequiresPermissions("mod:lifeStyle:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(LifeStyle lifeStyle, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String list(LifeStyle lifeStyle,String treeId, HttpServletRequest request, HttpServletResponse response, Model model) {
 		List<LifeStyle> list = Lists.newArrayList();
-		List<LifeStyle> sourcelist = lifeStyleService.findTree();
+		lifeStyle.setLifeStyleCategory(new LifeStyleCategory(treeId));
+		List<LifeStyle> sourcelist = lifeStyleService.findTree(lifeStyle);
 		LifeStyle.sortList(list, sourcelist, "1",true);
 		for(LifeStyle lifeStyle2:list){
 			lifeStyle2.setMotivationNames(motivationService.getMotivationNames(lifeStyle2.getMotivationIds()));
@@ -77,12 +82,13 @@ public class LifeStyleController extends BaseController {
 			lifeStyle2.setItemCategoryNames(itemCategoryService.getItemCategoryNames(lifeStyle2.getItemCategoryIds()));
 		}
         model.addAttribute("list", list);
+		model.addAttribute("treeId", treeId);
 		return "modules/mod/lifeStyleList";
 	}
 
 	@RequiresPermissions("mod:lifeStyle:view")
 	@RequestMapping(value = "form")
-	public String form(LifeStyle lifeStyle, Model model) {
+	public String form(LifeStyle lifeStyle,String treeId, Model model) {
 		if (lifeStyle.getParent()==null||lifeStyle.getParent().getId()==null){
 			lifeStyle.setParent(new LifeStyle("1"));
 		}
@@ -91,10 +97,11 @@ public class LifeStyleController extends BaseController {
 		lifeStyle.setMotivationNames(motivationService.getMotivationNames(lifeStyle.getMotivationIds()));
 		lifeStyle.setOccasionNames(occasionService.getOccasionNames(lifeStyle.getOccasionIds()));
 		lifeStyle.setItemCategoryNames(itemCategoryService.getItemCategoryNames(lifeStyle.getItemCategoryIds()));
+		lifeStyle.setLifeStyleCategory(lifeStyleCategoryService.get(treeId));
 		// 获取排序号，最末节点排序号+30
 		if (StringUtils.isBlank(lifeStyle.getId())){
 			List<LifeStyle> list = Lists.newArrayList();
-			List<LifeStyle> sourcelist = lifeStyleService.findTree();
+			List<LifeStyle> sourcelist = lifeStyleService.findTree(new LifeStyle());
 			LifeStyle.sortList(list, sourcelist, lifeStyle.getParentId(), false);
 			if (list.size() > 0){
 				lifeStyle.setSort(list.get(list.size()-1).getSort() + 30);
@@ -108,11 +115,11 @@ public class LifeStyleController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(LifeStyle lifeStyle, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, lifeStyle)){
-			return form(lifeStyle, model);
+			return form(lifeStyle,lifeStyle.getLifeStyleCategory().getId(), model);
 		}
 		lifeStyleService.save(lifeStyle);
 		addMessage(redirectAttributes, "保存VALS模型成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/lifeStyle/?repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/lifeStyle/?treeId="+lifeStyle.getLifeStyleCategory().getId()+"&repage";
 	}
 	
 	@RequiresPermissions("mod:lifeStyle:edit")
@@ -129,7 +136,7 @@ public class LifeStyleController extends BaseController {
 	public List<Map<String, Object>> treeData(String module, @RequestParam(required=false) String extId, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<LifeStyle> list = lifeStyleService.findTree();
+		List<LifeStyle> list = lifeStyleService.findTree(new LifeStyle());
 		for (int i=0; i<list.size(); i++){
 			LifeStyle e = list.get(i);
 			if (extId == null || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
@@ -146,7 +153,7 @@ public class LifeStyleController extends BaseController {
 	/**
 	 * 批量修改排序
 	 */
-	@RequiresPermissions("mod:itemCategory:edit")
+	@RequiresPermissions("mod:lifeStyle:edit")
 	@RequestMapping(value = "updateSort")
 	public String updateSort(String[] ids, Integer[] sorts, RedirectAttributes redirectAttributes) {
     	int len = ids.length;
@@ -158,5 +165,21 @@ public class LifeStyleController extends BaseController {
     	}
     	addMessage(redirectAttributes, "保存排序成功!");
 		return "redirect:" + adminPath + "/mod/lifeStyle/";
+	}
+
+	@RequiresPermissions("mod:lifeStyle:view")
+	@RequestMapping(value = "tree")
+	public String tree(Model model) {
+		model.addAttribute("url","mod/lifeStyle");
+		model.addAttribute("title","分类");
+		model.addAttribute("list", lifeStyleCategoryService.findTree());
+		return "treeData/tree";
+	}
+
+	@RequiresPermissions("mod:lifeStyle:view")
+	@RequestMapping(value = "none")
+	public String none(Model model) {
+		model.addAttribute("message","请在左侧选择一个分类。");
+		return "treeData/none";
 	}
 }

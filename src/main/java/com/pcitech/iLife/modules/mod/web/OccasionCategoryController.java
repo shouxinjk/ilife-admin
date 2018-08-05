@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pcitech.iLife.modules.mod.service.OccasionService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
-import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.OccasionCategory;
-import com.pcitech.iLife.modules.mod.entity.Phase;
 import com.pcitech.iLife.modules.mod.service.OccasionCategoryService;
 
 import springfox.documentation.annotations.ApiIgnore;
@@ -44,6 +43,8 @@ public class OccasionCategoryController extends BaseController {
 
 	@Autowired
 	private OccasionCategoryService occasionCategoryService;
+	@Autowired
+	private OccasionService occasionService;
 	
 	@ModelAttribute
 	public OccasionCategory get(@RequestParam(required=false) String id) {
@@ -95,6 +96,9 @@ public class OccasionCategoryController extends BaseController {
 			return form(occasionCategory, model);
 		}
 		occasionCategoryService.save(occasionCategory);
+
+		occasionService.updateChildrenType(occasionCategory);
+
 		addMessage(redirectAttributes, "保存外部诱因类别成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/occasionCategory/?repage";
 	}

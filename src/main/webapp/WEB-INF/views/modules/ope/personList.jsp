@@ -38,7 +38,8 @@
 			<tr>
 				<th>昵称</th>
 				<th>vals模型</th>
-				<th>阶层模型</th>
+				<th>所属阶段</th>
+				<th>所属阶层</th>
 				<th>用户分群</th>
 				<th>生活方式</th>
 				<th>最后访问时间</th>
@@ -57,6 +58,9 @@
 				
 				<td>
 					${person.phase.name}
+				</td>
+				<td>
+					${person.hierarchy.name}
 				</td>
 				<td>
 					${person.persona.name}

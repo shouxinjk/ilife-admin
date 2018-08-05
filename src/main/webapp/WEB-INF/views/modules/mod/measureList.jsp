@@ -57,7 +57,7 @@
 					${measure.category.name}
 				</td>
 				<td>
-					${measure.dimension}
+					${measure.itemDimension.name}
 				</td>
 				<td>
 					${measure.property}

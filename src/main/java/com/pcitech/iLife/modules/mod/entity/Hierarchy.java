@@ -17,13 +17,16 @@ public class Hierarchy extends DataEntity<Hierarchy> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// name
 	private Integer societyLevel;		// society_level
-	private Double societyScore;		// society_score
+	private Double societyScoreMax;		// society_score
+	private Double societyScoreMin;		// society_score
 	private Integer cultureLevel;		// culture_level
-	private Double cultureScore;		// culture_score
+	private Double cultureScoreMin;		// culture_score
+	private Double cultureScoreMax;		// culture_score
 	private String expression;		// expression
 	private String matrix;		// matrix
 	private Integer economyLevel;		// economy_level
-	private Double economyScore;		// economy_score
+	private Double economyScoreMin;		// economy_score
+	private Double economyScoreMax;		// economy_score
 	private String description;		// description
 	
 	public Hierarchy() {
@@ -50,29 +53,13 @@ public class Hierarchy extends DataEntity<Hierarchy> {
 	public void setSocietyLevel(Integer societyLevel) {
 		this.societyLevel = societyLevel;
 	}
-	
-	public Double getSocietyScore() {
-		return societyScore;
-	}
 
-	public void setSocietyScore(Double societyScore) {
-		this.societyScore = societyScore;
-	}
-	
 	public Integer getCultureLevel() {
 		return cultureLevel;
 	}
 
 	public void setCultureLevel(Integer cultureLevel) {
 		this.cultureLevel = cultureLevel;
-	}
-	
-	public Double getCultureScore() {
-		return cultureScore;
-	}
-
-	public void setCultureScore(Double cultureScore) {
-		this.cultureScore = cultureScore;
 	}
 	
 	@Length(min=0, max=1000, message="expression长度必须介于 0 和 1000 之间")
@@ -101,14 +88,6 @@ public class Hierarchy extends DataEntity<Hierarchy> {
 		this.economyLevel = economyLevel;
 	}
 	
-	public Double getEconomyScore() {
-		return economyScore;
-	}
-
-	public void setEconomyScore(Double economyScore) {
-		this.economyScore = economyScore;
-	}
-	
 	@Length(min=0, max=1000, message="description长度必须介于 0 和 1000 之间")
 	public String getDescription() {
 		return description;
@@ -117,5 +96,52 @@ public class Hierarchy extends DataEntity<Hierarchy> {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
+	public Double getSocietyScoreMax() {
+		return societyScoreMax;
+	}
+
+	public void setSocietyScoreMax(Double societyScoreMax) {
+		this.societyScoreMax = societyScoreMax;
+	}
+
+	public Double getSocietyScoreMin() {
+		return societyScoreMin;
+	}
+
+	public void setSocietyScoreMin(Double societyScoreMin) {
+		this.societyScoreMin = societyScoreMin;
+	}
+
+	public Double getCultureScoreMin() {
+		return cultureScoreMin;
+	}
+
+	public void setCultureScoreMin(Double cultureScoreMin) {
+		this.cultureScoreMin = cultureScoreMin;
+	}
+
+	public Double getCultureScoreMax() {
+		return cultureScoreMax;
+	}
+
+	public void setCultureScoreMax(Double cultureScoreMax) {
+		this.cultureScoreMax = cultureScoreMax;
+	}
+
+	public Double getEconomyScoreMin() {
+		return economyScoreMin;
+	}
+
+	public void setEconomyScoreMin(Double economyScoreMin) {
+		this.economyScoreMin = economyScoreMin;
+	}
+
+	public Double getEconomyScoreMax() {
+		return economyScoreMax;
+	}
+
+	public void setEconomyScoreMax(Double economyScoreMax) {
+		this.economyScoreMax = economyScoreMax;
+	}
 }

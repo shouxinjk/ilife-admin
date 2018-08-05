@@ -65,7 +65,7 @@
 				</tr>
 				<c:forEach items="${list}" var="tpl">
 					<tr id="${tpl.id}" pId="${tpl.parent.id ne '1'?tpl.parent.id:'0'}">
-						<td><a href="${ctx}/mod/tagCategory/form?id={{row.id}}">
+						<td><a href="${ctx}/mod/tagCategory/form?id=${tpl.id}">
 							${tpl.name}
 						</a></td>
 						<td>
@@ -92,25 +92,25 @@
 		</div></shiro:hasPermission>
 	</form>
 	<script type="text/template" id="treeTableTpl">
-		<tr id="{{row.id}}" pId="{{pid}}">
-			<td><a href="${ctx}/mod/tagCategory/form?id={{row.id}}">
-				{{row.name}}
-			</a></td>
-			<td>
-				${fns:getDictLabel('{{row.isexclusive}}', 'yes_no', '无')}
-			</td>
-			<td>
-				{{row.updateBy.name}} 
-			</td>
-			<td>
-				{{row.updateDate}}
-			</td>
-			<shiro:hasPermission name="mod:tagCategory:edit"><td>
-   				<a href="${ctx}/mod/tagCategory/form?id={{row.id}}">修改</a>
-				<a href="${ctx}/mod/tagCategory/delete?id={{row.id}}" onclick="return confirmx('确认要删除该标签分类及所有子标签分类吗？', this.href)">删除</a>
-				<a href="${ctx}/mod/tagCategory/form?parent.id={{row.id}}">添加下级标签分类</a> 
-			</td></shiro:hasPermission>
-		</tr>
+		<%--<tr id="{{row.id}}" pId="{{pid}}">--%>
+			<%--<td><a href="${ctx}/mod/tagCategory/form?id={{row.id}}">--%>
+				<%--{{row.name}}--%>
+			<%--</a></td>--%>
+			<%--<td>--%>
+				<%--${fns:getDictLabel('{{row.isexclusive}}', 'yes_no', '无')}--%>
+			<%--</td>--%>
+			<%--<td>--%>
+				<%--{{row.updateBy.name}} --%>
+			<%--</td>--%>
+			<%--<td>--%>
+				<%--{{row.updateDate}}--%>
+			<%--</td>--%>
+			<%--<shiro:hasPermission name="mod:tagCategory:edit"><td>--%>
+   				<%--<a href="${ctx}/mod/tagCategory/form?id={{row.id}}">修改</a>--%>
+				<%--<a href="${ctx}/mod/tagCategory/delete?id={{row.id}}" onclick="return confirmx('确认要删除该标签分类及所有子标签分类吗？', this.href)">删除</a>--%>
+				<%--<a href="${ctx}/mod/tagCategory/form?parent.id={{row.id}}">添加下级标签分类</a> --%>
+			<%--</td></shiro:hasPermission>--%>
+		<%--</tr>--%>
 	</script>
 </body>
 </html>

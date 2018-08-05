@@ -48,7 +48,8 @@
 		<div class="control-group">
 			<label class="control-label">经济资本评分：</label>
 			<div class="controls">
-				<form:input path="economyScore" htmlEscape="false" class="input-xlarge  number"/>
+				<form:input path="economyScoreMin" htmlEscape="false" class=" number"/> -
+				<form:input path="economyScoreMax" htmlEscape="false" class=" number"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -60,7 +61,8 @@
 		<div class="control-group">
 			<label class="control-label">社会资本评分：</label>
 			<div class="controls">
-				<form:input path="societyScore" htmlEscape="false" class="input-xlarge  number"/>
+				<form:input path="societyScoreMin" htmlEscape="false" class=" number"/> -
+				<form:input path="societyScoreMax" htmlEscape="false" class=" number"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -72,7 +74,8 @@
 		<div class="control-group">
 			<label class="control-label">文化资本评分：</label>
 			<div class="controls">
-				<form:input path="cultureScore" htmlEscape="false" class="input-xlarge  number"/>
+				<form:input path="cultureScoreMin" htmlEscape="false" class=" number"/> -
+				<form:input path="cultureScoreMax" htmlEscape="false" class=" number"/>
 			</div>
 		</div>
 		<div class="control-group">

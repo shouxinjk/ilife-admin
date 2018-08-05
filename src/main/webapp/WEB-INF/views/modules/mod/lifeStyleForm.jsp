@@ -32,12 +32,20 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="lifeStyle" action="${ctx}/mod/lifeStyle/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>	
+		<sys:message content="${message}"/>
+		<div class="control-group">
+			<label class="control-label">分类：</label>
+			<div class="controls">
+				<sys:treeselect id="lifeStyleCategory" name="lifeStyleCategory.id" value="${lifeStyle.lifeStyleCategory.id}" labelName="lifeStyleCategory.name" labelValue="${lifeStyle.lifeStyleCategory.name}"
+								title="VALS分类" url="/mod/lifeStyleCategory/treeData" cssClass="required" disabled="disabled"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
 		<div class="control-group">
 			<label class="control-label">上级模型：</label>
 			<div class="controls">
 				 <sys:treeselect id="lifeStyle" name="parent.id" value="${lifeStyle.parent.id}" labelName="parent.name" labelValue="${lifeStyle.parent.name}"
-					title="vals模型" url="/mod/lifeStyle/treeData" extId="${lifeStyle.id}" cssClass="required"/>
+					title="vals模型" url="/mod/lifeStyle/treeData" extId="${lifeStyle.id}" cssClass="required" disabled="disabled"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>	

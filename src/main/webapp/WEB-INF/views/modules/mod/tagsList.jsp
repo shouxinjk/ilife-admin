@@ -40,6 +40,7 @@
 				<th>所属类型</th>
 				<th>表达式</th>
 				<th>标签类型</th>
+				<th>判定规则</th>
 				<shiro:hasPermission name="mod:tags:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -57,6 +58,9 @@
 				</td>
 				<td>
 					${tags.type}
+				</td>
+				<td>
+					${tags.ruleOfJudgment}
 				</td>
 				<shiro:hasPermission name="mod:tags:edit"><td>
     				<a href="${ctx}/mod/tags/form?id=${tags.id}">修改</a>

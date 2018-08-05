@@ -6,6 +6,7 @@ package com.pcitech.iLife.modules.mod.service;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,9 @@ import com.pcitech.iLife.modules.mod.dao.TagCategoryDao;
 @Service
 @Transactional(readOnly = true)
 public class TagCategoryService extends TreeService<TagCategoryDao, TagCategory> {
+
+	@Autowired
+	private TagCategoryDao tagCategoryDao;
 
 	public TagCategory get(String id) {
 		return super.get(id);
@@ -72,5 +76,9 @@ public class TagCategoryService extends TreeService<TagCategoryDao, TagCategory>
 	public void delete(TagCategory tagCategory) {
 		super.delete(tagCategory);
 	}
-	
+
+	@Transactional(readOnly = false)
+	public void updateChildrenType(TagCategory tagCategory){
+		tagCategoryDao.updateChildrenType(tagCategory);
+	}
 }

@@ -5,6 +5,8 @@ package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
 
+import com.pcitech.iLife.modules.mod.entity.OccasionCategory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,9 @@ import com.pcitech.iLife.modules.mod.dao.OccasionDao;
 @Service
 @Transactional(readOnly = true)
 public class OccasionService extends CrudService<OccasionDao, Occasion> {
+
+	@Autowired
+	private OccasionDao occasionDao;
 
 	public Occasion get(String id) {
 		return super.get(id);
@@ -46,5 +51,10 @@ public class OccasionService extends CrudService<OccasionDao, Occasion> {
 	
 	public String getOccasionNames(String occasionIds) {
 		return dao.getOccasionNames(occasionIds);
+	}
+
+	@Transactional(readOnly = false)
+	public void updateChildrenType(OccasionCategory occasionCategory){
+		occasionDao.updateChildrenType(occasionCategory);
 	}
 }

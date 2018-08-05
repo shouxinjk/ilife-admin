@@ -6,7 +6,8 @@
 		a.id AS "id",
 		a.category AS "category.id",
 		c.name AS "category.name",
-		a.dimension AS "dimension",
+		a.dimension AS "itemDimension.id",
+		d.name AS "itemDimension.name",
 		a.property AS "property",
 		a.name AS "name",
 		a.percentage AS "percentage",
@@ -25,6 +26,7 @@
 	<sql id="measureJoins">
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_item_category c ON c.id = a.category
+		LEFT JOIN mod_item_dimension d ON d.id = a.dimension
 	</sql>
     
 	<select id="get" resultType="Measure">
@@ -109,7 +111,7 @@
 		) VALUES (
 			#{id},
 			#{category.id},
-			#{dimension},
+			#{itemDimension.id},
 			#{property},
 			#{name},
 			#{percentage},
@@ -128,7 +130,7 @@
 	<update id="update">
 		UPDATE mod_measure SET 	
 			category = #{category.id},
-			dimension = #{dimension},
+			dimension = #{itemDimension.id},
 			property = #{property},
 			name = #{name},
 			percentage = #{percentage},
