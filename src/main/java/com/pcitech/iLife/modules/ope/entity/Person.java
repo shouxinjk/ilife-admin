@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.ope.entity;
 
+import com.pcitech.iLife.modules.mod.entity.Hierarchy;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -37,9 +38,10 @@ public class Person extends DataEntity<Person> {
 	private Date lastAccess;		// 最后访问时间
 	private Double offset;		// 阶段偏移量
 	private Integer integrity;		// 信息健全度
-	private Phase phase;		// 阶层模型
+	private Phase phase;		// 所属阶段
 	private Persona persona;		// 用户分群
 	private LifeStyle lifeStyle;		// 生活方式
+	private Hierarchy hierarchy; //所属阶层
 	
 	public Person() {
 		super();
@@ -220,6 +222,12 @@ public class Person extends DataEntity<Person> {
 	public void setLifeStyle(LifeStyle lifeStyle) {
 		this.lifeStyle = lifeStyle;
 	}
-	
-	
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
 }

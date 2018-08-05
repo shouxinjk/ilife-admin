@@ -14,7 +14,9 @@
 		a.update_by AS "updateBy.id",
 		uu.name AS "updateBy.name",
 		a.update_date AS "updateDate",
-		a.del_flag AS "delFlag"
+		a.del_flag AS "delFlag",
+		a.rule_of_judgment AS "ruleOfJudgment",
+		a.tag_key AS "tagKey"
 	</sql>
 	
 	<sql id="tagsJoins">
@@ -82,6 +84,8 @@
 			tag_category,
 			expression,
 			type,
+			rule_of_judgment,
+			tag_key,
 			create_by,
 			create_date,
 			update_by,
@@ -93,6 +97,8 @@
 			#{tagCategory.id},
 			#{expression},
 			#{type},
+			#{ruleOfJudgment},
+			#{tagKey},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -107,6 +113,8 @@
 			tag_category=#{tagCategory.id},
 			expression = #{expression},
 			type = #{type},
+			rule_of_judgment=#{ruleOfJudgment},
+			tag_key=#{tagKey},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}

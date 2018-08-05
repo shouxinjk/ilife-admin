@@ -42,6 +42,7 @@ public class TagCategory extends TreeEntity<TagCategory> {
 	
 	@Length(min=0, max=100, message="类型长度必须介于 0 和 100 之间")
 	public String getType() {
+
 		return type;
 	}
 

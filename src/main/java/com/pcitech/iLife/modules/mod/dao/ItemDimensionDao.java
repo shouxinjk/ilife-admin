@@ -5,15 +5,14 @@ package com.pcitech.iLife.modules.mod.dao;
 
 import com.pcitech.iLife.common.persistence.TreeDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
-import com.pcitech.iLife.modules.mod.entity.TagCategory;
+import com.pcitech.iLife.modules.mod.entity.ItemDimension;
 
 /**
- * 标签分类DAO接口
+ * 商品维度DAO接口
  * @author chenci
- * @version 2017-09-26
+ * @version 2018-06-22
  */
 @MyBatisDao
-public interface TagCategoryDao extends TreeDao<TagCategory> {
-
-    public int updateChildrenType(TagCategory entity);
+public interface ItemDimensionDao extends TreeDao<ItemDimension> {
+	
 }

@@ -143,4 +143,12 @@
 		FROM mod_occasion 
 		WHERE #{occasionIds} like concat('%',id,'%')
 	</select>
+
+	<update id="updateChildrenType">
+		UPDATE mod_occasion SET
+		trigger_direction=#{triggerDirection},
+		trigger_type=#{triggerType}
+
+		WHERE category_id = #{id}
+	</update>
 </mapper>

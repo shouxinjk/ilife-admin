@@ -23,6 +23,8 @@
 		a.integrity AS "integrity",
 		a.phase_id AS "phase.id",
 		ph.name AS "phase.name",
+		a.hierarchy_id AS "hierarchy.id",
+		hi.name AS "hierarchy.name",
 		a.persona_id AS "persona.id",
 		pe.name AS "persona.name",
 		a.life_style_id AS "lifeStyle.id",
@@ -40,6 +42,7 @@
 		LEFT JOIN mod_phase ph ON ph.id = a.phase_id
 		LEFT JOIN mod_persona pe ON pe.id = a.persona_id
 		LEFT JOIN mod_life_style ls ON ls.id = a.life_style_id
+		LEFT JOIN mod_hierarchy hi ON hi.id = a.hierarchy_id
 	</sql>
     
 	<select id="get" resultType="Person">
@@ -119,6 +122,7 @@
 			offset,
 			integrity,
 			phase_id,
+			hierarchy_id,
 			persona_id,
 			life_style_id,
 			create_by,
@@ -146,6 +150,7 @@
 			#{offset},
 			#{integrity},
 			#{phase.id},
+			#{hierarchy.id},
 			#{persona.id},
 			#{lifeStyle.id},
 			#{createBy.id},
@@ -176,6 +181,7 @@
 			offset = #{offset},
 			integrity = #{integrity},
 			phase_id = #{phase.id},
+			hierarchy_id=#{hierarchy.id},
 			persona_id = #{persona.id},
 			life_style_id = #{lifeStyle.id},
 			update_by = #{updateBy.id},

@@ -5,6 +5,7 @@
 	<sql id="capabilityColumns">
 		a.id AS "id",
 		a.capital_id AS "capital.id",
+		a.capability_name AS "capabilityName",
 		c.name AS "capital.name",
 		c.category AS "capital.category",
 		c.control_value AS "capital.controlValue",
@@ -82,6 +83,7 @@
 		INSERT INTO mod_capability(
 			id,
 			capital_id,
+			capability_name,
 			marked_value,
 			normalized_value,
 			desc_value,
@@ -96,6 +98,7 @@
 		) VALUES (
 			#{id},
 			#{capital.id},
+			#{capabilityName},
 			#{markedValue},
 			#{normalizedValue},
 			#{descValue},
@@ -113,6 +116,7 @@
 	<update id="update">
 		UPDATE mod_capability SET 	
 			capital_id = #{capital.id},
+			capability_name=#{capabilityName},
 			marked_value = #{markedValue},
 			normalized_value = #{normalizedValue},
 			desc_value = #{descValue},

@@ -74,7 +74,12 @@ public class OccasionController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(Occasion occasion, Model model) {
 		if(occasion.getOccasionCategory()!=null&&StringUtils.isNoneBlank(occasion.getOccasionCategory().getId())){
-			occasion.setOccasionCategory(occasionCategoryService.get(occasion.getOccasionCategory().getId()));
+			OccasionCategory parent= occasionCategoryService.get(occasion.getOccasionCategory().getId());
+			occasion.setOccasionCategory(parent);
+			if(parent !=null){
+				occasion.setTriggerDirection(parent.getTriggerDirection());
+				occasion.setTriggerType(parent.getTriggerType());
+			}
 		}
 		model.addAttribute("occasion", occasion);
 		return "modules/mod/occasionForm";

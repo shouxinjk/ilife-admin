@@ -6,6 +6,7 @@ package com.pcitech.iLife.modules.mod.dao;
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.Occasion;
+import com.pcitech.iLife.modules.mod.entity.OccasionCategory;
 
 /**
  * 外部诱因DAO接口
@@ -16,4 +17,6 @@ import com.pcitech.iLife.modules.mod.entity.Occasion;
 public interface OccasionDao extends CrudDao<Occasion> {
 	
 	public String getOccasionNames(String occasionIds);
+
+	public int updateChildrenType(OccasionCategory occasionCategory);
 }

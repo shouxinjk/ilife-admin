@@ -22,6 +22,7 @@ public class Capability extends DataEntity<Capability> {
 	private Double originalValue;		// original_value
 	private Integer level;		// level
 	private String description;		// description
+	private String capabilityName;
 	
 	public Capability() {
 		super();
@@ -87,5 +88,12 @@ public class Capability extends DataEntity<Capability> {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
+	public String getCapabilityName() {
+		return capabilityName;
+	}
+
+	public void setCapabilityName(String capabilityName) {
+		this.capabilityName = capabilityName;
+	}
 }

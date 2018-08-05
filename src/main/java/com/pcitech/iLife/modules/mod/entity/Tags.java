@@ -19,6 +19,9 @@ public class Tags extends DataEntity<Tags> {
 	private String name;		// 名称
 	private String expression;		// 表达式
 	private String type;		// 类型
+	private String ruleOfJudgment;		// 判定规则
+	private String tagKey;		//Key
+
 	
 	public Tags() {
 		super();
@@ -62,5 +65,20 @@ public class Tags extends DataEntity<Tags> {
 	public void setTagCategory(TagCategory tagCategory) {
 		this.tagCategory = tagCategory;
 	}
-	
+
+	public String getRuleOfJudgment() {
+		return ruleOfJudgment;
+	}
+
+	public void setRuleOfJudgment(String ruleOfJudgment) {
+		this.ruleOfJudgment = ruleOfJudgment;
+	}
+
+	public String getTagKey() {
+		return tagKey;
+	}
+
+	public void setTagKey(String tagKey) {
+		this.tagKey = tagKey;
+	}
 }

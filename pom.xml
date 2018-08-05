@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>com.pcitech.iLife</groupId>
-	<artifactId>ilife</artifactId>
+	<artifactId>iLife</artifactId>
 	<version>1.2.7</version>
 	<packaging>war</packaging>
 	
-	<name>iLife-admin</name>
+	<name>iLife</name>
 	<url></url>
 	<inceptionYear>2017-2021</inceptionYear>
 	

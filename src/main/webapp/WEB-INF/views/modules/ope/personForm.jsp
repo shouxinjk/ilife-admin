@@ -130,10 +130,18 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">阶层模型：</label>
+			<label class="control-label">所属阶段：</label>
 			<div class="controls">
 				 <sys:treeselect id="phase" name="phase.id" value="${person.phase.id}" labelName="phase.name" labelValue="${person.phase.name}"
 					title="人生阶段" url="/mod/phase/treeData" cssClass="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">所属阶层：</label>
+			<div class="controls">
+				<sys:treeselect id="hierarchy" name="hierarchy.id" value="${person.hierarchy.id}" labelName="hierarchy.name" labelValue="${person.hierarchy.name}"
+								title="社会分层" url="/mod/hierarchy/listData" cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

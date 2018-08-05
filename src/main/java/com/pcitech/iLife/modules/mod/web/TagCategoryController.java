@@ -66,7 +66,12 @@ public class TagCategoryController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(TagCategory tagCategory, Model model) {
 		if (tagCategory.getParent()!=null && StringUtils.isNotBlank(tagCategory.getParent().getId())){
-			tagCategory.setParent(tagCategoryService.get(tagCategory.getParent().getId()));
+			TagCategory parent=tagCategoryService.get(tagCategory.getParent().getId());
+			tagCategory.setParent(parent);
+			if(parent !=null && StringUtils.isNotBlank(parent.getType())){
+				tagCategory.setType(parent.getType());
+			}
+
 			// 获取排序号，最末节点排序号+30
 			if (StringUtils.isBlank(tagCategory.getId())){
 				TagCategory tagCategoryChild = new TagCategory();
@@ -94,6 +99,9 @@ public class TagCategoryController extends BaseController {
 			return form(tagCategory, model);
 		}
 		tagCategoryService.save(tagCategory);
+		if(StringUtils.isBlank(tagCategory.getParent().getId())||tagCategory.getParent().getId().equals("0")){
+			tagCategoryService.updateChildrenType(tagCategory);
+		}
 		addMessage(redirectAttributes, "保存标签分类成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/tagCategory/?repage";
 	}

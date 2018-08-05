@@ -165,7 +165,7 @@
 	<select id="getItemCategoryNames" resultType="String">
 		SELECT group_concat(name) 
 		FROM mod_item_category 
-		WHERE #{itemCategoryIds} like concat('%',id,'%') AND id !='1'
+		WHERE #{itemCategoryIds} like concat('%',#{id},'%') AND id !='1'
 	</select>
 	
 </mapper>

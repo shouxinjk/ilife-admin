@@ -4,6 +4,8 @@
     
 	<sql id="lifeStyleColumns">
 		a.id AS "id",
+		a.category_id AS "category.id",
+		c.name AS "lifeStyleCategory.name",
 		a.name AS "name",
 		a.parent_id AS "parent.id",
 		p.name AS "parent.name",
@@ -41,6 +43,7 @@
 		LEFT JOIN mod_phase ph ON ph.id = a.phase_id
 		LEFT JOIN mod_hierarchy hi ON hi.id = a.hierarchy_id
 		LEFT JOIN mod_persona pe ON pe.id = a.persona_id
+		LEFT JOIN mod_life_style_category c ON c.id = a.category_id
 	</sql>
     
 	<select id="get" resultType="LifeStyle">
@@ -63,6 +66,9 @@
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="lifeStyleCategory != null and lifeStyleCategory.id != null and lifeStyleCategory.id != ''">
+				AND a.category_id =#{lifeStyleCategory.id}
 			</if>
 		</where>
 		<choose>
@@ -97,6 +103,7 @@
 		INSERT INTO mod_life_style(
 			id,
 			name,
+			category_id,
 			parent_id,
 			parent_ids,
 			sort,
@@ -123,6 +130,7 @@
 		) VALUES (
 			#{id},
 			#{name},
+			#{lifeStyleCategory.id},
 			#{parent.id},
 			#{parentIds},
 			#{sort},
@@ -152,6 +160,7 @@
 	<update id="update">
 		UPDATE mod_life_style SET 	
 			name = #{name},
+			category_id=#{lifeStyleCategory.id},
 			parent_id = #{parent.id},
 			parent_ids = #{parentIds},
 			sort=#{sort},

@@ -40,13 +40,13 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">分类：</label>
-			<div class="controls">
-				 <sys:treeselect id="occasionCategory" name="occasionCategory.id" value="${occasion.occasionCategory.id}" labelName="occasionCategory.name" labelValue="${occasion.occasionCategory.name}"
-					title="外部诱因分类" url="/mod/occasionCategory/treeData" cssClass="required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
+		<label class="control-label">分类：</label>
+		<div class="controls">
+			<sys:treeselect id="occasionCategory" name="occasionCategory.id" value="${occasion.occasionCategory.id}" labelName="occasionCategory.name" labelValue="${occasion.occasionCategory.name}"
+							title="外部诱因分类" url="/mod/occasionCategory/treeData" cssClass="required"/>
+			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
+	</div>
 		<div class="control-group">
 			<label class="control-label">匹配用户：</label>
 			<div class="controls">

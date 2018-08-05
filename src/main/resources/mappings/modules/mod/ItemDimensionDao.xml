@@ -1,50 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pcitech.iLife.modules.mod.dao.TagCategoryDao">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.ItemDimensionDao">
     
-	<sql id="tagCategoryColumns">
+	<sql id="itemDimensionColumns">
 		a.id AS "id",
-		a.name AS "name",
-		a.isexclusive AS "isexclusive",
-		a.type AS "type",
 		a.parent_id AS "parent.id",
 		p.name AS "parent.name",
 		a.parent_ids AS "parentIds",
+		a.name AS "name",
+		a.description AS "description",
+		a.weight AS "weight",
 		a.sort AS "sort",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
-		uu.name AS "updateBy.name",
 		a.update_date AS "updateDate",
 		a.del_flag AS "delFlag"
 	</sql>
 	
-	<sql id="tagCategoryJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
-		LEFT JOIN mod_tag_category p ON p.id = a.parent_id
+	<sql id="itemDimensionJoins">
+		LEFT JOIN mod_item_dimension p ON p.id = a.parent_id
 	</sql>
     
-	<select id="get" resultType="TagCategory">
+	<select id="get" resultType="ItemDimension">
 		SELECT 
-			<include refid="tagCategoryColumns"/>
-		FROM mod_tag_category a
-		<include refid="tagCategoryJoins"/>
+			<include refid="itemDimensionColumns"/>
+		FROM mod_item_dimension a
+		<include refid="itemDimensionJoins"/>
 		WHERE a.id = #{id}
 	</select>
 	
-	<select id="findList" resultType="TagCategory">
+	<select id="findList" resultType="ItemDimension">
 		SELECT 
-			<include refid="tagCategoryColumns"/>
-		FROM mod_tag_category a
-		<include refid="tagCategoryJoins"/>
+			<include refid="itemDimensionColumns"/>
+		FROM mod_item_dimension a
+		<include refid="itemDimensionJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
-			<if test="name != null and name != ''">
-				AND a.name LIKE 
-					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
-					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
-					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
-			</if>
 			<if test="parent != null and parent.id != null and parent.id != ''">
 				AND a.parent_id = #{parent.id}
 			</if>
@@ -54,28 +46,34 @@
 					<if test="dbName == 'mssql'">'%'+#{parentIds}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{parentIds},'%')</if>
 			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
 		</where>
 		ORDER BY a.sort ASC
 	</select>
 	
-	<select id="findAllList" resultType="TagCategory">
+	<select id="findAllList" resultType="ItemDimension">
 		SELECT 
-			<include refid="tagCategoryColumns"/>
-		FROM mod_tag_category a
-		<include refid="tagCategoryJoins"/>
+			<include refid="itemDimensionColumns"/>
+		FROM mod_item_dimension a
+		<include refid="itemDimensionJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 		</where>
 		ORDER BY a.sort ASC
 	</select>
 	
-	<select id="findByParentIdsLike" resultType="TagCategory">
+	<select id="findByParentIdsLike" resultType="ItemDimension">
 		SELECT
 			a.id,
 			a.parent_id AS "parent.id",
 			a.parent_ids
-		FROM mod_tag_category a
-		<include refid="tagCategoryJoins"/>
+		FROM mod_item_dimension a
+		<include refid="itemDimensionJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			AND a.parent_ids LIKE #{parentIds}
@@ -84,13 +82,13 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO mod_tag_category(
+		INSERT INTO mod_item_dimension(
 			id,
-			name,
-			isexclusive,
-			type,
 			parent_id,
 			parent_ids,
+			name,
+			description,
+			weight,
 			sort,
 			create_by,
 			create_date,
@@ -99,11 +97,11 @@
 			del_flag
 		) VALUES (
 			#{id},
-			#{name},
-			#{isexclusive},
-			#{type},
 			#{parent.id},
 			#{parentIds},
+			#{name},
+			#{description},
+			#{weight},
 			#{sort},
 			#{createBy.id},
 			#{createDate},
@@ -114,12 +112,12 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE mod_tag_category SET 	
-			name = #{name},
-			isexclusive = #{isexclusive},
-			type = #{type},
+		UPDATE mod_item_dimension SET 	
 			parent_id = #{parent.id},
 			parent_ids = #{parentIds},
+			name = #{name},
+			description = #{description},
+			weight = #{weight},
 			sort = #{sort},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
@@ -127,22 +125,16 @@
 	</update>
 	
 	<update id="updateParentIds">
-		UPDATE mod_tag_category SET 
+		UPDATE mod_item_dimension SET 
 			parent_id = #{parent.id}, 
 			parent_ids = #{parentIds}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="delete">
-		UPDATE mod_tag_category SET 
+		UPDATE mod_item_dimension SET 
 			del_flag = #{DEL_FLAG_DELETE}
-		WHERE id = #{id} OR parent_ids LIKE concat('%,',#{id},',%')
+		WHERE id = #{id} OR parent_ids LIKE '%,'||#{id}||',%'
 	</update>
-
-	<update id="updateChildrenType">
-		UPDATE mod_tag_category SET
-		type = #{type}
-
-		WHERE parent_ids LIKE concat('%,',#{id},',%')
-	</update>
+	
 </mapper>

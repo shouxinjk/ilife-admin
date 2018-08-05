@@ -34,7 +34,8 @@ public class LifeStyle extends TreeEntity<LifeStyle> {
 	private String itemCategoryIds;		// item_category_id
 	private String motivationNames;		// motivation_id
 	private String occasionNames;		// occasion_id
-	private String itemCategoryNames;	
+	private String itemCategoryNames;
+	private LifeStyleCategory lifeStyleCategory;
 	
 	public LifeStyle() {
 		super();
@@ -199,6 +200,14 @@ public class LifeStyle extends TreeEntity<LifeStyle> {
 
 	public void setItemCategoryNames(String itemCategoryNames) {
 		this.itemCategoryNames = itemCategoryNames;
+	}
+
+	public LifeStyleCategory getLifeStyleCategory() {
+		return lifeStyleCategory;
+	}
+
+	public void setLifeStyleCategory(LifeStyleCategory lifeStyleCategory) {
+		this.lifeStyleCategory = lifeStyleCategory;
 	}
 
 	@Override

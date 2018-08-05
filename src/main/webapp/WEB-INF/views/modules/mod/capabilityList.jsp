@@ -42,6 +42,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>资本标注</th>
 				<th>类别</th>
 				<th>属性定义</th>
 				<th>归一化参照值</th>
@@ -58,6 +59,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="capability">
 			<tr>
+				<td>
+					${capability.capabilityName}
+				</td>
 				<td>
 					${fns:getDictLabel(capability.capital.category, 'capital_category', '无')}
 				</td>

@@ -21,7 +21,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/mod/lifeStyle/">VALS模型列表</a></li>
-		<shiro:hasPermission name="mod:lifeStyle:edit"><li><a href="${ctx}/mod/lifeStyle/form">VALS模型添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="mod:lifeStyle:edit"><li><a href="${ctx}/mod/lifeStyle/form?treeId=${treeId}">VALS模型添加</a></li></shiro:hasPermission>
 	</ul>
 	<sys:message content="${message}"/>
 	<form id="listForm" method="post">
@@ -36,7 +36,7 @@
 			</tr>
 			<c:forEach items="${list}" var="tpl">
 				<tr id="${tpl.id}" pId="${tpl.parent.id ne '1'?tpl.parent.id:'0'}">
-					<td><a href="${ctx}/mod/lifeStyle/form?id=${tpl.id}">
+					<td><a href="${ctx}/mod/lifeStyle/form?id=${tpl.id}&treeId=${treeId}">
 						${tpl.name}
 					</a></td>
 					<td>
@@ -58,9 +58,9 @@
 					</td>
 					<td>
 						<shiro:hasPermission name="mod:lifeStyle:edit">
-							<a href="${ctx}/mod/lifeStyle/form?id=${tpl.id}">修改</a>
+							<a href="${ctx}/mod/lifeStyle/form?id=${tpl.id}&treeId=${treeId}">修改</a>
 							<a href="${ctx}/mod/lifeStyle/delete?id=${tpl.id}" onclick="return confirmx('要删除该阶段及所有子模型吗？', this.href)">删除</a>
-							<a href="${ctx}/mod/lifeStyle/form?parent.id=${tpl.id}">添加下级模型</a>
+							<a href="${ctx}/mod/lifeStyle/form?parent.id=${tpl.id}&treeId=${treeId}">添加下级模型</a>
 						</shiro:hasPermission>
 					</td>
 				</tr>

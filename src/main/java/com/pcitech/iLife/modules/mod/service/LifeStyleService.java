@@ -52,11 +52,10 @@ public class LifeStyleService extends TreeService<LifeStyleDao, LifeStyle> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<LifeStyle> findTree(){
+	public List<LifeStyle> findTree(LifeStyle lifeStyle){
 		
 		List<LifeStyle> list;
 		User user = UserUtils.getUser();
-		LifeStyle lifeStyle = new LifeStyle();
 		lifeStyle.getSqlMap().put("dsf", dataScopeFilter(user, "o", "u"));
 		lifeStyle.setParent(new LifeStyle());
 		list = dao.findList(lifeStyle);
