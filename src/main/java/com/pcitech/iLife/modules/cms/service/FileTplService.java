@@ -4,6 +4,7 @@ import com.pcitech.iLife.modules.cms.entity.FileTpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.ServletContextAware;
 
 import javax.servlet.ServletContext;
 import java.io.File;
@@ -17,10 +18,15 @@ import java.util.List;
  */
 @Service
 @Transactional(readOnly = true)
-public class FileTplService {
+public class FileTplService implements ServletContextAware{
 
-    @Autowired
-    ServletContext context;
+	//modified by alex: 
+	//causes: Autowire doesn't work while running unit tests by JUnit4
+	//1, change the class to implements ServletContextAware
+	//2, comment out @Autowired annotation against context
+	//3, add override method setServletContext to setting context 
+    //@Autowired
+    private ServletContext context;
 
     public List<String> getNameListByPrefix(String path) {
         List<FileTpl> list = getListByPath(path, false);
@@ -75,5 +81,11 @@ public class FileTplService {
    			return null;
    		}
    	}
+
+	@Override
+	public void setServletContext(ServletContext servletContext) {
+		this.context = servletContext;
+		
+	}
     
 }
