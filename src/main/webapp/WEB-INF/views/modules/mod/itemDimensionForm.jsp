@@ -28,10 +28,11 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/mod/itemDimension/">维度列表</a></li>
-		<li class="active"><a href="${ctx}/mod/itemDimension/form?id=${itemDimension.id}&parent.id=${itemDimensionparent.id}">维度<shiro:hasPermission name="mod:itemDimension:edit">${not empty itemDimension.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:itemDimension:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a href="${ctx}/mod/itemDimension/form?id=${itemDimension.id}&parent.id=${itemDimension.parent.id}">维度<shiro:hasPermission name="mod:itemDimension:edit">${not empty itemDimension.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:itemDimension:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="itemDimension" action="${ctx}/mod/itemDimension/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<form:hidden path="category.id" value="${itemDimension.category.id}"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">上级父级编号:</label>

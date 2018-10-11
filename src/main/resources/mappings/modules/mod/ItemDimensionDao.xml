@@ -4,6 +4,7 @@
     
 	<sql id="itemDimensionColumns">
 		a.id AS "id",
+		a.category AS "category.id",
 		a.parent_id AS "parent.id",
 		p.name AS "parent.name",
 		a.parent_ids AS "parentIds",
@@ -37,6 +38,9 @@
 		<include refid="itemDimensionJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="category != null and category.id != null and category.id != ''">
+				AND a.category = #{category.id}
+			</if>
 			<if test="parent != null and parent.id != null and parent.id != ''">
 				AND a.parent_id = #{parent.id}
 			</if>
@@ -84,6 +88,7 @@
 	<insert id="insert">
 		INSERT INTO mod_item_dimension(
 			id,
+			category,
 			parent_id,
 			parent_ids,
 			name,
@@ -97,6 +102,7 @@
 			del_flag
 		) VALUES (
 			#{id},
+			#{category.id},
 			#{parent.id},
 			#{parentIds},
 			#{name},
@@ -114,6 +120,7 @@
 	<update id="update">
 		UPDATE mod_item_dimension SET 	
 			parent_id = #{parent.id},
+			category = #{category.id},
 			parent_ids = #{parentIds},
 			name = #{name},
 			description = #{description},

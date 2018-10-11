@@ -19,6 +19,7 @@ import java.util.List;
 public class ItemDimension extends TreeEntity<ItemDimension> {
 	
 	private static final long serialVersionUID = 1L;
+	private ItemCategory category;		// 类别
 	private String name;		// 名称
 	private String description;		// 描述
 	private String weight;		// 占比
@@ -31,6 +32,14 @@ public class ItemDimension extends TreeEntity<ItemDimension> {
 		super(id);
 	}
 
+	public ItemCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ItemCategory category) {
+		this.category = category;
+	}
+	
 	@JsonBackReference
 	@NotNull(message="父级编号不能为空")
 	public ItemDimension getParent() {
