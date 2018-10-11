@@ -48,13 +48,24 @@ public class ItemDimensionService extends TreeService<ItemDimensionDao, ItemDime
 		super.delete(itemDimension);
 	}
 
-	public List<ItemDimension> findTree(){
-
+	public List<ItemDimension> findTree(ItemCategory category){
 		List<ItemDimension> list;
 		User user = UserUtils.getUser();
 		ItemDimension itemDimension = new ItemDimension();
 		itemDimension.getSqlMap().put("dsf", dataScopeFilter(user, "o", "u"));
-		itemDimension.setParent(new ItemDimension());
+		//start query dimensions by category qchzhu
+//		itemDimension.setParent(new ItemDimension());
+//		itemDimension.setParent(new ItemDimension());
+		if(category != null)
+			itemDimension.setCategory(category);
+		/*
+		ItemDimension parentItemDimension = new ItemDimension();
+		if(categoryId.trim().length()>0) {
+			parentItemDimension.setId(categoryId);//父节点ID和对应目录ID相同
+		}
+		itemDimension.setParent(parentItemDimension);
+		//*/
+		//end qchzhu
 		list = dao.findList(itemDimension);
 		// 将没有父节点的节点，找到父节点
 		Set<String> parentIdSet = Sets.newHashSet();

@@ -46,7 +46,7 @@ public class OccasionServiceTest {
 		//occasion.setId("test00001");
 		occasion.setName("test01");
 		occasion.setExprDuration("forever");
-		occasion.setExpression("***");
+		occasion.setExpression("*/10 * * * * *");
 		occasion.setExprItem("none");
 		occasion.setExprTrigger("none");
 		occasion.setExprUser("none");
