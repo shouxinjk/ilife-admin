@@ -7,7 +7,7 @@
 	<%@include file="/WEB-INF/views/include/treetable.jsp" %>
 	<script type="text/javascript">
         $(document).ready(function() {
-            $("#treeTableDimension").treeTable({expandLevel : 3});
+            $("#treeTableDimension").treeTable({expandLevel : 5});
         });
 
         function updateSort() {
