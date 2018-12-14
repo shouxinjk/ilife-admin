@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>客观评价明细管理</title>
+	<title>客观评价明细</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -18,8 +18,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/itemDimension/list?treeId=${categoryId}">维度列表</a></li>
-		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${categoryId}">维度添加</a></li></shiro:hasPermission>
+		<li><a href="${ctx}/mod/itemDimension/list?treeId=${categoryId}">客观评价列表</a></li>
+		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${categoryId}">客观评价添加</a></li></shiro:hasPermission>
 		<li class="active"><a href="${ctx}/mod/itemDimensionMeasure/list?dimensionId=${dimensionId}">评价明细列表</a></li>
 		<shiro:hasPermission name="mod:itemDimensionMeasure:edit"><li><a href="${ctx}/mod/itemDimensionMeasure/form?dimension.id=${dimensionId}&category.id=${categoryId}">评价明细添加</a></li></shiro:hasPermission>
 	</ul>

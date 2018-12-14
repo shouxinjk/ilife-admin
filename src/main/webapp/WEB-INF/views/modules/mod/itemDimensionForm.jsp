@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>维度管理</title>
+	<title>客观评价管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -27,8 +27,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/itemDimension/list?treeId=${itemDimension.category.id}">维度列表</a></li>
-		<li class="active"><a href="${ctx}/mod/itemDimension/form?id=${itemDimension.id}&parent.id=${itemDimension.parent.id}">维度<shiro:hasPermission name="mod:itemDimension:edit">${not empty itemDimension.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:itemDimension:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/mod/itemDimension/list?treeId=${itemDimension.category.id}">客观评价列表</a></li>
+		<li class="active"><a href="${ctx}/mod/itemDimension/form?id=${itemDimension.id}&parent.id=${itemDimension.parent.id}">客观评价<shiro:hasPermission name="mod:itemDimension:edit">${not empty itemDimension.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:itemDimension:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="itemDimension" action="${ctx}/mod/itemDimension/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
