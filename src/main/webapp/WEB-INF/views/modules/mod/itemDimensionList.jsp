@@ -19,7 +19,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/mod/itemDimension/">维度列表</a></li>
+		<li class="active"><a href="${ctx}/mod/itemDimension/list?treeId=${treeId}">维度列表</a></li>
 		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${treeId}">维度添加</a></li></shiro:hasPermission>
 	</ul>
 	<sys:message content="${message}"/>
@@ -36,7 +36,7 @@
 
 		<c:forEach items="${list}" var="row">
 			<tr id="${row.id}" pId="${row.parent.id ne '1'?row.parent.id:'0'}">
-				<td><a href="${ctx}/mod/itemDimension/form?id=${row.id}">
+				<td><a href="${ctx}/mod/itemDimensionMeasure/list?dimensionId=${row.id}&categoryId=${treeId}&dimension.id=${row.id}&category.id=${treeId}">
 					${row.name}
 				</a></td>
 				<td>
@@ -50,11 +50,13 @@
 					${row.sort}
 				</shiro:lacksPermission>
 				</td>
-				<shiro:hasPermission name="mod:itemDimension:edit"><td>
-					<a href="${ctx}/mod/itemDimension/form?id=${row.id}">修改</a>
-					<a href="${ctx}/mod/itemDimension/delete?id=${row.id}" onclick="return confirmx('确认要删除该维度及所有子维度吗？', this.href)">删除</a>
-					<a href="${ctx}/mod/itemDimension/form?parent.id=${row.id}&category.id=${row.category.id}">添加下级维度</a>
-				</td></shiro:hasPermission>
+				<td>
+					<shiro:hasPermission name="mod:itemDimension:edit">
+						<a href="${ctx}/mod/itemDimension/form?id=${row.id}">修改</a>
+						<a href="${ctx}/mod/itemDimension/delete?id=${row.id}" onclick="return confirmx('确认要删除该维度及所有子维度吗？', this.href)">删除</a>
+						<a href="${ctx}/mod/itemDimension/form?parent.id=${row.id}&category.id=${row.category.id}">添加下级维度</a>
+					</shiro:hasPermission>							
+				</td>			
 			</tr>
 		</c:forEach>
 

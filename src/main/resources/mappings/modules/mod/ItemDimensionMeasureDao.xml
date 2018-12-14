@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.ItemDimensionMeasureDao">
+    
+	<sql id="itemDimensionMeasureColumns">
+		a.id AS "id",
+		a.dimension_id AS "dimension.id",
+		d.name AS "dimension.name",
+		a.measure_id AS "measure.id",
+		m.name AS "measure.name",
+		a.name AS "name",
+		a.description AS "description",
+		a.weight AS "weight",
+		a.sort AS "sort",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag",
+		a.category AS "category.id",
+		c.name AS "category.name"
+	</sql>
+	
+	<sql id="itemDimensionMeasureJoins">
+		LEFT JOIN mod_measure m ON m.id = a.measure_id
+		LEFT JOIN mod_item_category c ON c.id = a.category
+		LEFT JOIN mod_item_dimension d ON d.id = a.dimension_id
+	</sql>
+    
+	<select id="get" resultType="ItemDimensionMeasure">
+		SELECT 
+			<include refid="itemDimensionMeasureColumns"/>
+		FROM int_item_dimension_measure a
+		<include refid="itemDimensionMeasureJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ItemDimensionMeasure">
+		SELECT 
+			<include refid="itemDimensionMeasureColumns"/>
+		FROM int_item_dimension_measure a
+		<include refid="itemDimensionMeasureJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="dimension != null and dimension.id != null and dimension.id != ''">
+				AND a.dimension_id =#{dimension.id}
+			</if>	
+			<if test="measure != null and measure.id != null and measure.id != ''">
+				AND a.measure_id =#{measure.id}
+			</if>						
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ItemDimensionMeasure">
+		SELECT 
+			<include refid="itemDimensionMeasureColumns"/>
+		FROM int_item_dimension_measure a
+		<include refid="itemDimensionMeasureJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO int_item_dimension_measure(
+			id,
+			dimension_id,
+			measure_id,
+			name,
+			description,
+			weight,
+			sort,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag,
+			category
+		) VALUES (
+			#{id},
+			#{dimension.id},
+			#{measure.id},
+			#{name},
+			#{description},
+			#{weight},
+			#{sort},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag},
+			#{category.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE int_item_dimension_measure SET 	
+			dimension_id = #{dimension.id},
+			measure_id = #{measure.id},
+			name = #{name},
+			description = #{description},
+			weight = #{weight},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			category = #{category.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE int_item_dimension_measure SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
