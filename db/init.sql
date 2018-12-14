@@ -1503,6 +1503,72 @@ CREATE TABLE `mod_item_dimension` (
 INSERT INTO `mod_item_dimension` VALUES ('1', '0', '0,', 'root', 'top dimension', '1', '30', '1', '2018-06-22 10:38:11', '1', '2018-06-22 10:38:14', '0','1');
 
 -- ----------------------------
+-- Table structure for mod_item_evaluation
+-- 主观评价定义
+-- ----------------------------
+DROP TABLE IF EXISTS `mod_item_evaluation`;
+CREATE TABLE `mod_item_evaluation` (
+  `id` varchar(64) NOT NULL,
+  `parent_id` varchar(64) NOT NULL COMMENT '父级编号',
+  `parent_ids` varchar(2000) NOT NULL COMMENT '所有父级编号',
+  `name` varchar(20) DEFAULT NULL,
+  `description` text,
+  `weight` double DEFAULT NULL,
+  `sort` int(11) DEFAULT NULL,
+  `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) DEFAULT NULL COMMENT '更新者',
+  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+  `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  `category` varchar(64) DEFAULT NULL,  
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for int_item_evaluation_dimension
+-- 主观评价与客观评价关联定义
+-- ----------------------------
+DROP TABLE IF EXISTS `int_item_evaluation_dimension`;
+CREATE TABLE `int_item_evaluation_dimension` (
+  `id` varchar(64) NOT NULL,
+  `evaluation_id` varchar(64) NOT NULL COMMENT '主观评价编号',
+  `dimension_id` varchar(64) NOT NULL COMMENT '客观评价编号',
+  `name` varchar(20) DEFAULT NULL,
+  `description` text,
+  `weight` double DEFAULT NULL,
+  `sort` int(11) DEFAULT NULL,
+  `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) DEFAULT NULL COMMENT '更新者',
+  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+  `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  `category` varchar(64) DEFAULT NULL,  
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for int_item_dimension_measure
+-- 客观评价与属性关联定义
+-- ----------------------------
+DROP TABLE IF EXISTS `int_item_dimension_measure`;
+CREATE TABLE `int_item_dimension_measure` (
+  `id` varchar(64) NOT NULL,
+  `dimension_id` varchar(64) NOT NULL COMMENT '客观评价编号',
+  `measure_id` varchar(64) NOT NULL COMMENT '关键属性编号',
+  `name` varchar(20) DEFAULT NULL,
+  `description` text,
+  `weight` double DEFAULT NULL,
+  `sort` int(11) DEFAULT NULL,
+  `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) DEFAULT NULL COMMENT '更新者',
+  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+  `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  `category` varchar(64) DEFAULT NULL,  
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 -- Table structure for mod_life_style
 -- ----------------------------
 DROP TABLE IF EXISTS `mod_life_style`;

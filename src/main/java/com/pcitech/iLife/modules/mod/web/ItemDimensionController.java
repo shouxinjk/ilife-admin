@@ -137,7 +137,7 @@ public class ItemDimensionController extends BaseController {
 		itemDimensionService.save(itemDimension);
 		addMessage(redirectAttributes, "保存维度成功");
 //		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?repage";
-		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?treeId="+itemDimension.getParent().getCategory().getId()+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?treeId="+itemDimension.getCategory().getId()+"&repage";
 	}
 	
 	@RequiresPermissions("mod:itemDimension:edit")
@@ -146,7 +146,7 @@ public class ItemDimensionController extends BaseController {
 		itemDimensionService.delete(itemDimension);
 		addMessage(redirectAttributes, "删除维度成功");
 //		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?repage";
-		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?treeId="+itemDimension.getParent().getCategory().getId()+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?treeId="+itemDimension.getCategory().getId()+"&repage";
 	}
 
 	@RequiresPermissions("user")
