@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>客观评价明细管理</title>
+	<title>客观评价明细</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -27,8 +27,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/itemDimension/list?treeId=${itemDimensionMeasure.category.id}">维度列表</a></li>
-		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${itemDimensionMeasure.category.id}">维度添加</a></li></shiro:hasPermission>	
+		<li><a href="${ctx}/mod/itemDimension/list?treeId=${itemDimensionMeasure.category.id}">客观评价列表</a></li>
+		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${itemDimensionMeasure.category.id}">客观评价添加</a></li></shiro:hasPermission>	
 		<li><a href="${ctx}/mod/itemDimensionMeasure/list?dimensionId=${itemDimensionMeasure.dimension.id}&categoryId=${itemDimensionMeasure.category.id}">评价明细列表</a></li>
 		<li class="active"><a href="${ctx}/mod/itemDimensionMeasure/form?id=${itemDimensionMeasure.id}&category.id=${itemDimensionMeasure.category.id}&dimension.id=${itemDimensionMeasure.dimension.id}">评价明细<shiro:hasPermission name="mod:itemDimensionMeasure:edit">${not empty itemDimensionMeasure.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:itemDimensionMeasure:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>

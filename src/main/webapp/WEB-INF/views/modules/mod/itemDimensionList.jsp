@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>维度管理</title>
+	<title>客观评价管理</title>
 	<meta name="decorator" content="default"/>
 	<%@include file="/WEB-INF/views/include/treetable.jsp" %>
 	<script type="text/javascript">
@@ -19,8 +19,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/mod/itemDimension/list?treeId=${treeId}">维度列表</a></li>
-		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${treeId}">维度添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/mod/itemDimension/list?treeId=${treeId}">客观评价列表</a></li>
+		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${treeId}">客观评价添加</a></li></shiro:hasPermission>
 	</ul>
 	<sys:message content="${message}"/>
 	<form id="listForm" method="post">
