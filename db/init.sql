@@ -1500,7 +1500,7 @@ CREATE TABLE `mod_item_dimension` (
 -- ----------------------------
 -- Records of mod_item_dimension
 -- ----------------------------
-INSERT INTO `mod_item_dimension` VALUES ('1', '0', '0,', 'root', 'top dimension', '1', '30', '1', '2018-06-22 10:38:11', '1', '2018-06-22 10:38:14', '0','1');
+INSERT INTO `mod_item_dimension` VALUES ('1', '0', '0,', 'root', 'top dimension', '100', '30', '1', '2018-06-22 10:38:11', '1', '2018-06-22 10:38:14', '0','1');
 
 -- ----------------------------
 -- Table structure for mod_item_evaluation
@@ -1523,6 +1523,13 @@ CREATE TABLE `mod_item_evaluation` (
   `category` varchar(64) DEFAULT NULL,  
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of mod_item_evaluation
+-- ----------------------------
+INSERT INTO `mod_item_evaluation` VALUES ('1', '0', '0,', 'root', 'top evaluation', '100', '30', '1', '2018-06-22 10:38:11', '1', '2018-06-22 10:38:14', '0','1');
+
+
 
 -- ----------------------------
 -- Table structure for int_item_evaluation_dimension
