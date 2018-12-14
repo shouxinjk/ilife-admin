@@ -216,7 +216,7 @@
 				</div>
 			</div>
 		    <div id="footer" class="row-fluid">
-	            Copyright &copy; 2012-${fns:getConfig('copyrightYear')} ${fns:getConfig('productName')}<!--  - Powered By <a href="https://github.com/thinkgem/iLife" target="_blank">iLife</a> ${fns:getConfig('version')} -->
+	            Copyright &copy; 2012-${fns:getConfig('copyrightYear')} ${fns:getConfig('productName')}<!--  - Powered By <a href="http://biglistoflittlethings.com/" target="_blank">iLife</a> ${fns:getConfig('version')} -->
 			</div>
 		</div>
 	</div>
