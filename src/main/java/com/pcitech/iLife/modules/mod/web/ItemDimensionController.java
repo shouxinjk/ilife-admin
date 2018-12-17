@@ -80,6 +80,7 @@ public class ItemDimensionController extends BaseController {
 			ItemDimension rootDimension = new ItemDimension();
 			rootDimension.setParent(rootParentDimension);
 			rootDimension.setName(category.getName());
+			rootDimension.setDescription("root dimension");
 			rootDimension.setCategory(category);
 			rootDimension.setWeight("100");
 			itemDimensionService.save(rootDimension);

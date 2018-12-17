@@ -28,6 +28,7 @@
 
 			<tr>
 				<th>名称</th>
+				<th>描述</th>
 				<th>占比</th>
                 <th style="text-align:center;">排序</th>
 				<shiro:hasPermission name="mod:itemEvaluation:edit"><th>操作</th></shiro:hasPermission>
@@ -39,6 +40,9 @@
 				<td><a href="${ctx}/mod/itemEvaluationDimension/list?evaluationId=${row.id}&categoryId=${treeId}&evaluation.id=${row.id}&category.id=${treeId}">
 					${row.name}
 				</a></td>
+				<td>
+					${row.description}
+				</td>				
 				<td>
 					${row.weight}
 				</td>
