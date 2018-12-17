@@ -85,17 +85,20 @@ public class ItemEvaluationController extends BaseController {
 			itemEvaluationService.save(rootDimension);
 			//在ROOT下建立5个默认节点，可以通过字典配置
 			String[] nodes = {"生存需求","安全需求","情感需求","尊重需求","价值实现"};
+			String[] desc = {"满足功能及可用性需求","满足安全、持续及保障可用需求","购买过程及使用过程服务需求","品牌及用户群体等","代言及形象投射"};
 			root = itemEvaluationService.findList(q).get(0);
-			int i=10;
+			int i=10,k=0;
 			for(String node:nodes){
 				ItemEvaluation evalNode = new ItemEvaluation();
 				evalNode.setParent(root);
 				evalNode.setName(node);
 				evalNode.setSort(i);
+				evalNode.setDescription(desc[k]);
 				evalNode.setCategory(category);
 				evalNode.setWeight(Double.toString(100/nodes.length));
 				itemEvaluationService.save(evalNode);
 				i += 10;
+				k++;
 			}
 		}
 		List<ItemEvaluation> sourcelist = itemEvaluationService.findTree(category);
