@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.web.BaseController;
+import com.pcitech.iLife.common.utils.IdGen;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.ItemDimension;
@@ -82,30 +83,90 @@ public class ItemEvaluationController extends BaseController {
 			rootDimension.setName(category.getName());
 			rootDimension.setCategory(category);
 			rootDimension.setWeight("100");
+			rootDimension.setFeatured(false);
+			rootDimension.setType("do-not-care");
+			rootDimension.setScript("no-script");
 			itemEvaluationService.save(rootDimension);
-			//在ROOT下建立5个默认节点，可以通过字典配置
-			String[] nodes = {"生存需求","安全需求","情感需求","尊重需求","价值实现"};
-			String[] desc = {"满足功能及可用性需求","满足安全、持续及保障可用需求","购买过程及使用过程服务需求","品牌及用户群体等","代言及形象投射"};
 			root = itemEvaluationService.findList(q).get(0);
-			int i=10,k=0;
-			for(String node:nodes){
-				ItemEvaluation evalNode = new ItemEvaluation();
-				evalNode.setParent(root);
-				evalNode.setName(node);
-				evalNode.setSort(i);
-				evalNode.setDescription(desc[k]);
-				evalNode.setCategory(category);
-				evalNode.setWeight(Double.toString(100/nodes.length));
-				itemEvaluationService.save(evalNode);
-				i += 10;
-				k++;
-			}
+			//ROOT下建立默认顶级节点：
+			//String[] parentNodes = {"效益","成本","约束","风格"};
+			//String[] parentDesc = {"能够带来的效益","需要的成本","时间空间限制等","适用情境以及设计风格"};
+			//----效益（生存、安全、情感、尊重、价值）
+			String[] nodes1 = {"生存需求","安全需求","情感需求","尊重需求","价值实现"};
+			String[] descs1 = {"满足功能及可用性需求","满足安全、持续及保障可用需求","购买过程及使用过程服务需求","品牌及用户群体等","代言及形象投射"};
+			String[] scripts1 = {"weighted-sum","weighted-sum","weighted-sum","weighted-sum","weighted-sum"};
+			String[] types1 = {"perform","perform","perform","perform","perform"};
+			createDefaultNodes(root,"效益","能够带来的收益",100,nodes1,descs1,scripts1,types1,category);
+			//----成本（经济、社会、文化）、
+			String[] nodes2 = {"经济","社会","文化"};
+			String[] descs2 = {"对经济的要求","对社会资源的要求","对文化方面的要求"};
+			String[] scripts2 = {"weighted-sum","weighted-sum","weighted-sum"};
+			String[] types2 = {"cost","cost","cost"};
+			createDefaultNodes(root,"成本","使用时需要付出的成本",200,nodes2,descs2,scripts2,types2,category);
+			//----约束（时间、空间）、
+			String[] nodes3 = {"时间","空间"};
+			String[] descs3 = {"可用时间","可用的范围"};
+			String[] scripts3 = {"script","script"};
+			String[] types3 = {"constraint","constraint"};
+			createDefaultNodes(root,"约束","使用限制",300,nodes3,descs3,scripts3,types3,category);
+			//----其他（情境满足度、偏好满足度）
+			String[] nodes4 = {"需求满足度","情境满足度","风格偏好"};
+			String[] descs4 = {"对需求的满足","对情境的满足","颜色款式设计等风格"};
+			String[] scripts4 = {"system","system","script"};
+			String[] types4 = {"satisfy","context","style"};
+			createDefaultNodes(root,"偏好","风格偏好及满足度",400,nodes4,descs4,scripts4,types4,category);
 		}
 		List<ItemEvaluation> sourcelist = itemEvaluationService.findTree(category);
 		ItemEvaluation.sortList(list, sourcelist, "1",true);
 		model.addAttribute("list", list);
 		model.addAttribute("treeId", treeId);
 		return "modules/mod/itemEvaluationList";
+	}
+	
+	private void createDefaultNodes(ItemEvaluation root,String parent,String parentDesc,int parentSort,String[] nodes,String[] nodeDesc,String[] nodeScript,String[] types, ItemCategory category) {
+		//创建父节点
+		String id = IdGen.uuid();
+		ItemEvaluation parentNode = new ItemEvaluation();
+		//parentNode.setId(id);
+		parentNode.setParent(root);
+		parentNode.setName(parent);
+		parentNode.setSort(parentSort);
+		parentNode.setDescription(parentDesc);
+		parentNode.setCategory(category);
+		parentNode.setWeight("100");
+		parentNode.setFeatured(false);
+		parentNode.setType("ignore");
+		parentNode.setScript("no-script");
+		itemEvaluationService.save(parentNode);
+		//query node
+		ItemEvaluation queryNode = new ItemEvaluation();
+		queryNode.setName(parent);
+		queryNode.setDescription(parentDesc);
+		queryNode.setCategory(category);
+		queryNode.setType("ignore");
+		queryNode.setScript("no-script");
+		
+		if(itemEvaluationService.findList(queryNode).size()>0)
+			parentNode = itemEvaluationService.findList(queryNode).get(0);//得到已建立的根节点
+		else
+			parentNode = root;//否则直接放到根节点下
+		//创建子节点
+		int i=10,k=0;
+		for(String node:nodes){
+			ItemEvaluation evalNode = new ItemEvaluation();
+			evalNode.setParent(parentNode);
+			evalNode.setName(node);
+			evalNode.setSort(i);
+			evalNode.setDescription(nodeDesc[k]);
+			evalNode.setCategory(category);
+			evalNode.setWeight(Double.toString(100/nodes.length));
+			evalNode.setFeatured(true);
+			evalNode.setType(types[k]);
+			evalNode.setScript(nodeScript[k]);
+			itemEvaluationService.save(evalNode);
+			i += 10;
+			k++;
+		}
 	}
 	
 	@RequiresPermissions("mod:itemEvaluation:view")

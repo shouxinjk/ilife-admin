@@ -1514,6 +1514,9 @@ CREATE TABLE `mod_item_evaluation` (
   `name` varchar(20) DEFAULT NULL,
   `description` text,
   `weight` double DEFAULT NULL,
+  `type` varchar(64) NOT NULL,
+  `script` text,
+  `featured` tinyint(1) NOT NULL DEFAULT '0',  
   `sort` int(11) DEFAULT NULL,
   `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
@@ -1527,7 +1530,7 @@ CREATE TABLE `mod_item_evaluation` (
 -- ----------------------------
 -- Records of mod_item_evaluation
 -- ----------------------------
-INSERT INTO `mod_item_evaluation` VALUES ('1', '0', '0,', 'root', 'top evaluation', '100', '30', '1', '2018-06-22 10:38:11', '1', '2018-06-22 10:38:14', '0','1');
+INSERT INTO `mod_item_evaluation` VALUES ('1', '0', '0,', 'root', 'top evaluation', '100', '30','do-not-calc','weighted-sum',false, '1', '2018-06-22 10:38:11', '1', '2018-06-22 10:38:14', '0','1');
 
 
 

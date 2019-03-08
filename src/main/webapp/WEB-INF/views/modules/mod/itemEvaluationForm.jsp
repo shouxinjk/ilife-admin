@@ -48,6 +48,27 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">是否特征:</label>
+			<div class="controls">
+				<form:select path="featured">
+					<form:options items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> “是”代表特征评价</span>
+			</div>
+		</div>			
+		<div class="control-group">
+			<label class="control-label">类型：</label>
+			<div class="controls">
+				<form:input path="type" htmlEscape="false" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">算法：</label>
+			<div class="controls">
+				<form:input path="script" htmlEscape="false" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">占比：</label>
 			<div class="controls">
 				<form:input path="weight" htmlEscape="false" class="input-xlarge "/>

@@ -10,6 +10,9 @@
 		a.name AS "name",
 		a.description AS "description",
 		a.weight AS "weight",
+		a.type AS "type",
+		a.script AS "script",
+		a.featured AS "featured",
 		a.sort AS "sort",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
@@ -93,6 +96,9 @@
 			name,
 			description,
 			weight,
+			type,
+			script,
+			featured,
 			sort,
 			create_by,
 			create_date,
@@ -107,6 +113,9 @@
 			#{name},
 			#{description},
 			#{weight},
+			#{type},
+			#{script},
+			#{featured},
 			#{sort},
 			#{createBy.id},
 			#{createDate},
@@ -124,10 +133,13 @@
 			name = #{name},
 			description = #{description},
 			weight = #{weight},
+			type = #{type},
+			script = #{script},
+			featured = #{featured},
 			sort = #{sort},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate},
-			category = #{category}
+			category = #{category.id}
 		WHERE id = #{id}
 	</update>
 	
