@@ -28,8 +28,11 @@
 
 			<tr>
 				<th>名称</th>
-				<th>描述</th>
+				<th>特征</th>
+				<th>类型</th>
+				<th>算法</th>
 				<th>占比</th>
+				<th>描述</th>			
                 <th style="text-align:center;">排序</th>
 				<shiro:hasPermission name="mod:itemEvaluation:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -41,10 +44,19 @@
 					${row.name}
 				</a></td>
 				<td>
-					${row.description}
+					${row.featured}
+				</td>
+				<td>
+					${row.type}
+				</td>
+				<td>
+					${row.script}
 				</td>				
 				<td>
 					${row.weight}
+				</td>
+				<td>
+					${row.description}
 				</td>
 				<td style="text-align:center;">
 					<shiro:hasPermission name="mod:itemCategory:edit">

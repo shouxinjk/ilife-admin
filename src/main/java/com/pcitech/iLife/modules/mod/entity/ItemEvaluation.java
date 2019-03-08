@@ -23,6 +23,9 @@ public class ItemEvaluation extends TreeEntity<ItemEvaluation> {
 	private String name;		// name
 	private String description;		// description
 	private String weight;		// weight
+	private String type;		// type
+	private String script;		// script：评价脚本
+	private boolean featured;		// featured
 	private ItemCategory category;		// category
 	
 	public ItemEvaluation() {
@@ -77,6 +80,30 @@ public class ItemEvaluation extends TreeEntity<ItemEvaluation> {
 		this.weight = weight;
 	}
 	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getScript() {
+		return script;
+	}
+
+	public void setScript(String script) {
+		this.script = script;
+	}
+
+	public boolean isFeatured() {
+		return featured;
+	}
+
+	public void setFeatured(boolean featured) {
+		this.featured = featured;
+	}
+
 	public ItemCategory getCategory() {
 		return category;
 	}
