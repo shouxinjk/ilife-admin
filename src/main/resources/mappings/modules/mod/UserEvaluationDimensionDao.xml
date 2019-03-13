@@ -4,8 +4,10 @@
     
 	<sql id="userEvaluationDimensionColumns">
 		a.id AS "id",
-		a.evaluation_id AS "evaluationId",
-		a.dimension_id AS "dimensionId",
+		a.evaluation_id AS "evaluation.id",
+		e.name AS "evaluation.name",
+		a.dimension_id AS "dimension.id",
+		d.name AS "dimension.name",
 		a.name AS "name",
 		a.description AS "description",
 		a.weight AS "weight",
@@ -19,6 +21,8 @@
 	</sql>
 	
 	<sql id="userEvaluationDimensionJoins">
+		LEFT JOIN mod_user_evaluation e ON e.id = a.evaluation_id
+		LEFT JOIN mod_user_dimension d ON d.id = a.dimension_id		
 	</sql>
     
 	<select id="get" resultType="UserEvaluationDimension">
@@ -42,6 +46,12 @@
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
+			<if test="dimension != null and dimension.id != null and dimension.id != ''">
+				AND a.dimension_id =#{dimension.id}
+			</if>	
+			<if test="evaluation != null and evaluation.id != null and evaluation.id != ''">
+				AND a.evaluation_id =#{evaluation.id}
+			</if>				
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -88,8 +98,8 @@
 			category
 		) VALUES (
 			#{id},
-			#{evaluationId},
-			#{dimensionId},
+			#{evaluation.id},
+			#{dimension.id},
 			#{name},
 			#{description},
 			#{weight},
@@ -105,8 +115,8 @@
 	
 	<update id="update">
 		UPDATE int_user_evaluation_dimension SET 	
-			evaluation_id = #{evaluationId},
-			dimension_id = #{dimensionId},
+			evaluation_id = #{evaluation.id},
+			dimension_id = #{dimension.id},
 			name = #{name},
 			description = #{description},
 			weight = #{weight},

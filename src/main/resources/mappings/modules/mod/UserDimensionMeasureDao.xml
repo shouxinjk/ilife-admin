@@ -4,8 +4,10 @@
     
 	<sql id="userDimensionMeasureColumns">
 		a.id AS "id",
-		a.dimension_id AS "dimensionId",
-		a.measure_id AS "measureId",
+		a.dimension_id AS "dimension.id",
+		d.name AS "dimension.name",
+		a.measure_id AS "measure.id",
+		m.name AS "measure.name",
 		a.name AS "name",
 		a.description AS "description",
 		a.weight AS "weight",
@@ -19,6 +21,8 @@
 	</sql>
 	
 	<sql id="userDimensionMeasureJoins">
+		LEFT JOIN mod_user_measure m ON m.id = a.measure_id
+		LEFT JOIN mod_user_dimension d ON d.id = a.dimension_id	
 	</sql>
     
 	<select id="get" resultType="UserDimensionMeasure">
@@ -42,6 +46,12 @@
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
+			<if test="dimension != null and dimension.id != null and dimension.id != ''">
+				AND a.dimension_id =#{dimension.id}
+			</if>	
+			<if test="measure != null and measure.id != null and measure.id != ''">
+				AND a.measure_id =#{measure.id}
+			</if>			
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -88,8 +98,8 @@
 			category
 		) VALUES (
 			#{id},
-			#{dimensionId},
-			#{measureId},
+			#{dimension.id},
+			#{measure.id},
 			#{name},
 			#{description},
 			#{weight},
@@ -105,8 +115,8 @@
 	
 	<update id="update">
 		UPDATE int_user_dimension_measure SET 	
-			dimension_id = #{dimensionId},
-			measure_id = #{measureId},
+			dimension_id = #{dimension.id},
+			measure_id = #{measure.id},
 			name = #{name},
 			description = #{description},
 			weight = #{weight},
