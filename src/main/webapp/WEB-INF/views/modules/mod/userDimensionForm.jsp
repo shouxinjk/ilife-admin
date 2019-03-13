@@ -6,7 +6,7 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			//$("#name").focus();
+			$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
@@ -15,7 +15,7 @@
 				errorContainer: "#messageBox",
 				errorPlacement: function(error, element) {
 					$("#messageBox").text("输入有误，请先更正。");
-					if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
+					if (element.is(":checkbox") || element.is(":radio") || element.parent().is(".input-append")){
 						error.appendTo(element.parent().parent());
 					} else {
 						error.insertAfter(element);
@@ -28,70 +28,66 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/mod/userDimension/">用户客观评价列表</a></li>
-		<li class="active"><a href="${ctx}/mod/userDimension/form?id=${userDimension.id}">用户客观评价<shiro:hasPermission name="mod:userDimension:edit">${not empty userDimension.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:userDimension:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a href="${ctx}/mod/userDimension/form?id=${userDimension.id}&parent.id=${userDimensionparent.id}">用户客观评价<shiro:hasPermission name="mod:userDimension:edit">${not empty userDimension.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:userDimension:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="userDimension" action="${ctx}/mod/userDimension/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">父级编号：</label>
+			<label class="control-label">上级父级编号:</label>
 			<div class="controls">
-				<span class="help-inline"><font color="red">*</font> </span>
+				<sys:treeselect id="parent" name="parent.id" value="${userDimension.parent.id}" labelName="parent.name" labelValue="${userDimension.parent.name}"
+					title="父级编号" url="/mod/userDimension/treeData" extId="${userDimension.id}" cssClass="" allowClear="true"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">所有父级编号：</label>
-			<div class="controls">
-				<form:input path="parentIds" htmlEscape="false" maxlength="2000" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">name：</label>
+			<label class="control-label">名称：</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" maxlength="20" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">description：</label>
+			<label class="control-label">描述：</label>
 			<div class="controls">
 				<form:input path="description" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">weight：</label>
+			<label class="control-label">占比：</label>
 			<div class="controls">
 				<form:input path="weight" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">type：</label>
+			<label class="control-label">类型：</label>
 			<div class="controls">
 				<form:input path="type" htmlEscape="false" maxlength="64" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">script：</label>
+			<label class="control-label">脚本：</label>
 			<div class="controls">
 				<form:input path="script" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">featured：</label>
+			<label class="control-label">特征：</label>
 			<div class="controls">
-				<form:input path="featured" htmlEscape="false" maxlength="1" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:select path="featured">
+					<form:options items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> “是”代表特征评价</span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">sort：</label>
+			<label class="control-label">排序：</label>
 			<div class="controls">
 				<form:input path="sort" htmlEscape="false" maxlength="11" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">category：</label>
+			<label class="control-label">分类：</label>
 			<div class="controls">
 				<form:input path="category" htmlEscape="false" maxlength="64" class="input-xlarge "/>
 			</div>

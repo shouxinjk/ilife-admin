@@ -4,17 +4,20 @@
 package com.pcitech.iLife.modules.mod.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
-import com.pcitech.iLife.common.persistence.DataEntity;
+import com.pcitech.iLife.common.persistence.TreeEntity;
 
 /**
  * 用户客观评价Entity
  * @author qchzhu
  * @version 2019-03-13
  */
-public class UserDimension extends DataEntity<UserDimension> {
+public class UserDimension extends TreeEntity<UserDimension> {
 	
 	private static final long serialVersionUID = 1L;
 	private UserDimension parent;		// 父级编号
@@ -106,15 +109,6 @@ public class UserDimension extends DataEntity<UserDimension> {
 		this.featured = featured;
 	}
 	
-	@Length(min=0, max=11, message="sort长度必须介于 0 和 11 之间")
-	public String getSort() {
-		return sort;
-	}
-
-	public void setSort(String sort) {
-		this.sort = sort;
-	}
-	
 	@Length(min=0, max=64, message="category长度必须介于 0 和 64 之间")
 	public String getCategory() {
 		return category;
@@ -124,4 +118,33 @@ public class UserDimension extends DataEntity<UserDimension> {
 		this.category = category;
 	}
 	
+	public String getParentId() {
+		return parent != null && parent.getId() != null ? parent.getId() : "0";
+	}
+	
+	
+	public static void sortList(List<UserDimension> list, List<UserDimension> sourcelist, String parentId,boolean cascade){
+		for (int i=0; i<sourcelist.size(); i++){
+			UserDimension e = sourcelist.get(i);
+			if (e.getParent()!=null && e.getParent().getId()!=null
+					&& e.getParent().getId().equals(parentId)){
+				list.add(e);
+				if (cascade){
+					// 判断是否还有子节点, 有则继续获取子节点
+					for (int j=0; j<sourcelist.size(); j++){
+						UserDimension child = sourcelist.get(j);
+						if (child.getParent()!=null && child.getParent().getId()!=null
+								&& child.getParent().getId().equals(e.getId())){
+							sortList(list, sourcelist, e.getId(),true);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public static boolean isRoot(String id){
+		return id != null && id.equals("1");
+	}
 }

@@ -3,7 +3,7 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
-import com.pcitech.iLife.common.persistence.CrudDao;
+import com.pcitech.iLife.common.persistence.TreeDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.UserDimension;
 
@@ -13,6 +13,6 @@ import com.pcitech.iLife.modules.mod.entity.UserDimension;
  * @version 2019-03-13
  */
 @MyBatisDao
-public interface UserDimensionDao extends CrudDao<UserDimension> {
-	
+public interface UserDimensionDao extends TreeDao<UserDimension> {
+	public String getUserDimensionNames(String userDimensionIds);
 }
