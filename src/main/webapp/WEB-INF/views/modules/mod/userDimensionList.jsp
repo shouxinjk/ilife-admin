@@ -72,7 +72,7 @@
 	</table>
 	<script type="text/template" id="treeTableTpl">
 		<tr id="{{row.id}}" pId="{{pid}}">
-			<td><a href="${ctx}/mod/userDimension/form?id={{row.id}}">
+			<td><a href="${ctx}/mod/userDimensionMeasure/list?dimensionId={{row.id}}&dimension.id={{row.id}}">
 				{{row.name}}
 			</a></td>
 			<td>

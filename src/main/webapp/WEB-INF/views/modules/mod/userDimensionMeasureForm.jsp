@@ -27,54 +27,58 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/userDimensionMeasure/">用户客观评价-属性列表</a></li>
-		<li class="active"><a href="${ctx}/mod/userDimensionMeasure/form?id=${userDimensionMeasure.id}">用户客观评价-属性<shiro:hasPermission name="mod:userDimensionMeasure:edit">${not empty userDimensionMeasure.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:userDimensionMeasure:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/mod/userDimension/list">客观评价列表</a></li>
+		<shiro:hasPermission name="mod:userDimension:edit"><li><a href="${ctx}/mod/userDimension/form?">客观评价添加</a></li></shiro:hasPermission>	
+		<li><a href="${ctx}/mod/userDimensionMeasure/list?dimensionId=${userDimensionMeasure.dimension.id}">评价明细列表</a></li>
+		<li class="active"><a href="${ctx}/mod/userDimensionMeasure/form?id=${userDimensionMeasure.id}&dimension.id=${userDimensionMeasure.dimension.id}">评价明细<shiro:hasPermission name="mod:userDimensionMeasure:edit">${not empty userDimensionMeasure.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:userDimensionMeasure:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="userDimensionMeasure" action="${ctx}/mod/userDimensionMeasure/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">客观评价编号：</label>
+			<label class="control-label">评价维度：</label>
 			<div class="controls">
-				<form:input path="dimensionId" htmlEscape="false" maxlength="64" class="input-xlarge required"/>
+				<sys:treeselect id="dimension" name="dimension.id" value="${userDimensionMeasure.dimension.id}" labelName="dimension.name" labelValue="${userDimensionMeasure.dimension.name}"
+								title="评价维度" url="/mod/userDimension/treeData" cssClass="required" disabled="disabled"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">关键属性编号：</label>
+			<label class="control-label">关键属性：</label>
 			<div class="controls">
-				<form:input path="measureId" htmlEscape="false" maxlength="64" class="input-xlarge required"/>
+				<sys:treeselect id="measure" name="measure.id" value="${userDimensionMeasure.measure.id}" labelName="measure.name" labelValue="${userDimensionMeasure.measure.name}"
+					title="关键属性" url="/mod/userMeasure/listData"  cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
+			</div>			
 		</div>
 		<div class="control-group">
-			<label class="control-label">name：</label>
+			<label class="control-label">名称：</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" maxlength="20" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">description：</label>
+			<label class="control-label">分类：</label>
 			<div class="controls">
-				<form:input path="description" htmlEscape="false" class="input-xlarge "/>
+				<form:input path="category" htmlEscape="false" maxlength="64" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">weight：</label>
+			<label class="control-label">占比：</label>
 			<div class="controls">
 				<form:input path="weight" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">sort：</label>
+			<label class="control-label">描述：</label>
 			<div class="controls">
-				<form:input path="sort" htmlEscape="false" maxlength="11" class="input-xlarge "/>
+				<form:input path="description" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">category：</label>
+			<label class="control-label">排序：</label>
 			<div class="controls">
-				<form:input path="category" htmlEscape="false" maxlength="64" class="input-xlarge "/>
+				<form:input path="sort" value="10" htmlEscape="false" maxlength="11" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="form-actions">

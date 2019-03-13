@@ -18,8 +18,10 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/mod/userEvaluationDimension/">用户主观评价-维度列表</a></li>
-		<shiro:hasPermission name="mod:userEvaluationDimension:edit"><li><a href="${ctx}/mod/userEvaluationDimension/form">用户主观评价-维度添加</a></li></shiro:hasPermission>
+		<li><a href="${ctx}/mod/userEvaluation/list">主观评价列表</a></li>
+		<shiro:hasPermission name="mod:userEvaluation:edit"><li><a href="${ctx}/mod/userEvaluation/form">主观评价添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/mod/userEvaluationDimension/list?evaluationId=${evaluationId}">评价明细列表</a></li>
+		<shiro:hasPermission name="mod:userEvaluationDimension:edit"><li><a href="${ctx}/mod/userEvaluationDimension/form?evaluation.id=${evaluationId}">评价明细添加</a></li></shiro:hasPermission>		
 	</ul>
 	<form:form id="searchForm" modelAttribute="userEvaluationDimension" action="${ctx}/mod/userEvaluationDimension/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -36,7 +38,13 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>name</th>
+				<th>名称</th>			
+				<th>主观评价</th>
+				<th>客观评价</th>		
+				<th>类别</th>					
+				<th>占比</th>
+				<th>描述</th>
+				<th>排序</th>				
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:userEvaluationDimension:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -47,6 +55,24 @@
 				<td><a href="${ctx}/mod/userEvaluationDimension/form?id=${userEvaluationDimension.id}">
 					${userEvaluationDimension.name}
 				</a></td>
+				<td>
+					${userEvaluationDimension.evaluation.name}
+				</td>		
+				<td>
+					${userEvaluationDimension.dimension.name}
+				</td>	
+				<td>
+					${userEvaluationDimension.category}
+				</td>					
+				<td>
+					${userEvaluationDimension.weight}
+				</td>				
+				<td>
+					${userEvaluationDimension.description}
+				</td>		
+				<td>
+					${userEvaluationDimension.sort}
+				</td>				
 				<td>
 					<fmt:formatDate value="${userEvaluationDimension.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>

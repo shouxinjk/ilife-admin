@@ -15,8 +15,8 @@ import com.pcitech.iLife.common.persistence.DataEntity;
 public class UserEvaluationDimension extends DataEntity<UserEvaluationDimension> {
 	
 	private static final long serialVersionUID = 1L;
-	private String evaluationId;		// 主观评价编号
-	private String dimensionId;		// 客观评价编号
+	private UserEvaluation evaluation;		// 主观评价编号
+	private UserDimension dimension;		// 客观评价编号
 	private String name;		// name
 	private String description;		// description
 	private String weight;		// weight
@@ -31,22 +31,20 @@ public class UserEvaluationDimension extends DataEntity<UserEvaluationDimension>
 		super(id);
 	}
 
-	@Length(min=1, max=64, message="主观评价编号长度必须介于 1 和 64 之间")
-	public String getEvaluationId() {
-		return evaluationId;
+	public UserEvaluation getEvaluation() {
+		return evaluation;
 	}
 
-	public void setEvaluationId(String evaluationId) {
-		this.evaluationId = evaluationId;
+	public void setEvaluation(UserEvaluation evaluation) {
+		this.evaluation = evaluation;
 	}
 	
-	@Length(min=1, max=64, message="客观评价编号长度必须介于 1 和 64 之间")
-	public String getDimensionId() {
-		return dimensionId;
+	public UserDimension getDimension() {
+		return dimension;
 	}
 
-	public void setDimensionId(String dimensionId) {
-		this.dimensionId = dimensionId;
+	public void setDimension(UserDimension dimension) {
+		this.dimension = dimension;
 	}
 	
 	@Length(min=0, max=20, message="name长度必须介于 0 和 20 之间")

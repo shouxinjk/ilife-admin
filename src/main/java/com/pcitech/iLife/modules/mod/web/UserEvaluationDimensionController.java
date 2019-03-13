@@ -21,6 +21,7 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.UserEvaluationDimension;
 import com.pcitech.iLife.modules.mod.service.UserEvaluationDimensionService;
+import com.pcitech.iLife.modules.mod.service.UserEvaluationService;
 
 /**
  * 用户主观评价-维度Controller
@@ -33,6 +34,9 @@ public class UserEvaluationDimensionController extends BaseController {
 
 	@Autowired
 	private UserEvaluationDimensionService userEvaluationDimensionService;
+	
+	@Autowired
+	private UserEvaluationService userEvaluationService;
 	
 	@ModelAttribute
 	public UserEvaluationDimension get(@RequestParam(required=false) String id) {
@@ -48,15 +52,23 @@ public class UserEvaluationDimensionController extends BaseController {
 	
 	@RequiresPermissions("mod:userEvaluationDimension:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(UserEvaluationDimension userEvaluationDimension, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String list(UserEvaluationDimension userEvaluationDimension,String evaluationId, HttpServletRequest request, HttpServletResponse response, Model model) {
+		if(userEvaluationDimension.getEvaluation() == null) {
+			userEvaluationDimension.setEvaluation(userEvaluationService.get(evaluationId));
+		}
 		Page<UserEvaluationDimension> page = userEvaluationDimensionService.findPage(new Page<UserEvaluationDimension>(request, response), userEvaluationDimension); 
 		model.addAttribute("page", page);
+		model.addAttribute("evaluationId", userEvaluationDimension.getEvaluation().getId());
 		return "modules/mod/userEvaluationDimensionList";
 	}
 
 	@RequiresPermissions("mod:userEvaluationDimension:view")
 	@RequestMapping(value = "form")
 	public String form(UserEvaluationDimension userEvaluationDimension, Model model) {
+		if(userEvaluationDimension.getId() == null) {//对于新添加记录需要根据ID补充dimension
+			userEvaluationDimension.setEvaluation(userEvaluationService.get(userEvaluationDimension.getEvaluation().getId()));
+			userEvaluationDimension.setName(userEvaluationDimension.getEvaluation().getName());
+		}
 		model.addAttribute("userEvaluationDimension", userEvaluationDimension);
 		return "modules/mod/userEvaluationDimensionForm";
 	}
@@ -69,7 +81,7 @@ public class UserEvaluationDimensionController extends BaseController {
 		}
 		userEvaluationDimensionService.save(userEvaluationDimension);
 		addMessage(redirectAttributes, "保存用户主观评价-维度成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/userEvaluationDimension/?repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/userEvaluationDimension/?evaluation.id="+userEvaluationDimension.getEvaluation().getId()+"&repage";
 	}
 	
 	@RequiresPermissions("mod:userEvaluationDimension:edit")
@@ -77,7 +89,7 @@ public class UserEvaluationDimensionController extends BaseController {
 	public String delete(UserEvaluationDimension userEvaluationDimension, RedirectAttributes redirectAttributes) {
 		userEvaluationDimensionService.delete(userEvaluationDimension);
 		addMessage(redirectAttributes, "删除用户主观评价-维度成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/userEvaluationDimension/?repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/userEvaluationDimension/?evaluation.id="+userEvaluationDimension.getEvaluation().getId()+"&repage";
 	}
 
 }
