@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.UserEvaluationDao">
+    
+	<sql id="userEvaluationColumns">
+		a.id AS "id",
+		a.parent_id AS "parent.id",
+		a.parent_ids AS "parentIds",
+		a.name AS "name",
+		a.description AS "description",
+		a.weight AS "weight",
+		a.type AS "type",
+		a.script AS "script",
+		a.featured AS "featured",
+		a.sort AS "sort",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag",
+		a.category AS "category"
+	</sql>
+	
+	<sql id="userEvaluationJoins">
+	</sql>
+    
+	<select id="get" resultType="UserEvaluation">
+		SELECT 
+			<include refid="userEvaluationColumns"/>
+		FROM mod_user_evaluation a
+		<include refid="userEvaluationJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="UserEvaluation">
+		SELECT 
+			<include refid="userEvaluationColumns"/>
+		FROM mod_user_evaluation a
+		<include refid="userEvaluationJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="UserEvaluation">
+		SELECT 
+			<include refid="userEvaluationColumns"/>
+		FROM mod_user_evaluation a
+		<include refid="userEvaluationJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_user_evaluation(
+			id,
+			parent_id,
+			parent_ids,
+			name,
+			description,
+			weight,
+			type,
+			script,
+			featured,
+			sort,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag,
+			category
+		) VALUES (
+			#{id},
+			#{parent.id},
+			#{parentIds},
+			#{name},
+			#{description},
+			#{weight},
+			#{type},
+			#{script},
+			#{featured},
+			#{sort},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag},
+			#{category}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_user_evaluation SET 	
+			parent_id = #{parent.id},
+			parent_ids = #{parentIds},
+			name = #{name},
+			description = #{description},
+			weight = #{weight},
+			type = #{type},
+			script = #{script},
+			featured = #{featured},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			category = #{category}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_user_evaluation SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
