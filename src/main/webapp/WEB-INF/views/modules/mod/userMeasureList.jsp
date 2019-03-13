@@ -19,13 +19,13 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/mod/userMeasure/">用户属性定义列表</a></li>
-		<shiro:hasPermission name="mod:userMeasure:edit"><li><a href="${ctx}/mod/userMeasure/form">用户属性定义添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="mod:userMeasure:edit"><li><a href="${ctx}/mod/userMeasure/form?category.id=${treeId}">用户属性定义添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="userMeasure" action="${ctx}/mod/userMeasure/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>name：</label>
+			<li><label>名称：</label>
 				<form:input path="name" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -36,7 +36,13 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>name</th>
+				<th>名称</th>
+				<th>类别</th>
+				<th>占比</th>
+				<th>属性定义</th>
+				<th>所属维度</th>
+				<th>归一化参考值</th>
+				<th>默认等级</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:userMeasure:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -47,6 +53,24 @@
 				<td><a href="${ctx}/mod/userMeasure/form?id=${userMeasure.id}">
 					${userMeasure.name}
 				</a></td>
+				<td>
+					${userMeasure.category.name}
+				</td>	
+				<td>
+					${userMeasure.weight}
+				</td>
+				<td>
+					${userMeasure.property}
+				</td>	
+				<td>
+					${userMeasure.dimension}
+				</td>				
+				<td>
+					${userMeasure.controlValue}
+				</td>
+				<td>
+					${userMeasure.defaultRank}
+				</td>							
 				<td>
 					<fmt:formatDate value="${userMeasure.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
