@@ -34,49 +34,51 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">category：</label>
+			<label class="control-label">所属分类：</label>
 			<div class="controls">
-				<form:input path="category" htmlEscape="false" maxlength="64" class="input-xlarge "/>
+				 <sys:treeselect id="category" name="category.id" value="${userMeasure.category.id}" labelName="category.name" labelValue="${userMeasure.category.name}"
+					title="商品分类" url="/mod/userCategory/treeData" notAllowSelectRoot="true" cssClass="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">dimension：</label>
+			<label class="control-label">名称：</label>
+			<div class="controls">
+				<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+			</div>
+		</div>	
+		<div class="control-group">
+			<label class="control-label">属性定义：</label>
+			<div class="controls">
+				<form:input path="property" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+			</div>
+		</div>			
+		<div class="control-group">
+			<label class="control-label">所属维度：</label>
 			<div class="controls">
 				<form:input path="dimension" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">property：</label>
-			<div class="controls">
-				<form:input path="property" htmlEscape="false" maxlength="100" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">name：</label>
-			<div class="controls">
-				<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">weight：</label>
+			<label class="control-label">权重：</label>
 			<div class="controls">
 				<form:input path="weight" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">control_value：</label>
+			<label class="control-label">参考值：</label>
 			<div class="controls">
 				<form:input path="controlValue" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">default_score：</label>
+			<label class="control-label">默认得分：</label>
 			<div class="controls">
 				<form:input path="defaultScore" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">default_rank：</label>
+			<label class="control-label">默认等级：</label>
 			<div class="controls">
 				<form:input path="defaultRank" htmlEscape="false" maxlength="8" class="input-xlarge "/>
 			</div>

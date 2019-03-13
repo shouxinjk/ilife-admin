@@ -4,7 +4,7 @@
     
 	<sql id="userMeasureColumns">
 		a.id AS "id",
-		a.category AS "category",
+		a.category AS "category.id",
 		a.dimension AS "dimension",
 		a.property AS "property",
 		a.name AS "name",
@@ -21,6 +21,8 @@
 	</sql>
 	
 	<sql id="userMeasureJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_user_category c ON c.id = a.category
 	</sql>
     
 	<select id="get" resultType="UserMeasure">
@@ -38,6 +40,9 @@
 		<include refid="userMeasureJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="category != null and category.id != null and category.id != ''">
+				AND a.category = #{category.id}
+			</if>			
 			<if test="name != null and name != ''">
 				AND a.name LIKE 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
@@ -92,7 +97,7 @@
 			del_flag
 		) VALUES (
 			#{id},
-			#{category},
+			#{category.id},
 			#{dimension},
 			#{property},
 			#{name},
@@ -111,7 +116,7 @@
 	
 	<update id="update">
 		UPDATE mod_user_measure SET 	
-			category = #{category},
+			category = #{category.id},
 			dimension = #{dimension},
 			property = #{property},
 			name = #{name},

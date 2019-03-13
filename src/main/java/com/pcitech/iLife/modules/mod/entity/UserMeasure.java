@@ -15,7 +15,7 @@ import com.pcitech.iLife.common.persistence.DataEntity;
 public class UserMeasure extends DataEntity<UserMeasure> {
 	
 	private static final long serialVersionUID = 1L;
-	private String category;		// category
+	private UserCategory category;		// category
 	private String dimension;		// dimension
 	private String property;		// property
 	private String name;		// name
@@ -33,12 +33,11 @@ public class UserMeasure extends DataEntity<UserMeasure> {
 		super(id);
 	}
 
-	@Length(min=0, max=64, message="category长度必须介于 0 和 64 之间")
-	public String getCategory() {
+	public UserCategory getCategory() {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(UserCategory category) {
 		this.category = category;
 	}
 	
