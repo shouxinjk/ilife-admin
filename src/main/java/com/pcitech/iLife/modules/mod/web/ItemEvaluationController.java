@@ -84,7 +84,7 @@ public class ItemEvaluationController extends BaseController {
 			rootDimension.setCategory(category);
 			rootDimension.setWeight("100");
 			rootDimension.setFeatured(false);
-			rootDimension.setType("do-not-care");
+			rootDimension.setType("ignore");
 			rootDimension.setScript("no-script");
 			itemEvaluationService.save(rootDimension);
 			root = itemEvaluationService.findList(q).get(0);
@@ -95,25 +95,25 @@ public class ItemEvaluationController extends BaseController {
 			String[] nodes1 = {"生存需求","安全需求","情感需求","尊重需求","价值实现"};
 			String[] descs1 = {"满足功能及可用性需求","满足安全、持续及保障可用需求","购买过程及使用过程服务需求","品牌及用户群体等","代言及形象投射"};
 			String[] scripts1 = {"weighted-sum","weighted-sum","weighted-sum","weighted-sum","weighted-sum"};
-			String[] types1 = {"perform","perform","perform","perform","perform"};
+			String[] types1 = {"a","b","c","d","e"};
 			createDefaultNodes(root,"效益","能够带来的收益",100,nodes1,descs1,scripts1,types1,category);
 			//----成本（经济、社会、文化）、
 			String[] nodes2 = {"经济","社会","文化"};
 			String[] descs2 = {"对经济的要求","对社会资源的要求","对文化方面的要求"};
 			String[] scripts2 = {"weighted-sum","weighted-sum","weighted-sum"};
-			String[] types2 = {"cost","cost","cost"};
+			String[] types2 = {"x","y","z"};
 			createDefaultNodes(root,"成本","使用时需要付出的成本",200,nodes2,descs2,scripts2,types2,category);
 			//----约束（时间、空间）、
 			String[] nodes3 = {"时间","空间"};
 			String[] descs3 = {"可用时间","可用的范围"};
 			String[] scripts3 = {"script","script"};
-			String[] types3 = {"constraint","constraint"};
+			String[] types3 = {"when","where"};
 			createDefaultNodes(root,"约束","使用限制",300,nodes3,descs3,scripts3,types3,category);
 			//----其他（情境满足度、偏好满足度）
 			String[] nodes4 = {"需求满足度","情境满足度","风格偏好"};
 			String[] descs4 = {"对需求的满足","对情境的满足","颜色款式设计等风格"};
 			String[] scripts4 = {"system","system","script"};
-			String[] types4 = {"satisfy","context","style"};
+			String[] types4 = {"demands","occasions","style"};
 			createDefaultNodes(root,"偏好","风格偏好及满足度",400,nodes4,descs4,scripts4,types4,category);
 		}
 		List<ItemEvaluation> sourcelist = itemEvaluationService.findTree(category);
