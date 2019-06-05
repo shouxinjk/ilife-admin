@@ -35,6 +35,10 @@ public class ItemCategoryService extends TreeService<ItemCategoryDao, ItemCatego
 		return super.findList(itemCategory);
 	}
 	
+	public List<ItemCategory> findByParentId(String parentId) {
+		return dao.findByParentId(parentId);
+	}
+	
 	public Page<ItemCategory> findPage(Page<ItemCategory> page, ItemCategory itemCategory) {
 		return super.findPage(page, itemCategory);
 	}
