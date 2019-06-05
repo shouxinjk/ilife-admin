@@ -163,14 +163,16 @@ public class ItemCategoryController extends BaseController {
 		
 		if(parentId==null || parentId.trim().length()==0) parentId = "1";//默认查询根目录下的节点
 		
+		//注意：受限于jstree，本方法返回结果均根据jstree数据要求定制
 		List<ItemCategory> list = itemCategoryService.findByParentId(parentId);
 		for (int i=0; i<list.size(); i++){
 			ItemCategory e = list.get(i);
 			//if ( e.getParentId()==parentId){
 				Map<String, Object> map = Maps.newHashMap();
-				map.put("id", e.getId());
-				map.put("pId", e.getParent()!=null?e.getParent().getId():0);
-				map.put("name", e.getName());
+				map.put("id", e.getId()=="1"?"#":e.getId());
+				map.put("pId", (e.getParent()==null||e.getParentId()=="1")?"#":e.getParent().getId());
+				map.put("text", e.getName());
+				map.put("children", true);
 				mapList.add(map);
 			//}
 		}
