@@ -118,6 +118,25 @@ public class MeasureController extends BaseController {
 		return mapList;
 	}
 	
+	@ResponseBody
+	@RequestMapping(value = "measures")
+	public List<Map<String, Object>> listMeasureByCategory(@RequestParam(required=true) String category,HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<Measure> list =measureService.findByCategory(category);
+		for (int i=0; i<list.size(); i++){
+			Measure e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", e.getId());
+			map.put("category", e.getCategory().getId());
+			map.put("name", e.getName());
+			map.put("property", e.getProperty());
+			mapList.add(map);
+			
+		}
+		return mapList;
+	}
+	
 	@RequiresPermissions("mod:measure:view")
 	@RequestMapping(value = "index")
 	public String index(Model model) {
