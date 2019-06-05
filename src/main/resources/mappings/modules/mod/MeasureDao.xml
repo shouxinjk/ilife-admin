@@ -91,6 +91,18 @@
 		</choose>
 	</select>
 	
+		
+	<select id="findByCategoryId" resultType="Measure">
+		SELECT 
+			<include refid="measureColumns"/>
+		FROM mod_measure a
+		<include refid="measureJoins"/>
+		<where>
+			a.del_flag = '0' 
+			AND a.category = #{category} 
+		</where>		
+	</select>
+	
 	<insert id="insert">
 		INSERT INTO mod_measure(
 			id,

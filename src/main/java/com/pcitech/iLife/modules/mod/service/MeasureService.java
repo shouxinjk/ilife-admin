@@ -30,6 +30,10 @@ public class MeasureService extends CrudService<MeasureDao, Measure> {
 		return super.findList(measure);
 	}
 	
+	public List<Measure> findByCategory(String category) {
+		return dao.findByCategoryId(category);
+	}
+	
 	public Page<Measure> findPage(Page<Measure> page, Measure measure) {
 		return super.findPage(page, measure);
 	}
