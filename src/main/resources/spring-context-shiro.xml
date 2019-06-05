@@ -19,6 +19,8 @@
 				${adminPath}/cas = cas
 				${adminPath}/login = authc
 				${adminPath}/logout = logout
+				${adminPath}/mod/itemCategory/** = anon
+				${adminPath}/mod/measure/** = anon
 				${adminPath}/** = user
 				/act/editor/** = user
 				/ReportServer/** = user

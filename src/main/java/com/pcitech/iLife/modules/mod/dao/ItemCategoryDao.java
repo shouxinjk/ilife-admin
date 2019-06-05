@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.TreeDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
@@ -17,5 +19,7 @@ import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 public interface ItemCategoryDao extends TreeDao<ItemCategory> {
 	
 	public String getItemCategoryNames(String itemCategoryIds);
+
+	public List<ItemCategory> findByParentId(String parentId);
 	
 }

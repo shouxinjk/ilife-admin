@@ -153,4 +153,28 @@ public class ItemCategoryController extends BaseController {
 		}
 		return mapList;
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "categories")
+	public List<Map<String, Object>> listCategoryByParentId( @RequestParam(required=false) String parentId, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		//List<ItemCategory> list = itemCategoryService.findTree();
+		
+		if(parentId==null || parentId.trim().length()==0) parentId = "1";//默认查询根目录下的节点
+		
+		List<ItemCategory> list = itemCategoryService.findByParentId(parentId);
+		for (int i=0; i<list.size(); i++){
+			ItemCategory e = list.get(i);
+			//if ( e.getParentId()==parentId){
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getParent()!=null?e.getParent().getId():0);
+				map.put("name", e.getName());
+				mapList.add(map);
+			//}
+		}
+		return mapList;
+	}
+	
 }
