@@ -27,8 +27,10 @@ import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
+import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.Phase;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
+import com.pcitech.iLife.modules.mod.service.MeasureService;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.OccasionService;
 
@@ -47,6 +49,8 @@ public class ItemCategoryController extends BaseController {
 	private MotivationService motivationService;
 	@Autowired
 	private OccasionService occasionService;
+	@Autowired
+	private MeasureService measureService;
 	
 	@ModelAttribute
 	public ItemCategory get(@RequestParam(required=false) String id) {
@@ -176,6 +180,47 @@ public class ItemCategoryController extends BaseController {
 				mapList.add(map);
 			//}
 		}
+		return mapList;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "categoriesAndMeasures")
+	public List<Map<String, Object>> listCategoryAndMeasureByParentId( @RequestParam(required=false) String parentId, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		if(parentId==null || parentId.trim().length()==0) parentId = "1";//默认查询根目录下的节点
+		
+		//注意：受限于jstree，本方法返回结果均根据jstree数据要求定制
+		
+		//加载子分类
+		List<ItemCategory> list = itemCategoryService.findByParentId(parentId);
+		for (int i=0; i<list.size(); i++){
+			ItemCategory e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("icon", "ext/jstree/images/tree_icon.png");
+			map.put("id", e.getId()=="1"?"#":e.getId());
+			map.put("pId", (e.getParent()==null||e.getParentId()=="1")?"#":e.getParent().getId());
+			map.put("text", e.getName());
+			map.put("children", true);
+			map.put("type", "category");
+			mapList.add(map);
+		}
+		
+		//加载所属关键属性
+		List<Measure> list2 =measureService.findByCategory(parentId);
+		for (int i=0; i<list2.size(); i++){
+			Measure e = list2.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("icon",  "ext/jstree/images/leaf-16.png");
+			map.put("id", e.getId());
+			map.put("pId", e.getCategory().getId());
+			map.put("text", e.getName()+":"+e.getProperty());
+			map.put("type", "measure");
+			map.put("name", e.getName());
+			map.put("property", e.getProperty());
+			mapList.add(map);
+			
+		}		
 		return mapList;
 	}
 	
