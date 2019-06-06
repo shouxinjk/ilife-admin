@@ -685,10 +685,15 @@
          </dependency>
         <!-- END -->
         <!-- 跨域处理 begin-->
+		<dependency>
+			<groupId>com.thetransactioncompany</groupId>
+			<artifactId>java-property-utils</artifactId>
+			<version>1.13</version>
+		</dependency>        
        	<dependency>
 		    <groupId>com.thetransactioncompany</groupId>
 		    <artifactId>cors-filter</artifactId>
-		    <version>2.5</version>
+		    <version>2.6</version>
 		</dependency>
 	<!-- END -->
 	<!-- jwt begin-->
