@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.BrokerDao">
+    
+	<sql id="brokerColumns">
+		a.parent_id AS "parent.id",
+		a.id AS "id",
+		a.name AS "name",
+		a.phone AS "phone",
+		a.email AS "email",
+		a.hierarchy AS "hierarchy",
+		a.security_no AS "securityNo",
+		a.level AS "level",
+		a.alipay_account AS "alipayAccount",
+		a.alipay_accountname AS "alipayAccountName",
+		a.status AS "status",
+		a.upgrade AS "upgrade",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="brokerJoins">
+	</sql>
+    
+	<select id="get" resultType="Broker">
+		SELECT 
+			<include refid="brokerColumns"/>
+		FROM mod_broker a
+		<include refid="brokerJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Broker">
+		SELECT 
+			<include refid="brokerColumns"/>
+		FROM mod_broker a
+		<include refid="brokerJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Broker">
+		SELECT 
+			<include refid="brokerColumns"/>
+		FROM mod_broker a
+		<include refid="brokerJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_broker(
+			parent_id,
+			id,
+			name,
+			phone,
+			email,
+			hierarchy,
+			security_no,
+			level,
+			alipay_account,
+			alipay_accountname,
+			status,
+			upgrade,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{parent.id},
+			#{id},
+			#{name},
+			#{phone},
+			#{email},
+			#{hierarchy},
+			#{securityNo},
+			#{level},
+			#{alipayAccount},
+			#{alipayAccountName},
+			#{status},
+			#{upgrade},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_broker SET 	
+			parent_id = #{parent.id},
+			name = #{name},
+			phone = #{phone},
+			email = #{email},
+			hierarchy = #{hierarchy},
+			security_no = #{securityNo},
+			level = #{level},
+			alipay_account = #{alipayAccount},
+			alipay_accountname = #{alipayAccountName},
+			status = #{status},
+			upgrade = #{upgrade},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_broker SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
