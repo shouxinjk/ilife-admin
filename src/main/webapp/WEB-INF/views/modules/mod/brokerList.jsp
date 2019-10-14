@@ -55,9 +55,7 @@
 				<td><a href="${ctx}/mod/broker/form?id=${broker.id}">
 					${broker.name}
 				</a></td>
-				<td><a href="${ctx}/mod/broker/form?id=${broker.parent.id}">
-					${broker.parent.name}
-				</a></td>				
+				<td>${broker.parent.name}</td>				
 				<td>${broker.phone}</td>		
 				<td>${broker.email}</td>	
 				<td>${broker.hierarchy}</td>	

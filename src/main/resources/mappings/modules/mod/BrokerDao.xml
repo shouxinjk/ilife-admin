@@ -4,6 +4,7 @@
     
 	<sql id="brokerColumns">
 		a.parent_id AS "parent.id",
+		p.name AS "parent.name",
 		a.id AS "id",
 		a.name AS "name",
 		a.phone AS "phone",

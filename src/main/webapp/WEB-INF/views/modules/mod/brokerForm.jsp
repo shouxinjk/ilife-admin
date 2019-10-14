@@ -36,6 +36,8 @@
 		<div class="control-group">
 			<label class="control-label">上级达人：</label>
 			<div class="controls">
+				<sys:treeselect id="parent" name="parent.id" value="${broker.parent.id}" labelName="parent.name" labelValue="${broker.parent.name}"
+					title="上级达人" url="/mod/broker/treeData" extId="${broker.id}" cssClass="" allowClear="true"/>
 			</div>
 		</div>
 		<div class="control-group">

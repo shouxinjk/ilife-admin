@@ -35,10 +35,15 @@
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">所属达人：</label>
+			
 			<div class="controls">
+				<sys:treeselect id="broker" name="broker" value="${traceCode.broker.id}" labelName="broker.name" labelValue="${traceCode.broker.name}"
+					title="上级达人" url="/mod/broker/treeData" extId="${traceCode.broker.id}" cssClass="" allowClear="true"/>
+			</div>			
+			<!--div class="controls">
 				<form:input path="broker.id" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
+			</div-->
 		</div>
 		<div class="control-group">
 			<label class="control-label">电商平台：</label>
