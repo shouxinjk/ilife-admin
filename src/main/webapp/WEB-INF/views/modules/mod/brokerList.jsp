@@ -36,7 +36,15 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>真实姓名</th>
+				<th>姓名</th>
+				<th>上级达人</th>
+				<th>电话</th>
+				<th>邮件</th>
+				<th>层级</th>
+				<th>等级</th>
+				<th>账户状态</th>
+				<th>升级状态</th>
+				<th>注册时间</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:broker:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -47,6 +55,18 @@
 				<td><a href="${ctx}/mod/broker/form?id=${broker.id}">
 					${broker.name}
 				</a></td>
+				<td><a href="${ctx}/mod/broker/form?id=${broker.parent.id}">
+					${broker.parent.name}
+				</a></td>				
+				<td>${broker.phone}</td>		
+				<td>${broker.email}</td>	
+				<td>${broker.hierarchy}</td>	
+				<td>${broker.level}</td>	
+				<td>${broker.status}</td>	
+				<td>${broker.upgrade}</td>	
+				<td>
+					<fmt:formatDate value="${broker.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>		
 				<td>
 					<fmt:formatDate value="${broker.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
