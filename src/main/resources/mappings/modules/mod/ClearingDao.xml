@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.ClearingDao">
+    
+	<sql id="clearingColumns">
+		a.id AS "id",
+		a.platform AS "platform",
+		a.order_id AS "orderId",
+		a.category AS "category",
+		a.amount_order AS "amountOrder",
+		a.amount_commission AS "amountCommission",
+		a.amount_profit AS "amountProfit",
+		a.scheme_id AS "schemeId",
+		a.beneficiary AS "beneficiary",
+		a.beneficiary_type AS "beneficiaryType",
+		a.share AS "share",
+		a.item AS "item",
+		a.order_time AS "orderTime",
+		a.status AS "status",
+		a.voucher_collection AS "voucherCollection",
+		a.voucher_settlement AS "voucherSettlement",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="clearingJoins">
+	</sql>
+    
+	<select id="get" resultType="Clearing">
+		SELECT 
+			<include refid="clearingColumns"/>
+		FROM mod_clearing a
+		<include refid="clearingJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Clearing">
+		SELECT 
+			<include refid="clearingColumns"/>
+		FROM mod_clearing a
+		<include refid="clearingJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Clearing">
+		SELECT 
+			<include refid="clearingColumns"/>
+		FROM mod_clearing a
+		<include refid="clearingJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_clearing(
+			id,
+			platform,
+			order_id,
+			category,
+			amount_order,
+			amount_commission,
+			amount_profit,
+			scheme_id,
+			beneficiary,
+			beneficiary_type,
+			share,
+			item,
+			order_time,
+			status,
+			voucher_collection,
+			voucher_settlement,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{platform},
+			#{orderId},
+			#{category},
+			#{amountOrder},
+			#{amountCommission},
+			#{amountProfit},
+			#{schemeId},
+			#{beneficiary},
+			#{beneficiaryType},
+			#{share},
+			#{item},
+			#{orderTime},
+			#{status},
+			#{voucherCollection},
+			#{voucherSettlement},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_clearing SET 	
+			platform = #{platform},
+			order_id = #{orderId},
+			category = #{category},
+			amount_order = #{amountOrder},
+			amount_commission = #{amountCommission},
+			amount_profit = #{amountProfit},
+			scheme_id = #{schemeId},
+			beneficiary = #{beneficiary},
+			beneficiary_type = #{beneficiaryType},
+			share = #{share},
+			item = #{item},
+			order_time = #{orderTime},
+			status = #{status},
+			voucher_collection = #{voucherCollection},
+			voucher_settlement = #{voucherSettlement},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_clearing SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
