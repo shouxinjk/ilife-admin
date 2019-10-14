@@ -4,7 +4,7 @@
     
 	<sql id="traceCodeColumns">
 		a.id AS "id",
-		a.broker_id AS "brokerId",
+		a.broker_id AS "broker.id",
 		a.platform AS "platform",
 		a.code AS "code",
 		a.create_by AS "createBy.id",
@@ -15,6 +15,8 @@
 	</sql>
 	
 	<sql id="traceCodeJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_broker p ON p.id = a.broker_id		
 	</sql>
     
 	<select id="get" resultType="TraceCode">
@@ -32,6 +34,9 @@
 		<include refid="traceCodeJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="broker != null and broker.id != null and broker.id != ''">
+				AND a.broker_id = #{broker.id}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -74,7 +79,7 @@
 			del_flag
 		) VALUES (
 			#{id},
-			#{brokerId},
+			#{broker.id},
 			#{platform},
 			#{code},
 			#{createBy.id},
@@ -87,7 +92,7 @@
 	
 	<update id="update">
 		UPDATE mod_trace_code SET 	
-			broker_id = #{brokerId},
+			broker_id = #{broker.id},
 			platform = #{platform},
 			code = #{code},
 			update_by = #{updateBy.id},
