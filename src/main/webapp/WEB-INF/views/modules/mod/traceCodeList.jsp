@@ -45,7 +45,7 @@
 			<tr>
 				<td>${traceCode.code}</td>			
 				<td>${traceCode.platform}</td>	
-				<td>${broker.name}</td>				
+				<td>${traceCode.broker.name}</td>				
 				<td><a href="${ctx}/mod/traceCode/form?id=${traceCode.id}">
 					<fmt:formatDate value="${traceCode.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</a></td>

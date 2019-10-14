@@ -5,6 +5,7 @@
 	<sql id="traceCodeColumns">
 		a.id AS "id",
 		a.broker_id AS "broker.id",
+		p.name AS "broker.name",
 		a.platform AS "platform",
 		a.code AS "code",
 		a.create_by AS "createBy.id",
