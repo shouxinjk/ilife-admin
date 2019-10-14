@@ -33,6 +33,9 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>跟踪码</th>
+				<th>电商平台</th>
+				<th>所属达人</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:traceCode:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -40,6 +43,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="traceCode">
 			<tr>
+				<td>${traceCode.code}</td>			
+				<td>${traceCode.platform}</td>	
+				<td>${broker.name}</td>				
 				<td><a href="${ctx}/mod/traceCode/form?id=${traceCode.id}">
 					<fmt:formatDate value="${traceCode.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</a></td>

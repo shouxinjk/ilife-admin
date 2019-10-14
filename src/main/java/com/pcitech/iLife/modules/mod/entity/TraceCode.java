@@ -15,7 +15,7 @@ import com.pcitech.iLife.common.persistence.DataEntity;
 public class TraceCode extends DataEntity<TraceCode> {
 	
 	private static final long serialVersionUID = 1L;
-	private String brokerId;		// 所属达人
+	private Broker broker;		// 所属达人
 	private String platform;		// 电商平台
 	private String code;		// 跟踪码
 	
@@ -27,13 +27,12 @@ public class TraceCode extends DataEntity<TraceCode> {
 		super(id);
 	}
 
-	@Length(min=1, max=20, message="所属达人长度必须介于 1 和 20 之间")
-	public String getBrokerId() {
-		return brokerId;
+	public Broker getBroker() {
+		return broker;
 	}
 
-	public void setBrokerId(String brokerId) {
-		this.brokerId = brokerId;
+	public void setBroker(Broker broker) {
+		this.broker = broker;
 	}
 	
 	@Length(min=0, max=50, message="电商平台长度必须介于 0 和 50 之间")

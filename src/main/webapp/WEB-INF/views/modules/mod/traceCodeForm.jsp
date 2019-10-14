@@ -36,7 +36,7 @@
 		<div class="control-group">
 			<label class="control-label">所属达人：</label>
 			<div class="controls">
-				<form:input path="brokerId" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
+				<form:input path="broker.id" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
