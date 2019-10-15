@@ -25,7 +25,7 @@ public class Order extends DataEntity<Order> {
 	private String commissionSettlement;		// 结算佣金
 	private String item;		// 商品名称
 	private Date orderTime;		// 订单完成时间
-	private String brokerId;		// 达人ID
+	private Broker broker;		// 达人
 	private String notification;		// 通知状态
 	private String status;		// 订单状态
 	
@@ -105,14 +105,13 @@ public class Order extends DataEntity<Order> {
 	public void setOrderTime(Date orderTime) {
 		this.orderTime = orderTime;
 	}
-	
-	@Length(min=1, max=64, message="达人ID长度必须介于 1 和 64 之间")
-	public String getBrokerId() {
-		return brokerId;
+
+	public Broker getBroker() {
+		return broker;
 	}
 
-	public void setBrokerId(String brokerId) {
-		this.brokerId = brokerId;
+	public void setBroker(Broker broker) {
+		this.broker = broker;
 	}
 	
 	@Length(min=1, max=1, message="通知状态长度必须介于 1 和 1 之间")
