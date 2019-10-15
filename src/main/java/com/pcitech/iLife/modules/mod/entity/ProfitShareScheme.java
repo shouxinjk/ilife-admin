@@ -16,6 +16,7 @@ public class ProfitShareScheme extends DataEntity<ProfitShareScheme> {
 	
 	private static final long serialVersionUID = 1L;
 	private String type;		// 分润类型，包括订单、意向、积分
+	private String name;		//名称
 	private String platform;		// 电商平台
 	private String category;		// 商品类别
 	private String status;		// 是否激活
@@ -72,6 +73,14 @@ public class ProfitShareScheme extends DataEntity<ProfitShareScheme> {
 
 	public void setPriority(String priority) {
 		this.priority = priority;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }
