@@ -4,7 +4,8 @@
     
 	<sql id="settlementColumns">
 		a.id AS "id",
-		a.broker_id AS "brokerId",
+		a.broker_id AS "broker.id",
+		p.name AS "broker.name",
 		a.voucher AS "voucher",
 		a.payment_id AS "paymentId",
 		a.type AS "type",
@@ -18,6 +19,8 @@
 	</sql>
 	
 	<sql id="settlementJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_broker p ON p.id = a.broker_id		
 	</sql>
     
 	<select id="get" resultType="Settlement">
@@ -80,7 +83,7 @@
 			del_flag
 		) VALUES (
 			#{id},
-			#{brokerId},
+			#{broker.id},
 			#{voucher},
 			#{paymentId},
 			#{type},
@@ -96,7 +99,7 @@
 	
 	<update id="update">
 		UPDATE mod_settlement SET 	
-			broker_id = #{brokerId},
+			broker_id = #{broker.id},
 			voucher = #{voucher},
 			payment_id = #{paymentId},
 			type = #{type},

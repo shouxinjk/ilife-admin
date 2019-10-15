@@ -15,7 +15,7 @@ import com.pcitech.iLife.common.persistence.DataEntity;
 public class Settlement extends DataEntity<Settlement> {
 	
 	private static final long serialVersionUID = 1L;
-	private String brokerId;		// 达人ID
+	private Broker broker;		// 达人ID
 	private String voucher;		// 结算凭证
 	private String paymentId;		// 支付记录ID
 	private String type;		// 类型：订单、积分、意向
@@ -30,13 +30,12 @@ public class Settlement extends DataEntity<Settlement> {
 		super(id);
 	}
 
-	@Length(min=1, max=20, message="达人ID长度必须介于 1 和 20 之间")
-	public String getBrokerId() {
-		return brokerId;
+	public Broker getBroker() {
+		return broker;
 	}
 
-	public void setBrokerId(String brokerId) {
-		this.brokerId = brokerId;
+	public void setBroker(Broker broker) {
+		this.broker = broker;
 	}
 	
 	@Length(min=0, max=50, message="结算凭证长度必须介于 0 和 50 之间")
@@ -74,7 +73,7 @@ public class Settlement extends DataEntity<Settlement> {
 		this.amount = amount;
 	}
 	
-	@Length(min=1, max=1, message="状态：锁定等长度必须介于 1 和 1 之间")
+	@Length(min=0, max=50, message="状态：锁定等长度必须介于 0 和 50 之间")
 	public String getStatus() {
 		return status;
 	}

@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>结算管理管理</title>
+	<title>结算管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -27,17 +27,16 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/settlement/">结算管理列表</a></li>
-		<li class="active"><a href="${ctx}/mod/settlement/form?id=${settlement.id}">结算管理<shiro:hasPermission name="mod:settlement:edit">${not empty settlement.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:settlement:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/mod/settlement/">结算记录列表</a></li>
+		<li class="active"><a href="${ctx}/mod/settlement/form?id=${settlement.id}">结算记录<shiro:hasPermission name="mod:settlement:edit">${not empty settlement.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:settlement:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="settlement" action="${ctx}/mod/settlement/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">达人ID：</label>
+			<label class="control-label">达人：</label>
 			<div class="controls">
-				<form:input path="brokerId" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="broker.id" htmlEscape="false" maxlength="64" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -47,16 +46,15 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">支付记录ID：</label>
+			<label class="control-label">支付凭证：</label>
 			<div class="controls">
-				<form:input path="paymentId" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="paymentId" htmlEscape="false" maxlength="50" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">类型：订单、积分、意向：</label>
+			<label class="control-label">分润类别：</label>
 			<div class="controls">
-				<form:input path="type" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				<form:select path="type" items="${fns:getDictList('shareProfitType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -66,10 +64,9 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">状态：锁定等：</label>
+			<label class="control-label">状态：</label>
 			<div class="controls">
-				<form:input path="status" htmlEscape="false" maxlength="1" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="status" htmlEscape="false" maxlength="50" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="form-actions">
