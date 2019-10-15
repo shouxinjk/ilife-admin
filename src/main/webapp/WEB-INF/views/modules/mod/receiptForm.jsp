@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>收款管理管理</title>
+	<title>收款管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -27,7 +27,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/receipt/">收款管理列表</a></li>
+		<li><a href="${ctx}/mod/receipt/">收款记录列表</a></li>
 		<li class="active"><a href="${ctx}/mod/receipt/form?id=${receipt.id}">收款管理<shiro:hasPermission name="mod:receipt:edit">${not empty receipt.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:receipt:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="receipt" action="${ctx}/mod/receipt/save" method="post" class="form-horizontal">
@@ -36,14 +36,13 @@
 		<div class="control-group">
 			<label class="control-label">电商平台：</label>
 			<div class="controls">
-				<form:input path="platform" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="platform" htmlEscape="false" maxlength="20" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">收款类型：个人或公司：</label>
+			<label class="control-label">收款类型：</label>
 			<div class="controls">
-				<form:input path="type" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				<form:radiobuttons path="type" items="${fns:getDictList('paymentType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -59,9 +58,9 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">收款渠道：支付宝、微信、银联：</label>
+			<label class="control-label">收款渠道：</label>
 			<div class="controls">
-				<form:input path="channel" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				<form:select path="channel" items="${fns:getDictList('paymentChannelType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -77,16 +76,15 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">对应清单文件路径：</label>
+			<label class="control-label">清单文件：</label>
 			<div class="controls">
 				<form:input path="filename" htmlEscape="false" maxlength="255" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">支付状态：</label>
+			<label class="control-label">收款状态：</label>
 			<div class="controls">
-				<form:input path="status" htmlEscape="false" maxlength="1" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="status" htmlEscape="false" maxlength="50" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">

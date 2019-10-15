@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>支付管理管理</title>
+	<title>支付管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -61,7 +61,7 @@
 		<div class="control-group">
 			<label class="control-label">付款渠道：</label>
 			<div class="controls">
-				<form:radiobuttons path="channel" items="${fns:getDictList('paymentChannelType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				<form:select path="channel" items="${fns:getDictList('paymentChannelType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 			</div>
 		</div>
 		<div class="control-group">
