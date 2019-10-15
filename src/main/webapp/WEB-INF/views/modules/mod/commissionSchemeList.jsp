@@ -33,6 +33,12 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>电商平台</th>
+				<th>商品类别</th>
+				<th>佣金类型</th>
+				<th>佣金额</th>
+				<th>生效时间</th>
+				<th>状态</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:commissionScheme:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -40,9 +46,17 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="commissionScheme">
 			<tr>
-				<td><a href="${ctx}/mod/commissionScheme/form?id=${commissionScheme.id}">
+				<td>${commissionScheme.platform}</td>
+				<td>${commissionScheme.category}</td>
+				<td>${fns:getDictLabel(commissionScheme.type, 'commissionType', '-')}</td>
+				<td>${commissionScheme.amount}</td>
+				<td>
+					<fmt:formatDate value="${commissionScheme.effectiveFrom}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>	
+				<td>${fns:getDictLabel(commissionScheme.status, 'yes_no', '-')}</td>						
+				<td>
 					<fmt:formatDate value="${commissionScheme.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</a></td>
+				</td>
 				<shiro:hasPermission name="mod:commissionScheme:edit"><td>
     				<a href="${ctx}/mod/commissionScheme/form?id=${commissionScheme.id}">修改</a>
 					<a href="${ctx}/mod/commissionScheme/delete?id=${commissionScheme.id}" onclick="return confirmx('确认要删除该佣金规则设置吗？', this.href)">删除</a>

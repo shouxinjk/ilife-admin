@@ -47,15 +47,16 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">佣金类型：固定金额或百分比：</label>
+			<label class="control-label">佣金类型：</label>
 			<div class="controls">
-				<form:input path="type" htmlEscape="false" maxlength="10" class="input-xlarge "/>
+				<!--form:input path="type" htmlEscape="false" maxlength="10" class="input-xlarge "/-->
+				<form:select path="type" items="${fns:getDictList('commissionType')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">佣金额：</label>
 			<div class="controls">
-				<form:input path="amount" htmlEscape="false" class="input-xlarge "/>
+				<form:input path="amount" htmlEscape="false" class="input-xlarge "/> 元或%
 			</div>
 		</div>
 		<div class="control-group">
@@ -69,7 +70,8 @@
 		<div class="control-group">
 			<label class="control-label">状态：</label>
 			<div class="controls">
-				<form:input path="status" htmlEscape="false" maxlength="1" class="input-xlarge required"/>
+				<!--form:input path="status" htmlEscape="false" maxlength="1" class="input-xlarge required"/-->
+				<form:radiobuttons path="status" items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
