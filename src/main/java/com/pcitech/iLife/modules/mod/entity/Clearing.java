@@ -18,12 +18,13 @@ public class Clearing extends DataEntity<Clearing> {
 	
 	private static final long serialVersionUID = 1L;
 	private String platform;		// 电商平台
-	private String orderId;		// 内部订单ID
+	private Order order;		// 内部订单ID
 	private String category;		// 商品类别
 	private String amountOrder;		// 订单金额
 	private String amountCommission;		// 佣金总额
 	private String amountProfit;		// 分润金额
-	private String schemeId;		// 所属分润规则
+	private ProfitShareScheme scheme;		// 所属分润规则
+	private ProfitShareItem schemeItem;		// 所属分润规则明细
 	private String beneficiary;		// 受益方
 	private String beneficiaryType;		// 受益方类型：个人、整体
 	private String share;		// 所占份额
@@ -50,13 +51,12 @@ public class Clearing extends DataEntity<Clearing> {
 		this.platform = platform;
 	}
 	
-	@Length(min=0, max=50, message="内部订单ID长度必须介于 0 和 50 之间")
-	public String getOrderId() {
-		return orderId;
+	public Order getOrder() {
+		return order;
 	}
 
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
+	public void setOrder(Order order) {
+		this.order = order;
 	}
 	
 	@Length(min=0, max=50, message="商品类别长度必须介于 0 和 50 之间")
@@ -92,15 +92,22 @@ public class Clearing extends DataEntity<Clearing> {
 		this.amountProfit = amountProfit;
 	}
 	
-	@Length(min=1, max=20, message="所属分润规则长度必须介于 1 和 20 之间")
-	public String getSchemeId() {
-		return schemeId;
+	public ProfitShareScheme getScheme() {
+		return scheme;
 	}
 
-	public void setSchemeId(String schemeId) {
-		this.schemeId = schemeId;
+	public void setScheme(ProfitShareScheme scheme) {
+		this.scheme = scheme;
 	}
 	
+	public ProfitShareItem getSchemeItem() {
+		return schemeItem;
+	}
+
+	public void setSchemeItem(ProfitShareItem schemeItem) {
+		this.schemeItem = schemeItem;
+	}
+
 	@Length(min=0, max=50, message="受益方长度必须介于 0 和 50 之间")
 	public String getBeneficiary() {
 		return beneficiary;

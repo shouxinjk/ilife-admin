@@ -5,12 +5,16 @@
 	<sql id="clearingColumns">
 		a.id AS "id",
 		a.platform AS "platform",
-		a.order_id AS "orderId",
+		a.order_id AS "order.id",
+		p.order_no As "order.orderNo",
 		a.category AS "category",
 		a.amount_order AS "amountOrder",
 		a.amount_commission AS "amountCommission",
 		a.amount_profit AS "amountProfit",
-		a.scheme_id AS "schemeId",
+		a.scheme_id AS "scheme.id",
+		q.name As "scheme.name",
+		a.scheme_item_id AS "schemeItem.id",
+		r.beneficiary As "schemeItem.beneficiary",
 		a.beneficiary AS "beneficiary",
 		a.beneficiary_type AS "beneficiaryType",
 		a.share AS "share",
@@ -27,6 +31,10 @@
 	</sql>
 	
 	<sql id="clearingJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_order p ON p.id = a.order_id	
+		LEFT JOIN mod_profit_share_scheme q ON q.id = a.scheme_id	
+		LEFT JOIN mod_profit_share_item r ON r.id = a.scheme_item_id		
 	</sql>
     
 	<select id="get" resultType="Clearing">
@@ -83,6 +91,7 @@
 			amount_commission,
 			amount_profit,
 			scheme_id,
+			scheme_item_id,
 			beneficiary,
 			beneficiary_type,
 			share,
@@ -99,12 +108,13 @@
 		) VALUES (
 			#{id},
 			#{platform},
-			#{orderId},
+			#{order.id},
 			#{category},
 			#{amountOrder},
 			#{amountCommission},
 			#{amountProfit},
-			#{schemeId},
+			#{scheme.id},
+			#{schemeItem.id},
 			#{beneficiary},
 			#{beneficiaryType},
 			#{share},
@@ -124,12 +134,13 @@
 	<update id="update">
 		UPDATE mod_clearing SET 	
 			platform = #{platform},
-			order_id = #{orderId},
+			order_id = #{order.id},
 			category = #{category},
 			amount_order = #{amountOrder},
 			amount_commission = #{amountCommission},
 			amount_profit = #{amountProfit},
-			scheme_id = #{schemeId},
+			scheme_id = #{scheme.id},
+			scheme_item_id = #{schemeItem.id},
 			beneficiary = #{beneficiary},
 			beneficiary_type = #{beneficiaryType},
 			share = #{share},
