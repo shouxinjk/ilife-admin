@@ -33,6 +33,11 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>类型</th>
+				<th>来源</th>
+				<th>类别</th>
+				<th>激活</th>
+				<th>优先级</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:profitShareScheme:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -40,6 +45,11 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="profitShareScheme">
 			<tr>
+				<td>${fns:getDictLabel(profitShareScheme.type, 'shareProfitType', '-')}</td>
+				<td>${profitShareScheme.platform}</td>
+				<td>${profitShareScheme.category}</td>
+				<td>${fns:getDictLabel(profitShareScheme.status, 'yes_no', '-')}</td>
+				<td>${profitShareScheme.priority}</td>
 				<td><a href="${ctx}/mod/profitShareScheme/form?id=${profitShareScheme.id}">
 					<fmt:formatDate value="${profitShareScheme.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</a></td>
