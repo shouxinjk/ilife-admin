@@ -36,14 +36,13 @@
 		<div class="control-group">
 			<label class="control-label">电商平台：</label>
 			<div class="controls">
-				<form:input path="platform" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="platform" htmlEscape="false" maxlength="50" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">内部订单ID：</label>
+			<label class="control-label">关联订单：</label>
 			<div class="controls">
-				<form:input path="orderId" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				<form:input path="order.id" htmlEscape="false" maxlength="64" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -71,22 +70,27 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">所属分润规则：</label>
+			<label class="control-label">分润规则：</label>
 			<div class="controls">
-				<form:input path="schemeId" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="scheme.id" htmlEscape="false" maxlength="64" class="input-xlarge"/>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">分润明细：</label>
+			<div class="controls">
+				<form:input path="schemeItem.id" htmlEscape="false" maxlength="64" class="input-xlarge"/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">受益方类型：</label>
+			<div class="controls">
+				<form:select path="beneficiaryType" items="${fns:getDictList('beneficiaryCategory')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
+			</div>
+		</div>		
 		<div class="control-group">
 			<label class="control-label">受益方：</label>
 			<div class="controls">
 				<form:input path="beneficiary" htmlEscape="false" maxlength="50" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">受益方类型：个人、整体：</label>
-			<div class="controls">
-				<form:input path="beneficiaryType" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">

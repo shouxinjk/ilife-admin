@@ -33,6 +33,21 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>电商平台</th>
+				<th>订单号</th>
+				<th>订单金额</th>
+				<th>佣金总额</th>
+				<th>分润金额</th>
+				<th>订单完成时间</th>
+				<th>分润规则</th>
+				<th>受益方类型</th>
+				<th>受益方</th>
+				<th>占比</th>
+				<th>分润完成状态</th>
+				<th>收款凭证号</th>
+				<th>结算凭证号</th>					
+				<th>商品类别</th>
+				<th>商品名称</th>							
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:clearing:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -40,9 +55,24 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="clearing">
 			<tr>
-				<td><a href="${ctx}/mod/clearing/form?id=${clearing.id}">
-					<fmt:formatDate value="${clearing.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</a></td>
+				<td>${clearing.platform}</td>
+				<td>${clearing.order.orderNo}</td>
+				<td>${clearing.amountOrder}</td>
+				<td>${clearing.amountCommission}</td>
+				<td>${clearing.amountProfit}</td>
+				<td>
+					<fmt:formatDate value="${clearing.orderTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>				
+				<td>${clearing.scheme.name}-${fns:getDictLabel(clearing.schemeItem.beneficiary, 'beneficiaryType', '-')}</td>	
+				<td>${fns:getDictLabel(clearing.beneficiaryType, 'beneficiaryCategory', '-')}</td>
+				<td>${clearing.beneficiary}</td>
+				<td>${clearing.share}</td>	
+				<td>${clearing.status}</td>
+				<td>${clearing.voucherCollection}</td>	
+				<td>${clearing.voucherSettlement}</td>			
+				<td>${clearing.category}</td>
+				<td>${clearing.item}</td>
+				<td><fmt:formatDate value="${clearing.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<shiro:hasPermission name="mod:clearing:edit"><td>
     				<a href="${ctx}/mod/clearing/form?id=${clearing.id}">修改</a>
 					<a href="${ctx}/mod/clearing/delete?id=${clearing.id}" onclick="return confirmx('确认要删除该清算吗？', this.href)">删除</a>
