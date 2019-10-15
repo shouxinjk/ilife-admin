@@ -15,7 +15,7 @@ import com.pcitech.iLife.common.persistence.DataEntity;
 public class Payment extends DataEntity<Payment> {
 	
 	private static final long serialVersionUID = 1L;
-	private String brokerId;		// 达人ID
+	private Broker broker;		// 达人ID
 	private String type;		// 类型：个人或公司
 	private String amountRequest;		// 申请提现金额
 	private String amountPayment;		// 实际支付金额
@@ -33,13 +33,12 @@ public class Payment extends DataEntity<Payment> {
 		super(id);
 	}
 
-	@Length(min=1, max=64, message="达人ID长度必须介于 1 和 64 之间")
-	public String getBrokerId() {
-		return brokerId;
+	public Broker getBroker() {
+		return broker;
 	}
 
-	public void setBrokerId(String brokerId) {
-		this.brokerId = brokerId;
+	public void setBroker(Broker broker) {
+		this.broker = broker;
 	}
 	
 	@Length(min=0, max=50, message="类型：个人或公司长度必须介于 0 和 50 之间")
@@ -94,7 +93,7 @@ public class Payment extends DataEntity<Payment> {
 		this.account = account;
 	}
 	
-	@Length(min=1, max=1, message="支付状态长度必须介于 1 和 1 之间")
+	@Length(min=0, max=50, message="支付状态长度必须介于 0 和 50 之间")
 	public String getStatus() {
 		return status;
 	}

@@ -33,6 +33,14 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>推广达人</th>
+				<th>账户类型</th>
+				<th>收款账户</th>
+				<th>申请金额</th>
+				<th>实付金额</th>
+				<th>付款渠道</th>
+				<th>付款状态</th>
+				<th>付款凭证</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:payment:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -40,9 +48,15 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="payment">
 			<tr>
-				<td><a href="${ctx}/mod/payment/form?id=${payment.id}">
-					<fmt:formatDate value="${payment.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</a></td>
+				<td>${payment.broker.name}</td>
+				<td>${fns:getDictLabel(payment.type, 'paymentType', '-')}</td>
+				<td>${payment.account}</td>
+				<td>${payment.amountRequest}</td>
+				<td>${payment.amountPayment}</td>
+				<td>${fns:getDictLabel(payment.channel, 'paymentChannelType', '-')}</td>
+				<td>${payment.status}</td>
+				<td>${payment.voucher}</td>
+				<td><fmt:formatDate value="${payment.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<shiro:hasPermission name="mod:payment:edit"><td>
     				<a href="${ctx}/mod/payment/form?id=${payment.id}">修改</a>
 					<a href="${ctx}/mod/payment/delete?id=${payment.id}" onclick="return confirmx('确认要删除该支付管理吗？', this.href)">删除</a>

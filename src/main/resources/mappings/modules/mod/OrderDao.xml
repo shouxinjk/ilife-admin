@@ -13,7 +13,7 @@
 		a.commission_settlement AS "commissionSettlement",
 		a.item AS "item",
 		a.order_time AS "orderTime",
-		a.broker_id AS "brokerId",
+		a.broker_id AS "broker.id",
 		a.notification AS "notification",
 		a.status AS "status",
 		a.create_by AS "createBy.id",

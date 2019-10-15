@@ -88,14 +88,13 @@
 			<label class="control-label">推广达人：</label>
 			<div class="controls">
 				<sys:treeselect id="broker" name="broker.id" value="${order.broker.id}" labelName="broker.name" labelValue="${order.broker.name}"
-					title="上级达人" url="/mod/broker/treeData" extId="${order.broker.id}" cssClass="" allowClear="true"/>
+					title="推广达人" url="/mod/broker/treeData" extId="${order.broker.id}" cssClass="" allowClear="true"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">通知状态：</label>
 			<div class="controls">
-				<form:radiobuttons path="notification" items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:radiobuttons path="notification" items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 			</div>
 		</div>
 		<div class="control-group">
