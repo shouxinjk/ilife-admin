@@ -33,6 +33,10 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>分润规则</th>
+				<th>受益方类型</th>
+				<th>受益方</th>
+				<th>占比</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:profitShareItem:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -40,6 +44,10 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="profitShareItem">
 			<tr>
+				<td>${profitShareItem.scheme.name}</td>
+				<td>${fns:getDictLabel(profitShareItem.beneficiaryType, 'beneficiaryCategory', '-')}</td>
+				<td>${fns:getDictLabel(profitShareItem.beneficiary, 'beneficiaryType', '-')}</td>
+				<td>${profitShareItem.share}</td>			
 				<td><a href="${ctx}/mod/profitShareItem/form?id=${profitShareItem.id}">
 					<fmt:formatDate value="${profitShareItem.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</a></td>

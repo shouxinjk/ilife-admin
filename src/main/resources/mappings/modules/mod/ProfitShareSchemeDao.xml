@@ -4,6 +4,7 @@
     
 	<sql id="profitShareSchemeColumns">
 		a.id AS "id",
+		a.name AS "name",
 		a.type AS "type",
 		a.platform AS "platform",
 		a.category AS "category",
@@ -66,6 +67,7 @@
 	<insert id="insert">
 		INSERT INTO mod_profit_share_scheme(
 			id,
+			name,
 			type,
 			platform,
 			category,
@@ -78,6 +80,7 @@
 			del_flag
 		) VALUES (
 			#{id},
+			#{name},
 			#{type},
 			#{platform},
 			#{category},
@@ -93,6 +96,7 @@
 	
 	<update id="update">
 		UPDATE mod_profit_share_scheme SET 	
+			name = #{name},
 			type = #{type},
 			platform = #{platform},
 			category = #{category},

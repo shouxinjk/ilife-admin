@@ -34,6 +34,12 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
+			<label class="control-label">名称：</label>
+			<div class="controls">
+				<form:input path="name" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">分润类型：</label>
 			<div class="controls">
 				<!--form:input path="type" htmlEscape="false" maxlength="20" class="input-xlarge required"/-->

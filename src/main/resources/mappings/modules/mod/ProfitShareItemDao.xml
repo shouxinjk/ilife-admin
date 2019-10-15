@@ -4,7 +4,8 @@
     
 	<sql id="profitShareItemColumns">
 		a.id AS "id",
-		a.scheme_id AS "schemeId",
+		a.scheme_id AS "scheme.id",
+		p.name AS "scheme.name",
 		a.beneficiary AS "beneficiary",
 		a.beneficiary_type AS "beneficiaryType",
 		a.share AS "share",
@@ -16,6 +17,8 @@
 	</sql>
 	
 	<sql id="profitShareItemJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_profit_share_scheme p ON p.id = a.scheme_id		
 	</sql>
     
 	<select id="get" resultType="ProfitShareItem">
@@ -76,7 +79,7 @@
 			del_flag
 		) VALUES (
 			#{id},
-			#{schemeId},
+			#{scheme.id},
 			#{beneficiary},
 			#{beneficiaryType},
 			#{share},
@@ -90,7 +93,7 @@
 	
 	<update id="update">
 		UPDATE mod_profit_share_item SET 	
-			scheme_id = #{schemeId},
+			scheme_id = #{scheme.id},
 			beneficiary = #{beneficiary},
 			beneficiary_type = #{beneficiaryType},
 			share = #{share},

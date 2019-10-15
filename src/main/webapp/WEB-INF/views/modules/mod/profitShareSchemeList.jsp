@@ -33,6 +33,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>名称</th>
 				<th>类型</th>
 				<th>来源</th>
 				<th>类别</th>
@@ -45,6 +46,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="profitShareScheme">
 			<tr>
+				<td>${profitShareScheme.name}</td>
 				<td>${fns:getDictLabel(profitShareScheme.type, 'shareProfitType', '-')}</td>
 				<td>${profitShareScheme.platform}</td>
 				<td>${profitShareScheme.category}</td>

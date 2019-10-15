@@ -34,28 +34,33 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">所属分润规则：</label>
+			<label class="control-label">分润规则：</label>
 			<div class="controls">
-				<form:input path="schemeId" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<!--form:input path="scheme.id" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font> </span-->
+				 <sys:treeselect id="scheme" name="scheme.id" value="${profitShareItem.scheme.id}" labelName="scheme.name" labelValue="${profitShareItem.scheme.name}"
+					title="分润规则" url="/mod/profitShareScheme/listData"  cssClass="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>			
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">受益方类型：</label>
+			<div class="controls">
+				<!--form:input path="beneficiaryType" htmlEscape="false" maxlength="50" class="input-xlarge "/-->
+				<form:select path="beneficiaryType" items="${fns:getDictList('beneficiaryCategory')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
+			</div>
+		</div>		
 		<div class="control-group">
 			<label class="control-label">受益方：</label>
 			<div class="controls">
-				<form:input path="beneficiary" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				<!--form:input path="beneficiary" htmlEscape="false" maxlength="50" class="input-xlarge "/-->
+				<form:select path="beneficiary" items="${fns:getDictList('beneficiaryType')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">受益方类型：个人、整体：</label>
+			<label class="control-label">占比：</label>
 			<div class="controls">
-				<form:input path="beneficiaryType" htmlEscape="false" maxlength="50" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">所占份额：</label>
-			<div class="controls">
-				<form:input path="share" htmlEscape="false" class="input-xlarge "/>
+				<form:input path="share" htmlEscape="false" class="input-xlarge "/> &nbsp;%
 			</div>
 		</div>
 		<div class="form-actions">

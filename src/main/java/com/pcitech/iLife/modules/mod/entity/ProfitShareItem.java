@@ -15,7 +15,7 @@ import com.pcitech.iLife.common.persistence.DataEntity;
 public class ProfitShareItem extends DataEntity<ProfitShareItem> {
 	
 	private static final long serialVersionUID = 1L;
-	private String schemeId;		// 所属分润规则
+	private ProfitShareScheme scheme;		// 所属分润规则
 	private String beneficiary;		// 受益方
 	private String beneficiaryType;		// 受益方类型：个人、整体
 	private String share;		// 所占份额
@@ -28,13 +28,12 @@ public class ProfitShareItem extends DataEntity<ProfitShareItem> {
 		super(id);
 	}
 
-	@Length(min=1, max=20, message="所属分润规则长度必须介于 1 和 20 之间")
-	public String getSchemeId() {
-		return schemeId;
+	public ProfitShareScheme getScheme() {
+		return scheme;
 	}
 
-	public void setSchemeId(String schemeId) {
-		this.schemeId = schemeId;
+	public void setScheme(ProfitShareScheme scheme) {
+		this.scheme = scheme;
 	}
 	
 	@Length(min=0, max=50, message="受益方长度必须介于 0 和 50 之间")
