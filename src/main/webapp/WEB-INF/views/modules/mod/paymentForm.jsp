@@ -27,23 +27,23 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/payment/">支付管理列表</a></li>
+		<li><a href="${ctx}/mod/payment/">支付列表</a></li>
 		<li class="active"><a href="${ctx}/mod/payment/form?id=${payment.id}">支付管理<shiro:hasPermission name="mod:payment:edit">${not empty payment.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:payment:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="payment" action="${ctx}/mod/payment/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">达人ID：</label>
+			<label class="control-label">推广达人：</label>
 			<div class="controls">
-				<form:input path="brokerId" htmlEscape="false" maxlength="64" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<sys:treeselect id="broker" name="broker.id" value="${payment.broker.id}" labelName="broker.name" labelValue="${payment.broker.name}"
+					title="推广达人" url="/mod/broker/treeData" extId="${payment.broker.id}" cssClass="" allowClear="true"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">类型：个人或公司：</label>
+			<label class="control-label">账户类型：</label>
 			<div class="controls">
-				<form:input path="type" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				<form:radiobuttons path="type" items="${fns:getDictList('paymentType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -59,9 +59,9 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">付款渠道：支付宝、微信、银联：</label>
+			<label class="control-label">付款渠道：</label>
 			<div class="controls">
-				<form:input path="channel" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				<form:radiobuttons path="channel" items="${fns:getDictList('paymentChannelType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -79,8 +79,7 @@
 		<div class="control-group">
 			<label class="control-label">支付状态：</label>
 			<div class="controls">
-				<form:input path="status" htmlEscape="false" maxlength="1" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="status" htmlEscape="false" maxlength="50" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
