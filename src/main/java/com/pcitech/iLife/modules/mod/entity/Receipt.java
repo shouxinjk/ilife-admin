@@ -104,7 +104,7 @@ public class Receipt extends DataEntity<Receipt> {
 		this.filename = filename;
 	}
 	
-	@Length(min=1, max=1, message="支付状态长度必须介于 1 和 1 之间")
+	@Length(min=0, max=50, message="支付状态长度必须介于 0 和 50 之间")
 	public String getStatus() {
 		return status;
 	}
