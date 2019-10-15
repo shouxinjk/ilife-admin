@@ -33,6 +33,17 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>订单号</th>
+				<th>来源</th>
+				<th>跟踪码</th>
+				<th>订单金额</th>
+				<th>预估佣金</th>
+				<th>结算佣金</th>
+				<th>结算时间</th>
+				<th>订单状态</th>
+				<th>推广达人</th>
+				<th>通知状态</th>
+				<th>商品名称</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:order:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -40,9 +51,22 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="order">
 			<tr>
-				<td><a href="${ctx}/mod/order/form?id=${order.id}">
+				<td><a href="${ctx}/mod/order/form?id=${order.id}">${order.orderNo}</a></td>
+				<td>${order.platform}</td>
+				<td>${order.traceCode}</td>
+				<td>${order.amount}</td>
+				<td>${order.commissionEstimate}</td>
+				<td>${order.commissionSettlement}</td>
+				<td>
+					<fmt:formatDate value="${order.orderTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>				
+				<td>${order.status}</td>	
+				<td>${order.broker.name}</td>
+				<td>${fns:getDictLabel(order.notification, 'yes_no', '-')}</td>
+				<td>${order.item}</td>
+				<td>
 					<fmt:formatDate value="${order.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</a></td>
+				</td>
 				<shiro:hasPermission name="mod:order:edit"><td>
     				<a href="${ctx}/mod/order/form?id=${order.id}">修改</a>
 					<a href="${ctx}/mod/order/delete?id=${order.id}" onclick="return confirmx('确认要删除该订单管理吗？', this.href)">删除</a>

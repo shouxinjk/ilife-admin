@@ -4,6 +4,7 @@
     
 	<sql id="orderColumns">
 		a.id AS "id",
+		p.name AS "broker.name",
 		a.platform AS "platform",
 		a.order_no AS "orderNo",
 		a.trace_code AS "traceCode",
@@ -23,6 +24,8 @@
 	</sql>
 	
 	<sql id="orderJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_broker p ON p.id = a.broker_id			
 	</sql>
     
 	<select id="get" resultType="Order">
@@ -98,7 +101,7 @@
 			#{commissionSettlement},
 			#{item},
 			#{orderTime},
-			#{brokerId},
+			#{broker.id},
 			#{notification},
 			#{status},
 			#{createBy.id},
@@ -119,7 +122,7 @@
 			commission_settlement = #{commissionSettlement},
 			item = #{item},
 			order_time = #{orderTime},
-			broker_id = #{brokerId},
+			broker_id = #{broker.id},
 			notification = #{notification},
 			status = #{status},
 			update_by = #{updateBy.id},
