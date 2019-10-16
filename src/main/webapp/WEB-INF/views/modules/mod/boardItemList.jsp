@@ -36,7 +36,9 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>Board</th>
 				<th>标题</th>
+				<th>描述</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:boardItem:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -44,9 +46,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="boardItem">
 			<tr>
-				<td><a href="${ctx}/mod/boardItem/form?id=${boardItem.id}">
-					${boardItem.title}
-				</a></td>
+				<td>${boardItem.board.title}</td>
+				<td>${boardItem.title}</td>
+				<td>${boardItem.description}</td>
 				<td>
 					<fmt:formatDate value="${boardItem.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
