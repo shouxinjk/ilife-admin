@@ -16,6 +16,7 @@ public class BoardItem extends DataEntity<BoardItem> {
 	
 	private static final long serialVersionUID = 1L;
 	private Board board;		// 对应Board ID
+	private String item;		// 条目ID
 	private String title;		// 标题
 	private String description;		// 描述
 	
@@ -35,6 +36,14 @@ public class BoardItem extends DataEntity<BoardItem> {
 		this.board = board;
 	}
 	
+	public String getItem() {
+		return item;
+	}
+
+	public void setItem(String item) {
+		this.item = item;
+	}
+
 	@Length(min=1, max=255, message="标题长度必须介于 1 和 255 之间")
 	public String getTitle() {
 		return title;

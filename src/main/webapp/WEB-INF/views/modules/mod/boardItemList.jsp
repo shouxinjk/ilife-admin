@@ -37,6 +37,7 @@
 		<thead>
 			<tr>
 				<th>Board</th>
+				<th>商品</th>
 				<th>标题</th>
 				<th>描述</th>
 				<th>更新时间</th>
@@ -47,6 +48,7 @@
 		<c:forEach items="${page.list}" var="boardItem">
 			<tr>
 				<td>${boardItem.board.title}</td>
+				<td>${boardItem.item}</td>
 				<td>${boardItem.title}</td>
 				<td>${boardItem.description}</td>
 				<td>
