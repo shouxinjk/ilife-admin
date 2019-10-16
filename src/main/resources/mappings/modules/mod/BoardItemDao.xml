@@ -4,7 +4,8 @@
     
 	<sql id="boardItemColumns">
 		a.id AS "id",
-		a.board_id AS "boardId",
+		a.board_id AS "board.id",
+		p.title AS "board.title", 
 		a.title AS "title",
 		a.description AS "description",
 		a.create_by AS "createBy.id",
@@ -15,6 +16,8 @@
 	</sql>
 	
 	<sql id="boardItemJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_board p ON p.id = a.board_id		
 	</sql>
     
 	<select id="get" resultType="BoardItem">
@@ -80,7 +83,7 @@
 			del_flag
 		) VALUES (
 			#{id},
-			#{boardId},
+			#{board.id},
 			#{title},
 			#{description},
 			#{createBy.id},
@@ -93,7 +96,7 @@
 	
 	<update id="update">
 		UPDATE mod_board_item SET 	
-			board_id = #{boardId},
+			board_id = #{board.id},
 			title = #{title},
 			description = #{description},
 			update_by = #{updateBy.id},

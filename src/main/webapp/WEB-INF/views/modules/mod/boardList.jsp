@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>内容看板管理管理</title>
+	<title>Board管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -18,8 +18,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/mod/board/">内容看板管理列表</a></li>
-		<shiro:hasPermission name="mod:board:edit"><li><a href="${ctx}/mod/board/form">内容看板管理添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/mod/board/">Board列表</a></li>
+		<shiro:hasPermission name="mod:board:edit"><li><a href="${ctx}/mod/board/form">Board添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="board" action="${ctx}/mod/board/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -37,6 +37,11 @@
 		<thead>
 			<tr>
 				<th>标题</th>
+				<th>标签</th>
+				<th>类型</th>
+				<th>关键词</th>
+				<th>状态</th>
+				<th>描述</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:board:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -47,6 +52,11 @@
 				<td><a href="${ctx}/mod/board/form?id=${board.id}">
 					${board.title}
 				</a></td>
+				<td>${board.tags}</td>
+				<td>${fns:getDictLabel(board.type, 'boardType', '-')}</td>
+				<td>${board.keywords}</td>
+				<td>${board.status}</td>
+				<td>${board.description}</td>
 				<td>
 					<fmt:formatDate value="${board.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>

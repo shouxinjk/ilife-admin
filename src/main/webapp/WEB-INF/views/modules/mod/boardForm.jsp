@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>内容看板管理管理</title>
+	<title>Board管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -27,8 +27,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/board/">内容看板管理列表</a></li>
-		<li class="active"><a href="${ctx}/mod/board/form?id=${board.id}">内容看板管理<shiro:hasPermission name="mod:board:edit">${not empty board.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:board:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/mod/board/">Board列表</a></li>
+		<li class="active"><a href="${ctx}/mod/board/form?id=${board.id}">Board列表<shiro:hasPermission name="mod:board:edit">${not empty board.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:board:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="board" action="${ctx}/mod/board/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
@@ -36,8 +36,7 @@
 		<div class="control-group">
 			<label class="control-label">标题：</label>
 			<div class="controls">
-				<form:input path="title" htmlEscape="false" maxlength="255" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="title" htmlEscape="false" maxlength="255" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -47,9 +46,9 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">类型：静态、动态：</label>
+			<label class="control-label">类型：</label>
 			<div class="controls">
-				<form:input path="type" htmlEscape="false" maxlength="20" class="input-xlarge "/>
+				<form:select path="type" items="${fns:getDictList('boardType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -59,7 +58,7 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">用于查询的关键词：</label>
+			<label class="control-label">关键词：</label>
 			<div class="controls">
 				<form:input path="keywords" htmlEscape="false" maxlength="512" class="input-xlarge "/>
 			</div>
@@ -67,8 +66,7 @@
 		<div class="control-group">
 			<label class="control-label">状态：</label>
 			<div class="controls">
-				<form:input path="status" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="status" htmlEscape="false" maxlength="20" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="form-actions">

@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>看板条目明细管理管理</title>
+	<title>Board条目管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -27,24 +27,23 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/boardItem/">看板条目明细管理列表</a></li>
-		<li class="active"><a href="${ctx}/mod/boardItem/form?id=${boardItem.id}">看板条目明细管理<shiro:hasPermission name="mod:boardItem:edit">${not empty boardItem.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:boardItem:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/mod/boardItem/">Board条目列表</a></li>
+		<li class="active"><a href="${ctx}/mod/boardItem/form?id=${boardItem.id}">Board条目<shiro:hasPermission name="mod:boardItem:edit">${not empty boardItem.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:boardItem:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="boardItem" action="${ctx}/mod/boardItem/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">对应Board ID：</label>
+			<label class="control-label">Board：</label>
 			<div class="controls">
-				<form:input path="boardId" htmlEscape="false" maxlength="64" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				 <sys:treeselect id="board" name="board.id" value="${boardItem.board.id}" labelName="board.title" labelValue="${boardItem.board.title}"
+					title="Board列表" url="/mod/board/listData"  cssClass="required"/>				
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">标题：</label>
 			<div class="controls">
-				<form:input path="title" htmlEscape="false" maxlength="255" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="title" htmlEscape="false" maxlength="255" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">

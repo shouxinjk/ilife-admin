@@ -15,7 +15,7 @@ import com.pcitech.iLife.common.persistence.DataEntity;
 public class BoardItem extends DataEntity<BoardItem> {
 	
 	private static final long serialVersionUID = 1L;
-	private String boardId;		// 对应Board ID
+	private Board board;		// 对应Board ID
 	private String title;		// 标题
 	private String description;		// 描述
 	
@@ -27,13 +27,12 @@ public class BoardItem extends DataEntity<BoardItem> {
 		super(id);
 	}
 
-	@Length(min=1, max=64, message="对应Board ID长度必须介于 1 和 64 之间")
-	public String getBoardId() {
-		return boardId;
+	public Board getBoard() {
+		return board;
 	}
 
-	public void setBoardId(String boardId) {
-		this.boardId = boardId;
+	public void setBoard(Board board) {
+		this.board = board;
 	}
 	
 	@Length(min=1, max=255, message="标题长度必须介于 1 和 255 之间")
