@@ -41,6 +41,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">Item：</label>
+			<div class="controls">
+				<form:input path="item" htmlEscape="false" maxlength="64" class="input-xlarge"/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">标题：</label>
 			<div class="controls">
 				<form:input path="title" htmlEscape="false" maxlength="255" class="input-xlarge"/>
