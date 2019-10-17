@@ -41,6 +41,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">OpenId：</label>
+			<div class="controls">
+				<form:input path="openid" htmlEscape="false" maxlength="64" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">真实姓名：</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" maxlength="20" class="input-xlarge "/>

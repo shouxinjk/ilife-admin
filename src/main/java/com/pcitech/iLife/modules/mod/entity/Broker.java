@@ -17,6 +17,7 @@ public class Broker extends DataEntity<Broker> {
 	
 	private static final long serialVersionUID = 1L;
 	private Broker parent;		// 上级达人
+	private String openid;		// openid
 	private String name;		// 真实姓名
 	private String phone;		// 电话号码
 	private String email;		// 邮件
@@ -45,6 +46,14 @@ public class Broker extends DataEntity<Broker> {
 		this.parent = parent;
 	}
 	
+	public String getOpenid() {
+		return openid;
+	}
+
+	public void setOpenid(String openid) {
+		this.openid = openid;
+	}
+
 	@Length(min=0, max=20, message="真实姓名长度必须介于 0 和 20 之间")
 	public String getName() {
 		return name;
