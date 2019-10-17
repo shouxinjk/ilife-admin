@@ -36,6 +36,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>OpenId</th>
 				<th>姓名</th>
 				<th>上级达人</th>
 				<th>电话</th>
@@ -53,8 +54,9 @@
 		<c:forEach items="${page.list}" var="broker">
 			<tr>
 				<td><a href="${ctx}/mod/broker/form?id=${broker.id}">
-					${broker.name}
+					${broker.openid}
 				</a></td>
+				<td>${broker.name}</td>
 				<td>${broker.parent.name}</td>				
 				<td>${broker.phone}</td>		
 				<td>${broker.email}</td>	

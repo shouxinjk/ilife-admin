@@ -6,6 +6,7 @@
 		a.parent_id AS "parent.id",
 		p.name AS "parent.name",
 		a.id AS "id",
+		a.openid AS "openid",
 		a.name AS "name",
 		a.phone AS "phone",
 		a.email AS "email",
@@ -85,6 +86,7 @@
 		INSERT INTO mod_broker(
 			parent_id,
 			id,
+			openid,
 			name,
 			phone,
 			email,
@@ -103,6 +105,7 @@
 		) VALUES (
 			#{parent.id},
 			#{id},
+			#{openid},
 			#{name},
 			#{phone},
 			#{email},
@@ -124,6 +127,7 @@
 	<update id="update">
 		UPDATE mod_broker SET 	
 			parent_id = #{parent.id},
+			openid = #{openid},
 			name = #{name},
 			phone = #{phone},
 			email = #{email},
