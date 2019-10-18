@@ -22,6 +22,7 @@
 				${adminPath}/mod/itemCategory/** = anon
 				${adminPath}/mod/measure/** = anon
 				${adminPath}/rest/api/** = anon
+				${adminPath}/mod/**/rest/** = anon
 				${adminPath}/** = user
 				/act/editor/** = user
 				/ReportServer/** = user

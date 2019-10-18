@@ -5,6 +5,7 @@ package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +23,15 @@ import com.pcitech.iLife.modules.mod.dao.BrokerDao;
 @Transactional(readOnly = true)
 public class BrokerService extends CrudService<BrokerDao, Broker> {
 
+	@Autowired
+	private BrokerDao brokerDao;
+	
 	public Broker get(String id) {
 		return super.get(id);
+	}
+	
+	public Broker getByOpenid(String openid) {
+		return brokerDao.getByOpenid(openid);
 	}
 	
 	public List<Broker> findList(Broker broker) {
@@ -43,5 +51,6 @@ public class BrokerService extends CrudService<BrokerDao, Broker> {
 	public void delete(Broker broker) {
 		super.delete(broker);
 	}
+
 	
 }
