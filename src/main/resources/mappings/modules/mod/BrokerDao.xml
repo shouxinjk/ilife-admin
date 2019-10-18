@@ -37,6 +37,14 @@
 		WHERE a.id = #{id}
 	</select>
 	
+	<select id="getByOpenid" resultType="Broker">
+		SELECT 
+			<include refid="brokerColumns"/>
+		FROM mod_broker a
+		<include refid="brokerJoins"/>
+		WHERE a.openid = #{openid} limit 1
+	</select>	
+	
 	<select id="findList" resultType="Broker">
 		SELECT 
 			<include refid="brokerColumns"/>

@@ -14,5 +14,6 @@ import com.pcitech.iLife.modules.mod.entity.Broker;
  */
 @MyBatisDao
 public interface BrokerDao extends CrudDao<Broker> {
-	
+	//根据openid获取指定达人信息
+	public Broker getByOpenid(String openid);
 }
