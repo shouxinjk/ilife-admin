@@ -59,6 +59,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">二维码URL：</label>
+			<div class="controls">
+				<form:input path="qrcodeUrl" htmlEscape="false" maxlength="512" class="input-xlarge "/>
+			</div>
+		</div>			
+		<div class="control-group">
 			<label class="control-label">邮件：</label>
 			<div class="controls">
 				<form:input path="email" htmlEscape="false" maxlength="50" class="input-xlarge "/>

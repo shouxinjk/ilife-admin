@@ -40,6 +40,7 @@
 				<th>姓名</th>
 				<th>上级达人</th>
 				<th>电话</th>
+				<th>二维码</th>
 				<th>邮件</th>
 				<th>层级</th>
 				<th>等级</th>
@@ -58,7 +59,8 @@
 				</a></td>
 				<td>${broker.name}</td>
 				<td>${broker.parent.name}</td>				
-				<td>${broker.phone}</td>		
+				<td>${broker.phone}</td>	
+				<td>${broker.qrcodeUrl== null?"无":"已生成"}</td>		
 				<td>${broker.email}</td>	
 				<td>${broker.hierarchy}</td>	
 				<td>${broker.level}</td>	
