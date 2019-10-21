@@ -32,8 +32,7 @@ import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
 
 import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
+
 
 /**
  * 达人管理Controller
