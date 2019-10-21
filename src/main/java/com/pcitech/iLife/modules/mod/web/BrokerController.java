@@ -138,25 +138,15 @@ public class BrokerController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/brokersByOpenid/{openid}", method = RequestMethod.GET)
-	public List<Map<String, Object>> listBrokersByOpenid(@PathVariable String openid, HttpServletRequest request, HttpServletResponse response, Model model) {
-		List<Map<String, Object>> mapList = Lists.newArrayList();
+	public List<Broker> listBrokersByOpenid(@PathVariable String openid, HttpServletRequest request, HttpServletResponse response, Model model) {
+		List<Broker> mapList = Lists.newArrayList();
 		Broker parent = brokerService.getByOpenid(openid);//根据openid获取父级达人
 		if(parent == null)//如果未找到对应的达人直接返回空
 			return mapList;
 		Broker broker = new Broker();
 		broker.setParent(parent);
 		List<Broker> list =brokerService.findList(broker);
-		for (int i=0; i<list.size(); i++){
-			Broker e = list.get(i);
-			Map<String, Object> map = Maps.newHashMap();
-			map.put("id", e.getId());
-			map.put("name", e.getName());
-			map.put("phone", e.getPhone());
-			map.put("level", e.getLevel());
-			map.put("upgrade", e.getUpgrade());
-			mapList.add(map);
-		}
-		return mapList;
+		return list;
 	}
 	
 	
@@ -165,24 +155,13 @@ public class BrokerController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/{id}", method = RequestMethod.GET)
-	public List<Map<String, Object>> listBrokers(@PathVariable String id, HttpServletRequest request, HttpServletResponse response, Model model) {
-		List<Map<String, Object>> mapList = Lists.newArrayList();
+	public List<Broker> listBrokers(@PathVariable String id, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Broker parent = new Broker();
 		parent.setId(id);
 		Broker broker = new Broker();
 		broker.setParent(parent);
 		List<Broker> list =brokerService.findList(broker);
-		for (int i=0; i<list.size(); i++){
-			Broker e = list.get(i);
-			Map<String, Object> map = Maps.newHashMap();
-			map.put("id", e.getId());
-			map.put("name", e.getName());
-			map.put("phone", e.getPhone());
-			map.put("level", e.getLevel());
-			map.put("upgrade", e.getUpgrade());
-			mapList.add(map);
-		}
-		return mapList;
+		return list;
 	}
 	
 	/**
@@ -201,20 +180,8 @@ public class BrokerController extends BaseController {
 			brokerService.save(broker);
 			result.put("status",true);
 			result.put("description","Broker created successfully");
-			
 			Broker newbroker = brokerService.get(broker);
-			
-			//给新注册的达人创建qrCode
-			//注意：当前由前端调用ilife-wechat完成。此处创建完成后返回即可
-			/**
-			WxMpQrCodeTicket ticket = wxMpService.getQrcodeService().qrCodeCreateLastTicket(broker.getId());
-			String url = wxMpService.getQrcodeService().qrCodePictureUrl(ticket.getTicket());
-			//设置broker的QRcode URL并保存
-			newbroker.setQrcodeUrl(url);
-			brokerService.save(newbroker);
-			//**/
 			result.put("data", newbroker);
-			
 		}
 		return result;
 	}
