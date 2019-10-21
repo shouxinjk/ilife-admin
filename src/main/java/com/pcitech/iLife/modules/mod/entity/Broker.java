@@ -28,6 +28,7 @@ public class Broker extends DataEntity<Broker> {
 	private String alipayAccountName;		// 支付宝账户名
 	private String status;		// 账户状态
 	private String upgrade;		// 升级状态
+	private String qrcodeUrl;		// 二维码地址
 	
 	public Broker() {
 		super();
@@ -142,6 +143,14 @@ public class Broker extends DataEntity<Broker> {
 
 	public void setUpgrade(String upgrade) {
 		this.upgrade = upgrade;
+	}
+
+	public String getQrcodeUrl() {
+		return qrcodeUrl;
+	}
+
+	public void setQrcodeUrl(String qrcodeUrl) {
+		this.qrcodeUrl = qrcodeUrl;
 	}
 	
 }

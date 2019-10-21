@@ -29,8 +29,11 @@ import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Broker;
-import com.pcitech.iLife.modules.mod.entity.ItemDimension;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
+
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
 /**
  * 达人管理Controller
@@ -41,6 +44,10 @@ import com.pcitech.iLife.modules.mod.service.BrokerService;
 @RequestMapping(value = "${adminPath}/mod/broker")
 public class BrokerController extends BaseController {
 
+	//注意：当前未启用，需要提供WxMpService实现类
+	//@Autowired
+	//private WxMpService wxMpService;
+	
 	@Autowired
 	private BrokerService brokerService;
 	
@@ -110,15 +117,33 @@ public class BrokerController extends BaseController {
 		return mapList;
 	}
 
+	/**
+	 * 根据openid获取指定达人信息
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/brokerByOpenid/{openid}", method = RequestMethod.GET)
+	public Map<String, Object> getBrokerByOpenid(@PathVariable String openid, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> result = Maps.newHashMap();
+		Broker broker = brokerService.getByOpenid(openid);//根据openid获取达人
+		if(broker == null) {//如果未找到对应的达人直接返回空
+			result.put("status", false);
+		}else {
+			result.put("status", true);
+			result.put("data", broker);
+		}
+		return result;
+	}
 	
 	/**
-	 * 根据oipenid获取下级达人列表
+	 * 根据openid获取下级达人列表
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/brokersByOpenid/{openid}", method = RequestMethod.GET)
 	public List<Map<String, Object>> listBrokersByOpenid(@PathVariable String openid, HttpServletRequest request, HttpServletResponse response, Model model) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		Broker parent = brokerService.getByOpenid(openid);//根据openid获取父级达人
+		if(parent == null)//如果未找到对应的达人直接返回空
+			return mapList;
 		Broker broker = new Broker();
 		broker.setParent(parent);
 		List<Broker> list =brokerService.findList(broker);
@@ -166,7 +191,7 @@ public class BrokerController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/{id}", method = RequestMethod.POST)
-	public Map<String, Object> registerBroker(@PathVariable String id,@RequestBody Broker broker, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public Map<String, Object> registerBroker(@PathVariable String id,@RequestBody Broker broker, HttpServletRequest request, HttpServletResponse response, Model model) throws WxErrorException{
 		Map<String, Object> result = Maps.newHashMap();
 		Broker parent = brokerService.get(id);
 		if(parent == null) {
@@ -177,8 +202,21 @@ public class BrokerController extends BaseController {
 			brokerService.save(broker);
 			result.put("status",true);
 			result.put("description","Broker created successfully");
+			
+			Broker newbroker = brokerService.get(broker);
+			
+			//给新注册的达人创建qrCode
+			//注意：当前由前端调用ilife-wechat完成。此处创建完成后返回即可
+			/**
+			WxMpQrCodeTicket ticket = wxMpService.getQrcodeService().qrCodeCreateLastTicket(broker.getId());
+			String url = wxMpService.getQrcodeService().qrCodePictureUrl(ticket.getTicket());
+			//设置broker的QRcode URL并保存
+			newbroker.setQrcodeUrl(url);
+			brokerService.save(newbroker);
+			//**/
+			result.put("data", newbroker);
+			
 		}
-		
 		return result;
 	}
 	
