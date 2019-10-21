@@ -16,11 +16,16 @@
 	
     <!-- 加载配置属性文件 -->
 	<context:property-placeholder ignore-unresolvable="true" location="classpath:iLife.properties" />
+	<!--context:property-placeholder ignore-unresolvable="true" location="classpath:wx.properties" /-->
 	
 	<!-- 加载应用属性实例，可通过  @Value("#{APP_PROP['jdbc.driver']}") String jdbcDriver 方式引用 -->
     <util:properties id="APP_PROP" location="classpath:iLife.properties" local-override="true"/>
+    
+    <!-- 微信配置：当前无用。通过ilife-wechat提供统一服务 -->
+	<!--util:properties id="wxProperties" location="classpath:wx.properties"/-->
+	<!-- util:properties id="wxPayProperties" location="classpath:/wxPay.properties"/ -->
 	
-		<!-- 增加AOP -->
+	<!-- 增加AOP -->
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 	
 	<!-- 使用Annotation自动注册Bean，解决事物失效问题：在主容器中不扫描@Controller注解，在SpringMvc中只扫描@Controller注解。  -->

@@ -17,6 +17,7 @@
 		a.alipay_accountname AS "alipayAccountName",
 		a.status AS "status",
 		a.upgrade AS "upgrade",
+		a.qrcodeUrl AS "qrcodeUrl",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -105,6 +106,7 @@
 			alipay_accountname,
 			status,
 			upgrade,
+			qrcodeUrl,
 			create_by,
 			create_date,
 			update_by,
@@ -124,6 +126,7 @@
 			#{alipayAccountName},
 			#{status},
 			#{upgrade},
+			#{qrcodeUrl},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -146,6 +149,7 @@
 			alipay_accountname = #{alipayAccountName},
 			status = #{status},
 			upgrade = #{upgrade},
+			qrcodeUrl = #{qrcodeUrl},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}
