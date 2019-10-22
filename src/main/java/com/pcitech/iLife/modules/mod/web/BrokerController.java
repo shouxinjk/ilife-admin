@@ -189,7 +189,7 @@ public class BrokerController extends BaseController {
 	 * 修改达人：包括修改单个属性如“升级状态”
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/{id}", method = RequestMethod.PATCH)
+	@RequestMapping(value = "rest/{id}", method = RequestMethod.PUT)
 	public Map<String, Object> modifyBroker(@PathVariable String id,@RequestBody Broker broker, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Map<String, Object> result = Maps.newHashMap();
 		Broker old = brokerService.get(id);
