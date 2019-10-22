@@ -149,7 +149,6 @@ public class BrokerController extends BaseController {
 		return list;
 	}
 	
-	
 	/**
 	 * 根据id获取下级达人列表
 	 */
@@ -190,7 +189,7 @@ public class BrokerController extends BaseController {
 	 * 修改达人：包括修改单个属性如“升级状态”
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/{id}", method = RequestMethod.PUT)
+	@RequestMapping(value = "rest/{id}", method = RequestMethod.PATCH)
 	public Map<String, Object> modifyBroker(@PathVariable String id,@RequestBody Broker broker, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Map<String, Object> result = Maps.newHashMap();
 		Broker old = brokerService.get(id);
@@ -205,5 +204,16 @@ public class BrokerController extends BaseController {
 			result.put("description","Broker modified successfully");
 		}
 		return result;
+	}
+	
+	/**
+	 * 用于跨域访问不支持PATCH方法问题：
+	 * 通过POST提交请求
+	 * 修改达人：包括修改单个属性如“升级状态”
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/bad-cors/{id}", method = RequestMethod.POST)
+	public Map<String, Object> modifyBrokerByPost(@PathVariable String id,@RequestBody Broker broker, HttpServletRequest request, HttpServletResponse response, Model model) {
+		return modifyBroker(id,broker,request,response,model);
 	}
 }
