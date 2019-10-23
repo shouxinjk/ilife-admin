@@ -224,7 +224,7 @@ public class BrokerController extends BaseController {
 	}
 	
 	/**
-	 * 获取达人收益汇总数据
+	 * 获取达人收益汇总数据:按照清算金额、结算金额、冻结金额、已支付金额返回
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/money/{id}", method = RequestMethod.GET)
