@@ -134,6 +134,23 @@ public class BrokerController extends BaseController {
 	}
 	
 	/**
+	 * 根据brokerId获取指定达人信息
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/brokerById/{brokerId}", method = RequestMethod.GET)
+	public Map<String, Object> getBrokerByBrokerid(@PathVariable String brokerId, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> result = Maps.newHashMap();
+		Broker broker = brokerService.get(brokerId);//根据brokerId获取达人
+		if(broker == null) {//如果未找到对应的达人直接返回空
+			result.put("status", false);
+		}else {
+			result.put("status", true);
+			result.put("data", broker);
+		}
+		return result;
+	}
+	
+	/**
 	 * 根据openid获取下级达人列表
 	 */
 	@ResponseBody
