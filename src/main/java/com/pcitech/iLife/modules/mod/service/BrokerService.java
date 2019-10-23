@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,10 @@ public class BrokerService extends CrudService<BrokerDao, Broker> {
 	public Broker getByOpenid(String openid) {
 		return brokerDao.getByOpenid(openid);
 	}
+	
+	public Map<String,Object> getMoney(String id) {
+		return brokerDao.getMoney(id);
+	}	
 	
 	public List<Broker> findList(Broker broker) {
 		return super.findList(broker);
