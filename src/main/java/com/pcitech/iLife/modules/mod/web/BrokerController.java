@@ -224,13 +224,16 @@ public class BrokerController extends BaseController {
 	}
 	
 	/**
-	 * 用于跨域访问不支持PATCH方法问题：
-	 * 通过POST提交请求
-	 * 修改达人：包括修改单个属性如“升级状态”
+	 * 获取达人收益汇总数据
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/bad-cors/{id}", method = RequestMethod.POST)
-	public Map<String, Object> modifyBrokerByPost(@PathVariable String id,@RequestBody Broker broker, HttpServletRequest request, HttpServletResponse response, Model model) {
-		return modifyBroker(id,broker,request,response,model);
+	@RequestMapping(value = "rest/money/{id}", method = RequestMethod.GET)
+	public Map<String, Object> getMoney(@PathVariable String id, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> map = brokerService.getMoney(id);
+		if(map.get("clearingAmount")==null)map.put("clearingAmount",0);
+		if(map.get("settlementAmount")==null)map.put("settlementAmount",0);
+		if(map.get("paymentAmount")==null)map.put("paymentAmount",0);
+		if(map.get("lockedAmount")==null)map.put("lockedAmount",0);
+		return map;
 	}
 }
