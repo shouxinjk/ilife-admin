@@ -129,7 +129,7 @@ public class CommissionSchemeController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/profit", method = RequestMethod.GET)
-	public Map<String, Object> getCpsLink(@RequestParam String source, @RequestParam double price, @RequestParam String category,HttpServletRequest request, HttpServletResponse response, Model model) {
+	public Map<String, Object> getProfit(@RequestParam String source, @RequestParam double price, @RequestParam String category,HttpServletRequest request, HttpServletResponse response, Model model) {
 		Map<String, Object> map = Maps.newHashMap();
 		
 		//查询佣金规则
