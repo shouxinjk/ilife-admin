@@ -187,21 +187,24 @@ public class CommissionSchemeController extends BaseController {
 		creditScheme.setPlatform(source);
 		creditScheme.setCategory(category);
 		creditScheme = creditSchemeService.getByQuery(creditScheme);
-		if(creditScheme == null) {//不用说了，运营没设置积分规则
-			map.put("warn-credit", "no credit scheme");
+		String script = "return price";//默认积分与价格相同
+		if(creditScheme == null) {//不用说了，运营没设置积分规则。直接采用与价格相等作为积分
+			map.put("warn-credit", "no credit scheme. use default one let credit=price");
 		}else {//否则就获取脚本算积分吧
-			Binding binding = new Binding();
-			binding.setVariable("source",source);
-			binding.setVariable("category",category);
-			binding.setVariable("price",price);
-			try {
-		        GroovyShell shell = new GroovyShell(binding);
-		        Object value = shell.evaluate(creditScheme.getScript());//计算得到目标url
-		        map.put("credit", Double.parseDouble(value.toString()));
-			}catch(Exception ex) {//如果计算发生错误也使用默认链接
-				map.put("error-script", ex.getMessage());
-			}
+			script = creditScheme.getScript();
 		}
+		Binding binding = new Binding();
+		binding.setVariable("source",source);
+		binding.setVariable("category",category);
+		binding.setVariable("price",price);
+		try {
+	        GroovyShell shell = new GroovyShell(binding);
+	        Object value = shell.evaluate(script);//计算得到积分
+	        map.put("credit", Double.parseDouble(value.toString()));
+		}catch(Exception ex) {//如果计算发生错误也使用默认链接
+			map.put("error-script", ex.getMessage());
+		}
+		
         return map;
 	}
 
