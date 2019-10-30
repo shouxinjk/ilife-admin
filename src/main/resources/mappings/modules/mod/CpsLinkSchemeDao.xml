@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pcitech.iLife.modules.mod.dao.CommissionSchemeDao">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.CpsLinkSchemeDao">
     
-	<sql id="commissionSchemeColumns">
+	<sql id="cpsLinkSchemeColumns">
 		a.id AS "id",
 		a.platform AS "platform",
 		a.category AS "category",
-		a.type AS "type",
-		a.amount AS "amount",
-		a.effective_from AS "effectiveFrom",
-		a.status AS "status",
+		a.script AS "script",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -17,40 +14,34 @@
 		a.del_flag AS "delFlag"
 	</sql>
 	
-	<sql id="commissionSchemeJoins">
+	<sql id="cpsLinkSchemeJoins">
 	</sql>
     
-	<select id="get" resultType="CommissionScheme">
+	<select id="get" resultType="CpsLinkScheme">
 		SELECT 
-			<include refid="commissionSchemeColumns"/>
-		FROM mod_commission_scheme a
-		<include refid="commissionSchemeJoins"/>
+			<include refid="cpsLinkSchemeColumns"/>
+		FROM mod_cps_scheme a
+		<include refid="cpsLinkSchemeJoins"/>
 		WHERE a.id = #{id}
 	</select>
-
 	
-	<select id="getByQuery" resultType="CommissionScheme">
+	<select id="getByQuery" resultType="CpsLinkScheme">
 		SELECT 
-			<include refid="commissionSchemeColumns"/>
-		FROM mod_commission_scheme a
-		<include refid="commissionSchemeJoins"/>
-		<where>
-			a.del_flag = #{DEL_FLAG_NORMAL}		
-			<if test="platform != null and platform != ''">
-				AND a.platform = #{platform}
-			</if>	
-			<if test="category != null and category != ''">
-				AND a.category = #{category}
-			</if>		
-		</where>
+			<include refid="cpsLinkSchemeColumns"/>
+		FROM mod_cps_scheme a
+		<include refid="cpsLinkSchemeJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="platform != null and platform != ''">
+			AND a.platform = #{platform}
+		</if>		
 		LIMIT 1
-	</select>	
+	</select>
 	
-	<select id="findList" resultType="CommissionScheme">
+	<select id="findList" resultType="CpsLinkScheme">
 		SELECT 
-			<include refid="commissionSchemeColumns"/>
-		FROM mod_commission_scheme a
-		<include refid="commissionSchemeJoins"/>
+			<include refid="cpsLinkSchemeColumns"/>
+		FROM mod_cps_scheme a
+		<include refid="cpsLinkSchemeJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 		</where>
@@ -64,11 +55,11 @@
 		</choose>
 	</select>
 	
-	<select id="findAllList" resultType="CommissionScheme">
+	<select id="findAllList" resultType="CpsLinkScheme">
 		SELECT 
-			<include refid="commissionSchemeColumns"/>
-		FROM mod_commission_scheme a
-		<include refid="commissionSchemeJoins"/>
+			<include refid="cpsLinkSchemeColumns"/>
+		FROM mod_cps_scheme a
+		<include refid="cpsLinkSchemeJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 		</where>		
@@ -83,14 +74,11 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO mod_commission_scheme(
+		INSERT INTO mod_cps_scheme(
 			id,
 			platform,
 			category,
-			type,
-			amount,
-			effective_from,
-			status,
+			script,
 			create_by,
 			create_date,
 			update_by,
@@ -100,10 +88,7 @@
 			#{id},
 			#{platform},
 			#{category},
-			#{type},
-			#{amount},
-			#{effectiveFrom},
-			#{status},
+			#{script},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -113,20 +98,17 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE mod_commission_scheme SET 	
+		UPDATE mod_cps_scheme SET 	
 			platform = #{platform},
 			category = #{category},
-			type = #{type},
-			amount = #{amount},
-			effective_from = #{effectiveFrom},
-			status = #{status},
+			script = #{script},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="delete">
-		UPDATE mod_commission_scheme SET 
+		UPDATE mod_cps_scheme SET 
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

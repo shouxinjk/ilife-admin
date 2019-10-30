@@ -5,6 +5,7 @@ package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,13 @@ import com.pcitech.iLife.modules.mod.dao.CommissionSchemeDao;
 @Transactional(readOnly = true)
 public class CommissionSchemeService extends CrudService<CommissionSchemeDao, CommissionScheme> {
 
+	@Autowired
+	CommissionSchemeDao commissionSchemeDao;
+	
+	public CommissionScheme getByQuery(CommissionScheme query) {
+		return commissionSchemeDao.getByQuery(query);
+	}
+	
 	public CommissionScheme get(String id) {
 		return super.get(id);
 	}

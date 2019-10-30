@@ -20,7 +20,7 @@ public class CommissionScheme extends DataEntity<CommissionScheme> {
 	private String platform;		// 电商平台
 	private String category;		// 商品类别
 	private String type;		// 佣金类型：固定金额或百分比
-	private String amount;		// 佣金额
+	private double amount;		// 佣金额
 	private Date effectiveFrom;		// 生效时间
 	private String status;		// 状态
 	
@@ -59,11 +59,11 @@ public class CommissionScheme extends DataEntity<CommissionScheme> {
 		this.type = type;
 	}
 	
-	public String getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 	

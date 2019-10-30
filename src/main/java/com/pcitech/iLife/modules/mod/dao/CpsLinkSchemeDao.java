@@ -5,15 +5,15 @@ package com.pcitech.iLife.modules.mod.dao;
 
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
-import com.pcitech.iLife.modules.mod.entity.TraceCode;
+import com.pcitech.iLife.modules.mod.entity.CpsLinkScheme;
 
 /**
- * 推广位DAO接口
+ * CPS链接规则DAO接口
  * @author qchzhu
- * @version 2019-10-14
+ * @version 2019-10-30
  */
 @MyBatisDao
-public interface TraceCodeDao extends CrudDao<TraceCode> {
+public interface CpsLinkSchemeDao extends CrudDao<CpsLinkScheme> {
 	//根据platform和category获取链接规则
-	public TraceCode getByBrokerAndPlatform(TraceCode query);
+	public CpsLinkScheme getByQuery(CpsLinkScheme scheme);
 }

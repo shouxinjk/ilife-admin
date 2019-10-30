@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.ProfitShareItem;
@@ -14,5 +16,7 @@ import com.pcitech.iLife.modules.mod.entity.ProfitShareItem;
  */
 @MyBatisDao
 public interface ProfitShareItemDao extends CrudDao<ProfitShareItem> {
+	
+	public ProfitShareItem getByQuery(ProfitShareItem query);
 	
 }

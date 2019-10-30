@@ -27,6 +27,23 @@
 		<include refid="traceCodeJoins"/>
 		WHERE a.id = #{id}
 	</select>
+
+	<select id="getByBrokerAndPlatform" resultType="TraceCode">
+		SELECT 
+			<include refid="traceCodeColumns"/>
+		FROM mod_trace_code a
+		<include refid="traceCodeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="broker != null and broker.id != null and broker.id != ''">
+				AND a.broker_id = #{broker.id}
+			</if>
+			<if test="platform != null and platform != ''">
+				AND a.platform = #{platform}
+			</if>		
+		</where>
+		LIMIT 1
+	</select>
 	
 	<select id="findList" resultType="TraceCode">
 		SELECT 
