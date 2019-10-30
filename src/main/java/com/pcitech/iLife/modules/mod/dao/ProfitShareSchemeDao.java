@@ -14,5 +14,5 @@ import com.pcitech.iLife.modules.mod.entity.ProfitShareScheme;
  */
 @MyBatisDao
 public interface ProfitShareSchemeDao extends CrudDao<ProfitShareScheme> {
-	
+	public ProfitShareScheme getByQuery(ProfitShareScheme query);
 }

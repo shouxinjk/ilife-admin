@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pcitech.iLife.modules.mod.dao.ProfitShareSchemeDao">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.CreditSchemeDao">
     
-	<sql id="profitShareSchemeColumns">
+	<sql id="creditSchemeColumns">
 		a.id AS "id",
-		a.name AS "name",
-		a.type AS "type",
 		a.platform AS "platform",
 		a.category AS "category",
-		a.status AS "status",
-		a.priority AS "priority",
+		a.script AS "script",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -17,29 +14,24 @@
 		a.del_flag AS "delFlag"
 	</sql>
 	
-	<sql id="profitShareSchemeJoins">
-	
+	<sql id="creditSchemeJoins">
 	</sql>
     
-	<select id="get" resultType="ProfitShareScheme">
+	<select id="get" resultType="CreditScheme">
 		SELECT 
-			<include refid="profitShareSchemeColumns"/>
-		FROM mod_profit_share_scheme a
-		<include refid="profitShareSchemeJoins"/>
+			<include refid="creditSchemeColumns"/>
+		FROM mod_credit_scheme a
+		<include refid="creditSchemeJoins"/>
 		WHERE a.id = #{id}
 	</select>
-	
 
-	<select id="getByQuery" resultType="ProfitShareScheme">
+	<select id="getByQuery" resultType="CreditScheme">
 		SELECT 
-			<include refid="profitShareSchemeColumns"/>
-		FROM mod_profit_share_scheme a
-		<include refid="profitShareSchemeJoins"/>
+			<include refid="creditSchemeColumns"/>
+		FROM mod_credit_scheme a
+		<include refid="creditSchemeJoins"/>
 		<where>
-			a.del_flag = #{DEL_FLAG_NORMAL}
-			<if test="type != null and type != ''">
-				AND a.type = #{type}
-			</if>			
+			a.del_flag = #{DEL_FLAG_NORMAL}		
 			<if test="platform != null and platform != ''">
 				AND a.platform = #{platform}
 			</if>	
@@ -50,11 +42,11 @@
 		LIMIT 1
 	</select>	
 	
-	<select id="findList" resultType="ProfitShareScheme">
+	<select id="findList" resultType="CreditScheme">
 		SELECT 
-			<include refid="profitShareSchemeColumns"/>
-		FROM mod_profit_share_scheme a
-		<include refid="profitShareSchemeJoins"/>
+			<include refid="creditSchemeColumns"/>
+		FROM mod_credit_scheme a
+		<include refid="creditSchemeJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 		</where>
@@ -68,11 +60,11 @@
 		</choose>
 	</select>
 	
-	<select id="findAllList" resultType="ProfitShareScheme">
+	<select id="findAllList" resultType="CreditScheme">
 		SELECT 
-			<include refid="profitShareSchemeColumns"/>
-		FROM mod_profit_share_scheme a
-		<include refid="profitShareSchemeJoins"/>
+			<include refid="creditSchemeColumns"/>
+		FROM mod_credit_scheme a
+		<include refid="creditSchemeJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 		</where>		
@@ -87,14 +79,11 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO mod_profit_share_scheme(
+		INSERT INTO mod_credit_scheme(
 			id,
-			name,
-			type,
 			platform,
 			category,
-			status,
-			priority,
+			script,
 			create_by,
 			create_date,
 			update_by,
@@ -102,12 +91,9 @@
 			del_flag
 		) VALUES (
 			#{id},
-			#{name},
-			#{type},
 			#{platform},
 			#{category},
-			#{status},
-			#{priority},
+			#{script},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -117,20 +103,17 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE mod_profit_share_scheme SET 	
-			name = #{name},
-			type = #{type},
+		UPDATE mod_credit_scheme SET 	
 			platform = #{platform},
 			category = #{category},
-			status = #{status},
-			priority = #{priority},
+			script = #{script},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="delete">
-		UPDATE mod_profit_share_scheme SET 
+		UPDATE mod_credit_scheme SET 
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

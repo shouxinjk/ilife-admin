@@ -5,6 +5,7 @@ package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,12 @@ import com.pcitech.iLife.modules.mod.dao.ProfitShareSchemeDao;
 @Service
 @Transactional(readOnly = true)
 public class ProfitShareSchemeService extends CrudService<ProfitShareSchemeDao, ProfitShareScheme> {
-
+	@Autowired
+	ProfitShareSchemeDao profitShareSchemeDao;
+	
+	public ProfitShareScheme getByQuery(ProfitShareScheme profitShareScheme) {
+		return profitShareSchemeDao.getByQuery(profitShareScheme);
+	}
 	public ProfitShareScheme get(String id) {
 		return super.get(id);
 	}

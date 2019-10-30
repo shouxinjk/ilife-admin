@@ -14,5 +14,5 @@ import com.pcitech.iLife.modules.mod.entity.CommissionScheme;
  */
 @MyBatisDao
 public interface CommissionSchemeDao extends CrudDao<CommissionScheme> {
-	
+	public CommissionScheme getByQuery(CommissionScheme scheme);
 }

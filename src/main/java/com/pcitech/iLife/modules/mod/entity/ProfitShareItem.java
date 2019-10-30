@@ -18,7 +18,7 @@ public class ProfitShareItem extends DataEntity<ProfitShareItem> {
 	private ProfitShareScheme scheme;		// 所属分润规则
 	private String beneficiary;		// 受益方
 	private String beneficiaryType;		// 受益方类型：个人、整体
-	private String share;		// 所占份额
+	private double share;		// 所占份额
 	
 	public ProfitShareItem() {
 		super();
@@ -54,11 +54,11 @@ public class ProfitShareItem extends DataEntity<ProfitShareItem> {
 		this.beneficiaryType = beneficiaryType;
 	}
 	
-	public String getShare() {
+	public double getShare() {
 		return share;
 	}
 
-	public void setShare(String share) {
+	public void setShare(double share) {
 		this.share = share;
 	}
 	

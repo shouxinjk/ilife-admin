@@ -29,6 +29,26 @@
 		WHERE a.id = #{id}
 	</select>
 	
+	<select id="getByQuery" resultType="ProfitShareItem">
+		SELECT 
+			<include refid="profitShareItemColumns"/>
+		FROM mod_profit_share_item a
+		<include refid="profitShareItemJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}		
+			<if test="scheme != null and scheme.id != null and scheme.id != ''">
+				AND a.scheme_id = #{scheme.id}
+			</if>			
+			<if test="beneficiaryType != null and beneficiaryType != ''">
+				AND a.beneficiary_type = #{beneficiaryType}
+			</if>	
+			<if test="beneficiary != null and beneficiary != ''">
+				AND a.beneficiary = #{beneficiary}
+			</if>		
+		</where>
+		LIMIT 1
+	</select>	
+	
 	<select id="findList" resultType="ProfitShareItem">
 		SELECT 
 			<include refid="profitShareItemColumns"/>
