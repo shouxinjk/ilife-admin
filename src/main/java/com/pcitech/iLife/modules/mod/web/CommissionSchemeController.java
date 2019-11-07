@@ -207,5 +207,88 @@ public class CommissionSchemeController extends BaseController {
 		
         return map;
 	}
-
+	/**
+	 * 获得指定商品的佣金及积分。返回结果为：
+	 * {
+	 * 	order:x,
+	 * 	team:y,
+	 * 	credit:z
+	 * }
+	 * 
+	 * 参数：source，category，amount，price。其中amount为2方分润佣金额，price为商品售价。积分不根据category区分
+	 * 
+	 * 计算逻辑：
+	 * 1，获取佣金总额 amount：注意佣金总额由前端传入
+	 * 2，根据source、category查询得到分润规则，默认分润类型为 order
+	 * 3，查询分润类型明细，得到 推广达人、上级分润规则。根据分润规则及amount计算店返及团返
+	 * 4，根据source查询积分规则。并根据amount调用脚本计算得到积分
+	 * 
+	 * 前端展现逻辑：
+	 * 0，获取页面分享brokerId，如果存在broker则传递source、category、price请求获取profit信息
+	 * 1，得到返回结果后进行显示。如果有店返、团返则不显示积分
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/profit-2-party", method = RequestMethod.GET)
+	public Map<String, Object> getProfit2Party(@RequestParam String source, @RequestParam double price, @RequestParam double amount, @RequestParam String category,HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> map = Maps.newHashMap();
+		
+		//查询分润规则并根据2方分润计算3方分润
+		ProfitShareScheme profitShareScheme = new ProfitShareScheme();
+		profitShareScheme.setCategory(category);
+		profitShareScheme.setPlatform(source);
+		profitShareScheme.setType("order");//默认只查找订单分润的规则：注意，这个值是在字典里定义的，不能弄错了
+		profitShareScheme = profitShareSchemeService.getByQuery(profitShareScheme);
+		if(profitShareScheme==null) {//如果没有分润规则，那也没法算钱啊。快找运营去设置
+			map.put("warn-profit", "no profit share scheme");
+		}else {//那就找分润明细，并计算达人分润和上级分润
+			ProfitShareItem profitShareItem = new ProfitShareItem();
+			profitShareItem.setScheme(profitShareScheme);
+			profitShareItem.setBeneficiaryType("person");//个人分润
+			profitShareItem.setBeneficiary("broker");//特定给推广者
+			//查找并计算达人分润
+			ProfitShareItem brokerShare = profitShareItemService.getByQuery(profitShareItem);
+			if(brokerShare ==null) {//我还能说什么，运营把推广达人的分润都忘到九霄云网了，去找他
+				map.put("warn-broker", "no broker profit share item");
+			}else {//计算达人的分润金额，并设置店返
+				double shareAmount = amount*brokerShare.getShare()/100;
+				map.put("order", shareAmount);
+			}
+			//查找并计算上级达人分润
+			profitShareItem.setBeneficiary("parent");//特定给上级达人
+			ProfitShareItem parentBrokerShare = profitShareItemService.getByQuery(profitShareItem);
+			if(brokerShare ==null) {//彻底无语了，上级达人的分润也没设置
+				map.put("warn-parent", "no parent broker profit share item");
+			}else {//计算上级达人的分润金额，并设置店返
+				double shareAmount = amount*parentBrokerShare.getShare()/100;
+				map.put("team", shareAmount);
+			}
+		}
+		
+		//查询积分规则，并进行脚本计算，样例如下：
+		//注意：脚本中字符串操作需要用单引号，双引号表示模板消息，会出现解析错误
+		//return price*0.01
+		CreditScheme creditScheme = new CreditScheme();
+		creditScheme.setPlatform(source);
+		creditScheme.setCategory(category);
+		creditScheme = creditSchemeService.getByQuery(creditScheme);
+		String script = "return price";//默认积分与价格相同
+		if(creditScheme == null) {//不用说了，运营没设置积分规则。直接采用与价格相等作为积分
+			map.put("warn-credit", "no credit scheme. use default one let credit=price");
+		}else {//否则就获取脚本算积分吧
+			script = creditScheme.getScript();
+		}
+		Binding binding = new Binding();
+		binding.setVariable("source",source);
+		binding.setVariable("category",category);
+		binding.setVariable("price",price);
+		try {
+	        GroovyShell shell = new GroovyShell(binding);
+	        Object value = shell.evaluate(script);//计算得到积分
+	        map.put("credit", Double.parseDouble(value.toString()));
+		}catch(Exception ex) {//如果计算发生错误也使用默认链接
+			map.put("error-script", ex.getMessage());
+		}
+		
+        return map;
+	}
 }
