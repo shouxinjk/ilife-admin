@@ -142,6 +142,7 @@ public class CommissionSchemeController extends BaseController {
 		if(commission == null) {
 			map.put("warn-commission", "use platform default commission scheme");
 			commission = new CommissionScheme();
+			commission.setCategory("default");
 			commission.setPlatform(source);
 			commission = commissionSchemeService.getByQuery(commission);
 		}
@@ -167,6 +168,7 @@ public class CommissionSchemeController extends BaseController {
 			if(profitShareScheme==null) {//如果无针对指定类别的分润规则，则直接该平台的默认分润规则
 				map.put("warn-profit", "use platform default profit share scheme");
 				profitShareScheme = new ProfitShareScheme();
+				profitShareScheme.setCategory("default");
 				profitShareScheme.setPlatform(source);//仅根据source查找分润规则
 				profitShareScheme.setType("order");//默认只查找订单分润的规则：注意，这个值是在字典里定义的，不能弄错了
 				profitShareScheme = profitShareSchemeService.getByQuery(profitShareScheme);
@@ -213,6 +215,7 @@ public class CommissionSchemeController extends BaseController {
 			map.put("warn-credit", "no credit scheme. use platform default credit scheme");
 			creditScheme = new CreditScheme();
 			creditScheme.setPlatform(source);
+			creditScheme.setCategory("default");
 			creditScheme = creditSchemeService.getByQuery(creditScheme);
 		}
 		
@@ -271,6 +274,7 @@ public class CommissionSchemeController extends BaseController {
 		if(profitShareScheme==null) {//如果无针对指定类别的分润规则，则直接该平台的默认分润规则
 			map.put("warn-profit", "use platform default profit share scheme");
 			profitShareScheme = new ProfitShareScheme();
+			profitShareScheme.setCategory("default");
 			profitShareScheme.setPlatform(source);//仅根据source查找分润规则
 			profitShareScheme.setType("order");//默认只查找订单分润的规则：注意，这个值是在字典里定义的，不能弄错了
 			profitShareScheme = profitShareSchemeService.getByQuery(profitShareScheme);
@@ -316,6 +320,7 @@ public class CommissionSchemeController extends BaseController {
 			map.put("warn-credit", "no credit scheme. use platform default credit scheme");
 			creditScheme = new CreditScheme();
 			creditScheme.setPlatform(source);
+			creditScheme.setCategory("default");
 			creditScheme = creditSchemeService.getByQuery(creditScheme);
 		}
 		
