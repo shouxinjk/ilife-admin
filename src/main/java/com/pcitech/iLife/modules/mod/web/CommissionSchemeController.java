@@ -153,6 +153,16 @@ public class CommissionSchemeController extends BaseController {
 			profitShareScheme.setPlatform(source);
 			profitShareScheme.setType("order");//默认只查找订单分润的规则：注意，这个值是在字典里定义的，不能弄错了
 			profitShareScheme = profitShareSchemeService.getByQuery(profitShareScheme);
+			
+			//如果无针对指定类别的分润规则，则直接该平台的默认分润规则
+			if(profitShareScheme==null) {//如果无针对指定类别的分润规则，则直接该平台的默认分润规则
+				map.put("warn-profit", "use platform default profit share scheme");
+				profitShareScheme = new ProfitShareScheme();
+				profitShareScheme.setPlatform(source);//仅根据source查找分润规则
+				profitShareScheme.setType("order");//默认只查找订单分润的规则：注意，这个值是在字典里定义的，不能弄错了
+				profitShareScheme = profitShareSchemeService.getByQuery(profitShareScheme);
+			}
+			
 			if(profitShareScheme==null) {//如果没有分润规则，那也没法算钱啊。快找运营去设置
 				map.put("warn-profit", "no profit share scheme");
 			}else {//那就找分润明细，并计算达人分润和上级分润
@@ -238,6 +248,16 @@ public class CommissionSchemeController extends BaseController {
 		profitShareScheme.setPlatform(source);
 		profitShareScheme.setType("order");//默认只查找订单分润的规则：注意，这个值是在字典里定义的，不能弄错了
 		profitShareScheme = profitShareSchemeService.getByQuery(profitShareScheme);
+		
+		//如果无针对指定类别的分润规则，则直接该平台的默认分润规则
+		if(profitShareScheme==null) {//如果无针对指定类别的分润规则，则直接该平台的默认分润规则
+			map.put("warn-profit", "use platform default profit share scheme");
+			profitShareScheme = new ProfitShareScheme();
+			profitShareScheme.setPlatform(source);//仅根据source查找分润规则
+			profitShareScheme.setType("order");//默认只查找订单分润的规则：注意，这个值是在字典里定义的，不能弄错了
+			profitShareScheme = profitShareSchemeService.getByQuery(profitShareScheme);
+		}
+		
 		if(profitShareScheme==null) {//如果没有分润规则，那也没法算钱啊。快找运营去设置
 			map.put("warn-profit", "no profit share scheme");
 		}else {//那就找分润明细，并计算达人分润和上级分润
