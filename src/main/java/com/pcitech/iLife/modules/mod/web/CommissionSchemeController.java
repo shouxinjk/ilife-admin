@@ -137,6 +137,15 @@ public class CommissionSchemeController extends BaseController {
 		commission.setCategory(category);
 		commission.setPlatform(source);
 		commission = commissionSchemeService.getByQuery(commission);
+		
+		//如果没有根据类目设置佣金则默认使用平台佣金规则
+		if(commission == null) {
+			map.put("warn-commission", "use platform default commission scheme");
+			commission = new CommissionScheme();
+			commission.setPlatform(source);
+			commission = commissionSchemeService.getByQuery(commission);
+		}
+		
 		if(commission == null) {//如果没有佣金规则，那当然就不算钱了，但是积分还是要算的
 			map.put("warn-commission", "no commission scheme");
 		}else {//如果有佣金规则，就计算佣金总额
@@ -198,6 +207,15 @@ public class CommissionSchemeController extends BaseController {
 		creditScheme.setCategory(category);
 		creditScheme = creditSchemeService.getByQuery(creditScheme);
 		String script = "return price";//默认积分与价格相同
+		
+		//如果没有特定品类积分规则，则使用平台积分规则
+		if(creditScheme == null) {
+			map.put("warn-credit", "no credit scheme. use platform default credit scheme");
+			creditScheme = new CreditScheme();
+			creditScheme.setPlatform(source);
+			creditScheme = creditSchemeService.getByQuery(creditScheme);
+		}
+		
 		if(creditScheme == null) {//不用说了，运营没设置积分规则。直接采用与价格相等作为积分
 			map.put("warn-credit", "no credit scheme. use default one let credit=price");
 		}else {//否则就获取脚本算积分吧
@@ -292,6 +310,15 @@ public class CommissionSchemeController extends BaseController {
 		creditScheme.setCategory(category);
 		creditScheme = creditSchemeService.getByQuery(creditScheme);
 		String script = "return price";//默认积分与价格相同
+		
+		//如果没有特定品类积分规则，则使用平台积分规则
+		if(creditScheme == null) {
+			map.put("warn-credit", "no credit scheme. use platform default credit scheme");
+			creditScheme = new CreditScheme();
+			creditScheme.setPlatform(source);
+			creditScheme = creditSchemeService.getByQuery(creditScheme);
+		}
+		
 		if(creditScheme == null) {//不用说了，运营没设置积分规则。直接采用与价格相等作为积分
 			map.put("warn-credit", "no credit scheme. use default one let credit=price");
 		}else {//否则就获取脚本算积分吧
