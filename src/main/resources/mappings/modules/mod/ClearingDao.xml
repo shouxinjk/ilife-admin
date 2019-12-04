@@ -46,6 +46,20 @@
 		WHERE a.id = #{id}
 	</select>
 	
+	<!-- 根据达人ID分页查询清分记录，按照订单时间倒序排列。注意使用map传递参数 -->
+	<select id="findListByBroker" resultType="Clearing">
+		SELECT 
+			<include refid="clearingColumns"/>
+		FROM mod_clearing a
+		<include refid="clearingJoins"/>
+		<where>
+			a.del_flag = '0'
+			AND a.beneficiary = #{brokerId}
+		</where>
+		order by a.order_time desc 
+		limit #{offset},#{size}
+	</select>	
+	
 	<select id="findList" resultType="Clearing">
 		SELECT 
 			<include refid="clearingColumns"/>

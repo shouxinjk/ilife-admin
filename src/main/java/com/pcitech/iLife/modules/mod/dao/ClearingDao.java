@@ -3,6 +3,9 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.Clearing;
@@ -14,5 +17,5 @@ import com.pcitech.iLife.modules.mod.entity.Clearing;
  */
 @MyBatisDao
 public interface ClearingDao extends CrudDao<Clearing> {
-	
+	public List<Clearing> findListByBroker(Map<String,Object> param);
 }

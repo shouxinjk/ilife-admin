@@ -4,7 +4,9 @@
 package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +23,13 @@ import com.pcitech.iLife.modules.mod.dao.ClearingDao;
 @Service
 @Transactional(readOnly = true)
 public class ClearingService extends CrudService<ClearingDao, Clearing> {
-
+	@Autowired
+	private ClearingDao clearingDao;
+	
+	public List<Clearing> findListByBroker(Map<String,Object> param){
+		return clearingDao.findListByBroker(param);
+	}
+	
 	public Clearing get(String id) {
 		return super.get(id);
 	}

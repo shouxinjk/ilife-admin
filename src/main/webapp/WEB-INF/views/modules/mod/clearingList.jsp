@@ -37,13 +37,13 @@
 				<th>订单号</th>
 				<th>订单金额</th>
 				<th>佣金总额</th>
-				<th>分润金额</th>
-				<th>订单完成时间</th>
-				<th>分润规则</th>
-				<th>受益方类型</th>
-				<th>受益方</th>
 				<th>占比</th>
+				<th>分润金额</th>
 				<th>分润完成状态</th>
+				<th>受益方</th>
+				<th>受益方类型</th>
+				<th>分润规则</th>
+				<th>订单完成时间</th>
 				<th>收款凭证号</th>
 				<th>结算凭证号</th>					
 				<th>商品类别</th>
@@ -58,16 +58,16 @@
 				<td>${clearing.platform}</td>
 				<td>${clearing.order.orderNo}</td>
 				<td>${clearing.amountOrder}</td>
+				<td>${clearing.share}</td>
 				<td>${clearing.amountCommission}</td>
 				<td>${clearing.amountProfit}</td>
+				<td>${clearing.status}</td>
+				<td>${clearing.beneficiary}</td>
+				<td>${fns:getDictLabel(clearing.beneficiaryType, 'beneficiaryCategory', '-')}</td>
+				<td>${clearing.scheme.name}-${fns:getDictLabel(clearing.schemeItem.beneficiary, 'beneficiaryType', '-')}</td>	
 				<td>
 					<fmt:formatDate value="${clearing.orderTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>				
-				<td>${clearing.scheme.name}-${fns:getDictLabel(clearing.schemeItem.beneficiary, 'beneficiaryType', '-')}</td>	
-				<td>${fns:getDictLabel(clearing.beneficiaryType, 'beneficiaryCategory', '-')}</td>
-				<td>${clearing.beneficiary}</td>
-				<td>${clearing.share}</td>	
-				<td>${clearing.status}</td>
 				<td>${clearing.voucherCollection}</td>	
 				<td>${clearing.voucherSettlement}</td>			
 				<td>${clearing.category}</td>
