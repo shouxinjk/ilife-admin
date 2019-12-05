@@ -49,7 +49,7 @@
 		LEFT JOIN mod_clearing c ON c.beneficiary = a.id
 		LEFT JOIN mod_settlement s ON s.broker_id = a.id	
 		LEFT JOIN mod_payment p ON p.broker_id = a.id	
-		LEFT JOIN (SELECT tmp.broker_id as broker_id,tmp.amount as amount FROM mod_settlement tmp WHERE tmp.status_clear="locked") AS sLocked ON sLocked.broker_id = a.id	
+		LEFT JOIN (SELECT tmp.broker_id as broker_id,tmp.amount as amount FROM mod_settlement tmp WHERE tmp.status="locked") AS sLocked ON sLocked.broker_id = a.id	
 	</sql>    
 
 	<select id="getMoney" resultType="java.util.HashMap">
