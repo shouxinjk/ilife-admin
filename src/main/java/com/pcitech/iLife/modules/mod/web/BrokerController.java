@@ -224,16 +224,13 @@ public class BrokerController extends BaseController {
 	}
 	
 	/**
-	 * 获取达人收益汇总数据:按照清算金额、结算金额、冻结金额、已支付金额返回
+	 * 获取达人收益汇总数据:总额、已锁定总额(已收款+已锁定)、可提款总额（已收款+已清算）、已提现总额
+	 * 结算中金额 = 总额-已锁定总额-可提款总额
+	 * 提现金额 = 可提款总额-已提现总额
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/money/{id}", method = RequestMethod.GET)
 	public Map<String, Object> getMoney(@PathVariable String id, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Map<String, Object> map = brokerService.getMoney(id);
-		if(map.get("clearingAmount")==null)map.put("clearingAmount",0);
-		if(map.get("settlementAmount")==null)map.put("settlementAmount",0);
-		if(map.get("paymentAmount")==null)map.put("paymentAmount",0);
-		if(map.get("lockedAmount")==null)map.put("lockedAmount",0);
-		return map;
+		return brokerService.getMoney(id);
 	}
 }

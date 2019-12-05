@@ -39,17 +39,14 @@
 		a.hierarchy AS "hierarchy",
 		a.level AS "level",
 		a.create_date AS "createDate",
-		sum(c.amount_profit) AS "clearingAmount",
-		sum(s.amount) AS "settlementAmount",
-		sum(p.amount_request) AS "paymentAmount",
-		sum(sLocked.amount) AS "lockedAmount"
+		ifnull((SELECT sum(sTotal.amount_profit) FROM mod_clearing sTotal where sTotal.beneficiary=a.id),0) AS "totalAmount",
+		ifnull((SELECT sum(sCashed.amount_profit) FROM mod_clearing sCashed where sCashed.status_clear="cleared" and sCashed.status_cash="cashed" and sCashed.beneficiary=a.id),0) AS "payableAmount",
+		ifnull((SELECT sum(sLocked.amount_profit) FROM mod_clearing sLocked where sLocked.status_clear="locked" and sLocked.status_cash="cashed" and sLocked.beneficiary=a.id),0) AS "lockedAmount",
+		ifnull(sum(pay.amount_request),0) AS "paidAmount"
 	</sql>
 	
 	<sql id="moneyJoins">
-		LEFT JOIN mod_clearing c ON c.beneficiary = a.id
-		LEFT JOIN mod_settlement s ON s.broker_id = a.id	
-		LEFT JOIN mod_payment p ON p.broker_id = a.id	
-		LEFT JOIN (SELECT tmp.broker_id as broker_id,tmp.amount as amount FROM mod_settlement tmp WHERE tmp.status="locked") AS sLocked ON sLocked.broker_id = a.id	
+		LEFT JOIN mod_payment pay ON pay.broker_id = a.id	
 	</sql>    
 
 	<select id="getMoney" resultType="java.util.HashMap">
