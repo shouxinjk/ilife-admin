@@ -30,7 +30,9 @@ public class Clearing extends DataEntity<Clearing> {
 	private String share;		// 所占份额
 	private String item;		// 商品名称
 	private Date orderTime;		// 订单完成时间
-	private String status;		// 分润完成状态
+	private String statusClear;		// 分润完成状态
+	private String statusSettle;		// 结算状态
+	private String statusCash;		// 收款状态
 	private String voucherCollection;		// 收款凭证号
 	private String voucherSettlement;		// 结算凭证号
 	
@@ -153,14 +155,30 @@ public class Clearing extends DataEntity<Clearing> {
 	}
 	
 	@Length(min=0, max=20, message="分润完成状态长度必须介于 0 和 20 之间")
-	public String getStatus() {
-		return status;
+	public String getStatusClear() {
+		return statusClear;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setStatusClear(String statusClear) {
+		this.statusClear = statusClear;
 	}
 	
+	public String getStatusSettle() {
+		return statusSettle;
+	}
+
+	public void setStatusSettle(String statusSettle) {
+		this.statusSettle = statusSettle;
+	}
+
+	public String getStatusCash() {
+		return statusCash;
+	}
+
+	public void setStatusCash(String statusCash) {
+		this.statusCash = statusCash;
+	}
+
 	@Length(min=1, max=50, message="收款凭证号长度必须介于 1 和 50 之间")
 	public String getVoucherCollection() {
 		return voucherCollection;

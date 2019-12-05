@@ -114,11 +114,23 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">分润完成状态：</label>
+			<label class="control-label">清算状态：</label>
 			<div class="controls">
-				<form:input path="status" htmlEscape="false" maxlength="20" class="input-xlarge "/>
+				<form:input path="statusClear" htmlEscape="false" maxlength="20" class="input-xlarge "/>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">结算状态：</label>
+			<div class="controls">
+				<form:input path="statusSettle" htmlEscape="false" maxlength="20" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">收款状态：</label>
+			<div class="controls">
+				<form:input path="statusCash" htmlEscape="false" maxlength="20" class="input-xlarge "/>
+			</div>
+		</div>				
 		<div class="control-group">
 			<label class="control-label">收款凭证号：</label>
 			<div class="controls">
