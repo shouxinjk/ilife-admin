@@ -4,7 +4,9 @@
 package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +24,15 @@ import com.pcitech.iLife.modules.mod.dao.BoardDao;
 @Transactional(readOnly = true)
 public class BoardService extends CrudService<BoardDao, Board> {
 
+	@Autowired
+	BoardDao boardDao;
+	
 	public Board get(String id) {
 		return super.get(id);
+	}
+	
+	public List<Board> findByBrokerId(Map<String,Object> params) {
+		return boardDao.findByBrokerId(params);
 	}
 	
 	public List<Board> findList(Board board) {

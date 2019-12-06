@@ -14,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -26,6 +29,7 @@ import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Board;
+import com.pcitech.iLife.modules.mod.entity.Clearing;
 import com.pcitech.iLife.modules.mod.entity.ProfitShareScheme;
 import com.pcitech.iLife.modules.mod.service.BoardService;
 
@@ -103,6 +107,50 @@ public class BoardController extends BaseController {
 			
 		}
 		return mapList;
-	}	
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/boards/{brokerId}", method = RequestMethod.GET)
+	public List<Board> getBoardByBrokerId(@PathVariable String brokerId,@RequestParam int offset,@RequestParam int size,HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> map = Maps.newHashMap();
+		map.put("brokerId", brokerId);
+		map.put("offset", offset);
+		map.put("size", size);
+		return boardService.findByBrokerId(map);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/board", method = RequestMethod.POST)
+	public Map<String, Object> createNewBoard(@RequestBody Board board,HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> result = Maps.newHashMap();
+		boardService.save(board);
+		result.put("status",true);
+		result.put("description","Board created successfully");
+		Board newBoard = boardService.get(board);
+		result.put("data", newBoard);
+		return result;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/board/{id}", method = RequestMethod.PUT)
+	public Map<String, Object> modifyBoard(@PathVariable String id,@RequestBody Board board,HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> result = Maps.newHashMap();
+		Board old = boardService.get(id);
+		if(old == null) {
+			result.put("status",false);
+			result.put("description","Board does not exist. id:"+id);
+		}else {
+			old.setTitle(board.getTitle());
+			old.setDescription(board.getDescription());
+			old.setKeywords(board.getKeywords());
+			old.setTags(board.getTags());
+			boardService.save(old);
+			result.put("status",true);
+			result.put("description","Board modified successfully");
+			Board newBoard = boardService.get(old);
+			result.put("data", newBoard);
+		}
+		return result;
+	}
 	
 }

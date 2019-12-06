@@ -29,6 +29,18 @@
 		WHERE a.id = #{id}
 	</select>
 	
+	<select id="findListByBoardId" resultType="BoardItem">
+		SELECT 
+			<include refid="boardItemColumns"/>
+		FROM mod_board_item a
+		<include refid="boardItemJoins"/>
+		<where>
+			a.del_flag = 0 
+			AND a.board_id=#{boardId} 
+		</where>		
+		ORDER BY a.update_date ASC
+	</select>	
+	
 	<select id="findList" resultType="BoardItem">
 		SELECT 
 			<include refid="boardItemColumns"/>

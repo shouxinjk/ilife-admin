@@ -3,6 +3,9 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.Board;
@@ -14,5 +17,6 @@ import com.pcitech.iLife.modules.mod.entity.Board;
  */
 @MyBatisDao
 public interface BoardDao extends CrudDao<Board> {
-	
+	//根据brokerId查找创建的board。含分页参数
+	public List<Board> findByBrokerId(Map<String,Object> params);
 }

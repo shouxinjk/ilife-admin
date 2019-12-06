@@ -8,6 +8,8 @@
 		a.description AS "description",
 		a.type AS "type",
 		a.tags AS "tags",
+		b.name AS "broker.name",
+		a.broker_id AS "broker.id",
 		a.keywords AS "keywords",
 		a.status AS "status",
 		a.create_by AS "createBy.id",
@@ -18,6 +20,7 @@
 	</sql>
 	
 	<sql id="boardJoins">
+	left join mod_broker b on b.id=a.broker_id
 	</sql>
     
 	<select id="get" resultType="Board">
@@ -26,6 +29,19 @@
 		FROM mod_board a
 		<include refid="boardJoins"/>
 		WHERE a.id = #{id}
+	</select>
+
+	<select id="findByBrokerId" resultType="Board">
+		SELECT 
+			<include refid="boardColumns"/>
+		FROM mod_board a
+		<include refid="boardJoins"/>
+		<where>
+			a.del_flag = 0
+			AND a.broker_id = #{brokerId} 
+		</where>		
+		ORDER BY a.update_date DESC 
+		limit #{offset},#{size}  
 	</select>
 	
 	<select id="findList" resultType="Board">
@@ -73,6 +89,7 @@
 	<insert id="insert">
 		INSERT INTO mod_board(
 			id,
+			broker_id,
 			title,
 			description,
 			type,
@@ -86,6 +103,7 @@
 			del_flag
 		) VALUES (
 			#{id},
+			#{broker.id},
 			#{title},
 			#{description},
 			#{type},
@@ -102,6 +120,7 @@
 	
 	<update id="update">
 		UPDATE mod_board SET 	
+			broker_id = #{broker.id},
 			title = #{title},
 			description = #{description},
 			type = #{type},

@@ -21,6 +21,7 @@ public class Board extends DataEntity<Board> {
 	private String tags;		// 标签
 	private String keywords;		// 用于查询的关键词
 	private String status;		// 状态
+	private Broker broker; //创建该Board的达人
 	
 	public Board() {
 		super();
@@ -39,6 +40,14 @@ public class Board extends DataEntity<Board> {
 		this.title = title;
 	}
 	
+	public Broker getBroker() {
+		return broker;
+	}
+
+	public void setBroker(Broker broker) {
+		this.broker = broker;
+	}
+
 	public String getDescription() {
 		return description;
 	}

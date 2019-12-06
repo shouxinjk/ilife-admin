@@ -5,11 +5,13 @@ package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.service.CrudService;
+import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.BoardItem;
 import com.pcitech.iLife.modules.mod.dao.BoardItemDao;
 
@@ -22,6 +24,13 @@ import com.pcitech.iLife.modules.mod.dao.BoardItemDao;
 @Transactional(readOnly = true)
 public class BoardItemService extends CrudService<BoardItemDao, BoardItem> {
 
+	@Autowired
+	BoardItemDao boardItemDao;
+	
+	public List<BoardItem> findByBoardId(String boardId){
+		return boardItemDao.findListByBoardId(boardId);
+	}
+	
 	public BoardItem get(String id) {
 		return super.get(id);
 	}

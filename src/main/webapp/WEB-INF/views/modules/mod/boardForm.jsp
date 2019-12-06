@@ -32,7 +32,14 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="board" action="${ctx}/mod/board/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>	
+		<div class="control-group">
+			<label class="control-label">达人：</label>
+			<div class="controls">
+				<sys:treeselect id="broker" name="broker.id" value="${board.broker.id}" labelName="broker.name" labelValue="${board.broker.name}"
+					title="选择达人" url="/mod/broker/treeData" extId="${broker.id}" cssClass="" allowClear="true"/>
+			</div>
+		</div>			
 		<div class="control-group">
 			<label class="control-label">标题：</label>
 			<div class="controls">
