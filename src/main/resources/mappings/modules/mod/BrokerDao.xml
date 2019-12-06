@@ -46,7 +46,7 @@
 	</sql>
 	
 	<sql id="moneyJoins">
-		LEFT JOIN mod_payment pay ON pay.broker_id = a.id	
+		LEFT JOIN mod_payment pay ON pay.broker_id = a.id	 and pay.status='paid'
 	</sql>    
 
 	<select id="getMoney" resultType="java.util.HashMap">
