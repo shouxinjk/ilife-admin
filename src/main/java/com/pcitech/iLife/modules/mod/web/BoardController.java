@@ -153,4 +153,20 @@ public class BoardController extends BaseController {
 		return result;
 	}
 	
+	@ResponseBody
+	@RequestMapping(value = "rest/board/{id}", method = RequestMethod.GET)
+	public Map<String, Object> getBoardById(@PathVariable String id,HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> result = Maps.newHashMap();
+		Board old = boardService.get(id);
+		if(old == null) {
+			result.put("status",false);
+			result.put("description","Board does not exist. id:"+id);
+		}else {
+			result.put("status",true);
+			result.put("description","Board found successfully");
+			result.put("data", old);
+		}
+		return result;
+	}
+	
 }
