@@ -38,7 +38,7 @@
 			a.del_flag = 0 
 			AND a.board_id=#{boardId} 
 		</where>		
-		ORDER BY a.update_date ASC
+		ORDER BY a.create_date
 	</select>	
 	
 	<select id="findList" resultType="BoardItem">
