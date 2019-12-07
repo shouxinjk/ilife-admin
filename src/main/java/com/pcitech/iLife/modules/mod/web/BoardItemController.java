@@ -121,8 +121,9 @@ public class BoardItemController extends BaseController {
 		return result;
 	}
 	
+	//Nginx跨域配置DELETE方法不支持，只能通过PUT方法进行
 	@ResponseBody
-	@RequestMapping(value = "rest/board-item/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "rest/board-item/x/{id}", method = RequestMethod.PUT)
 	public Map<String, Object> removeBoardItem(@PathVariable String id,HttpServletRequest request, HttpServletResponse response, Model model) {
 		Map<String, Object> result = Maps.newHashMap();
 		BoardItem old = boardItemService.get(id);
