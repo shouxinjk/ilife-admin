@@ -15,4 +15,8 @@
 /src/main/webapp/userfiles/*
 /src/main/resources/iLife.properties
 /src/main/resources/wx.properties
+src/main/resources/iLife.properties
+src/main/resources/wx.properties
+iLife.properties
+wx.properties
 /target/
