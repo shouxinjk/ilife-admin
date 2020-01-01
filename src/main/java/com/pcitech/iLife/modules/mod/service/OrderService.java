@@ -5,6 +5,7 @@ package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +23,15 @@ import com.pcitech.iLife.modules.mod.dao.OrderDao;
 @Transactional(readOnly = true)
 public class OrderService extends CrudService<OrderDao, Order> {
 
+	@Autowired
+	OrderDao orderDao;
+	
 	public Order get(String id) {
 		return super.get(id);
+	}
+	
+	public List<Order> findPendingNofityList() {
+		return orderDao.findPendingNofityList();
 	}
 	
 	public List<Order> findList(Order order) {

@@ -14,6 +14,7 @@
 		a.item AS "item",
 		a.order_time AS "orderTime",
 		a.broker_id AS "broker.id",
+		p.openid AS "broker.openid",
 		a.notification AS "notification",
 		a.status AS "status",
 		a.create_by AS "createBy.id",
@@ -34,6 +35,18 @@
 		FROM mod_order a
 		<include refid="orderJoins"/>
 		WHERE a.id = #{id}
+	</select>
+
+	<select id="findPendingNofityList" resultType="Order">
+		SELECT 
+			<include refid="orderColumns"/>
+		FROM mod_order a
+		<include refid="orderJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} and a.notification='0'
+		</where>
+		ORDER BY a.create_date DESC 
+		LIMIT 100
 	</select>
 	
 	<select id="findList" resultType="Order">
