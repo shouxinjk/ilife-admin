@@ -36,7 +36,7 @@ public class TaskLoader{
 	@Autowired
 	private OccasionCategoryService occasionCategoryService;
 	
-    @PostConstruct
+   // @PostConstruct
     public void loadOccasionTasks() {
     		List<Occasion> occasions = occasionService.findList(new Occasion());
     		//schedule tasks
