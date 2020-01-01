@@ -18,4 +18,5 @@ import com.pcitech.iLife.modules.mod.entity.Clearing;
 @MyBatisDao
 public interface ClearingDao extends CrudDao<Clearing> {
 	public List<Clearing> findListByBroker(Map<String,Object> param);
+	public List<Map<String,Object>> findPendingNotifyList();
 }

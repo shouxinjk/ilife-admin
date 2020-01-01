@@ -53,16 +53,17 @@ public class NotifyTaskLoader{
 		SchedulerFactory sf = new StdSchedulerFactory();
 		try {
     			Scheduler sched = sf.getScheduler();
+    			String cron = Global.getConfig("task.cron.order-notify");
     			//增加订单通知任务
     			JobDetail job = newJob(BrokerOrderNotifyTask.class)
     				    .withIdentity("order-notify")
     				    .build();
 			CronTrigger trigger = newTrigger()
 			    .withIdentity("order-notify")
-			    .withSchedule(cronSchedule(Global.getConfig("task.cron.order-notify")))
+			    .withSchedule(cronSchedule(cron))
 			    .build();
 			sched.scheduleJob(job, trigger);		
-			logger.warn("order notify task loaded.");
+			logger.warn("order notify task loaded.[cron]"+cron);
 		}catch(SchedulerException e) {
 			logger.error("Load order notify task failed.",e);
 		}

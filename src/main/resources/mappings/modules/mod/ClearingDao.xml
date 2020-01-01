@@ -23,6 +23,7 @@
 		a.status_clear AS "statusClear",
 		a.status_settle AS "statusSettle",
 		a.status_cash AS "statusCash",
+		a.status_notify AS "statusNotify",
 		a.voucher_collection AS "voucherCollection",
 		a.voucher_settlement AS "voucherSettlement",
 		a.create_by AS "createBy.id",
@@ -47,6 +48,26 @@
 		<include refid="clearingJoins"/>
 		WHERE a.id = #{id}
 	</select>
+	
+	<!-- 查询所有待发送通知列表：注意其中包含grandpa、parent、broker、buy、credit五类通知 -->
+	<select id="findPendingNotifyList" resultType="java.util.HashMap">
+		select a.id,
+		a.platform,
+		a.amount_profit,
+		a.item,
+		a.order_time,
+		a.status_clear,
+		b.id as broker_id,
+		b.openid as broker_openid,
+		b.name as broker_name,
+		d.beneficiary,
+		(select tmp.name from mod_broker tmp,mod_trace_code tmp2 where tmp2.code=c.trace_code and tmp.id=tmp2.broker_id) as seller 
+		from mod_clearing a 
+		left join mod_broker b on b.id = a.beneficiary 
+		left join mod_order c on c.id=a.order_id 
+		left join mod_profit_share_item d on d.id=a.scheme_item_id 
+		where a.beneficiary_type='person' and a.status_notify = 'pending' limit 20
+	</select>	
 	
 	<!-- 根据达人ID分页查询清分记录，按照订单时间倒序排列。注意使用map传递参数 -->
 	<select id="findListByBroker" resultType="Clearing">
@@ -117,6 +138,7 @@
 			status_clear,
 			status_settle,
 			status_cash,
+			status_notify,
 			voucher_collection,
 			voucher_settlement,
 			create_by,
@@ -142,6 +164,7 @@
 			#{statusClear},
 			#{statusSettle},
 			#{statusCash},
+			#{statusNotify},
 			#{voucherCollection},
 			#{voucherSettlement},
 			#{createBy.id},
@@ -170,6 +193,7 @@
 			status_clear = #{statusClear},
 			status_settle = #{statusSettle},
 			status_cash = #{statusCash},
+			status_notify = #{statusNotify},
 			voucher_collection = #{voucherCollection},
 			voucher_settlement = #{voucherSettlement},
 			update_by = #{updateBy.id},

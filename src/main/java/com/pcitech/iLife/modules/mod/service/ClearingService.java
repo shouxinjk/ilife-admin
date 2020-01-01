@@ -30,6 +30,10 @@ public class ClearingService extends CrudService<ClearingDao, Clearing> {
 		return clearingDao.findListByBroker(param);
 	}
 	
+	public List<Map<String,Object>> findPendingNotifyList(){
+		return clearingDao.findPendingNotifyList();
+	}
+	
 	public Clearing get(String id) {
 		return super.get(id);
 	}

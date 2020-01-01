@@ -33,6 +33,7 @@ public class Clearing extends DataEntity<Clearing> {
 	private String statusClear;		// 分润完成状态
 	private String statusSettle;		// 结算状态
 	private String statusCash;		// 收款状态
+	private String statusNotify;		// 通知状态
 	private String voucherCollection;		// 收款凭证号
 	private String voucherSettlement;		// 结算凭证号
 	
@@ -177,6 +178,14 @@ public class Clearing extends DataEntity<Clearing> {
 
 	public void setStatusCash(String statusCash) {
 		this.statusCash = statusCash;
+	}
+
+	public String getStatusNotify() {
+		return statusNotify;
+	}
+
+	public void setStatusNotify(String statusNotify) {
+		this.statusNotify = statusNotify;
 	}
 
 	@Length(min=1, max=50, message="收款凭证号长度必须介于 1 和 50 之间")
