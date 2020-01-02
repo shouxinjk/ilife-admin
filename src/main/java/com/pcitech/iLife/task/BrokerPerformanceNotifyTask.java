@@ -45,7 +45,7 @@ public class BrokerPerformanceNotifyTask implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
     		//从配置中获取任务类型
     		String type = context.getJobDetail().getJobDataMap().getString("task_type");
-    		logger.warn("Performance Notification job start. [type]"+type + new Date());
+    		logger.info("Performance Notification job start. [type]"+type + new Date());
     		
     		Calendar cal = Calendar.getInstance();
     		SimpleDateFormat fmt1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -64,6 +64,10 @@ public class BrokerPerformanceNotifyTask implements Job {
     	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
     	    JSONObject result = null;
     		for(BrokerPerformance task:tasks) {
+    			if(task.getBroker() == null || task.getBroker().getOpenid()==null || task.getBroker().getOpenid().trim().length()==0) {
+    				logger.error("Cannot send performance notification to broker without openid.[json]"+task);
+    				continue;
+    			}
     			//计算起止时间：
     			if("daily".equalsIgnoreCase(task.getTaskType())) {
     				//如果是daily任务：每天晚上7点开始汇总前一天晚上7点到今天晚上7点的数据
@@ -129,12 +133,16 @@ public class BrokerPerformanceNotifyTask implements Job {
         			result = HttpClientHelper.getInstance().post(
         					Global.getConfig("wechat.templateMessenge")+"/performance-notify", 
         					msg,header);
-        			task.setStatusNotify("done");
-        			task.setDateNotify(new Date());
-        			task.setUpdateDate(new Date());
-        			performanceService.save(task);
+        			//3，更新通知状态
+        			if(result.getBooleanValue("status")) {
+        				logger.info("perfromance notification msg sent.[msgId] " + result.getString("msgId"));
+	        			task.setStatusNotify("done");
+	        			task.setDateNotify(new Date());
+	        			task.setUpdateDate(new Date());
+	        			performanceService.save(task);
+        			}
     			}
-    	        logger.info("Performace Calc & Notification job executed: " +task);
+    	        logger.info("Performace Calc & Notification job executed.[msg]" +task+"\n[next fire]"+context.getNextFireTime());
     		}
     }
 

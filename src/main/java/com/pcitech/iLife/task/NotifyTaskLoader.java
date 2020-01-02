@@ -35,7 +35,7 @@ public class NotifyTaskLoader{
     @PostConstruct
     public void loadNotifyTasks() {
     		//订单通知任务
-    		loadOrderNotifyJobs();
+    		loadClearingNotifyJobs();
     		
     		//自动汇总初始化任务
     		loadCalcTaskInitJobs("daily");
@@ -49,21 +49,21 @@ public class NotifyTaskLoader{
     }
     
     //订单自动通知任务：每5分钟执行一次
-    public void loadOrderNotifyJobs() {
+    public void loadClearingNotifyJobs() {
 		SchedulerFactory sf = new StdSchedulerFactory();
 		try {
     			Scheduler sched = sf.getScheduler();
     			String cron = Global.getConfig("task.cron.order-notify");
     			//增加订单通知任务
-    			JobDetail job = newJob(BrokerOrderNotifyTask.class)
-    				    .withIdentity("order-notify")
+    			JobDetail job = newJob(BrokerClearingNotifyTask.class)
+    				    .withIdentity("job-clearing-notify")
     				    .build();
 			CronTrigger trigger = newTrigger()
-			    .withIdentity("order-notify")
+			    .withIdentity("trigger-clearing-notify")
 			    .withSchedule(cronSchedule(cron))
 			    .build();
 			sched.scheduleJob(job, trigger);		
-			logger.warn("order notify task loaded.[cron]"+cron);
+			logger.info("clearing notify task loaded.[cron]"+cron+"[next fire]"+trigger.getNextFireTime());
 		}catch(SchedulerException e) {
 			logger.error("Load order notify task failed.",e);
 		}
@@ -77,15 +77,15 @@ public class NotifyTaskLoader{
     			Scheduler sched = sf.getScheduler();
     			//增加创建汇总记录任务
     			JobDetail job = newJob(BrokerPerformanceTaskCreator.class)
-    				    .withIdentity("init-calc-"+type)
+    				    .withIdentity("job-init-calc-"+type)
     				    .build();
     			job.getJobDataMap().put("task_type", type);//传递参数到任务内部
 			CronTrigger trigger = newTrigger()
-			    .withIdentity("init-calc-"+type)
+			    .withIdentity("trigger-init-calc-"+type)
 			    .withSchedule(cronSchedule(cron))
 			    .build();
 			sched.scheduleJob(job, trigger);		
-			logger.warn("init auto-calc task loaded.[type]"+type+"[cron]"+cron);
+			logger.info(type+" init auto-calc task loaded.[type]"+type+"[cron]"+cron+"[next fire]"+trigger.getNextFireTime());
 		}catch(SchedulerException e) {
 			logger.error("Load init calc task failed.[type]"+type,e);
 		}
@@ -100,15 +100,15 @@ public class NotifyTaskLoader{
     			Scheduler sched = sf.getScheduler();
     			//增加创建汇总记录任务
     			JobDetail job = newJob(BrokerPerformanceNotifyTask.class)
-    				    .withIdentity("auto-calc-"+type)
+    				    .withIdentity("job-auto-calc-"+type)
     				    .build();
     			job.getJobDataMap().put("task_type", type);//传递参数到任务内部
 			CronTrigger trigger = newTrigger()
-			    .withIdentity("auto-calc-"+type)
+			    .withIdentity("trigger-auto-calc-"+type)
 			    .withSchedule(cronSchedule(cron))
 			    .build();
 			sched.scheduleJob(job, trigger);		
-			logger.warn("auto-calc task loaded.[type]"+type+"[cron]"+cron);
+			logger.info(type+" auto-calc task loaded.[type]"+type+"[cron]"+cron+"[next fire]"+trigger.getNextFireTime());
 		}catch(SchedulerException e) {
 			logger.error("Load auto calc task failed.[type]"+type,e);
 		}

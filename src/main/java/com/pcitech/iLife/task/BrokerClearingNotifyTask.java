@@ -25,13 +25,13 @@ import org.quartz.JobExecutionException;
 /**
  * 查询新成交的订单，并发送通知给指定达人。
  */
-public class BrokerOrderNotifyTask implements Job {
-    private static Logger logger = LoggerFactory.getLogger(BrokerOrderNotifyTask.class);
+public class BrokerClearingNotifyTask implements Job {
+    private static Logger logger = LoggerFactory.getLogger(BrokerClearingNotifyTask.class);
     
     @Autowired
     ClearingService clearingService;
 
-    public BrokerOrderNotifyTask() {
+    public BrokerClearingNotifyTask() {
     }
 
     /**
@@ -41,7 +41,7 @@ public class BrokerOrderNotifyTask implements Job {
 	 * 3，更新notification状态为true
      */
     public void execute(JobExecutionContext context) throws JobExecutionException {
-    		logger.warn("Order Notification job start. " + new Date());
+    		logger.info("Clearing Notification job start. " + new Date());
     		//1，查询所有待通知清分记录
     		List<Map<String,Object>> items = clearingService.findPendingNotifyList();
     		//2，逐条发送通知：不处理结果，仅发送即可
@@ -50,6 +50,10 @@ public class BrokerOrderNotifyTask implements Job {
     	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
     	    JSONObject result = null;
     		for(Map<String,Object> item:items) {
+    			if(item.get("broker_openid")==null || item.get("broker_openid").toString().length()==0) {
+    				logger.error("Cannot send clearing notification to broker without openid.[json]"+item);
+    				continue;
+    			}
     			JSONObject msg = new JSONObject();
     			msg.put("item", item.get("item"));
     			msg.put("orderTime", item.get("order_time"));
@@ -65,14 +69,14 @@ public class BrokerOrderNotifyTask implements Job {
     					msg,header);
     			//3，更新通知状态
     			if(result.getBooleanValue("status")) {
-    				logger.info("notification msg sent.[msgId] " + result.getString("msgId"));
+    				logger.info("clearing notification msg sent.[msgId] " + result.getString("msgId"));
     				//更新清分记录的通知状态
     				Clearing clearing = clearingService.get(item.get("id").toString());
     				clearing.setStatusNotify("done");
     				clearing.setUpdateDate(new Date());
     				clearingService.save(clearing);
     			}
-    	        logger.info("Order Notification job executed: " + msg);
+    	        logger.info("Clearing Notification job executed.[msg]" + msg+"\n[next fire]"+context.getNextFireTime());
     		}
     }
 
