@@ -27,7 +27,7 @@ import org.quartz.JobExecutionException;
 /**
  * 查询达人当日、当周、当月绩效汇总，并发送通知给指定达人。
  */
-public class BrokerPerformanceNotifyTask implements Job {
+public class BrokerPerformanceNotifyTask{
     private static Logger logger = LoggerFactory.getLogger(BrokerPerformanceNotifyTask.class);
     
     @Autowired
@@ -42,9 +42,8 @@ public class BrokerPerformanceNotifyTask implements Job {
 	 * 2，循环根据所有达人查询：分享量、浏览量、成交量、订单数。并更新对应记录数据及任务状态为true
 	 * 3，通过httpclient发送通知给达人并更新对应记录的notification状态为true
      */
-    public void execute(JobExecutionContext context) throws JobExecutionException {
+    public void execute(String type) throws JobExecutionException {
     		//从配置中获取任务类型
-    		String type = context.getJobDetail().getJobDataMap().getString("task_type");
     		logger.info("Performance Notification job start. [type]"+type + new Date());
     		
     		Calendar cal = Calendar.getInstance();
@@ -142,7 +141,7 @@ public class BrokerPerformanceNotifyTask implements Job {
 	        			performanceService.save(task);
         			}
     			}
-    	        logger.info("Performace Calc & Notification job executed.[msg]" +task+"\n[next fire]"+context.getNextFireTime());
+    	        logger.info("Performace Calc & Notification job executed.[type]"+type+"[msg]" +task);
     		}
     }
 

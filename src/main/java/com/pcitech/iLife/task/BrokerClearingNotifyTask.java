@@ -1,5 +1,6 @@
 package com.pcitech.iLife.task;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,7 @@ import org.quartz.JobExecutionException;
 /**
  * 查询新成交的订单，并发送通知给指定达人。
  */
-public class BrokerClearingNotifyTask implements Job {
+public class BrokerClearingNotifyTask {
     private static Logger logger = LoggerFactory.getLogger(BrokerClearingNotifyTask.class);
     
     @Autowired
@@ -40,8 +41,9 @@ public class BrokerClearingNotifyTask implements Job {
 	 * 2，通过httpclient发送通知给达人
 	 * 3，更新notification状态为true
      */
-    public void execute(JobExecutionContext context) throws JobExecutionException {
+    public void execute() throws JobExecutionException {
     		logger.info("Clearing Notification job start. " + new Date());
+    		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		//1，查询所有待通知清分记录
     		List<Map<String,Object>> items = clearingService.findPendingNotifyList();
     		//2，逐条发送通知：不处理结果，仅发送即可
@@ -54,10 +56,18 @@ public class BrokerClearingNotifyTask implements Job {
     				logger.error("Cannot send clearing notification to broker without openid.[json]"+item);
     				continue;
     			}
+    			//Date orderTime = new Date(Long.parseLong(item.get("order_time").toString()));
+    			
     			JSONObject msg = new JSONObject();
     			msg.put("item", item.get("item"));
-    			msg.put("orderTime", item.get("order_time"));
-    			msg.put("amountProfit", item.get("order_time"));
+    			try {
+    				Date orderTime = fmt.parse(item.get("order_time").toString());
+    				msg.put("orderTime",fmt.format(orderTime) );
+    			}catch(Exception ex) {
+    				msg.put("orderTime", fmt.format(new Date()));
+    				logger.error("Cannot parse order time.[msg]"+item,ex);
+    			}
+    			msg.put("amountProfit", item.get("amount_profit"));
     			msg.put("status", item.get("status_clear"));
     			msg.put("brokerName", item.get("broker_name"));
     			msg.put("brokerOpenid", item.get("broker_openid"));
@@ -76,7 +86,7 @@ public class BrokerClearingNotifyTask implements Job {
     				clearing.setUpdateDate(new Date());
     				clearingService.save(clearing);
     			}
-    	        logger.info("Clearing Notification job executed.[msg]" + msg+"\n[next fire]"+context.getNextFireTime());
+    	        logger.info("Clearing Notification job executed.[msg]" + msg);
     		}
     }
 

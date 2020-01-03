@@ -11,7 +11,8 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.1.xsd 
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd"
-	default-lazy-init="false">
+	default-lazy-init="true">
+	
 	<description>Spring Configuration</description>
 	
 	<context:annotation-config/>

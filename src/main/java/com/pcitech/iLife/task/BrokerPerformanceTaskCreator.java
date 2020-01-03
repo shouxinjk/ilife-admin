@@ -24,7 +24,7 @@ import org.quartz.JobExecutionException;
  * 创建待汇总达人绩效任务。
  * 在指定时间自动查询所有达人，并生成对应的任务列表，其中汇总状态、通知状态均为pending
  */
-public class BrokerPerformanceTaskCreator implements Job {
+public class BrokerPerformanceTaskCreator{
     private static Logger logger = LoggerFactory.getLogger(BrokerPerformanceTaskCreator.class);
     
     @Autowired
@@ -39,8 +39,7 @@ public class BrokerPerformanceTaskCreator implements Job {
 	 * 2，将任务记录添加到达人绩效任务表。包括brokerId、brokerOpenid、taskType（daily、weekly、monthly等）、分享量、浏览量、购买量、订单数、团队人数、订单佣金、团队佣金。其中taskStatus=false、notifyStatus=false
      * 注意：实际直接通过SQL语句完成。不需要循环处理
      */
-    public void execute(JobExecutionContext context) throws JobExecutionException {
-    		String type = context.getJobDetail().getJobDataMap().getString("task_type");
+    public void execute(String type) throws JobExecutionException {
     		logger.warn("Performance init-calc job start. [type]"+type + new Date());
     		
     		performanceService.insertByBroker(type);

@@ -1,11 +1,10 @@
 package com.pcitech.iLife.task;
 
-import javax.annotation.PostConstruct;
+import java.util.Date;
 
-public class AutoRunSample {
+public class AutoRunSample{
 	
-	@PostConstruct
-	public void applicationStart(){
-		System.out.println("=================\napplication start\n================");
+	public void execute(String type) {
+		System.err.println("=================\nAuto job runs....[type]"+type+"[next fire]"+new Date()+"\n================");
 	}
 }
