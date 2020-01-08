@@ -96,6 +96,14 @@
             <artifactId>weixin-java-mp</artifactId>
             <version>${weixin-java-mp.version}</version>
         </dependency>
+        <!-- taobao SDK -->
+        <!-- 需要本地安装 -->
+        <!-- mvn install:install-file -DgroupId=com.taobao -DartifactId=sdk-java -Dversion=20191228 -Dpackaging=jar -Dfile=/path/to/taobao-sdk-java-auto_1564048773031-20191228.jar -->
+        <dependency>
+            <groupId>com.taobao</groupId>
+            <artifactId>sdk-java</artifactId>
+            <version>20191228</version>
+        </dependency>         
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -245,7 +253,7 @@
 		<dependency>
 		    <groupId>com.arangodb</groupId>
 		    <artifactId>arangodb-java-driver</artifactId>
-		    <version>4.7.0</version>
+		    <version>5.0.0</version>
 		</dependency>
 		
 		<!-- WEB begin -->
