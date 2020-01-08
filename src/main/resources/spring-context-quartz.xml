@@ -140,4 +140,21 @@
         </property>
     </bean>         
 	
+	<!-- 淘宝数据类目同步: 每3分钟执行 -->
+    <bean id="cpsDataSyncTaskTaobao" class="com.pcitech.iLife.task.TaobaoItemSync"></bean>
+    <bean id="cpsDataSyncTaskTaobaoMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskTaobao"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskTaobaoTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskTaobaoMethod"></property>
+        <property name="cronExpression" value="0 */3 * * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskTaobaoScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskTaobaoTrigger"></ref>
+            </list>
+        </property>
+    </bean> 	
 </beans>
