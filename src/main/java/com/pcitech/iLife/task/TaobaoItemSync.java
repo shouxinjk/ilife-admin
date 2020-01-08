@@ -83,7 +83,6 @@ public class TaobaoItemSync {
             arangoClient = new ArangoDbClient(host,port,username,password,database);
             List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
             for (BaseDocument item:items) {
-                //itemMap.put(item.getProperties().get("link").toString(), item.getProperties().get("itemKey").toString());
             		itemMap.put(item.getProperties().get("id").toString(), item.getProperties().get("itemKey").toString());
                 itemList.add(item.getProperties().get("id").toString());
             }
@@ -102,28 +101,48 @@ public class TaobaoItemSync {
 			logger.error("failed query item info from taobao.",ex);
 		}//查询结果
     		int count = 0;
-    		for(NTbkItem item:results) {
-    			//String itemKey = itemMap.get(item.getItemUrl());
+    		List<String> syncedList = new ArrayList<String>();//存放所有已查询的结果
+    		for(NTbkItem item:results) {//注意，返回的结果中仅包含部分内容。
     			String itemKey = itemMap.get(""+item.getNumIid());
     			if(itemKey != null && itemKey.trim().length()>1) {//避免出现地址不匹配更新错误
     				logger.info("try to update item.[itemKey]"+itemKey+"[url]"+item.getItemUrl());
     				BaseDocument doc = new BaseDocument();
     				Map<String,Object> syncStatus = new HashMap<String,Object>();
     				syncStatus.put("sync", true);
+    				Map<String,Object> syncTimestamp = new HashMap<String,Object>();
+    				syncStatus.put("sync", new Date());	
     				List<String> categories = new ArrayList<String>();
     				categories.add(item.getCatLeafName());
     				categories.add(item.getCatName());
     				
     				doc.setKey(itemKey);
     				doc.getProperties().put("status", syncStatus);
+    				doc.getProperties().put("timestamp", syncTimestamp);
     				doc.getProperties().put("category", categories);
     				doc.getProperties().put("logo", item.getPictUrl());
     				
     				arangoClient.update("my_stuff", itemKey, doc);
+    				syncedList.add(""+item.getNumIid());
     				count ++;
     			}else {
     				logger.warn("Cannot update arangodb item while url is wrong.[id]"+item.getNumIid()+"[url]"+item.getItemUrl());
     			}
+    		}
+    		
+    		//更新API接口内无返回数据的结果。设置更新标注
+    		for(String id:itemList) {
+    			if(syncedList.indexOf(id)>-1) continue;//如果已经处理过则直接跳过
+    			String itemKey = itemMap.get(id);
+			logger.info("try to update unchanged item.[itemKey]"+itemKey);
+			BaseDocument doc = new BaseDocument();
+			Map<String,Object> syncStatus = new HashMap<String,Object>();
+			syncStatus.put("sync", true);
+			Map<String,Object> syncTimestamp = new HashMap<String,Object>();
+			syncStatus.put("sync", new Date());			
+			doc.setKey(itemKey);
+			doc.getProperties().put("status", syncStatus);
+			doc.getProperties().put("timestamp", syncTimestamp);
+			arangoClient.update("my_stuff", itemKey, doc);
     		}
     		
     		//完成后关闭arangoDbClient
@@ -139,10 +158,10 @@ public class TaobaoItemSync {
 		msg.put("title", "导购数据同步结果");
 		msg.put("task", "淘宝类目数据同步");
 		msg.put("time", fmt.format(new Date()));
-		msg.put("remark", "期望同步数量："+itemList.size()
-				+ "\n实际同步数量："+results.size()
-				+ "\n差异数："+(itemList.size()-results.size()));
-		msg.put("color", itemList.size()-results.size()==0?"#00FF00":"#FF0000");
+		msg.put("remark", "预期数量："+itemList.size()
+				+ "\n实际数量："+results.size()
+				+ "\n差异："+(itemList.size()-results.size()));
+		msg.put("color", itemList.size()-results.size()==0?"#00FF00":"#000000");
 
 		result = HttpClientHelper.getInstance().post(
 				Global.getConfig("wechat.templateMessenge")+"/data-sync-notify", 
