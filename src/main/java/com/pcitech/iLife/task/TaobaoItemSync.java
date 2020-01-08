@@ -93,84 +93,84 @@ public class TaobaoItemSync {
         }
         
     		//将所有商品ID组织逗号分隔的字符串
-    		String ids = StringUtils.join(itemList.toArray(),",");
-    		List<NTbkItem> results = new ArrayList<NTbkItem>();
-    		try {
-    			results = taobaoHelper.getItemDetail(ids);
-		} catch (ApiException ex) {
-			logger.error("failed query item info from taobao.",ex);
-		}//查询结果
-    		int count = 0;
-    		List<String> syncedList = new ArrayList<String>();//存放所有已查询的结果
-    		for(NTbkItem item:results) {//注意，返回的结果中仅包含部分内容。
-    			String itemKey = itemMap.get(""+item.getNumIid());
-    			if(itemKey != null && itemKey.trim().length()>1) {//避免出现地址不匹配更新错误
-    				logger.info("try to update item.[itemKey]"+itemKey+"[url]"+item.getItemUrl());
-    				BaseDocument doc = new BaseDocument();
-    				Map<String,Object> syncStatus = new HashMap<String,Object>();
-    				syncStatus.put("sync", true);
-    				Map<String,Object> syncTimestamp = new HashMap<String,Object>();
-    				syncStatus.put("sync", new Date());	
-    				List<String> categories = new ArrayList<String>();
-    				categories.add(item.getCatLeafName());
-    				categories.add(item.getCatName());
-    				
-    				doc.setKey(itemKey);
-    				doc.getProperties().put("status", syncStatus);
-    				doc.getProperties().put("timestamp", syncTimestamp);
-    				doc.getProperties().put("category", categories);
-    				doc.getProperties().put("logo", item.getPictUrl());
-    				
-    				arangoClient.update("my_stuff", itemKey, doc);
-    				syncedList.add(""+item.getNumIid());
-    				count ++;
-    			}else {
-    				logger.warn("Cannot update arangodb item while url is wrong.[id]"+item.getNumIid()+"[url]"+item.getItemUrl());
-    			}
+        if(itemList.size()>0) {
+	    		String ids = StringUtils.join(itemList.toArray(),",");
+	    		List<NTbkItem> results = new ArrayList<NTbkItem>();
+	    		try {
+	    			results = taobaoHelper.getItemDetail(ids);
+			} catch (ApiException ex) {
+				logger.error("failed query item info from taobao.",ex);
+			}
+	    		List<String> syncedList = new ArrayList<String>();//存放所有已查询的结果
+	    		for(NTbkItem item:results) {//注意，返回的结果中仅包含部分内容。
+	    			String itemKey = itemMap.get(""+item.getNumIid());
+	    			if(itemKey != null && itemKey.trim().length()>1) {//避免出现地址不匹配更新错误
+	    				logger.info("try to update item.[itemKey]"+itemKey+"[url]"+item.getItemUrl());
+	    				BaseDocument doc = new BaseDocument();
+	    				Map<String,Object> syncStatus = new HashMap<String,Object>();
+	    				syncStatus.put("sync", true);
+	    				Map<String,Object> syncTimestamp = new HashMap<String,Object>();
+	    				syncStatus.put("sync", new Date());	
+	    				List<String> categories = new ArrayList<String>();
+	    				categories.add(item.getCatLeafName());
+	    				categories.add(item.getCatName());
+	    				
+	    				doc.setKey(itemKey);
+	    				doc.getProperties().put("status", syncStatus);
+	    				doc.getProperties().put("timestamp", syncTimestamp);
+	    				doc.getProperties().put("category", categories);
+	    				doc.getProperties().put("logo", item.getPictUrl());
+	    				
+	    				arangoClient.update("my_stuff", itemKey, doc);
+	    				syncedList.add(""+item.getNumIid());
+	    			}else {
+	    				logger.warn("Cannot update arangodb item while url is wrong.[id]"+item.getNumIid()+"[url]"+item.getItemUrl());
+	    			}
+	    		}
+    		
+	    		//更新API接口内无返回数据的结果。设置更新标注
+	    		for(String id:itemList) {
+	    			if(syncedList.indexOf(id)>-1) continue;//如果已经处理过则直接跳过
+	    			String itemKey = itemMap.get(id);
+				logger.info("try to update unchanged item.[itemKey]"+itemKey);
+				BaseDocument doc = new BaseDocument();
+				Map<String,Object> syncStatus = new HashMap<String,Object>();
+				syncStatus.put("sync", true);
+				Map<String,Object> syncTimestamp = new HashMap<String,Object>();
+				syncStatus.put("sync", new Date());			
+				doc.setKey(itemKey);
+				doc.getProperties().put("status", syncStatus);
+				doc.getProperties().put("timestamp", syncTimestamp);
+				arangoClient.update("my_stuff", itemKey, doc);
+	    		}
+    		
+    			//完成后关闭arangoDbClient
+    			arangoClient.close();
+    		
+    			//发送处理结果到管理员
+	    		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    	    Map<String,String> header = new HashMap<String,String>();
+	    	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
+	    	    JSONObject result = null;
+			JSONObject msg = new JSONObject();
+			msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
+			msg.put("title", "导购数据同步结果");
+			msg.put("task", "淘宝类目数据同步");
+			msg.put("time", fmt.format(new Date()));
+			msg.put("remark", "预期数量："+itemList.size()
+					+ "\n实际数量："+results.size()
+					+ "\n差异："+(itemList.size()-results.size()));
+			msg.put("color", itemList.size()-results.size()==0?"#00FF00":"#000000");
+	
+			result = HttpClientHelper.getInstance().post(
+					Global.getConfig("wechat.templateMessenge")+"/data-sync-notify", 
+					msg,header);
+			//3，更新通知状态
+			if(result.getBooleanValue("status")) {
+				logger.info("clearing notification msg sent.[msgId] " + result.getString("msgId"));
+			}
+	        logger.info("Clearing Notification job executed.[msg]" + msg);
     		}
-    		
-    		//更新API接口内无返回数据的结果。设置更新标注
-    		for(String id:itemList) {
-    			if(syncedList.indexOf(id)>-1) continue;//如果已经处理过则直接跳过
-    			String itemKey = itemMap.get(id);
-			logger.info("try to update unchanged item.[itemKey]"+itemKey);
-			BaseDocument doc = new BaseDocument();
-			Map<String,Object> syncStatus = new HashMap<String,Object>();
-			syncStatus.put("sync", true);
-			Map<String,Object> syncTimestamp = new HashMap<String,Object>();
-			syncStatus.put("sync", new Date());			
-			doc.setKey(itemKey);
-			doc.getProperties().put("status", syncStatus);
-			doc.getProperties().put("timestamp", syncTimestamp);
-			arangoClient.update("my_stuff", itemKey, doc);
-    		}
-    		
-    		//完成后关闭arangoDbClient
-    		arangoClient.close();
-    		
-    		//发送处理结果到管理员
-    		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    	    Map<String,String> header = new HashMap<String,String>();
-    	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
-    	    JSONObject result = null;
-		JSONObject msg = new JSONObject();
-		msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
-		msg.put("title", "导购数据同步结果");
-		msg.put("task", "淘宝类目数据同步");
-		msg.put("time", fmt.format(new Date()));
-		msg.put("remark", "预期数量："+itemList.size()
-				+ "\n实际数量："+results.size()
-				+ "\n差异："+(itemList.size()-results.size()));
-		msg.put("color", itemList.size()-results.size()==0?"#00FF00":"#000000");
-
-		result = HttpClientHelper.getInstance().post(
-				Global.getConfig("wechat.templateMessenge")+"/data-sync-notify", 
-				msg,header);
-		//3，更新通知状态
-		if(result.getBooleanValue("status")) {
-			logger.info("clearing notification msg sent.[msgId] " + result.getString("msgId"));
-		}
-        logger.info("Clearing Notification job executed.[msg]" + msg);
     		
     }
 
