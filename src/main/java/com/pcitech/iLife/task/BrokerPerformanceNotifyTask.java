@@ -129,6 +129,8 @@ public class BrokerPerformanceNotifyTask{
         			msg.put("taskType", task.getTaskType());
         			msg.put("brokerOpenid", task.getBroker().getOpenid());
         			msg.put("brokerName", task.getBroker().getName());
+        			msg.put("amount", task.getAmountBuy()+task.getAmountCredit()+task.getAmountOrder()+task.getAmountTeam());
+        			msg.put("date", fmt1.format(new Date()));
         			result = HttpClientHelper.getInstance().post(
         					Global.getConfig("wechat.templateMessenge")+"/performance-notify", 
         					msg,header);

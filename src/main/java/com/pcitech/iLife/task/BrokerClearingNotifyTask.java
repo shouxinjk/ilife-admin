@@ -67,6 +67,7 @@ public class BrokerClearingNotifyTask {
     				msg.put("orderTime", fmt.format(new Date()));
     				logger.error("Cannot parse order time.[msg]"+item,ex);
     			}
+    			msg.put("amountOrder", item.get("amount_order"));
     			msg.put("amountProfit", item.get("amount_profit"));
     			msg.put("status", item.get("status_clear"));
     			msg.put("brokerName", item.get("broker_name"));

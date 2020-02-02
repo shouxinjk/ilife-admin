@@ -53,6 +53,7 @@
 	<select id="findPendingNotifyList" resultType="java.util.HashMap">
 		select a.id,
 		a.platform,
+		a.amount_order,
 		a.amount_profit,
 		a.item,
 		a.order_time,

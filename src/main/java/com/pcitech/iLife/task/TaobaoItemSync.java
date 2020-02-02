@@ -110,7 +110,7 @@ public class TaobaoItemSync {
 	    				Map<String,Object> syncStatus = new HashMap<String,Object>();
 	    				syncStatus.put("sync", true);
 	    				Map<String,Object> syncTimestamp = new HashMap<String,Object>();
-	    				syncStatus.put("sync", new Date());	
+	    				syncTimestamp.put("sync", new Date());	
 	    				List<String> categories = new ArrayList<String>();
 	    				categories.add(item.getCatLeafName());
 	    				categories.add(item.getCatName());
@@ -137,7 +137,7 @@ public class TaobaoItemSync {
 				Map<String,Object> syncStatus = new HashMap<String,Object>();
 				syncStatus.put("sync", true);
 				Map<String,Object> syncTimestamp = new HashMap<String,Object>();
-				syncStatus.put("sync", new Date());			
+				syncTimestamp.put("sync", new Date());			
 				doc.setKey(itemKey);
 				doc.getProperties().put("status", syncStatus);
 				doc.getProperties().put("timestamp", syncTimestamp);
