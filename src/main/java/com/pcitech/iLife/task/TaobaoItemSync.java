@@ -154,13 +154,13 @@ public class TaobaoItemSync {
 	    	    JSONObject result = null;
 			JSONObject msg = new JSONObject();
 			msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
-			msg.put("title", "导购数据同步结果");
-			msg.put("task", "淘宝类目数据同步");
+			msg.put("title", "导购数据同步任务结果");
+			msg.put("task", "淘宝类目 已同步");
 			msg.put("time", fmt.format(new Date()));
 			msg.put("remark", "预期数量："+itemList.size()
 					+ "\n实际数量："+results.size()
-					+ "\n差异："+(itemList.size()-results.size()));
-			msg.put("color", itemList.size()-results.size()==0?"#00FF00":"#000000");
+					+ "\n数量差异："+(itemList.size()-results.size()));
+			msg.put("color", itemList.size()-results.size()==0?"#FF0000":"#000000");
 	
 			result = HttpClientHelper.getInstance().post(
 					Global.getConfig("wechat.templateMessenge")+"/data-sync-notify", 
