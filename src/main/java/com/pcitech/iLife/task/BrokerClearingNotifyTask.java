@@ -43,7 +43,7 @@ public class BrokerClearingNotifyTask {
      */
     public void execute() throws JobExecutionException {
     		logger.info("Clearing Notification job start. " + new Date());
-    		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
     		//1，查询所有待通知清分记录
     		List<Map<String,Object>> items = clearingService.findPendingNotifyList();
     		//2，逐条发送通知：不处理结果，仅发送即可

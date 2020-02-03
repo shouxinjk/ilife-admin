@@ -67,7 +67,7 @@
 		left join mod_broker b on b.id = a.beneficiary 
 		left join mod_order c on c.id=a.order_id 
 		left join mod_profit_share_item d on d.id=a.scheme_item_id 
-		where a.beneficiary_type='person' and a.status_notify = 'pending' limit 20
+		where a.beneficiary_type='person' and a.status_notify = 'pending' limit 5
 	</select>	
 	
 	<!-- 根据达人ID分页查询清分记录，按照订单时间倒序排列。注意使用map传递参数 -->

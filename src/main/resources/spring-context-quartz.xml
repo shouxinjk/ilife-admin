@@ -16,7 +16,7 @@
     </bean>
     <bean id="clearingNotifyTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="clearingNotifyMethod"></property>
-        <property name="cronExpression" value="0 */5 * * * ?"></property>
+        <property name="cronExpression" value="0 */1 * * * ?"></property>
     </bean>
     <bean id="clearingNotifyScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
