@@ -125,7 +125,7 @@ public class BoardController extends BaseController {
 		Map<String, Object> map = Maps.newHashMap();
 		map.put("offset", offset);
 		map.put("size", size);
-		return boardService.findByBrokerId(map);
+		return boardService.findAllBoards(map);
 	}
 	
 	@ResponseBody
