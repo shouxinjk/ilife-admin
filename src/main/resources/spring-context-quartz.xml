@@ -139,6 +139,24 @@
             </list>
         </property>
     </bean>         
+    
+	<!-- 清单数据推送: 每天早上8点钟执行 -->
+    <bean id="newBoardBroadcastTask" class="com.pcitech.iLife.task.NewBoardBroadcast"></bean>
+    <bean id="newBoardBroadcastMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="newBoardBroadcastTask"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="newBoardBroadcastTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="newBoardBroadcastMethod"></property>
+        <property name="cronExpression" value="0 0 8,16 * * ?"></property>
+    </bean>
+    <bean id="newBoardBroadcastScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="newBoardBroadcastTrigger"></ref>
+            </list>
+        </property>
+    </bean> 	    
 	
 	<!-- 淘宝数据类目同步: 每3分钟执行 -->
     <bean id="cpsDataSyncTaskTaobao" class="com.pcitech.iLife.task.TaobaoItemSync"></bean>

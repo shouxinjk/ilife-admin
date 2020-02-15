@@ -68,6 +68,20 @@
 		</choose>
 	</select>
 	
+	<select id="findListByDate" resultType="Board">
+		SELECT 
+			<include refid="boardColumns"/>
+		FROM mod_board a
+		<include refid="boardJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} 
+			and a.update_date &gt; #{startDate} 
+			and a.update_date &lt; #{endDate} 
+		</where>
+		ORDER BY a.update_date DESC 
+		limit #{offset},#{size} 
+	</select>	
+	
 	<select id="findAllList" resultType="Board">
 		SELECT 
 			<include refid="boardColumns"/>
