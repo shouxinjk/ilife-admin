@@ -31,6 +31,10 @@ public class BoardService extends CrudService<BoardDao, Board> {
 		return super.get(id);
 	}
 	
+	public List<Board> findAllBoards(Map<String,Object> params) {
+		return boardDao.findAllBoards(params);
+	}
+	
 	public List<Board> findByBrokerId(Map<String,Object> params) {
 		return boardDao.findByBrokerId(params);
 	}

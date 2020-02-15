@@ -73,12 +73,14 @@ public class NewBoardBroadcast {
     			return;
     		}
     		
-    		String titleStr = "";
+    		String titleStr = "[最新增加]"+items.get(0).getTitle();
+    		/**
     		int i=1;
     		for(Board item:items) {
     			titleStr += "\n"+i+" "+item.getTitle();
     			i++;
     		}
+    		//**/
     		//2，查询所有达人
     		List<Broker> brokers = brokerService.findList(new Broker());
     		
@@ -100,7 +102,7 @@ public class NewBoardBroadcast {
     			msg.put("remark", titleStr);
     	
     			result = HttpClientHelper.getInstance().post(
-    					Global.getConfig("wechat.templateMessenge")+"/data-sync-notify", 
+    					Global.getConfig("wechat.templateMessenge")+"/board-list-notify", 
     					msg,header);
     			//3，更新通知状态
     			if(result.getBooleanValue("status")) {

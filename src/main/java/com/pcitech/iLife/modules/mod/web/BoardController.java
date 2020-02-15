@@ -120,6 +120,15 @@ public class BoardController extends BaseController {
 	}
 	
 	@ResponseBody
+	@RequestMapping(value = "rest/all-boards", method = RequestMethod.GET)
+	public List<Board> getAllBoards(@RequestParam int offset,@RequestParam int size,HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> map = Maps.newHashMap();
+		map.put("offset", offset);
+		map.put("size", size);
+		return boardService.findByBrokerId(map);
+	}
+	
+	@ResponseBody
 	@RequestMapping(value = "rest/board", method = RequestMethod.POST)
 	public Map<String, Object> createNewBoard(@RequestBody Board board,HttpServletRequest request, HttpServletResponse response, Model model) {
 		Map<String, Object> result = Maps.newHashMap();

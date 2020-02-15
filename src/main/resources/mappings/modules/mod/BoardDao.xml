@@ -44,6 +44,18 @@
 		limit #{offset},#{size}  
 	</select>
 	
+	<select id="findAllBoards" resultType="Board">
+		SELECT 
+			<include refid="boardColumns"/>
+		FROM mod_board a
+		<include refid="boardJoins"/>
+		<where>
+			a.del_flag = 0
+		</where>		
+		ORDER BY a.update_date DESC 
+		limit #{offset},#{size}  
+	</select>	
+	
 	<select id="findList" resultType="Board">
 		SELECT 
 			<include refid="boardColumns"/>
