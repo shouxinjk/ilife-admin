@@ -68,6 +68,11 @@ public class NewBoardBroadcast {
     		
     		//1，查询所有昨日更新board
     		List<Board> items = boardService.findListByDate(params);
+    		if(items == null || items.size()==0) {//如果没有新的清单则跳过
+    			sendNoBoardWaring();
+    			return;
+    		}
+    		
     		String titleStr = "";
     		int i=1;
     		for(Board item:items) {
@@ -103,6 +108,26 @@ public class NewBoardBroadcast {
     			}
     	        logger.info("board list broadcast job executed.[msg]" + msg);
     		}
+    }
+    
+    private void sendNoBoardWaring() {
+    		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    Map<String,String> header = new HashMap<String,String>();
+	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
+	    JSONObject result = null;
+		JSONObject msg = new JSONObject();
+		msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
+		msg.put("title", "清单推送任务结果");
+		msg.put("task", "无清单");
+		msg.put("time", fmt.format(new Date()));
+		msg.put("remark", "请确保每天有新增清单");
+		msg.put("color", "#FF0000");
+	
+		result = HttpClientHelper.getInstance().post(
+				Global.getConfig("wechat.templateMessenge")+"/data-sync-notify", 
+				msg,header);    	
+		
+		logger.info("board list broadcast job executed.[msg]" + msg);
     }
 
 }
