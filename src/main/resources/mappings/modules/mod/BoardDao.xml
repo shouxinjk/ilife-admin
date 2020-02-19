@@ -86,9 +86,9 @@
 		FROM mod_board a
 		<include refid="boardJoins"/>
 		<where>
-			a.del_flag = #{DEL_FLAG_NORMAL} 
-			and a.update_date &gt; #{startDate} 
-			and a.update_date &lt; #{endDate} 
+			a.del_flag =  0 
+			and a.update_date &gt;= #{dateStart} 
+			and a.update_date &lt; #{dateEnd} 
 		</where>
 		ORDER BY a.update_date DESC 
 		limit #{offset},#{size} 

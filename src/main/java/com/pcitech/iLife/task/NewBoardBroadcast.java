@@ -10,6 +10,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
@@ -32,6 +33,7 @@ import org.quartz.JobExecutionException;
  * 查询新增加的Board并发送给所有达人
  * 查询条件：最后修改时间为昨天
  */
+@Service
 public class NewBoardBroadcast {
     private static Logger logger = LoggerFactory.getLogger(NewBoardBroadcast.class);
     
@@ -52,17 +54,18 @@ public class NewBoardBroadcast {
      */
     public void execute() throws JobExecutionException {
     		logger.info("New board broadcast job start. " + new Date());
-    		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+    		SimpleDateFormat fmt1 = new SimpleDateFormat("yyyy-MM-dd");
+    		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     		
     		Calendar  cal  =   Calendar.getInstance();
     		cal.add(Calendar.DATE,  -1);
     		
-    		Date startDate = new Date(cal.getTimeInMillis());
+    		Date startDate = cal.getTime();
     		Date endDate = new Date();
     		
     		Map<String,Object> params = new HashMap<String,Object>();
-    		params.put("startDate", startDate);
-    		params.put("endDate", endDate);
+    		params.put("dateStart", startDate);
+    		params.put("dateEnd", endDate);
     		params.put("offset", 0);
     		params.put("size", 5);//限制为5条
     		
@@ -73,14 +76,14 @@ public class NewBoardBroadcast {
     			return;
     		}
     		
-    		String titleStr = "[最新增加]"+items.get(0).getTitle();
-    		/**
+    		String titleStr = "【最新清单】";//+items.get(0).getTitle();
+    		
     		int i=1;
     		for(Board item:items) {
     			titleStr += "\n"+i+" "+item.getTitle();
     			i++;
     		}
-    		//**/
+    		
     		//2，查询所有达人
     		List<Broker> brokers = brokerService.findList(new Broker());
     		
@@ -98,7 +101,7 @@ public class NewBoardBroadcast {
     			msg.put("openid", broker.getOpenid());
     			msg.put("title", "发现新的商品清单，图文并茂，非常适合批量推荐。");
     			msg.put("task", "点击查看详情");
-    			msg.put("time", fmt.format(new Date()));
+    			msg.put("time", fmt1.format(new Date()));
     			msg.put("remark", titleStr);
     	
     			result = HttpClientHelper.getInstance().post(
