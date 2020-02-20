@@ -67,7 +67,7 @@ public class NewBoardBroadcast {
     		params.put("dateStart", startDate);
     		params.put("dateEnd", endDate);
     		params.put("offset", 0);
-    		params.put("size", 5);//限制为5条
+    		params.put("size", 3);//限制为5条
     		
     		//1，查询所有昨日更新board
     		List<Board> items = boardService.findListByDate(params);
@@ -78,11 +78,10 @@ public class NewBoardBroadcast {
     		
     		String titleStr = "【最新清单】";//+items.get(0).getTitle();
     		
-    		int i=1;
     		for(Board item:items) {
-    			titleStr += "\n"+i+" "+item.getTitle();
-    			i++;
+    			titleStr += "\n* "+item.getTitle();
     		}
+    		titleStr += "\n点击查看全部清单。";
     		
     		//2，查询所有达人
     		List<Broker> brokers = brokerService.findList(new Broker());
