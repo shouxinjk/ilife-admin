@@ -76,12 +76,11 @@ public class NewBoardBroadcast {
     			return;
     		}
     		
-    		String titleStr = "【最新清单】";//+items.get(0).getTitle();
+    		String titleStr = "有新清单哦，点击查看：";//+items.get(0).getTitle();
     		
     		for(Board item:items) {
     			titleStr += "\n* "+item.getTitle();
     		}
-    		titleStr += "\n点击查看全部清单。";
     		
     		//2，查询所有达人
     		List<Broker> brokers = brokerService.findList(new Broker());

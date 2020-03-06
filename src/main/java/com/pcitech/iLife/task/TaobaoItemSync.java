@@ -76,7 +76,8 @@ public class TaobaoItemSync {
         		+ "return {itemKey:doc._key,id:split(doc.link.web,\"id=\")[1],link:doc.link.web}";
 
         // execute AQL queries
-        Map<String,String> itemMap = new HashMap<String,String>();//预先准备一个本地队列，用于记录商品ID和链接
+        Map<String,String> itemMap = new HashMap<String,String>();//预先准备一个本地队列，用于记录商品ID和itemKey
+        Map<String,String> itemLinks = new HashMap<String,String>();//预先准备一个本地队列，用于记录商品ID和web link
         List<String> itemList = new ArrayList<String>();//存放所有商品的淘宝id
         
         try {
@@ -84,6 +85,7 @@ public class TaobaoItemSync {
             List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
             for (BaseDocument item:items) {
             		itemMap.put(item.getProperties().get("id").toString(), item.getProperties().get("itemKey").toString());
+            		itemLinks.put(item.getProperties().get("id").toString(), item.getProperties().get("link").toString());
                 itemList.add(item.getProperties().get("id").toString());
             }
             logger.debug("listed item map.",itemMap);
@@ -121,6 +123,21 @@ public class TaobaoItemSync {
 	    				doc.getProperties().put("category", categories);
 	    				doc.getProperties().put("logo", item.getPictUrl());
 	    				
+	    				//生成淘口令:注意，如果没有淘口令会直接忽略，不做变化
+	    				Map<String,String> links = new HashMap<String,String>();
+	    				String link = itemLinks.get(""+item.getNumIid());//根据当前商品ID获取对应url
+	    				try {
+						String tbToken = taobaoHelper.getTaobaoToken(link);
+						if(tbToken!=null && tbToken.indexOf("￥")>-1) {
+							links.put("token", tbToken);
+							doc.getProperties().put("link", links);
+						}else {
+							logger.error("Generate taobao token failed.[link]"+link);
+						}
+					} catch (ApiException e) {
+						logger.error("failed create taobao token.[link]"+link,e);
+					}
+	    				
 	    				arangoClient.update("my_stuff", itemKey, doc);
 	    				syncedList.add(""+item.getNumIid());
 	    			}else {
@@ -141,6 +158,23 @@ public class TaobaoItemSync {
 				doc.setKey(itemKey);
 				doc.getProperties().put("status", syncStatus);
 				doc.getProperties().put("timestamp", syncTimestamp);
+				
+				//生成淘口令:注意，如果没有淘口令会直接忽略，不做变化
+				//由于在同步目录中仅有部分，剩余部分也要同步淘口令
+				Map<String,String> links = new HashMap<String,String>();
+				String link = itemLinks.get(id);//根据当前商品ID获取对应url
+				try {
+					String tbToken = taobaoHelper.getTaobaoToken(link);
+					if(tbToken!=null && tbToken.indexOf("￥")>-1) {
+						links.put("token", tbToken);
+						doc.getProperties().put("link", links);
+					}else {
+						logger.error("Generate taobao token failed.[link]"+link);
+					}
+				} catch (ApiException e) {
+					logger.error("failed create taobao token.[link]"+link,e);
+				}
+				
 				arangoClient.update("my_stuff", itemKey, doc);
 	    		}
     		
