@@ -83,7 +83,9 @@ public class NewBoardBroadcast {
     		}
     		
     		//2，查询所有达人
-    		List<Broker> brokers = brokerService.findList(new Broker());
+    		Broker filter = new Broker();
+    		filter.setStatus("ready");
+    		List<Broker> brokers = brokerService.findList(filter);
     		
     	    //准备发起HTTP请求：设置data server Authorization
     	    Map<String,String> header = new HashMap<String,String>();
