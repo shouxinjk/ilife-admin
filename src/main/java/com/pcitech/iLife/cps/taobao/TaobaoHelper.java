@@ -50,7 +50,7 @@ public class TaobaoHelper {
 	}
 
 	//获取移动端导购链接
-	//当前存在问题：部分链接使用API调用会返回错误：需要配合脚本工具使用
+	//当前存在问题：权限不足，会返回错误提示
 	/**
 {"error_response":{"code":15,"msg":"Remote service error","sub_code":"20000","sub_msg":"口令跳转url不支持口令转换","request_id":"nbgpwalolcnq"}}
 	 */
@@ -64,7 +64,7 @@ public class TaobaoHelper {
 		//req.setLogo("https://uland.taobao.com/");
 		//req.setExt("{}");
 		TbkTpwdCreateResponse rsp = client.execute(req);
-		return rsp.getData().getModel();	
+		return rsp.getData()==null?null:rsp.getData().getModel();	
 	}
 	
 }

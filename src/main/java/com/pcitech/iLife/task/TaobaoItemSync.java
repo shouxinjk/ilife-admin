@@ -128,7 +128,7 @@ public class TaobaoItemSync {
 	    				String link = itemLinks.get(""+item.getNumIid());//根据当前商品ID获取对应url
 	    				try {
 						String tbToken = taobaoHelper.getTaobaoToken(link);
-						if(tbToken!=null && tbToken.indexOf("￥")>-1) {
+						if(tbToken!=null && tbToken.trim().length()>2) {//淘口令格式：首尾为货币符号中间是字符
 							links.put("token", tbToken);
 							doc.getProperties().put("link", links);
 						}else {

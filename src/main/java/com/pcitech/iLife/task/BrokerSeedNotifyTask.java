@@ -105,7 +105,7 @@ public class BrokerSeedNotifyTask {
                     		}
             			}
             		}else if(duration > 3*60*1000) {//如果超时，则告诉达人，找不到对应的商品。同时发送服务器通知信息给管理员
-                		if(sendFailNotification(stuff)) {
+                		if(sendFailNotification(item.getProperties())) {//注意参数是broker_seed
                 			updateBrokerSeed(item.getProperties().get("itemKey").toString());//5，更新broker-seed状态：出错后也会更新状态，直接跳过
                 		}
             		}else {//我们还是可以再等等
