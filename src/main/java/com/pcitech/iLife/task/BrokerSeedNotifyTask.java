@@ -71,9 +71,10 @@ public class BrokerSeedNotifyTask {
 
     		//1，查询待处理商品记录 返回itemKey、url、openid、create时间
     		String query = "for doc in broker_seeds filter "
-        		+ "doc.url != null "
-        		+ "and doc.status!=null and doc.status.parse==true and doc.status.`collect`==true and doc.status.cps==true and doc.status.profit==true and doc.status.notify==false "
-        		+ "limit 1 "//限定为10条
+        		//+ "doc.url != null "
+        		//+ "and doc.status!=null and doc.status.parse==true and doc.status.`collect`==true and doc.status.cps==true and doc.status.profit==true and doc.status.notify==false "
+        		+ "and doc.status!=null and doc.status.notify==false "//直接查询所有未发送通知的内容，如果超过时间则直接发送失败信息
+        		+ "limit 10 "//限定为10条
         		+ "return {itemKey:doc._key,url:doc.url,openid:doc.openid,createdOn:doc.timestamp.create}";
 
         try {
