@@ -37,6 +37,17 @@ public class TaobaoHelper {
 		TbkItemInfoGetResponse rsp = client.execute(req);
 		return rsp.getResults();		
 	}	
+	
+	//按时间段查询订单：当前权限不足，无法使用该接口
+	public void getOrders() {
+		/**
+		getClient();
+		TbkOrderDetailsGetRequest req = new TbkOrderDetailsGetRequest();
+		req.setEndTime("2020-03-12 11:00:00");
+		req.setStartTime("2020-03-12 14:00:00");
+		TbkOrderDetailsGetResponse response = client.execute(req);	
+		//**/
+	}
 
 	//获取移动端导购链接
 	//当前存在问题：部分链接使用API调用会返回错误：需要配合脚本工具使用
