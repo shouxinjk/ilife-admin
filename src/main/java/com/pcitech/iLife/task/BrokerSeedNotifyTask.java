@@ -75,7 +75,7 @@ public class BrokerSeedNotifyTask {
         		//+ "and doc.status!=null and doc.status.parse==true and doc.status.`collect`==true and doc.status.cps==true and doc.status.profit==true and doc.status.notify==false "
         		+ "doc.status!=null and doc.status.notify==false "//直接查询所有未发送通知的内容，如果超过时间则直接发送失败信息
         		+ "limit 10 "//限定为10条
-        		+ "return {itemKey:doc._key,url:doc.url,openid:doc.openid,createdOn:doc.timestamp.create}";
+        		+ "return {itemKey:doc._key,url:doc.url,openid:doc.openid,createdOn:doc.timestamp.create,text:doc.text}";
 
         try {
             arangoClient = new ArangoDbClient(host,port,username,password,database);
@@ -104,7 +104,7 @@ public class BrokerSeedNotifyTask {
                     			updateBrokerSeed(item.getProperties().get("itemKey").toString());//5，更新broker-seed状态
                     		}
             			}
-            		}else if(duration > 3*60*1000) {//如果超时，则告诉达人，找不到对应的商品。同时发送服务器通知信息给管理员
+            		}else if(duration > 3*60*1000) {//如果超过3分钟，则告诉达人，找不到对应的商品。同时发送服务器通知信息给管理员
                 		if(sendFailNotification(item.getProperties())) {//注意参数是broker_seed
                 			updateBrokerSeed(item.getProperties().get("itemKey").toString());//5，更新broker-seed状态：出错后也会更新状态，直接跳过
                 		}
