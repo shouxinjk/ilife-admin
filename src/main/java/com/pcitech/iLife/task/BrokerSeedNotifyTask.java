@@ -84,7 +84,12 @@ public class BrokerSeedNotifyTask {
             		//2,根据openid查询对应达人
             		Broker broker = brokerService.getByOpenid(item.getProperties().get("openid").toString());
             		//3,查询对应的商品详情
-            		Map<String,Object> stuff = queryStuff(broker,item.getProperties().get("url").toString());
+            		Map<String,Object> stuff = Maps.newHashMap();
+            		try{//注意：对于无法解析的内容，url为空，查询会失败
+            			stuff = queryStuff(broker,item.getProperties().get("url").toString());
+            		}catch(Exception ex) {
+            			logger.warn("cannot load stuff by url.[item]"+item,ex);
+            		}
             		stuff.put("openid", item.getProperties().get("openid").toString());
             		//4,发送通知
             		Date createdOn = sdf.parse(item.getProperties().get("createdOn").toString());//获取seed创建时间
