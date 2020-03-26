@@ -81,8 +81,12 @@ public class BrokerSeedNotifyTask {
             arangoClient = new ArangoDbClient(host,port,username,password,database);
             List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
             for (BaseDocument item:items) {
+            		Map<String,Object> seed = item.getProperties();
             		//2,根据openid查询对应达人
             		Broker broker = brokerService.getByOpenid(item.getProperties().get("openid").toString());
+            		if(broker!=null && broker.getId().trim().length()>0) {//将推送达人信息放到seed里
+            			seed.put("broker", broker.getName()==null||broker.getName().trim().length()==0?"":broker.getName());
+            		}
             		//3,查询对应的商品详情
             		Map<String,Object> stuff = Maps.newHashMap();
             		try{//注意：对于无法解析的内容，url为空，查询会失败
@@ -110,8 +114,8 @@ public class BrokerSeedNotifyTask {
                     		}
             			}
             		}else if(duration > 3*60*1000) {//如果超过3分钟，则告诉达人，找不到对应的商品。同时发送服务器通知信息给管理员
-                		if(sendFailNotification(item.getProperties())) {//注意参数是broker_seed
-                			updateBrokerSeed(item.getProperties().get("itemKey").toString());//5，更新broker-seed状态：出错后也会更新状态，直接跳过
+                		if(sendFailNotification(seed)) {//注意参数是broker_seed
+                			updateBrokerSeed(seed.get("itemKey").toString());//5，更新broker-seed状态：出错后也会更新状态，直接跳过
                 		}
             		}else {//我们还是可以再等等
             			//do nothing
