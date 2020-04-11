@@ -18,7 +18,7 @@ public class Performance extends DataEntity<Performance> {
 	private static final long serialVersionUID = 1L;
 	private Measure measure;		// 关键属性
 	private Double markedValue;		// 标注值
-	private Double originalValue;		// 原始值
+	private String originalValue;		// 原始值
 	private Double normalizedValue;		// 归一值
 	private Double controlValue;		// 对照值
 	private Integer level;		// 等级
@@ -48,11 +48,11 @@ public class Performance extends DataEntity<Performance> {
 		this.markedValue = markedValue;
 	}
 	
-	public Double getOriginalValue() {
+	public String getOriginalValue() {
 		return originalValue;
 	}
 
-	public void setOriginalValue(Double originalValue) {
+	public void setOriginalValue(String originalValue) {
 		this.originalValue = originalValue;
 	}
 	

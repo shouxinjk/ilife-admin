@@ -50,7 +50,7 @@
 		<div class="control-group">
 			<label class="control-label">原始值：</label>
 			<div class="controls">
-				<form:input path="originalValue" htmlEscape="false" class="input-xlarge  number"/>
+				<form:input path="originalValue" htmlEscape="false" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
