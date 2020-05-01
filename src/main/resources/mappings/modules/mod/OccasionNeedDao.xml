@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.OccasionNeedDao">
+    
+	<sql id="occasionNeedColumns">
+		a.id AS "id",
+		a.description AS "description",
+		a.weight AS "weight",
+		a.occasion_id AS "occasion.id",
+		o.name AS "occasion.name",
+		a.need_id AS "need.id",
+		m.name AS "need.name",
+		a.expression AS "expression",
+		a.sort AS "sort",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="occasionNeedJoins">
+		LEFT JOIN sys_user cc ON cc.id = a.create_by
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_occasion o ON o.id = a.occasion_id
+		LEFT JOIN mod_motivation m ON m.id = a.need_id	
+	</sql>
+    
+	<select id="get" resultType="OccasionNeed">
+		SELECT 
+			<include refid="occasionNeedColumns"/>
+		FROM int_occasion_need a
+		<include refid="occasionNeedJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OccasionNeed">
+		SELECT 
+			<include refid="occasionNeedColumns"/>
+		FROM int_occasion_need a
+		<include refid="occasionNeedJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="occasion != null and occasion.id != ''">
+				AND a.occasion_id = #{occasion.id}
+			</if>	
+			<if test="need != null and need.id != ''">
+				AND a.need_id = #{need.id}
+			</if>			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OccasionNeed">
+		SELECT 
+			<include refid="occasionNeedColumns"/>
+		FROM int_occasion_need a
+		<include refid="occasionNeedJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO int_occasion_need(
+			id,
+			description,
+			weight,
+			occasion_id,
+			need_id,
+			expression,
+			sort,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{description},
+			#{weight},
+			#{occasion.id},
+			#{need.id},
+			#{expression},
+			#{sort},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE int_occasion_need SET 	
+			description = #{description},
+			weight = #{weight},
+			occasion_id = #{occasion.id},
+			need_id = #{need.id},
+			expression = #{expression},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE int_occasion_need SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

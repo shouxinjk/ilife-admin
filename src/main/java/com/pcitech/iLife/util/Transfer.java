@@ -20,7 +20,7 @@ public class Transfer {
 	private Logger kafka = LoggerFactory.getLogger("kafkaLogger");//kafka output
 //	private Logger logger = LoggerFactory.getLogger(Transfer.class); //file output
 	//TODO 对于新建内容无法获取id，需要使用Around或After进行切片
-    @Before("execution(* com.pcitech.iLife.modules.mod.service.OccasionService.save(..)) && args(occasion)")
+    //@Before("execution(* com.pcitech.iLife.modules.mod.service.OccasionService.save(..)) && args(occasion)")
     public void saveOccasion(Occasion occasion) {
         Gson gson = new Gson();
 		Map map = new HashMap();

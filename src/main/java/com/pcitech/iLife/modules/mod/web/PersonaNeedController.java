@@ -27,117 +27,117 @@ import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Persona;
+import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
 import com.pcitech.iLife.modules.mod.entity.Phase;
+import com.pcitech.iLife.modules.mod.service.PersonaNeedService;
 import com.pcitech.iLife.modules.mod.service.PersonaService;
 import com.pcitech.iLife.modules.mod.service.PhaseService;
 
-import springfox.documentation.annotations.ApiIgnore;
-
 /**
- * 用户分群Controller
- * @author chenci
- * @version 2017-09-15
+ * 画像需要构成Controller
+ * @author qchzhu
+ * @version 2020-04-30
  */
 @Controller
-@RequestMapping(value = "${adminPath}/mod/persona")
-@ApiIgnore
-public class PersonaController extends BaseController {
-
+@RequestMapping(value = "${adminPath}/mod/personaNeed")
+public class PersonaNeedController extends BaseController {
 	@Autowired
 	private PersonaService personaService;
 	@Autowired
 	private PhaseService phaseService;
+	@Autowired
+	private PersonaNeedService personaNeedService;
 	
 	@ModelAttribute
-	public Persona get(@RequestParam(required=false) String id) {
-		Persona entity = null;
+	public PersonaNeed get(@RequestParam(required=false) String id) {
+		PersonaNeed entity = null;
 		if (StringUtils.isNotBlank(id)){
-			entity = personaService.get(id);
+			entity = personaNeedService.get(id);
 		}
 		if (entity == null){
-			entity = new Persona();
+			entity = new PersonaNeed();
 		}
 		return entity;
 	}
 	
-	@RequiresPermissions("mod:persona:view")
+	@RequiresPermissions("mod:personaNeed:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(Persona persona,String treeId ,String treeModule,String topType,HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String list(PersonaNeed personaNeed,String treeId ,String treeModule,String topType,HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeModule.equals("persona")){
-			persona.setParent(new Persona(treeId));
-		}else if(treeModule.equals("phase")){
-			persona.setPhase(new Phase(treeId));
-			persona.setParent(new Persona("0"));
+			personaNeed.setPersona(new Persona(treeId));
+		}else{//否则提示选择用户画像
+			model.addAttribute("message","选择画像查看其需要构成。");
+			return "treeData/none";
 		}
 			
-		Page<Persona> page = personaService.findPage(new Page<Persona>(request, response), persona); 
+		Page<PersonaNeed> page = personaNeedService.findPage(new Page<PersonaNeed>(request, response), personaNeed); 
 		model.addAttribute("page", page);
 		model.addAttribute("pid", treeId);
 		model.addAttribute("pType", treeModule);
-		return "modules/mod/personaList";
+		return "modules/mod/personaNeedList";
 	}
 
-	@RequiresPermissions("mod:persona:view")
+	@RequiresPermissions("mod:personaNeed:view")
 	@RequestMapping(value = "form")
-	public String form(Persona persona,String pid,String pType, Model model) {
+	public String form(PersonaNeed personaNeed,String pid,String pType, Model model) {
 		Persona parent=new Persona();
 		if(pType.equals("persona")){
 			parent = personaService.get(pid);
-			persona.setParent(parent);
-			persona.setPhase(parent.getPhase());
-		}else if(pType.equals("phase")){
-			persona.setPhase(phaseService.get(pid));
-			parent.setId("0");
-			parent.setName("顶级");
-			persona.setParent(parent);
+			personaNeed.setPersona(parent);
+		}else {//否则提示选择用户画像
+			model.addAttribute("message","选择画像查看其需要构成。");
+			return "treeData/none";
 		}
 		model.addAttribute("pid", pid);
 		model.addAttribute("pType", pType);
-		model.addAttribute("persona", persona);
-		return "modules/mod/personaForm";
+		model.addAttribute("personaNeed", personaNeed);
+		return "modules/mod/personaNeedForm";
 	}
 
-	@RequiresPermissions("mod:persona:edit")
+	@RequiresPermissions("mod:personaNeed:edit")
 	@RequestMapping(value = "save")
-	public String save(Persona persona,String pid,String pType, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, persona)){
-			return form(persona,pid,pType,model);
+	public String save(PersonaNeed personaNeed,String pid,String pType, Model model, RedirectAttributes redirectAttributes) {
+		if (!beanValidator(model, personaNeed)){
+			return form(personaNeed,pid,pType,model);
 		}
-		personaService.save(persona);
-		addMessage(redirectAttributes, "保存用户分群成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/persona/?treeId="+pid+"&treeModule="+pType+"&repage";
+		if(personaNeed.getPersona() == null){//不知道为啥，前端传进来的persona信息丢失了，手动补一次
+			personaNeed.setPersona(personaService.get(pid));
+		}
+		personaNeedService.save(personaNeed);
+		addMessage(redirectAttributes, "保存用户分群下的需要成功");
+		return "redirect:"+Global.getAdminPath()+"/mod/personaNeed/?treeId="+pid+"&treeModule="+pType+"&repage";
 	}
 	
-	@RequiresPermissions("mod:persona:edit")
+	@RequiresPermissions("mod:personaNeed:edit")
 	@RequestMapping(value = "delete")
-	public String delete(Persona persona,String pid,String pType, RedirectAttributes redirectAttributes) {
-		personaService.delete(persona);
-		addMessage(redirectAttributes, "删除用户分群成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/persona/?treeId="+pid+"&treeModule="+pType+"&repage";
+	public String delete(PersonaNeed personaNeed,String pid,String pType, RedirectAttributes redirectAttributes) {
+		personaNeedService.delete(personaNeed);
+		addMessage(redirectAttributes, "删除用户分群下的需要成功");
+		return "redirect:"+Global.getAdminPath()+"/mod/personaNeed/?treeId="+pid+"&treeModule="+pType+"&repage";
 	}
 
-	@RequiresPermissions("mod:persona:view")
+	@RequiresPermissions("mod:personaNeed:view")
 	@RequestMapping(value = "index")
 	public String index(Model model) {
-		model.addAttribute("url","mod/persona");
-		model.addAttribute("title","用户分群");
+		model.addAttribute("url","mod/personaNeed");
+		model.addAttribute("title","用户分群需要构成");
 		return "treeData/index";
 	}
 	
-	@RequiresPermissions("mod:persona:view")
+	@RequiresPermissions("mod:personaNeed:view")
 	@RequestMapping(value = "tree")
 	public String tree(Model model) {
-		model.addAttribute("url","mod/persona");
+		model.addAttribute("url","mod/personaNeed");
 		model.addAttribute("title","成长阶段");
 		List<Phase> phaseTree = phaseService.findTree();
 		model.addAttribute("list", personaService.getTree(phaseTree));
 		return "treeData/tree";
 	}
 	
-	@RequiresPermissions("mod:persona:view")
+	@RequiresPermissions("mod:personaNeed:view")
 	@RequestMapping(value = "none")
 	public String none(Model model) {
-		model.addAttribute("message","请在左侧选择一个项目。");
+		model.addAttribute("message","请在左侧选择一个画像。");
 		return "treeData/none";
 	}
 	

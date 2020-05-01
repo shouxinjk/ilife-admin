@@ -96,6 +96,66 @@ public class MotivationService extends CrudService<MotivationDao, Motivation> {
 		return list;
 	}
 	
+
+	public List<TreeNode> getTreeWithLeaf(List<Phase> phaseTree, List<MotivationCategory> motivationCategoryTree) {
+		List<TreeNode> list=new ArrayList<TreeNode>();
+		for(Phase phase:phaseTree){
+			TreeNode treeNode=new TreeNode();
+			treeNode.setId(phase.getId());
+			treeNode.setBusinessId(phase.getId());
+			treeNode.setName(phase.getName());
+			treeNode.setParent(new TreeNode(phase.getParentId()));
+			treeNode.setParentIds(phase.getParentIds());
+			treeNode.setSort(phase.getSort());
+			treeNode.setModule("phase");
+			treeNode.setTopType("phase");
+			list.add(treeNode);
+			//Phase queryEntity=new Phase();
+			//queryEntity.setParentIds("%,"+phase.getId()+",%");
+			//List<Phase> phases = phaseDao.findByParentIdsLike(queryEntity);
+			//if(phases==null||phases.size()==0){
+				for(MotivationCategory motivationCategory:motivationCategoryTree){
+					if(!motivationCategory.getId().equals("1")){
+						TreeNode  motivationCategoryTreeNode=new TreeNode();
+						motivationCategoryTreeNode.setId(motivationCategory.getId()+phase.getId());
+						motivationCategoryTreeNode.setBusinessId(motivationCategory.getId());
+						motivationCategoryTreeNode.setName(motivationCategory.getName());
+						if(motivationCategory.getParentId().equals("1")){
+							motivationCategoryTreeNode.setParent(new TreeNode(phase.getId()));
+						}else{
+							motivationCategoryTreeNode.setParent(new TreeNode(motivationCategory.getParentId()+phase.getId()));
+						}
+						motivationCategoryTreeNode.setTopId(phase.getId());
+						motivationCategoryTreeNode.setSort(motivationCategory.getSort());
+						motivationCategoryTreeNode.setModule("motivationCategory");
+						motivationCategoryTreeNode.setTopType("phase");
+						list.add(motivationCategoryTreeNode);
+						//获取对应phase及category下的具体动机，作为叶子节点
+						Motivation query = new Motivation();
+						query.setPhase(phase);
+						query.setMotivationCategory(motivationCategory);
+						List<Motivation> motivations = findList(query);
+						for(Motivation motivation:motivations) {
+							TreeNode leafNode=new TreeNode();
+							leafNode.setId(motivation.getId());
+							leafNode.setBusinessId(motivation.getId());
+							leafNode.setName(motivation.getName());
+							leafNode.setParent(new TreeNode(motivationCategory.getId()+phase.getId()));//放到当前category下，注意需要结合phase进行差异化
+//							leafNode.setParentIds(persona.getParentIds());
+//							leafNode.setSort(occasion.getSort());
+							motivationCategoryTreeNode.setTopId(phase.getId());
+							leafNode.setModule("motivation");
+							leafNode.setTopType("phase");
+							list.add(leafNode);
+						}
+					}
+				}
+			//}
+		}
+		
+		return list;
+	}
+	
 	public String getMotivationNames(String motivationIds) {
 		return dao.getMotivationNames(motivationIds);
 	}

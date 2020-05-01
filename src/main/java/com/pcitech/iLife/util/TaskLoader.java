@@ -40,6 +40,7 @@ public class TaskLoader{
     public void loadOccasionTasks() {
     		List<Occasion> occasions = occasionService.findList(new Occasion());
     		//schedule tasks
+    		/**
     		SchedulerFactory sf = new StdSchedulerFactory();
     		try {
 	    		Scheduler sched = sf.getScheduler();
@@ -66,6 +67,8 @@ public class TaskLoader{
     		}catch(SchedulerException e) {
     			logger.error("Load occasion tasks failed.",e);
     		}
+    		
+    		//**/
     		
     		//inform kafka
     		Gson gson = new Gson();
