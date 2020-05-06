@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -145,6 +146,45 @@ public class OccasionController extends BaseController {
 //			}
 			mapList.add(map);
 			
+		}
+		return mapList;
+	}
+	
+	/**
+	 * 获取诱因的树状结构，诱因为叶子节点
+	 * @param module
+	 * @param extId
+	 * @param response
+	 * @return
+	 */
+	@RequiresUser
+	@ResponseBody
+	@RequestMapping(value = "treeData")
+	public List<Map<String, Object>> treeData(String module, @RequestParam(required=false) String extId, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<OccasionCategory> list = occasionCategoryService.findTree();
+		for (int i=0; i<list.size(); i++){
+			OccasionCategory e = list.get(i);
+			if (extId == null || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getParent()!=null?e.getParent().getId():0);
+				map.put("name", e.getName());
+				mapList.add(map);
+				
+				//获取该分类下诱因
+				Occasion query = new Occasion();
+				query.setOccasionCategory(e);
+				List<Occasion> items = occasionService.findList(query);
+				for(Occasion item:items) {
+					Map<String, Object> leaf = Maps.newHashMap();
+					leaf.put("id", item.getId());
+					leaf.put("pId", e.getId());
+					leaf.put("name", item.getName());
+					mapList.add(leaf);
+				}
+			}
 		}
 		return mapList;
 	}

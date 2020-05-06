@@ -46,7 +46,7 @@
 			<label class="control-label">诱因：</label>
 			<div class="controls">
 				 <sys:treeselect id="occasion" name="occasion.id" value="${needOccasion.occasion.id}" labelName="occasion.name" labelValue="${needOccasion.occasion.name}"
-					title="诱因列表" url="/mod/occasion/listData" checked="true" cssClass="required"/>
+					title="诱因列表" url="/mod/occasion/treeData" notAllowSelectRoot="true" cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
