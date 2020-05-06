@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,8 @@ import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.MotivationCategory;
 import com.pcitech.iLife.modules.mod.entity.Phase;
+import com.pcitech.iLife.modules.mod.entity.UserCategory;
+import com.pcitech.iLife.modules.mod.entity.UserMeasure;
 import com.pcitech.iLife.modules.mod.service.MotivationCategoryService;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.PhaseService;
@@ -158,4 +161,42 @@ public class MotivationController extends BaseController {
 		}
 		return mapList;
 	}
+	
+
+	/**
+	 * 查询动机分类及动机列表，返回树结构，其中动机作为叶子节点。
+	 * @param extId
+	 * @param response
+	 * @return
+	 */
+	@RequiresUser
+	@ResponseBody
+	@RequestMapping(value = "treeData")
+	public List<Map<String, Object>> treeDataWithLeaf(@RequestParam(required=false) String extId, HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<MotivationCategory> categories = motivationCategoryService.findList(new MotivationCategory());
+		for (int i=0; i<categories.size(); i++){
+			MotivationCategory e = categories.get(i);
+			if (StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getParentId());
+				map.put("name", e.getName());
+				mapList.add(map);
+				//查询该类别下的动机
+				Motivation query = new Motivation();
+				query.setMotivationCategory(e);
+				List<Motivation> items = motivationService.findList(query);
+				for(Motivation item:items) {
+					Map<String, Object> leafNode = Maps.newHashMap();
+					leafNode.put("id", item.getId());
+					leafNode.put("pId", e.getId());
+					leafNode.put("name", item.getName());
+					mapList.add(leafNode);
+				}
+			}
+		}
+		return mapList;
+	}
+	
 }

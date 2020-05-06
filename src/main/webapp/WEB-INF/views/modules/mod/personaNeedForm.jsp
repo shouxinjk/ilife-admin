@@ -54,7 +54,7 @@
 			<label class="control-label">需要：</label>
 			<div class="controls">
 				 <sys:treeselect id="need" name="need.id" value="${personaNeed.need.id}" labelName="need.name" labelValue="${personaNeed.need.name}"
-					title="需要列表" url="/mod/motivation/listData" checked="true" cssClass="required"/>
+					title="需要列表" url="/mod/motivation/treeData"  notAllowSelectRoot="true" cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
