@@ -43,6 +43,14 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">阶段：</label>
+			<div class="controls">
+				 <sys:treeselect id="phase" name="phase.id" value="${personaNeed.phase.id}" labelName="phase.name" labelValue="${personaNeed.phase.name}"
+					title="阶段列表" url="/mod/phase/treeData"  notAllowSelectRoot="true" cssClass="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">需要：</label>
 			<div class="controls">
 				 <sys:treeselect id="need" name="need.id" value="${personaNeed.need.id}" labelName="need.name" labelValue="${personaNeed.need.name}"

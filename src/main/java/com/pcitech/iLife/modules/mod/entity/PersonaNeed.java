@@ -20,6 +20,7 @@ public class PersonaNeed extends DataEntity<PersonaNeed> {
 	private Double weight;		// 满足度
 	private Persona persona;		// 关联的画像
 	private Motivation need;		// 关联的动机
+	private Phase phase;	//所属阶段
 	private String expression;		// 满足度表达式
 	private String sort;		// sort
 	
@@ -65,6 +66,14 @@ public class PersonaNeed extends DataEntity<PersonaNeed> {
 		this.need = need;
 	}
 	
+	public Phase getPhase() {
+		return phase;
+	}
+
+	public void setPhase(Phase phase) {
+		this.phase = phase;
+	}
+
 	@Length(min=0, max=1024, message="满足度表达式长度必须介于 0 和 1024 之间")
 	public String getExpression() {
 		return expression;

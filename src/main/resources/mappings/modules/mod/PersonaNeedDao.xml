@@ -10,6 +10,8 @@
 		p.name AS "persona.name",
 		a.need_id AS "need.id",
 		m.name AS "need.name",
+		a.phase_id AS "phase.id",
+		pha.name AS "phase.name",		
 		a.expression AS "expression",
 		a.sort AS "sort",
 		a.create_by AS "createBy.id",
@@ -24,6 +26,7 @@
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_persona p ON p.id = a.persona_id
 		LEFT JOIN mod_motivation m ON m.id = a.need_id
+		LEFT JOIN mod_phase pha ON pha.id = a.phase_id
 	</sql>
     
 	<select id="get" resultType="PersonaNeed">
@@ -83,6 +86,7 @@
 			weight,
 			persona_id,
 			need_id,
+			phase_id,
 			expression,
 			sort,
 			create_by,
@@ -96,6 +100,7 @@
 			#{weight},
 			#{persona.id},
 			#{need.id},
+			#{phase.id},
 			#{expression},
 			#{sort},
 			#{createBy.id},
@@ -112,6 +117,7 @@
 			weight = #{weight},
 			persona_id = #{persona.id},
 			need_id = #{need.id},
+			phase_id = #{phase.id},
 			expression = #{expression},
 			sort = #{sort},
 			update_by = #{updateBy.id},
