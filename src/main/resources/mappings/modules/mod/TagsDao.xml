@@ -9,6 +9,8 @@
 		c.name AS "tagCategory.name",
 		a.expression AS "expression",
 		a.type AS "type",
+		a.measure_id AS "measure.id",
+		m.name AS "measure.name",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -22,6 +24,7 @@
 	<sql id="tagsJoins">
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_tag_category c ON c.id = a.tag_category
+		LEFT JOIN mod_measure m ON m.id = a.measure_id
 	</sql>
     
 	<select id="get" resultType="Tags">
@@ -84,6 +87,7 @@
 			tag_category,
 			expression,
 			type,
+			measure_id,
 			rule_of_judgment,
 			tag_key,
 			create_by,
@@ -97,6 +101,7 @@
 			#{tagCategory.id},
 			#{expression},
 			#{type},
+			#{measure.id},
 			#{ruleOfJudgment},
 			#{tagKey},
 			#{createBy.id},
@@ -113,6 +118,7 @@
 			tag_category=#{tagCategory.id},
 			expression = #{expression},
 			type = #{type},
+			measure_id=#{measure.id},
 			rule_of_judgment=#{ruleOfJudgment},
 			tag_key=#{tagKey},
 			update_by = #{updateBy.id},

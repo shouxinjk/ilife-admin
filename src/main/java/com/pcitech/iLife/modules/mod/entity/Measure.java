@@ -24,6 +24,7 @@ public class Measure extends DataEntity<Measure> {
 	private Double defaultScore;		// 默认评分
 	private Integer defaultLevel;		// 默认等级
 	private String type;		// 类型
+	private String tags;		// 标签
 	
 	public Measure() {
 		super();
@@ -106,6 +107,14 @@ public class Measure extends DataEntity<Measure> {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 	
 }

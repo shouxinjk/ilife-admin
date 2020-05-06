@@ -37,10 +37,18 @@
 			<label class="control-label">分类：</label>
 			<div class="controls">
 				 <sys:treeselect id="userTagCategory" name="userTagCategory.id" value="${userTag.userTagCategory.id}" labelName="userTagCategory.name" labelValue="${userTag.userTagCategory.name}"
-					title="分类" url="/mod/userTagCategory/treeData" cssClass="required" disabled="disabled"/>
+					title="分类" url="/mod/userTagCategory/treeData" cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>	
+		<div class="control-group">
+			<label class="control-label">关联属性：</label>
+			<div class="controls">
+				 <sys:treeselect id="userMeasure" name="userMeasure.id" value="${userTag.userMeasure.id}" labelName="userMeasure.name" labelValue="${userTag.userMeasure.name}"
+					title="用户属性" url="/mod/userMeasure/treeData" cssClass="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>			
 		<div class="control-group">
 			<label class="control-label">名称：</label>
 			<div class="controls">

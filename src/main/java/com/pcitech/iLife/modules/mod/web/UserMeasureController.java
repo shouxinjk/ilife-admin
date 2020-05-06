@@ -27,10 +27,16 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
+import com.pcitech.iLife.modules.mod.entity.TagCategory;
+import com.pcitech.iLife.modules.mod.entity.Tags;
 import com.pcitech.iLife.modules.mod.entity.UserCategory;
 import com.pcitech.iLife.modules.mod.entity.UserMeasure;
+import com.pcitech.iLife.modules.mod.entity.UserTag;
+import com.pcitech.iLife.modules.mod.entity.UserTagCategory;
 import com.pcitech.iLife.modules.mod.service.UserCategoryService;
 import com.pcitech.iLife.modules.mod.service.UserMeasureService;
+import com.pcitech.iLife.modules.mod.service.UserTagCategoryService;
+import com.pcitech.iLife.modules.mod.service.UserTagService;
 
 /**
  * 用户属性定义Controller
@@ -45,6 +51,10 @@ public class UserMeasureController extends BaseController {
 	private UserMeasureService userMeasureService;
 	@Autowired
 	private UserCategoryService userCategoryService;
+	@Autowired
+	private UserTagService userTagService;
+	@Autowired
+	private UserTagCategoryService userTagCategoryService;
 	
 	@ModelAttribute
 	public UserMeasure get(@RequestParam(required=false) String id) {
@@ -74,6 +84,10 @@ public class UserMeasureController extends BaseController {
 		if(userMeasure.getCategory()!=null&&StringUtils.isNoneBlank(userMeasure.getCategory().getId())){
 			userMeasure.setCategory(userCategoryService.get(userMeasure.getCategory().getId()));
 		}
+		//将tag分别建立为主题
+		if(userMeasure.getTags()!=null&&userMeasure.getTags().trim().length()>0) {
+			saveTags(userMeasure);
+		}
 		model.addAttribute("userMeasure", userMeasure);
 		return "modules/mod/userMeasureForm";
 	}
@@ -87,6 +101,39 @@ public class UserMeasureController extends BaseController {
 		userMeasureService.save(userMeasure);
 		addMessage(redirectAttributes, "保存用户属性定义成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/userMeasure/?treeId="+userMeasure.getCategory().getId()+"&repage";
+	}
+	
+	private void saveTags(UserMeasure measure) {
+		List<UserMeasure> list =userMeasureService.findList(measure);//根据当前measure查询
+		if(list==null || list.size()==0)
+			return;
+		UserMeasure target = list.get(0);
+		String tags = target.getTags();
+		if(tags == null || tags.trim().length()==0)
+			return;
+		String[] tagArray = tags.split("\\s+");
+		
+		//处理标签主题的默认分类节点
+		UserTagCategory parent = new UserTagCategory();
+		parent.setParent(new UserTagCategory("0"));//查找一级节点
+		List<UserTagCategory> parents = userTagCategoryService.findList(parent);
+		if(parents!=null && parents.size()>0)
+			parent = parents.get(0);//取一级节点的第一个作为目录
+		else
+			parent = new UserTagCategory("0");//否则放到一级目录下
+		
+		//逐个建立标签主题
+		for(String tag:tagArray) {
+			UserTag item = new UserTag();
+			item.setUserMeasure(measure);
+			item.setName(tag);
+			List<UserTag> exists = userTagService.findList(item);
+			if(exists == null || exists.size()==0) {//仅在没有相同tag的时候才创建
+				item.setType("auto");
+				item.setUserTagCategory(parent);//放到第一个一级节点下，或者直接挂到根目录下
+				userTagService.save(item);
+			}
+		}
 	}
 	
 	@RequiresPermissions("mod:userMeasure:edit")
@@ -141,6 +188,42 @@ public class UserMeasureController extends BaseController {
 	public String none(Model model) {
 		model.addAttribute("message","请在左侧选择一个类型。");
 		return "treeData/none";
+	}
+	
+	/**
+	 * 查询属性分类及属性。返回树结构，其中属性作为叶子节点。
+	 * @param extId
+	 * @param response
+	 * @return
+	 */
+	@RequiresPermissions("mod:userMeasure:view")
+	@ResponseBody
+	@RequestMapping(value = "treeData")
+	public List<Map<String, Object>> treeDataWithLeaf(@RequestParam(required=false) String extId, HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<UserCategory> categories = userCategoryService.findList(new UserCategory());
+		for (int i=0; i<categories.size(); i++){
+			UserCategory e = categories.get(i);
+			if (StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getParentId());
+				map.put("name", e.getName());
+				mapList.add(map);
+				//查询该类别下的用户属性
+				UserMeasure query = new UserMeasure();
+				query.setCategory(e);
+				List<UserMeasure> props = userMeasureService.findList(query);
+				for(UserMeasure prop:props) {
+					Map<String, Object> leafNode = Maps.newHashMap();
+					leafNode.put("id", prop.getId());
+					leafNode.put("pId", e.getId());
+					leafNode.put("name", prop.getName());
+					mapList.add(leafNode);
+				}
+			}
+		}
+		return mapList;
 	}
 	
 }

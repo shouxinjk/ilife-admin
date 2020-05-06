@@ -40,9 +40,9 @@
 				<th>类别</th>
 				<th>占比</th>
 				<th>属性定义</th>
-				<th>所属维度</th>
 				<th>归一化参考值</th>
 				<th>默认等级</th>
+				<th>标签</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:userMeasure:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -61,16 +61,16 @@
 				</td>
 				<td>
 					${userMeasure.property}
-				</td>	
-				<td>
-					${userMeasure.dimension}
-				</td>				
+				</td>					
 				<td>
 					${userMeasure.controlValue}
 				</td>
 				<td>
 					${userMeasure.defaultRank}
-				</td>							
+				</td>	
+				<td>
+					${userMeasure.tags}
+				</td>										
 				<td>
 					<fmt:formatDate value="${userMeasure.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>

@@ -21,7 +21,7 @@ public class UserTag extends DataEntity<UserTag> {
 	private String type;		// 类型
 	private String ruleOfJudgment;		// 判定规则
 	private String tagKey;		//Key
-
+	private UserMeasure userMeasure;//关联的属性
 	
 	public UserTag() {
 		super();
@@ -80,5 +80,13 @@ public class UserTag extends DataEntity<UserTag> {
 
 	public void setTagKey(String tagKey) {
 		this.tagKey = tagKey;
+	}
+
+	public UserMeasure getUserMeasure() {
+		return userMeasure;
+	}
+
+	public void setUserMeasure(UserMeasure userMeasure) {
+		this.userMeasure = userMeasure;
 	}
 }

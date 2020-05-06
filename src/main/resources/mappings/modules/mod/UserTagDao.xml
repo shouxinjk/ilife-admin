@@ -9,6 +9,8 @@
 		c.name AS "userTagCategory.name",
 		a.expression AS "expression",
 		a.type AS "type",
+		a.measure_id AS "userMeasure.id",
+		m.name AS "userMeasure.name",		
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -22,6 +24,7 @@
 	<sql id="userTagJoins">
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_user_tag_category c ON c.id = a.user_tag_category
+		LEFT JOIN mod_user_measure m ON m.id = a.measure_id		
 	</sql>
     
 	<select id="get" resultType="UserTag">
@@ -84,6 +87,7 @@
 			user_tag_category,
 			expression,
 			type,
+			measure_id,
 			rule_of_judgment,
 			tag_key,
 			create_by,
@@ -97,6 +101,7 @@
 			#{userTagCategory.id},
 			#{expression},
 			#{type},
+			#{userMeasure.id},
 			#{ruleOfJudgment},
 			#{tagKey},
 			#{createBy.id},
@@ -113,6 +118,7 @@
 			user_tag_category=#{userTagCategory.id},
 			expression = #{expression},
 			type = #{type},
+			measure_id=#{userMeasure.id},
 			rule_of_judgment=#{ruleOfJudgment},
 			tag_key=#{tagKey},
 			update_by = #{updateBy.id},

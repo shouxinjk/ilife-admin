@@ -24,6 +24,7 @@ public class UserMeasure extends DataEntity<UserMeasure> {
 	private String defaultScore;		// default_score
 	private String defaultRank;		// default_rank
 	private String type;		// type
+	private String tags;		// tags
 	
 	public UserMeasure() {
 		super();
@@ -108,6 +109,14 @@ public class UserMeasure extends DataEntity<UserMeasure> {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 	
 }

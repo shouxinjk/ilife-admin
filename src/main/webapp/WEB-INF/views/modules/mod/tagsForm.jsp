@@ -37,10 +37,18 @@
 			<label class="control-label">分类：</label>
 			<div class="controls">
 				 <sys:treeselect id="tagCategory" name="tagCategory.id" value="${tags.tagCategory.id}" labelName="tagCategory.name" labelValue="${tags.tagCategory.name}"
-					title="分类" url="/mod/tagCategory/treeData" cssClass="required" disabled="disabled"/>
+					title="分类" url="/mod/tagCategory/treeData" cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>	
+		<div class="control-group">
+			<label class="control-label">关联属性：</label>
+			<div class="controls">
+				 <sys:treeselect id="measure" name="measure.id" value="${tags.measure.id}" labelName="measure.name" labelValue="${tags.measure.name}"
+					title="属性" url="/mod/measure/treeData" cssClass="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>			
 		<div class="control-group">
 			<label class="control-label">名称：</label>
 			<div class="controls">

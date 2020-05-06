@@ -21,7 +21,7 @@ public class Tags extends DataEntity<Tags> {
 	private String type;		// 类型
 	private String ruleOfJudgment;		// 判定规则
 	private String tagKey;		//Key
-
+	private Measure measure;//关联的属性
 	
 	public Tags() {
 		super();
@@ -80,5 +80,13 @@ public class Tags extends DataEntity<Tags> {
 
 	public void setTagKey(String tagKey) {
 		this.tagKey = tagKey;
+	}
+
+	public Measure getMeasure() {
+		return measure;
+	}
+
+	public void setMeasure(Measure measure) {
+		this.measure = measure;
 	}
 }

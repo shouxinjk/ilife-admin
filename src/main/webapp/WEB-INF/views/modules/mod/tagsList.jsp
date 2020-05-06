@@ -37,7 +37,8 @@
 		<thead>
 			<tr>
 				<th>名称</th>
-				<th>所属类型</th>
+				<th>所属分类</th>
+				<th>关联属性</th>
 				<th>表达式</th>
 				<th>标签类型</th>
 				<th>判定规则</th>
@@ -52,6 +53,9 @@
 				</a></td>
 				<td>
 					${tags.tagCategory.name}
+				</td>
+				<td>
+					${tags.measure.name}
 				</td>
 				<td>
 					${tags.expression}

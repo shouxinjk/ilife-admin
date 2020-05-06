@@ -60,6 +60,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">关联标签：</label>
+			<div class="controls">
+				<form:textarea path="tags" htmlEscape="false" rows="5" maxlength="1024" class="input-xlarge"/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">权重：</label>
 			<div class="controls">
 				<form:input path="weight" htmlEscape="false" class="input-xlarge "/>

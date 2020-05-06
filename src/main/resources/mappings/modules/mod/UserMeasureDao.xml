@@ -13,6 +13,7 @@
 		a.default_score AS "defaultScore",
 		a.default_rank AS "defaultRank",
 		a.type AS "type",
+		a.tags AS "tags",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -90,6 +91,7 @@
 			default_score,
 			default_rank,
 			type,
+			tags,
 			create_by,
 			create_date,
 			update_by,
@@ -106,6 +108,7 @@
 			#{defaultScore},
 			#{defaultRank},
 			#{type},
+			#{tags},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -125,6 +128,7 @@
 			default_score = #{defaultScore},
 			default_rank = #{defaultRank},
 			type = #{type},
+			tags = #{tags},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}

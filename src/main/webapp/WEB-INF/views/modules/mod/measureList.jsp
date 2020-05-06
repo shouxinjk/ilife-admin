@@ -47,6 +47,7 @@
 				<th>属性占比</th>
 				<th>归一化参照值</th>
 				<th>默认等级</th>
+				<th>标签</th>
 				<shiro:hasPermission name="mod:measure:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -74,6 +75,9 @@
 				<td>
 					${measure.defaultLevel}
 				</td>
+				<td>
+					${measure.tags}
+				</td>				
 				<shiro:hasPermission name="mod:measure:edit"><td>
     				<a href="${ctx}/mod/measure/form?id=${measure.id}">修改</a>
 					<a href="${ctx}/mod/measure/delete?id=${measure.id}" onclick="return confirmx('确认要删除该商品属性吗？', this.href)">删除</a>
