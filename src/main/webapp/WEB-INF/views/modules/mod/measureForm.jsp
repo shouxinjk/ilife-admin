@@ -86,6 +86,66 @@
 				<form:input path="defaultLevel" htmlEscape="false" maxlength="8" class="input-xlarge "/>
 			</div>
 		</div>
+	<div class="control-group">
+			<label class="control-label">脚本表达式：</label>
+			<div class="controls">
+				<form:input path="expression" htmlEscape="false" maxlength="1024" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">效益：生理：</label>
+			<div class="controls">
+				<form:input path="alpha" htmlEscape="false" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">效益：安全：</label>
+			<div class="controls">
+				<form:input path="beta" htmlEscape="false" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">效益：情感：</label>
+			<div class="controls">
+				<form:input path="gamma" htmlEscape="false" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">效益：尊重：</label>
+			<div class="controls">
+				<form:input path="delte" htmlEscape="false" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">效益：价值：</label>
+			<div class="controls">
+				<form:input path="epsilon" htmlEscape="false" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">成本：经济：</label>
+			<div class="controls">
+				<form:input path="zeta" htmlEscape="false" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">成本：社会：</label>
+			<div class="controls">
+				<form:input path="eta" htmlEscape="false" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">成本：文化：</label>
+			<div class="controls">
+				<form:input path="theta" htmlEscape="false" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">偏好表达式：</label>
+			<div class="controls">
+				<form:input path="lambda" htmlEscape="false" maxlength="1024" class="input-xlarge "/>
+			</div>
+		</div>		
 		<div class="control-group">
 			<label class="control-label">类型：</label>
 			<div class="controls">

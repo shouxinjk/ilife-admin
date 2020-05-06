@@ -47,6 +47,9 @@
 			<if test="persona != null and persona.id != ''">
 				AND a.persona_id = #{persona.id}
 			</if>	
+			<if test="phase != null and phase != ''">
+				AND a.phase_id = #{phase.id}
+			</if>			
 			<if test="need != null and need.id != ''">
 				AND a.need_id = #{need.id}
 			</if>			

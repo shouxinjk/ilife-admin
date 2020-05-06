@@ -42,11 +42,20 @@
 			<tr>
 				<th>类别</th>
 				<th>维度</th>
-				<th>属性定义</th>
-				<th>属性名称</th>
-				<th>属性占比</th>
-				<th>归一化参照值</th>
+				<th>key</th>
+				<th>名称</th>
+				<th>占比</th>
+				<th>参照值</th>
 				<th>默认等级</th>
+				<th>alpha</th>
+				<th>beta</th>
+				<th>gamma</th>
+				<th>delte</th>
+				<th>epsilon</th>	
+				<th>zeta</th>
+				<th>eta</th>
+				<th>theta</th>	
+				<th>lambda</th>					
 				<th>标签</th>
 				<shiro:hasPermission name="mod:measure:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -75,6 +84,33 @@
 				<td>
 					${measure.defaultLevel}
 				</td>
+				<td>
+					${measure.alpha}
+				</td>
+				<td>
+					${measure.beta}
+				</td>
+				<td>
+					${measure.gamma}
+				</td>
+				<td>
+					${measure.delte}
+				</td>
+				<td>
+					${measure.epsilon}
+				</td>
+				<td>
+					${measure.zeta}
+				</td>
+				<td>
+					${measure.eta}
+				</td>
+				<td>
+					${measure.theta}
+				</td>												
+				<td>
+					${measure.lambda}
+				</td>				
 				<td>
 					${measure.tags}
 				</td>				
