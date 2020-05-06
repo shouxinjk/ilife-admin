@@ -84,10 +84,6 @@ public class UserMeasureController extends BaseController {
 		if(userMeasure.getCategory()!=null&&StringUtils.isNoneBlank(userMeasure.getCategory().getId())){
 			userMeasure.setCategory(userCategoryService.get(userMeasure.getCategory().getId()));
 		}
-		//将tag分别建立为主题
-		if(userMeasure.getTags()!=null&&userMeasure.getTags().trim().length()>0) {
-			saveTags(userMeasure);
-		}
 		model.addAttribute("userMeasure", userMeasure);
 		return "modules/mod/userMeasureForm";
 	}
@@ -99,6 +95,10 @@ public class UserMeasureController extends BaseController {
 			return form(userMeasure, model);
 		}
 		userMeasureService.save(userMeasure);
+		//将tag分别建立为主题
+		if(userMeasure.getTags()!=null&&userMeasure.getTags().trim().length()>0) {
+			saveTags(userMeasure);
+		}
 		addMessage(redirectAttributes, "保存用户属性定义成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/userMeasure/?treeId="+userMeasure.getCategory().getId()+"&repage";
 	}
@@ -111,18 +111,22 @@ public class UserMeasureController extends BaseController {
 		String tags = target.getTags();
 		if(tags == null || tags.trim().length()==0)
 			return;
-		String[] tagArray = tags.split("\\s+");
 		
 		//处理标签主题的默认分类节点
 		UserTagCategory parent = new UserTagCategory();
 		parent.setParent(new UserTagCategory("0"));//查找一级节点
+		parent.setName("auto");//节点名称为auto
 		List<UserTagCategory> parents = userTagCategoryService.findList(parent);
 		if(parents!=null && parents.size()>0)
 			parent = parents.get(0);//取一级节点的第一个作为目录
-		else
-			parent = new UserTagCategory("0");//否则放到一级目录下
+		else {//建立auto节点
+			userTagCategoryService.save(parent);
+			parents = userTagCategoryService.findList(parent);
+			parent = parents.get(0);
+		}
 		
 		//逐个建立标签主题
+		String[] tagArray = tags.split("\\s+");
 		for(String tag:tagArray) {
 			UserTag item = new UserTag();
 			item.setUserMeasure(measure);

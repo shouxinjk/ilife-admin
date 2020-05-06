@@ -112,18 +112,22 @@ public class MeasureController extends BaseController {
 		String tags = target.getTags();
 		if(tags == null || tags.trim().length()==0)
 			return;
-		String[] tagArray = tags.split("\\s+");
 		
 		//处理标签主题的默认分类节点
 		TagCategory parent = new TagCategory();
 		parent.setParent(new TagCategory("0"));//查找一级节点
+		parent.setName("auto");//一级节点名称为auto
 		List<TagCategory> parents = tagCategoryService.findList(parent);
 		if(parents!=null && parents.size()>0)
 			parent = parents.get(0);//取一级节点的第一个作为目录
-		else
-			parent = new TagCategory("0");//否则放到一级目录下
+		else {//否则建立一个名为auto的节点
+			tagCategoryService.save(parent);
+			parents = tagCategoryService.findList(parent);
+			parent = parents.get(0);
+		}
 		
 		//逐个建立标签主题
+		String[] tagArray = tags.split("\\s+");
 		for(String tag:tagArray) {
 			Tags item = new Tags();
 			item.setMeasure(measure);
