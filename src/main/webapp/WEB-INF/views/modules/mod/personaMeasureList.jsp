@@ -28,15 +28,15 @@
 				<th>阶段</th>
 				<th>属性</th>
 				<th>权重</th>
-				<th>效益：生理</th>
-				<th>效益：安全</th>
-				<th>效益：情感</th>
-				<th>效益：尊重</th>
-				<th>效益：价值</th>	
-				<th>成本：经济</th>
-				<th>成本：社会</th>
-				<th>成本：文化</th>	
-				<th>偏好脚本</th>						
+				<th>alpha</th>
+				<th>beta</th>
+				<th>gamma</th>
+				<th>delte</th>
+				<th>epsilon</th>	
+				<th>zeta</th>
+				<th>eta</th>
+				<th>theta</th>	
+				<th>lambda</th>						
 				<th>描述</th>
 				<th>创建时间</th>
 				<th>最后更新</th>
