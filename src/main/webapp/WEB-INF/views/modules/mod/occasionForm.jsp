@@ -32,6 +32,8 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="occasion" action="${ctx}/mod/occasion/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<input type="hidden" id="pid" name="pid" value="${pid}"/>
+		<input type="hidden" id="pType" name="pType" value="${pType}"/>	
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">名称：</label>

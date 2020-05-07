@@ -55,7 +55,7 @@ public class Transfer {
     }
     
     /**
-     * 在保存商品标注值时推送到分析库。
+     * 在保存商品标注值时推送到分析库。 
      * @param performance
      */
     

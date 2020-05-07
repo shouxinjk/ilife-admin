@@ -27,17 +27,19 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/ope/performance/">标注列表</a></li>
-		<li class="active"><a href="${ctx}/ope/performance/form?id=${performance.id}">标注<shiro:hasPermission name="ope:performance:edit">${not empty performance.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="ope:performance:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/ope/performance/?treeId=${pid}&treeModule=${pType}">标注列表</a></li>
+		<li class="active"><a href="${ctx}/ope/performance/form?id=${performance.id}&pid=${pid}&pType=${pType}">标注<shiro:hasPermission name="ope:performance:edit">${not empty performance.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="ope:performance:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="performance" action="${ctx}/ope/performance/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<input type="hidden" id="pid" name="pid" value="${pid}"/>
+		<input type="hidden" id="pType" name="pType" value="${pType}"/>	
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">关键属性：</label>
 			<div class="controls">
-				<sys:treeselect id="measure" name="measure.id" value="${humanMarkedValue.measure.id}" labelName="measure.name" labelValue="${humanMarkedValue.measure.name}"
-					title="关键属性" url="/mod/measure/listData"  cssClass="required"/>
+				<sys:treeselect id="measure" name="measure.id" value="${performance.measure.id}" labelName="measure.name" labelValue="${performance.measure.name}"
+					title="关键属性" url="/mod/measure/treeData"  cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

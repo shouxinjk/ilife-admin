@@ -40,6 +40,9 @@
 		<include refid="performanceJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="measure != null and measure.id != ''">
+				AND a.measure_id = #{measure.id}
+			</if>				
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

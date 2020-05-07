@@ -19,9 +19,9 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/ope/performance/">标注列表</a></li>
-		<shiro:hasPermission name="ope:performance:edit"><li><a href="${ctx}/ope/performance/form">标注添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="ope:performance:edit"><li><a href="${ctx}/ope/performance/form?pid=${pid}&pType=${pType}">标注添加</a></li></shiro:hasPermission>
 	</ul>
-	<form:form id="searchForm" modelAttribute="performance" action="${ctx}/ope/performance/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="performance" action="${ctx}/ope/performance/?treeId=${pid}&treeModule=${pType}" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 	</form:form>
@@ -72,8 +72,8 @@
 					<fmt:formatDate value="${performance.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="ope:performance:edit"><td>
-    				<a href="${ctx}/ope/performance/form?id=${performance.id}">修改</a>
-					<a href="${ctx}/ope/performance/delete?id=${performance.id}" onclick="return confirmx('确认要删除该标注吗？', this.href)">删除</a>
+    				<a href="${ctx}/ope/performance/form?id=${performance.id}&pid=${pid}&pType=${pType}">修改</a>
+					<a href="${ctx}/ope/performance/delete?id=${performance.id}&pid=${pid}&pType=${pType}" onclick="return confirmx('确认要删除该标注吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
