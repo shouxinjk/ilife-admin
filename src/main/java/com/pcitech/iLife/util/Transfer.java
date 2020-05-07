@@ -15,8 +15,11 @@ import com.google.gson.Gson;
 import com.pcitech.iLife.common.utils.KafkaUtils;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.Occasion;
+import com.pcitech.iLife.modules.mod.entity.UserMeasure;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
+import com.pcitech.iLife.modules.mod.service.UserMeasureService;
 import com.pcitech.iLife.modules.ope.entity.Performance;
+import com.pcitech.iLife.modules.ope.entity.UserPerformance;
 
 @Component
 @Aspect
@@ -26,6 +29,8 @@ public class Transfer {
 //	private Logger logger = LoggerFactory.getLogger(Transfer.class); //file output
 	@Autowired
 	MeasureService measureService;
+	@Autowired
+	UserMeasureService userMeasureService;
 	
 	/**
 	 * 在保存Occasion时推送消息
@@ -64,8 +69,9 @@ public class Transfer {
     		Measure m = measureService.get(performance.getMeasure().getId());
         Gson gson = new Gson();
 		Map map = new HashMap();
-		map.put("type", "dic");//dic 、 ref，分别表示来源于引用或字典
-		map.put("category", m.getCategory().getId());
+		map.put("ref_type", "dic");//dic 、 ref，分别表示来源于引用或字典
+		map.put("object_type", "item");//item 、 person，分别表示商品标注或用户标注
+		map.put("category", m.getCategory().getId());//对于商品标注是ItemCategoryId，对于用户标注是UserCategoryId，对于dic则是具体的表名
 		map.put("property_key", m.getProperty());
 		map.put("property", m.getName());
 		map.put("org_value", performance.getOriginalValue());
@@ -74,6 +80,32 @@ public class Transfer {
 		map.put("rank", performance.getLevel());
 		map.put("status", "ready");
 		map.put("createdOn",performance.getCreateDate());
+		map.put("modifiedOn", new Date());
+		valueKafkaLogger.info(gson.toJson(map));
+    }
+    
+
+    /**
+     * 在用户商品标注值时推送到分析库。 
+     * @param performance
+     */
+    
+    @Before("execution(* com.pcitech.iLife.modules.ope.service.UserPerformanceService.save(..)) && args(userPerformance)")
+    public void saveUserPerformance(UserPerformance userPerformance) {
+    		UserMeasure m = userMeasureService.get(userPerformance.getMeasure().getId());
+        Gson gson = new Gson();
+		Map map = new HashMap();
+		map.put("ref_type", "dic");//dic 、 ref，分别表示来源于引用或字典
+		map.put("object_type", "user");//item 、 person，分别表示商品标注或用户标注
+		map.put("category", m.getCategory().getId());//对于商品标注是ItemCategoryId，对于用户标注是UserCategoryId，对于dic则是具体的表名
+		map.put("property_key", m.getProperty());
+		map.put("property", m.getName());
+		map.put("org_value", userPerformance.getOriginalValue());
+		map.put("mark_type", "manual");//manual、auto
+		map.put("score", userPerformance.getMarkedValue());
+		map.put("rank", userPerformance.getLevel());
+		map.put("status", "ready");
+		map.put("createdOn",userPerformance.getCreateDate());
 		map.put("modifiedOn", new Date());
 		valueKafkaLogger.info(gson.toJson(map));
     }

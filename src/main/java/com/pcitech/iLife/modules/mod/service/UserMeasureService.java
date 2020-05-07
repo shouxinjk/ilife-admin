@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.service.CrudService;
+import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.UserMeasure;
 import com.pcitech.iLife.modules.mod.dao.UserMeasureDao;
 
@@ -28,6 +29,10 @@ public class UserMeasureService extends CrudService<UserMeasureDao, UserMeasure>
 	
 	public List<UserMeasure> findList(UserMeasure userMeasure) {
 		return super.findList(userMeasure);
+	}
+	
+	public List<UserMeasure> findByCategory(String category) {
+		return dao.findByCategoryId(category);
 	}
 	
 	public Page<UserMeasure> findPage(Page<UserMeasure> page, UserMeasure userMeasure) {
