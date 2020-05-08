@@ -69,6 +69,7 @@ public class Transfer {
     		Measure m = measureService.get(performance.getMeasure().getId());
         Gson gson = new Gson();
 		Map map = new HashMap();
+		map.put("id", Util.md5(m.getCategory().getId()+m.getProperty()));//根据category和property做唯一性识别
 		map.put("ref_type", "dic");//dic 、 ref，分别表示来源于引用或字典
 		map.put("object_type", "item");//item 、 person，分别表示商品标注或用户标注
 		map.put("category", m.getCategory().getId());//对于商品标注是ItemCategoryId，对于用户标注是UserCategoryId，对于dic则是具体的表名
@@ -95,6 +96,7 @@ public class Transfer {
     		UserMeasure m = userMeasureService.get(userPerformance.getMeasure().getId());
         Gson gson = new Gson();
 		Map map = new HashMap();
+		map.put("id", Util.md5(m.getCategory().getId()+m.getProperty()));//根据category和property做唯一性识别
 		map.put("ref_type", "dic");//dic 、 ref，分别表示来源于引用或字典
 		map.put("object_type", "user");//item 、 person，分别表示商品标注或用户标注
 		map.put("category", m.getCategory().getId());//对于商品标注是ItemCategoryId，对于用户标注是UserCategoryId，对于dic则是具体的表名
