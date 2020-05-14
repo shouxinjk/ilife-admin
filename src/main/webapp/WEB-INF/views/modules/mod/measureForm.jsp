@@ -158,6 +158,25 @@
 				<form:textarea path="tags" htmlEscape="false" rows="5" maxlength="1024" class="input-xlarge"/>
 			</div>
 		</div>		
+		<div class="control-group">
+			<label class="control-label">自动标注：</label>
+			<div class="controls">
+				<form:select path="autoLabelType" items="${fns:getDictList('autoLabelType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">从字典标注：</label>
+			<div class="controls">
+				<form:select path="autoLabelDict" items="${fns:getDictList('autoLabelDictItem')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">Refer引用标注：</label>
+			<div class="controls">
+				 <sys:treeselect id="autoLabelCategory" name="autoLabelCategory.id" value="${measure.autoLabelCategory.id}" labelName="autoLabelCategory.name" labelValue="${measure.autoLabelCategory.name}"
+					title="商品分类" url="/mod/itemCategory/treeData" notAllowSelectRoot="true"/>
+			</div>
+		</div>			
 		<div class="form-actions">
 			<shiro:hasPermission name="mod:measure:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

@@ -14,6 +14,10 @@
 		a.control_value AS "controlValue",
 		a.default_score AS "defaultScore",
 		a.default_level AS "defaultLevel",
+		a.auto_label_category AS "autoLabelCategory.id",
+		cc.name AS "autoLabelCategory.name",		
+		a.auto_label_dict AS "autoLabelDict",
+		a.auto_label_type AS "autoLabelType",
 		a.expression AS "expression",
 		a.alpha AS "alpha",
 		a.beta AS "beta",
@@ -37,6 +41,7 @@
 	<sql id="measureJoins">
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_item_category c ON c.id = a.category
+		LEFT JOIN mod_item_category cc ON cc.id = a.auto_label_category
 		LEFT JOIN mod_item_dimension d ON d.id = a.dimension
 	</sql>
     
@@ -125,6 +130,9 @@
 			control_value,
 			default_score,
 			default_level,
+			auto_label_type,
+			auto_label_dict,
+			auto_label_category,
 			expression,
 			alpha,
 			beta,
@@ -152,6 +160,9 @@
 			#{controlValue},
 			#{defaultScore},
 			#{defaultLevel},
+			#{autoLabelType},
+			#{autoLabelDict},
+			#{autoLabelCategory.id},
 			#{expression},
 			#{alpha},
 			#{beta},
@@ -182,6 +193,9 @@
 			control_value = #{controlValue},
 			default_score = #{defaultScore},
 			default_level = #{defaultLevel},
+			auto_label_type = #{autoLabelType},
+			auto_label_dict = #{autoLabelDict},
+			auto_label_category = #{autoLabelCategory.id},			
 			expression = #{expression},
 			alpha = #{alpha},
 			beta = #{beta},

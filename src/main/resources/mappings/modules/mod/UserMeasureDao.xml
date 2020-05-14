@@ -12,6 +12,10 @@
 		a.control_value AS "controlValue",
 		a.default_score AS "defaultScore",
 		a.default_rank AS "defaultRank",
+		a.auto_label_category AS "autoLabelCategory.id",
+		cc.name AS "autoLabelCategory.name",		
+		a.auto_label_dict AS "autoLabelDict",
+		a.auto_label_type AS "autoLabelType",		
 		a.type AS "type",
 		a.tags AS "tags",
 		a.create_by AS "createBy.id",
@@ -24,6 +28,7 @@
 	<sql id="userMeasureJoins">
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_user_category c ON c.id = a.category
+		LEFT JOIN mod_user_category cc ON cc.id = a.auto_label_category
 	</sql>
     
 	<select id="get" resultType="UserMeasure">
@@ -90,6 +95,9 @@
 			control_value,
 			default_score,
 			default_rank,
+			auto_label_type,
+			auto_label_dict,
+			auto_label_category,			
 			type,
 			tags,
 			create_by,
@@ -107,6 +115,9 @@
 			#{controlValue},
 			#{defaultScore},
 			#{defaultRank},
+			#{autoLabelType},
+			#{autoLabelDict},
+			#{autoLabelCategory.id},			
 			#{type},
 			#{tags},
 			#{createBy.id},
@@ -127,6 +138,9 @@
 			control_value = #{controlValue},
 			default_score = #{defaultScore},
 			default_rank = #{defaultRank},
+			auto_label_type = #{autoLabelType},
+			auto_label_dict = #{autoLabelDict},
+			auto_label_category = #{autoLabelCategory.id},			
 			type = #{type},
 			tags = #{tags},
 			update_by = #{updateBy.id},

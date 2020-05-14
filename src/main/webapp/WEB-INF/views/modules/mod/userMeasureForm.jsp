@@ -37,7 +37,7 @@
 			<label class="control-label">所属分类：</label>
 			<div class="controls">
 				 <sys:treeselect id="category" name="category.id" value="${userMeasure.category.id}" labelName="category.name" labelValue="${userMeasure.category.name}"
-					title="商品分类" url="/mod/userCategory/treeData" notAllowSelectRoot="true" cssClass="required"/>
+					title="用户分类" url="/mod/userCategory/treeData" notAllowSelectRoot="true" cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -89,6 +89,26 @@
 				<form:input path="defaultRank" htmlEscape="false" maxlength="8" class="input-xlarge "/>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">自动标注：</label>
+			<div class="controls">
+				<form:select path="autoLabelType" items="${fns:getDictList('autoLabelType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">从字典标注：</label>
+			<div class="controls">
+				<form:select path="autoLabelDict" items="${fns:getDictList('autoLabelDictUser')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">Refer引用标注：</label>
+			<div class="controls">
+				 <sys:treeselect id="autoLabelCategory" name="autoLabelCategory.id" value="${userMeasure.autoLabelCategory.id}" labelName="autoLabelCategory.name" labelValue="${userMeasure.autoLabelCategory.name}"
+					title="用户分类" url="/mod/userCategory/treeData" notAllowSelectRoot="true"/>
+			</div>
+		</div>					
 		<div class="control-group">
 			<label class="control-label">type：</label>
 			<div class="controls">

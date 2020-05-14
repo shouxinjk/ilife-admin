@@ -43,6 +43,9 @@
 				<th>归一化参考值</th>
 				<th>默认等级</th>
 				<th>标签</th>
+				<th>自动标注</th>
+				<th>Dict</th>
+				<th>Refer</th>				
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:userMeasure:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -70,7 +73,10 @@
 				</td>	
 				<td>
 					${userMeasure.tags}
-				</td>										
+				</td>		
+				<td>${fns:getDictLabel(userMeasure.autoLabelType, 'autoLabelType', '-')}</td>
+				<td>${fns:getDictLabel(userMeasure.autoLabelDict, 'autoLabelDictUser', '-')}</td>	
+				<td>${userMeasure.autoLabelCategory.name}</td>													
 				<td>
 					<fmt:formatDate value="${userMeasure.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>

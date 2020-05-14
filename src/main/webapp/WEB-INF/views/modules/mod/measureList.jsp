@@ -57,6 +57,9 @@
 				<th>theta</th>	
 				<th>lambda</th>					
 				<th>标签</th>
+				<th>自动标注</th>
+				<th>Dict</th>
+				<th>Refer</th>
 				<shiro:hasPermission name="mod:measure:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -113,7 +116,10 @@
 				</td>				
 				<td>
 					${measure.tags}
-				</td>				
+				</td>	
+				<td>${fns:getDictLabel(measure.autoLabelType, 'autoLabelType', '-')}</td>
+				<td>${fns:getDictLabel(measure.autoLabelDict, 'autoLabelDictItem', '-')}</td>	
+				<td>${measure.autoLabelCategory.name}</td>			
 				<shiro:hasPermission name="mod:measure:edit"><td>
     				<a href="${ctx}/mod/measure/form?id=${measure.id}">修改</a>
 					<a href="${ctx}/mod/measure/delete?id=${measure.id}" onclick="return confirmx('确认要删除该商品属性吗？', this.href)">删除</a>

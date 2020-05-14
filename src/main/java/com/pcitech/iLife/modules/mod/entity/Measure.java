@@ -35,6 +35,9 @@ public class Measure extends DataEntity<Measure> {
 	private double eta=0.3;		// 成本：社会
 	private double theta=0.2;		// 成本：文化
 	private String lambda;		// 偏好表达式
+	private ItemCategory autoLabelCategory;		// 自动标注引用类别
+	private String autoLabelDict;		// 自动标注引用字典
+	private String autoLabelType;		// 自动标注引用字典
 	
 	public Measure() {
 		super();
@@ -108,6 +111,30 @@ public class Measure extends DataEntity<Measure> {
 
 	public void setDefaultLevel(Integer defaultLevel) {
 		this.defaultLevel = defaultLevel;
+	}
+
+	public ItemCategory getAutoLabelCategory() {
+		return autoLabelCategory;
+	}
+
+	public void setAutoLabelCategory(ItemCategory autoLabelCategory) {
+		this.autoLabelCategory = autoLabelCategory;
+	}
+
+	public String getAutoLabelDict() {
+		return autoLabelDict;
+	}
+
+	public void setAutoLabelDict(String autoLabelDict) {
+		this.autoLabelDict = autoLabelDict;
+	}
+
+	public String getAutoLabelType() {
+		return autoLabelType;
+	}
+
+	public void setAutoLabelType(String autoLabelType) {
+		this.autoLabelType = autoLabelType;
 	}
 
 	@Length(min=0, max=100, message="类型长度必须介于 0 和 100 之间")

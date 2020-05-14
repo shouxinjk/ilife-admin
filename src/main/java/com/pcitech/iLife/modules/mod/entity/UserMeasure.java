@@ -25,6 +25,9 @@ public class UserMeasure extends DataEntity<UserMeasure> {
 	private String defaultRank;		// default_rank
 	private String type;		// type
 	private String tags;		// tags
+	private UserCategory autoLabelCategory;		// 自动标注引用类别
+	private String autoLabelDict;		// 自动标注引用字典
+	private String autoLabelType;		// 自动标注引用字典
 	
 	public UserMeasure() {
 		super();
@@ -102,6 +105,30 @@ public class UserMeasure extends DataEntity<UserMeasure> {
 		this.defaultRank = defaultRank;
 	}
 	
+	public UserCategory getAutoLabelCategory() {
+		return autoLabelCategory;
+	}
+
+	public void setAutoLabelCategory(UserCategory autoLabelCategory) {
+		this.autoLabelCategory = autoLabelCategory;
+	}
+
+	public String getAutoLabelDict() {
+		return autoLabelDict;
+	}
+
+	public void setAutoLabelDict(String autoLabelDict) {
+		this.autoLabelDict = autoLabelDict;
+	}
+
+	public String getAutoLabelType() {
+		return autoLabelType;
+	}
+
+	public void setAutoLabelType(String autoLabelType) {
+		this.autoLabelType = autoLabelType;
+	}
+
 	@Length(min=0, max=100, message="type长度必须介于 0 和 100 之间")
 	public String getType() {
 		return type;
