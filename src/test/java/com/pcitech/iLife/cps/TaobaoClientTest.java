@@ -1,4 +1,4 @@
-package com.pcitech.iLife.cps.taobao;
+package com.pcitech.iLife.cps;
 
 import static org.junit.Assert.*;
 

@@ -18,7 +18,7 @@ import com.arangodb.entity.BaseDocument;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.pcitech.iLife.common.config.Global;
-import com.pcitech.iLife.cps.taobao.TaobaoHelper;
+import com.pcitech.iLife.cps.TaobaoHelper;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.entity.Clearing;
 import com.pcitech.iLife.modules.mod.entity.Order;

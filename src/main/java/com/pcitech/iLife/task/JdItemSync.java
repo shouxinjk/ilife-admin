@@ -22,7 +22,6 @@ import com.jd.open.api.sdk.domain.kplunion.GoodsService.response.query.Promotion
 import com.jd.open.api.sdk.domain.kplunion.promotioncommon.PromotionService.response.get.PromotionCodeResp;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.cps.JdHelper;
-import com.pcitech.iLife.cps.taobao.TaobaoHelper;
 import com.pcitech.iLife.modules.mod.entity.Clearing;
 import com.pcitech.iLife.modules.mod.entity.Order;
 import com.pcitech.iLife.modules.mod.service.ClearingService;
