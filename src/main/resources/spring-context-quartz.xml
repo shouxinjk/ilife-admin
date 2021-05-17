@@ -175,6 +175,24 @@
             </list>
         </property>
     </bean> 	
+
+	<!-- 京东数据同步: 每3分钟执行 -->
+    <bean id="cpsDataSyncTaskJd" class="com.pcitech.iLife.task.JdItemSync"></bean>
+    <bean id="cpsDataSyncTaskJdMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskJd"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskJdTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskJdMethod"></property>
+        <property name="cronExpression" value="0 */3 * * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskJdScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskJdTrigger"></ref>
+            </list>
+        </property>
+    </bean> 	
 	
 	<!-- 微信选品入库：达人发送淘口令后存储到broker_seeds -->
     <bean id="brokerSeedNotifyTask" class="com.pcitech.iLife.task.BrokerSeedNotifyTask"></bean>

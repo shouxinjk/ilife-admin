@@ -14,7 +14,6 @@
 	
 	<!-- 项目属性 -->
 	<properties>
-		
 		<!-- main version setting -->
 		<!--spring.version>4.1.9.RELEASE</spring.version>
 		<spring-security.version>4.1.9.RELEASE</spring-security.version-->
@@ -103,7 +102,34 @@
             <groupId>com.taobao</groupId>
             <artifactId>sdk-java</artifactId>
             <version>20191228</version>
-        </dependency>         
+        </dependency>       
+        <!-- pdd SDK -->
+        <!-- 需要本地安装 -->
+        <!-- mvn install:install-file -DgroupId=com.pdd -DartifactId=pop-sdk -Dversion=1.10.84 -Dpackaging=jar -Dfile=/path/to/pop-sdk-1.10.84-all.jar -->
+        <dependency>
+            <groupId>com.pdd</groupId>
+            <artifactId>pop-sdk</artifactId>
+            <version>1.10.84</version>
+        </dependency>      
+        <!-- jd SDK -->
+        <!-- 需要本地安装 -->
+        <!-- mvn install:install-file -DgroupId=com.jd -DartifactId=open-api -Dversion=2.0 -Dpackaging=jar -Dfile=path/to/open-api-sdk-2.0-2021-05-12.jar -->
+        <dependency>
+            <groupId>com.jd</groupId>
+            <artifactId>open-api</artifactId>
+            <version>2.0</version>
+        </dependency>     
+        
+		 <dependency>
+	       <groupId>org.codehaus.jackson</groupId>
+	       <artifactId>jackson-mapper-asl</artifactId>
+	       <version>1.9.13</version>
+		</dependency> 
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>		      
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
