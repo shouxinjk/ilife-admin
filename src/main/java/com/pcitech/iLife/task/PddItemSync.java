@@ -198,7 +198,6 @@ public class PddItemSync {
         
         //处理数量归零
         processedAmount = 0;
-		
     }
 
 }

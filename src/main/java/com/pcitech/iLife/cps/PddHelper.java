@@ -22,6 +22,7 @@ import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsPromotionUrlGenerateReque
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsZsUnitUrlGenRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkMemberAuthorityQueryRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkOrderListRangeGetRequest;
+import com.pdd.pop.sdk.http.api.pop.request.PddPopAuthTokenRefreshRequest;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse.GoodsDetailResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse;
@@ -31,6 +32,7 @@ import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.Goo
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkMemberAuthorityQueryResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse.OrderListGetResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddPopAuthTokenRefreshResponse;
 
 
 //通过API接口完成商品查询获得类目信息
@@ -173,5 +175,15 @@ public class PddHelper {
 		return response.getGoodsPromotionUrlGenerateResponse();
 	}
 
-	
+	/**
+	 * TODO 根据时间检查并自动更新AccessToken
+	 * 当前accessToken有效期1年，到期后需要使用refreshToken更新
+	 * @throws Exception
+	 */
+	public void refreshAccessToken() throws Exception{
+		PddPopAuthTokenRefreshRequest request = new PddPopAuthTokenRefreshRequest();
+        request.setRefreshToken(Global.getConfig("pdd.refreshToken"));
+        PddPopAuthTokenRefreshResponse response = getClient().syncInvoke(request);
+        System.out.println(JsonUtil.transferToJson(response));
+	}
 }
