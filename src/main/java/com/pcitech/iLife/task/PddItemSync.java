@@ -157,6 +157,11 @@ public class PddItemSync {
             arangoClient = new ArangoDbClient(host,port,username,password,database);
             List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
             totalAmount = items.size();
+            if(totalAmount ==0) {//如果没有了就提前收工
+	            	logger.debug("没有待同步拼多多商品条目");
+	            	arangoClient.close();//链接还是要关闭的
+	            	return;
+	        }
             for (BaseDocument item:items) {
             		syncCpsLinks(item);//逐条查询CPS链接并更新ArangoDB doc
             }
