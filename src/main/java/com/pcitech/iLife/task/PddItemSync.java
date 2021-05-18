@@ -129,7 +129,8 @@ public class PddItemSync {
 				processedAmount++;
 				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				//注意：直接更新doc，否则 导致重复提示
+				arangoClient.update("my_stuff", itemKey, doc);   
 				e.printStackTrace();
 			}
 		}
