@@ -110,6 +110,7 @@ public class JdItemSync {
 				}else {
 					logger.warn("查询详情失败。【SKU】"+skuId+"【URL】"+url);
 				}
+				break;
 			} 
 			
 			//TODO：获取佣金信息
@@ -179,7 +180,8 @@ public class JdItemSync {
 			logger.info("clearing notification msg sent.[msgId] " + result.getString("msgId"));
 		}
         logger.info("Clearing Notification job executed.[msg]" + msg);
-		
+		//处理数量归零
+        processedAmount = 0;
     }
 
 }
