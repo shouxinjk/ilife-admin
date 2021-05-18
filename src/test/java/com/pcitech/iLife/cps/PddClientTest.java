@@ -20,6 +20,7 @@ import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse.GoodsDeta
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse.GoodsPromotionUrlGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.GoodsZsUnitGenerateResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse.OrderListGetResponse;
 import com.taobao.api.ApiException;
 
 @RunWith(SpringJUnit4ClassRunner.class) 
@@ -60,9 +61,23 @@ public class PddClientTest {
 		System.out.println("now start generate cps links by url ... ");
 		String brokerId = "alexchew";
 		try {
-			GoodsZsUnitGenerateResponse resp = pddHelper.generateCpsLinksByGoodsUrl(brokerId,"https://jinbao.pinduoduo.com/goods-detail?s=Y9z2s_dyW-dU8LcVwvfZCxeQHhqL5_0E_J976NZBG2");
+			GoodsZsUnitGenerateResponse resp = pddHelper.generateCpsLinksByUrl(brokerId,"https://mobile.yangkeduo.com/duo_coupon_landing.html?goods_id=244713040093&pid=20434335_206807608&goods_sign=Y9H2mpBGVklU8LcTwvfZAiQpGnpkFLvf_JQh6J0oGX4&customParameters=%7B%22uid%22%3A%2220434335%22%2C%22brokerId%22%3A%22default%22%7D&cpsSign=CC_210518_20434335_206807608_42f6b8466c9b619e8171d8f0e054339c&duoduo_type=2");
 			System.err.println("Mobile URL::"+resp.getMobileUrl());
 			System.err.println("Web URL::"+resp.getUrl());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assert true;
+	}
+	
+	@Test
+	public void getOrders() {
+		System.out.println("now start query orders ... ");
+		String brokerId = "alexchew";
+		try {
+			OrderListGetResponse resp = pddHelper.getOrders();
+			System.err.println("orders::"+JsonUtil.transferToJson(resp));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
