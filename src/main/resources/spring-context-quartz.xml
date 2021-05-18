@@ -213,6 +213,23 @@
         </property>
     </bean> 		
 	
+	<!-- 考拉数据同步: 每3分钟执行 -->
+    <bean id="cpsDataSyncTaskKaola" class="com.pcitech.iLife.task.KaolaItemSync"></bean>
+    <bean id="cpsDataSyncTaskKaolaMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskKaola"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskKaolaTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskKaolaMethod"></property>
+        <property name="cronExpression" value="0 */3 * * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskKaolaScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskKaolaTrigger"></ref>
+            </list>
+        </property>
+    </bean> 		
 	<!-- 微信选品入库：达人发送淘口令后存储到broker_seeds -->
     <bean id="brokerSeedNotifyTask" class="com.pcitech.iLife.task.BrokerSeedNotifyTask"></bean>
     <bean id="brokerSeedNotifyTaskMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

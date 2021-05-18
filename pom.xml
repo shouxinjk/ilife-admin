@@ -119,7 +119,15 @@
             <artifactId>open-api</artifactId>
             <version>2.0</version>
         </dependency>     
-        
+        <!-- kaola SDK -->
+        <!-- 需要本地安装 -->
+        <!-- mvn install:install-file -DgroupId=com.kaola -DartifactId=haitao-thirdparty-sdk -Dversion=1.0.0 -Dpackaging=jar -Dfile=haitao-thirdpart-sdk-1.0.0.jar -->
+        <dependency>
+            <groupId>com.kaola</groupId>
+            <artifactId>haitao-thirdparty-sdk</artifactId>
+            <version>1.0.0</version>
+        </dependency> 
+                
 		 <dependency>
 	       <groupId>org.codehaus.jackson</groupId>
 	       <artifactId>jackson-mapper-asl</artifactId>
