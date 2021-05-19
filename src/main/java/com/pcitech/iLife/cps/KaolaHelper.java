@@ -30,7 +30,12 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.haitao.thirdpart.sdk.APIUtil;
 import com.pcitech.iLife.common.config.Global;
+import com.pcitech.iLife.cps.kaola.GoodsInfoRequest;
 import com.pcitech.iLife.cps.kaola.GoodsInfoResponse;
+import com.pcitech.iLife.cps.kaola.OrderInfoRequest;
+import com.pcitech.iLife.cps.kaola.OrderInfoResponse;
+import com.pcitech.iLife.cps.kaola.ShareLinkRequest;
+import com.pcitech.iLife.cps.kaola.ShareLinkResponse;
 
 //通过API接口完成商品查询获得类目信息
 @Service
@@ -45,7 +50,7 @@ public class KaolaHelper {
 		return client;
 	}
 	
-	public String createSign(TreeMap<String,String> map ) {
+	private String createSign(TreeMap<String,String> map ) {
 		map.put("timestamp", sdf.format(new Date()));
 		map.put("v", "1.0");
 		map.put("unionId", Global.getConfig("kaola.unionId"));
@@ -55,35 +60,51 @@ public class KaolaHelper {
 	}
 	
 	public GoodsInfoResponse getItemDetail(String brokerId,String ids) {
-		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-		
 		//参数
-		TreeMap<String,String> map = new TreeMap<String,String>();
-		map.put("method", "kaola.zhuanke.api.queryGoodsInfo");
-		map.put("goodsIds", ids);
-		map.put("trackingCode1", brokerId);
+		GoodsInfoRequest req = new GoodsInfoRequest();
+		req.setGoodsIds(ids);
+		req.setTrackingCode1(brokerId);
+		TreeMap<String,String> map = req.getMap();
 		map.put("sign", createSign(map));
-		//组装成链接参数，注意需要进行URIEncode
-		StringBuffer params = new StringBuffer();
-		int index = 0;
-		for (Map.Entry<String, String> entry : map.entrySet()) {
-			if(index==0) {
-				params.append("?");
-			}else{
-				params.append("&");
-			}
-			params.append(entry.getKey());
-			params.append("=");
-			try {
-				params.append(URLEncoder.encode(entry.getValue(), "utf-8"));
-			} catch (UnsupportedEncodingException e) {
-				params.append(entry.getValue());
-			}
-			index++;
-		}
-
+		//请求并返回解析结果
+		return JSON.parseObject(post(map),GoodsInfoResponse.class);
+	}
+	
+	public OrderInfoResponse getOrder() {
+		//参数:按照时间段查询
+		Calendar cal = Calendar.getInstance();
+		Date end = cal.getTime();
+		cal.add(Calendar.MINUTE, -30);//每半小时查询一次
+		Date from = cal.getTime();
+		
+		OrderInfoRequest req = new OrderInfoRequest();
+		req.setType(1);//1:根据下单时间段查询 2:根据订单号查询 3:根据更新时间查询
+		req.setStartDate(from.getTime());
+		req.setEndDate(end.getTime());
+		TreeMap<String,String> map = req.getMap();
+		map.put("sign", createSign(map));
+		//请求并返回解析结果
+		return JSON.parseObject(post(map),OrderInfoResponse.class);
+	}
+	
+	public ShareLinkResponse convertLinks(String brokerId,List<String> links) {
+		ShareLinkRequest req = new ShareLinkRequest();
+		req.setTrackingCode1(brokerId);
+		req.setLinkList(links);
+		TreeMap<String,String> map = req.getMap();
+		map.put("sign", createSign(map));
+		//请求并返回解析结果
+		return JSON.parseObject(post(map),ShareLinkResponse.class);
+	}
+	
+	private String post(TreeMap<String,String> map) {
+		//参数处理
+		map.put("sign", createSign(map));//自动对参数进行签名
+		String params = getParams(map);//将参数转换为键值对
+		logger.error(Global.getConfig("kaola.api.https") + params);
+		
 		// 创建Post请求
-		System.err.println(Global.getConfig("kaola.api.https") + params);
+		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost httpPost = new HttpPost(Global.getConfig("kaola.api.https") + params);
 		httpPost.setHeader("Accept", "application/json;charset=UTF-8");
 //		httpPost.setHeader("Content-Type", "application/json;charset=UTF-8");
@@ -99,8 +120,7 @@ public class KaolaHelper {
 			     result.append(line);
 			} 
 			logger.debug(result.toString()); 
-			GoodsInfoResponse goodsInfoResponse = JSON.parseObject(result.toString(),GoodsInfoResponse.class);
-			return goodsInfoResponse;
+			return result.toString();
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
@@ -123,4 +143,25 @@ public class KaolaHelper {
 		return null;
 	}
 	
+	//组装成链接参数，注意需要进行URIEncode
+	private String getParams(TreeMap<String,String> map) {
+		StringBuffer params = new StringBuffer();
+		int index = 0;
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			if(index==0) {
+				params.append("?");
+			}else{
+				params.append("&");
+			}
+			params.append(entry.getKey());
+			params.append("=");
+			try {
+				params.append(URLEncoder.encode(entry.getValue(), "utf-8"));
+			} catch (UnsupportedEncodingException e) {
+				params.append(entry.getValue());
+			}
+			index++;
+		}
+		return params.toString();
+	}
 }
