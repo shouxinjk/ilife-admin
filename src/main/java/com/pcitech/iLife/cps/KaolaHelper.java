@@ -5,20 +5,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -42,14 +37,8 @@ import com.pcitech.iLife.cps.kaola.ShareLinkResponse;
 public class KaolaHelper {
 	private static Logger logger = LoggerFactory.getLogger(KaolaHelper.class);
 	SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private CloseableHttpClient client = null;
-	
-	private HttpClient getClient() {
-		if(client == null)
-			client = HttpClientBuilder.create().build();
-		return client;
-	}
-	
+
+	//方法调用签名。对参数按字母排序后MD5得到，需要过滤掉系统参数，直接调用API完成
 	private String createSign(TreeMap<String,String> map ) {
 		map.put("timestamp", sdf.format(new Date()));
 		map.put("v", "1.0");
@@ -59,6 +48,12 @@ public class KaolaHelper {
 		return sign;
 	}
 	
+	/**
+	 * 根据商品列表查询商品详情。商品ID以逗号分隔，最多10个
+	 * @param brokerId
+	 * @param ids
+	 * @return
+	 */
 	public GoodsInfoResponse getItemDetail(String brokerId,String ids) {
 		//参数
 		GoodsInfoRequest req = new GoodsInfoRequest();
@@ -70,6 +65,11 @@ public class KaolaHelper {
 		return JSON.parseObject(post(map),GoodsInfoResponse.class);
 	}
 	
+	/**
+	 * TODO 订单查询，需要分解为多个具体查询接口
+	 * 查询类型：1:根据下单时间段查询 2:根据订单号查询 3:根据更新时间查询
+	 * @return
+	 */
 	public OrderInfoResponse getOrder() {
 		//参数:按照时间段查询
 		Calendar cal = Calendar.getInstance();
@@ -87,6 +87,12 @@ public class KaolaHelper {
 		return JSON.parseObject(post(map),OrderInfoResponse.class);
 	}
 	
+	/**
+	 * 链接转化。将其他推广链接转换为自己的推广链接。
+	 * @param brokerId：所属达人
+	 * @param links：需要转换的链接，最多10个
+	 * @return
+	 */
 	public ShareLinkResponse convertLinks(String brokerId,List<String> links) {
 		ShareLinkRequest req = new ShareLinkRequest();
 		req.setTrackingCode1(brokerId);
@@ -97,6 +103,11 @@ public class KaolaHelper {
 		return JSON.parseObject(post(map),ShareLinkResponse.class);
 	}
 	
+	/**
+	 * 调用API方法。具体调用方法通过参数传递，在Request内置封装
+	 * @param map
+	 * @return
+	 */
 	private String post(TreeMap<String,String> map) {
 		//参数处理
 		map.put("sign", createSign(map));//自动对参数进行签名
