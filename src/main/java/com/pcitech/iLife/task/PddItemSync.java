@@ -129,8 +129,8 @@ public class PddItemSync {
 				processedAmount++;
 				
 			} catch (Exception e) {
-				//注意：直接更新doc，否则 导致重复提示
-				arangoClient.update("my_stuff", itemKey, doc);   
+				//TODO 需要注意：当前有重复提示问题，直接更新doc，避免导致重复提示
+				//arangoClient.update("my_stuff", itemKey, doc);   
 				e.printStackTrace();
 			}
 		}

@@ -49,6 +49,7 @@ public class KaolaClientTest {
 		GoodsInfoResponse goodsInfoResponse = kaolaHelper.getItemDetail(brokerId, goodsIds);
 		try {
 			System.out.println(JsonUtil.toJson(goodsInfoResponse));
+			System.out.println(JsonUtil.toJson(goodsInfoResponse.getData().get(0).getBaseInfo().getImageList()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
