@@ -113,6 +113,10 @@ public class KaolaItemSync {
 					//将第一张展示图片作为logo
 					doc.getProperties().put("logo", good.getBaseInfo().getImageList().get(0));
 					
+					//如果有subtitle，则作为summary
+					if(good.getBaseInfo().getGoodsSubTitle()!=null && good.getBaseInfo().getGoodsSubTitle().trim().length()>0)
+						doc.getProperties().put("summary", good.getBaseInfo().getGoodsSubTitle());
+					
 					//增加类目
 					List<String> categories = new ArrayList<String>();
 					for(CategoryInfo category:good.getCategoryInfo())//增加类目

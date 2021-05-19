@@ -45,7 +45,7 @@ public class KaolaClientTest {
 	public void getItemDetail() {
 		System.out.println("now start query item details ... ");
 		String brokerId = "default";
-		String goodsIds = "8248852,1488637,6241234";
+		String goodsIds = "8248852,1488637,5680881";
 		GoodsInfoResponse goodsInfoResponse = kaolaHelper.getItemDetail(brokerId, goodsIds);
 		try {
 			System.out.println(JsonUtil.toJson(goodsInfoResponse));
