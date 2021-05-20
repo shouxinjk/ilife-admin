@@ -85,79 +85,82 @@ public class SuningItemSync {
 			//更新CPS链接：直接覆盖
 			Map<String,String> links = new HashMap<String,String>();
 			JSONObject result = suningHelper.generateCpsLink("default", webUrl);
-			links.put("web2", URLDecoder.decode(result.getString("extendUrl"))+"&sub_user="+brokerId);
+			if(result != null) //部分商品可能获取失败：会导致链接不会被更新
+				links.put("web2", URLDecoder.decode(result.getString("extendUrl"))+"&sub_user="+brokerId);
 			result = suningHelper.generateCpsLink("default", wapUrl);
-			links.put("wap2", URLDecoder.decode(result.getString("extendUrl"))+"&sub_user="+brokerId);
+			if(result != null) //部分商品可能获取失败：会导致链接不会被更新
+				links.put("wap2", URLDecoder.decode(result.getString("extendUrl"))+"&sub_user="+brokerId);
 			doc.getProperties().put("link", links);
-			
 			//获取详情更新类目
 			Pattern p=Pattern.compile("(\\d+)/(\\d+)"); 
 			Matcher m=p.matcher(webUrl); 
 			if(m.find() && m.groupCount()>=2 ) { //https://product.suning.com/0000000000/12208306208.html
 			    String skuId = m.group(2)+"-"+m.group(1); //组装skuId
 				result = suningHelper.getDetail(skuId);
-				JSONObject commodityInfo = result.getJSONObject("commodityInfo");
-				
-				//更新标题
-				doc.getProperties().put("title", commodityInfo.getString("commodityName"));
-
-				//如果summary
-				doc.getProperties().put("summary", commodityInfo.getString("sellingPoint"));
-				
-				//更新图片列表：注意脚本中已经有采集，此处使用自带的内容
-				JSONArray imgList =  commodityInfo.getJSONArray("pictureUrl");
-				doc.getProperties().put("logo", imgList.getJSONObject(0).getString("picUrl"));//将第一张展示图片作为logo
-				/**
-				//不更新图片列表
-				List<String> images = new ArrayList<String>();
-				for(int i=0;i<imgList.size();i++) {//增加展示图片
-					images.add(imgList.getJSONObject(i).getString("picUrl"));
-				}
-				doc.getProperties().put("images", images);
-				//**/
-				
-				//props信息脚本端已经采集，不再更新
-				/*
-				Map<String,String> props = new HashMap<String,String>();
-				//如果原来已经有属性，需要继续保留
-				if(doc.getProperties().get("props") != null) {
-					Map<String,String> oldProps = (Map<String,String>)doc.getProperties().get("props");
-					props = oldProps;
-				}
-				props.put("品牌", good.getBaseInfo().getBrandName());//增加品牌属性
-				props.put("品牌国家", good.getBaseInfo().getBrandCountryName());//增加品牌国家属性
-				doc.getProperties().put("props", props);
-				//**/
-				
-				//增加类目:直接替换原有类目
-				List<String> categories = new ArrayList<String>();
-				JSONObject categoryObj = result.getJSONObject("categoryInfo");
-				if(categoryObj.getString("firstSaleCategoryName")!=null)categories.add(categoryObj.getString("firstSaleCategoryName"));
-				if(categoryObj.getString("secondSaleCategoryName")!=null)categories.add(categoryObj.getString("secondSaleCategoryName"));
-				if(categoryObj.getString("thirdSaleCategoryName")!=null)categories.add(categoryObj.getString("thirdSaleCategoryName"));
-				doc.getProperties().put("category", categories);//更新类目，包含多级分类
+				if(result != null) { //部分商品可能获取失败：不更新数据，直接跳过
+					JSONObject commodityInfo = result.getJSONObject("commodityInfo");
+					
+					//更新标题
+					doc.getProperties().put("title", commodityInfo.getString("commodityName"));
 	
-				//更新佣金信息：默认为2-party
-				String rateStr = commodityInfo.getString("rate");
-				String priceStr = commodityInfo.getString("commodityPrice");
-				double rate = 0;
-				double amount = 0;
-				double price = 0;
-				try {
-					rate = Double.parseDouble(rateStr);
-					price = Double.parseDouble(priceStr);
-					amount = price*rate/100;//注意rate是百分比
-				}catch(Exception ex) {
-					logger.warn("cannot parse rate to double.[rate str]",rateStr);
-				}
-				if(rate>0) {
-					Map<String,String> profit = new HashMap<String,String>();
-					profit.put("type", "2-party");
-					profit.put("rate", ""+rate);
-					profit.put("amount", ""+amount);
-					doc.getProperties().put("profit", profit);
-				}else {
-					logger.warn("cannot set profit.amount or profit.rate.");
+					//如果summary
+					doc.getProperties().put("summary", commodityInfo.getString("sellingPoint"));
+					
+					//更新图片列表：注意脚本中已经有采集，此处使用自带的内容
+					JSONArray imgList =  commodityInfo.getJSONArray("pictureUrl");
+					doc.getProperties().put("logo", imgList.getJSONObject(0).getString("picUrl"));//将第一张展示图片作为logo
+					/**
+					//不更新图片列表
+					List<String> images = new ArrayList<String>();
+					for(int i=0;i<imgList.size();i++) {//增加展示图片
+						images.add(imgList.getJSONObject(i).getString("picUrl"));
+					}
+					doc.getProperties().put("images", images);
+					//**/
+					
+					//props信息脚本端已经采集，不再更新
+					/*
+					Map<String,String> props = new HashMap<String,String>();
+					//如果原来已经有属性，需要继续保留
+					if(doc.getProperties().get("props") != null) {
+						Map<String,String> oldProps = (Map<String,String>)doc.getProperties().get("props");
+						props = oldProps;
+					}
+					props.put("品牌", good.getBaseInfo().getBrandName());//增加品牌属性
+					props.put("品牌国家", good.getBaseInfo().getBrandCountryName());//增加品牌国家属性
+					doc.getProperties().put("props", props);
+					//**/
+					
+					//增加类目:直接替换原有类目
+					List<String> categories = new ArrayList<String>();
+					JSONObject categoryObj = result.getJSONObject("categoryInfo");
+					if(categoryObj.getString("firstSaleCategoryName")!=null)categories.add(categoryObj.getString("firstSaleCategoryName"));
+					if(categoryObj.getString("secondSaleCategoryName")!=null)categories.add(categoryObj.getString("secondSaleCategoryName"));
+					if(categoryObj.getString("thirdSaleCategoryName")!=null)categories.add(categoryObj.getString("thirdSaleCategoryName"));
+					doc.getProperties().put("category", categories);//更新类目，包含多级分类
+		
+					//更新佣金信息：默认为2-party
+					String rateStr = commodityInfo.getString("rate");
+					String priceStr = commodityInfo.getString("commodityPrice");
+					double rate = 0;
+					double amount = 0;
+					double price = 0;
+					try {
+						rate = Double.parseDouble(rateStr);
+						price = Double.parseDouble(priceStr);
+						amount = price*rate/100;//注意rate是百分比
+					}catch(Exception ex) {
+						logger.warn("cannot parse rate to double.[rate str]",rateStr);
+					}
+					if(rate>0) {
+						Map<String,String> profit = new HashMap<String,String>();
+						profit.put("type", "2-party");
+						profit.put("rate", ""+rate);
+						profit.put("amount", ""+amount);
+						doc.getProperties().put("profit", profit);
+					}else {
+						logger.warn("cannot set profit.amount or profit.rate.");
+					}
 				}
 			}
 			//更新doc

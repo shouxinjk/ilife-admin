@@ -83,7 +83,10 @@ public class SuningHelper {
 			CommoditydetailQueryResponse response = getClient().excute(request);
 			logger.error(response.getBody());
 			JSONObject jsonobj = JSON.parseObject(response.getBody());
-			return jsonobj.getJSONObject("sn_responseContent").getJSONObject("sn_body").getJSONArray("queryCommoditydetail").getJSONObject(0);
+			if(jsonobj.getJSONObject("sn_responseContent").getJSONObject("sn_error")!=null) 
+				logger.warn("error occured."+jsonobj.getJSONObject("sn_responseContent").getJSONObject("sn_error").getString("error_msg"));
+			else
+				return jsonobj.getJSONObject("sn_responseContent").getJSONObject("sn_body").getJSONArray("queryCommoditydetail").getJSONObject(0);
 		} catch (SuningApiException e) {
 			e.printStackTrace();
 		}
@@ -100,7 +103,10 @@ public class SuningHelper {
 		 CustompromotionurlQueryResponse response = getClient().excute(request);
 		 logger.debug(response.getBody());
 		 JSONObject jsonObj = JSON.parseObject(response.getBody());
-		 return jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_body").getJSONObject("queryCustompromotionurl");
+		if(jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_error")!=null) 
+			logger.warn("error occured."+jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_error").getString("error_msg"));
+		else
+			return jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_body").getJSONObject("queryCustompromotionurl");
 		} catch (SuningApiException e) {
 		 e.printStackTrace();
 		}
@@ -124,10 +130,14 @@ public class SuningHelper {
 		 BacthcustomlinkQueryResponse response = getClient().excute(request);
 		 JSONObject jsonObj = JSON.parseObject(response.getBody());
 		 logger.debug(response.getBody());
-		 //注意：返回值有错误，未能正确封装为JSON数组，只能通过字符串手动处理，这帮傻缺~~~
-		 String linkStr = jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_body").getJSONObject("queryBacthcustomlink").getString("shortLink");
-		 String[] links = linkStr.split("\\[|,|\\]");
-		 return links;
+		if(jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_error")!=null) 
+			logger.warn("error occured."+jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_error").getString("error_msg"));
+		else {
+			 //注意：返回值有错误，未能正确封装为JSON数组，只能通过字符串手动处理，这帮傻缺~~~
+			 String linkStr = jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_body").getJSONObject("queryBacthcustomlink").getString("shortLink");
+			 String[] links = linkStr.split("\\[|,|\\]");
+			 return links;
+		}
 		} catch (SuningApiException e) {
 		 e.printStackTrace();
 		}
