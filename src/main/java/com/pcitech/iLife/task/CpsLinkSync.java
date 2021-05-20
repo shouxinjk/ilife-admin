@@ -150,7 +150,7 @@ public class CpsLinkSync {
 			links.put("wap2", prefix+item.getProperties().get("wap"));
 			doc.getProperties().put("link", links);
 			processedMap.put(itemSource, processedMap.get(itemSource)+1);
-		}else if("gomme".equalsIgnoreCase(itemSource)) {
+		}else if("gome".equalsIgnoreCase(itemSource)) {
 			String prefix = "?cmpid=cps_2552_25169_default&sid=2552&wid=25169&feedback=default";
 			Map<String,String> links = new HashMap<String,String>();
 			links.put("web2", item.getProperties().get("web")+prefix);
