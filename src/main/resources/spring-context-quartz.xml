@@ -211,6 +211,24 @@
             </list>
         </property>
     </bean> 		
+
+    <!-- 苏宁数据同步: 每3分钟执行 -->
+    <bean id="cpsDataSyncTaskSuning" class="com.pcitech.iLife.task.SuningItemSync"></bean>
+    <bean id="cpsDataSyncTaskSuningMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskSuning"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskSuningTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskSuningMethod"></property>
+        <property name="cronExpression" value="0 */3 * * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskSuningScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskSuningTrigger"></ref>
+            </list>
+        </property>
+    </bean> 	
 	
 	<!-- 手动拼接CPS链接数据同步: 每分钟执行 -->
     <bean id="cpsDataSyncTaskCpsLink" class="com.pcitech.iLife.task.CpsLinkSync"></bean>
