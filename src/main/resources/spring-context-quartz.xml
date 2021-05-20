@@ -194,7 +194,6 @@
         </property>
     </bean> 	
 	
-	
 	<!-- 拼多多数据同步: 每3分钟执行 -->
     <bean id="cpsDataSyncTaskPdd" class="com.pcitech.iLife.task.PddItemSync"></bean>
     <bean id="cpsDataSyncTaskPddMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -212,6 +211,24 @@
             </list>
         </property>
     </bean> 		
+	
+	<!-- 手动拼接CPS链接数据同步: 每分钟执行 -->
+    <bean id="cpsDataSyncTaskCpsLink" class="com.pcitech.iLife.task.CpsLinkSync"></bean>
+    <bean id="cpsDataSyncTaskCpsLinkMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskCpsLink"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskCpsLinkTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskCpsLinkMethod"></property>
+        <property name="cronExpression" value="0 * * * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskCpsLinkScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskCpsLinkTrigger"></ref>
+            </list>
+        </property>
+    </bean> 	
 	
 	<!-- 考拉数据同步: 每3分钟执行 -->
     <bean id="cpsDataSyncTaskKaola" class="com.pcitech.iLife.task.KaolaItemSync"></bean>

@@ -85,7 +85,7 @@ public class CpsLinkSync {
     //待处理的来源列表
     String[] source = {"dhc","tongcheng","dangdang","kaola","gome","amazon","ctrip"};
     String[] sourceName = {"DHC","同程","当当","考拉","国美","亚马逊","携程"};
-    int numberPerTask = 10;//每次任务同步处理条数
+    int numberPerTask = 100;//每次任务同步处理条数： 每分钟100条
     
     // 记录处理条数
     int totalAmount = 0;
