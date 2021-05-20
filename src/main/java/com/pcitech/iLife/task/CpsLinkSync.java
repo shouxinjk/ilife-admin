@@ -109,15 +109,31 @@ public class CpsLinkSync {
 		if("dhc".equalsIgnoreCase(itemSource)) {
 			String prefix = "?ad_cps=70130084&";
 			Map<String,String> links = new HashMap<String,String>();
-			links.put("web2", item.getProperties().get("web").toString().replace("?", prefix));
-			links.put("wap2", item.getProperties().get("wap").toString().replace("?", prefix));
+			if(item.getProperties().get("web").toString().indexOf("?")>0)
+				links.put("web2", item.getProperties().get("web").toString().replace("?", prefix));
+			else
+				links.put("web2", item.getProperties().get("web")+ prefix);
+			
+			if(item.getProperties().get("wap").toString().indexOf("?")>0)
+				links.put("wap2", item.getProperties().get("wap").toString().replace("?", prefix));
+			else
+				links.put("wap2", item.getProperties().get("wap")+ prefix);
+			
 			doc.getProperties().put("link", links);
 			processedMap.put(itemSource, processedMap.get(itemSource)+1);
 		}else if("tongcheng".equalsIgnoreCase(itemSource)) {
 			String prefix = "?refid=29240070&";
 			Map<String,String> links = new HashMap<String,String>();
-			links.put("web2", item.getProperties().get("web").toString().replace("?", prefix));
-			links.put("wap2", item.getProperties().get("wap").toString().replace("?", prefix));
+			if(item.getProperties().get("web").toString().indexOf("?")>0)
+				links.put("web2", item.getProperties().get("web").toString().replace("?", prefix));
+			else
+				links.put("web2", item.getProperties().get("web")+ prefix);
+			
+			if(item.getProperties().get("wap").toString().indexOf("?")>0)
+				links.put("wap2", item.getProperties().get("wap").toString().replace("?", prefix));
+			else
+				links.put("wap2", item.getProperties().get("wap")+ prefix);
+			
 			doc.getProperties().put("link", links);
 			processedMap.put(itemSource, processedMap.get(itemSource)+1);
 		}else if("dangdang".equalsIgnoreCase(itemSource)) {
