@@ -127,6 +127,14 @@
             <artifactId>haitao-thirdparty-sdk</artifactId>
             <version>1.0.0</version>
         </dependency> 
+         <!-- 需要本地安装 -->
+        <!-- mvn install:install-file -DgroupId=com.suning -DartifactId=suning-sdk-java  -Dversion=standard -Dpackaging=jar -Dfile=suning-sdk-java-standard-20210520.jar -->
+        <dependency>
+            <groupId>com.suning</groupId>
+            <artifactId>suning-sdk-java</artifactId>
+            <version>standard</version>
+        </dependency> 
+ 
  
  
 		 <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->

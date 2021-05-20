@@ -1,5 +1,6 @@
 package com.pcitech.iLife.task;
 
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,15 +15,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.google.gson.Gson;
 import com.pcitech.iLife.common.config.Global;
-import com.pcitech.iLife.cps.KaolaHelper;
-import com.pcitech.iLife.cps.kaola.CategoryInfo;
-import com.pcitech.iLife.cps.kaola.GoodInfo;
-import com.pcitech.iLife.cps.kaola.GoodsInfoResponse;
+import com.pcitech.iLife.cps.SuningHelper;
 import com.pcitech.iLife.modules.mod.entity.Clearing;
 import com.pcitech.iLife.modules.mod.entity.Order;
 import com.pcitech.iLife.modules.mod.service.ClearingService;
@@ -47,8 +46,8 @@ import org.quartz.JobExecutionException;
  * 如果没有待处理内容则等待
  */
 @Service
-public class KaolaItemSync {
-    private static Logger logger = LoggerFactory.getLogger(KaolaItemSync.class);
+public class SuningItemSync {
+    private static Logger logger = LoggerFactory.getLogger(SuningItemSync.class);
     ArangoDbClient arangoClient;
     String host = Global.getConfig("arangodb.host");
     String port = Global.getConfig("arangodb.port");
@@ -57,18 +56,18 @@ public class KaolaItemSync {
     String database = Global.getConfig("arangodb.database");
     
     @Autowired
-    KaolaHelper kaolaHelper;
+    SuningHelper suningHelper;
     
     // 记录处理条数
     int totalAmount = 0;
     int processedAmount = 0;
 
-    public KaolaItemSync() {
+    public SuningItemSync() {
     }
     
     private void syncCpsLinks(BaseDocument item) {
 		String itemKey = item.getProperties().get("itemKey").toString();
-
+		logger.error("got Sunning item.[key]"+itemKey);
 		//准备更新doc
 		BaseDocument doc = new BaseDocument();
 		Map<String,Object> syncStatus = new HashMap<String,Object>();
@@ -78,69 +77,89 @@ public class KaolaItemSync {
 		doc.setKey(itemKey);
 		doc.getProperties().put("status", syncStatus);
 		doc.getProperties().put("timestamp", syncTimestamp);
-		String  url = item.getProperties().get("link").toString();
+		String  webUrl = item.getProperties().get("web").toString();
+		String  wapUrl = item.getProperties().get("wap").toString();
+		String brokerId = "default";//默认都认为是平台自己生成的
 		
 		try {
-
-			//获取详情更新类目
-			Pattern p=Pattern.compile("\\d+"); 
-			Matcher m=p.matcher(url); 
-			while(m.find()) { //仅处理第一个即可
-			    String skuId = m.group(); 
-			    GoodsInfoResponse goods = kaolaHelper.getItemDetail("default", skuId);
-				if(goods != null && goods.getData()!=null && goods.getData().size()>0) {
-					GoodInfo good = goods.getData().get(0);
-					
-					//更新品牌信息到prop列表
-					Map<String,String> props = new HashMap<String,String>();
-					//如果原来已经有属性，需要继续保留
-					if(doc.getProperties().get("props") != null) {
-						Map<String,String> oldProps = (Map<String,String>)doc.getProperties().get("props");
-						props = oldProps;
-					}
-					props.put("品牌", good.getBaseInfo().getBrandName());//增加品牌属性
-					props.put("品牌国家", good.getBaseInfo().getBrandCountryName());//增加品牌国家属性
-					doc.getProperties().put("props", props);
-					
-					//更新图片列表：注意脚本中已经有采集，此处使用自带的内容
-					List<String> images = new ArrayList<String>();
-					for(String img:good.getBaseInfo().getImageList())//增加展示图片
-						images.add(img);
-					for(String img:good.getBaseInfo().getDetailImgList())//增加详情图片
-						images.add(img);
-					doc.getProperties().put("images", images);
-					
-					//将第一张展示图片作为logo
-					doc.getProperties().put("logo", good.getBaseInfo().getImageList().get(0));
-					
-					//如果有subtitle，则作为summary
-					if(good.getBaseInfo().getGoodsSubTitle()!=null && good.getBaseInfo().getGoodsSubTitle().trim().length()>0)
-						doc.getProperties().put("summary", good.getBaseInfo().getGoodsSubTitle());
-					
-					//增加类目
-					List<String> categories = new ArrayList<String>();
-					for(CategoryInfo category:good.getCategoryInfo())//增加类目
-						categories.add(category.getCategoryName());
-					doc.getProperties().put("category", categories);//更新类目，包含多级分类
-
-					//更新CPS链接：直接覆盖
-					Map<String,String> links = new HashMap<String,String>();
-					links.put("wap2", good.getLinkInfo().getShareUrl());
-					links.put("web2", good.getLinkInfo().getShareUrl());
-					doc.getProperties().put("link", links);
-
-					//更新价格：直接覆盖
-					Map<String,String> price = new HashMap<String,String>();
-					price.put("bid", ""+good.getPriceInfo().getMarketPrice());
-					price.put("sale", ""+good.getPriceInfo().getCurrentPrice());
-					doc.getProperties().put("price", price);
-					
-				}else {
-					logger.warn("查询详情失败。【SKU】"+skuId+"【URL】"+url);
-				}
-				break;
-			} 
+			//更新CPS链接：直接覆盖
+			Map<String,String> links = new HashMap<String,String>();
+			JSONObject result = suningHelper.generateCpsLink("default", webUrl);
+			links.put("web2", URLDecoder.decode(result.getString("extendUrl"))+"&sub_user="+brokerId);
+			result = suningHelper.generateCpsLink("default", wapUrl);
+			links.put("wap2", URLDecoder.decode(result.getString("extendUrl"))+"&sub_user="+brokerId);
+			doc.getProperties().put("link", links);
 			
+			//获取详情更新类目
+			Pattern p=Pattern.compile("(\\d+)/(\\d+)"); 
+			Matcher m=p.matcher(webUrl); 
+			if(m.find() && m.groupCount()>=2 ) { //https://product.suning.com/0000000000/12208306208.html
+			    String skuId = m.group(2)+"-"+m.group(1); //组装skuId
+				result = suningHelper.getDetail(skuId);
+				JSONObject commodityInfo = result.getJSONObject("commodityInfo");
+				
+				//更新标题
+				doc.getProperties().put("title", commodityInfo.getString("commodityName"));
+
+				//如果summary
+				doc.getProperties().put("summary", commodityInfo.getString("sellingPoint"));
+				
+				//更新图片列表：注意脚本中已经有采集，此处使用自带的内容
+				JSONArray imgList =  commodityInfo.getJSONArray("pictureUrl");
+				doc.getProperties().put("logo", imgList.getJSONObject(0).getString("picUrl"));//将第一张展示图片作为logo
+				/**
+				//不更新图片列表
+				List<String> images = new ArrayList<String>();
+				for(int i=0;i<imgList.size();i++) {//增加展示图片
+					images.add(imgList.getJSONObject(i).getString("picUrl"));
+				}
+				doc.getProperties().put("images", images);
+				//**/
+				
+				//props信息脚本端已经采集，不再更新
+				/*
+				Map<String,String> props = new HashMap<String,String>();
+				//如果原来已经有属性，需要继续保留
+				if(doc.getProperties().get("props") != null) {
+					Map<String,String> oldProps = (Map<String,String>)doc.getProperties().get("props");
+					props = oldProps;
+				}
+				props.put("品牌", good.getBaseInfo().getBrandName());//增加品牌属性
+				props.put("品牌国家", good.getBaseInfo().getBrandCountryName());//增加品牌国家属性
+				doc.getProperties().put("props", props);
+				//**/
+				
+				//增加类目:直接替换原有类目
+				List<String> categories = new ArrayList<String>();
+				JSONObject categoryObj = result.getJSONObject("categoryInfo");
+				if(categoryObj.getString("firstSaleCategoryName")!=null)categories.add(categoryObj.getString("firstSaleCategoryName"));
+				if(categoryObj.getString("secondSaleCategoryName")!=null)categories.add(categoryObj.getString("secondSaleCategoryName"));
+				if(categoryObj.getString("thirdSaleCategoryName")!=null)categories.add(categoryObj.getString("thirdSaleCategoryName"));
+				doc.getProperties().put("category", categories);//更新类目，包含多级分类
+	
+				//更新佣金信息：默认为2-party
+				String rateStr = commodityInfo.getString("rate");
+				String priceStr = commodityInfo.getString("commodityPrice");
+				double rate = 0;
+				double amount = 0;
+				double price = 0;
+				try {
+					rate = Double.parseDouble(rateStr);
+					price = Double.parseDouble(priceStr);
+					amount = price*rate/100;//注意rate是百分比
+				}catch(Exception ex) {
+					logger.warn("cannot parse rate to double.[rate str]",rateStr);
+				}
+				if(rate>0) {
+					Map<String,String> profit = new HashMap<String,String>();
+					profit.put("type", "2-party");
+					profit.put("rate", ""+rate);
+					profit.put("amount", ""+amount);
+					doc.getProperties().put("profit", profit);
+				}else {
+					logger.warn("cannot set profit.amount or profit.rate.");
+				}
+			}
 			//更新doc
 			arangoClient.update("my_stuff", itemKey, doc);    	
 			processedAmount++;
@@ -152,7 +171,7 @@ public class KaolaItemSync {
 
     /**
 	 * 查询待同步数据记录，并提交查询商品信息
-	 * 1，查询Arangodb中(status==null || status.sync==null) and (source=="kaola")的记录，限制30条。
+	 * 1，查询Arangodb中(status==null || status.sync==null) and (source=="suning")的记录，限制30条。
 	 * 2，通过API接口查询生成商品导购链接
 	 * 3，逐条解析，并更新Arangodb商品记录
 	 * 4，处理完成后发送通知给管理者
@@ -163,17 +182,17 @@ public class KaolaItemSync {
     		//1，查询待处理商品记录 返回itemKey、商品ID、商品链接
     		//for doc in my_stuff filter (doc.source == "jd") and (doc.status==null or doc.status.sync==null) limit 30 return {itemKey:doc._key,id:split(doc.link.web,"id=")[1],link:doc.link.web}    		
         String query = "for doc in my_stuff filter "
-        		+ "(doc.source == \"kaola\") and "
+        		+ "(doc.source == \"suning\") and "
         		+ "(doc.status==null or doc.status.sync==null) "
-        		+ "limit 30 "//一个批次处理30条
-        		+ "return {itemKey:doc._key,link:doc.link.web}";
+        		+ "limit 1 "//一个批次处理30条
+        		+ "return {itemKey:doc._key,web:doc.link.web,wap:doc.link.wap}";
         
         try {
             arangoClient = new ArangoDbClient(host,port,username,password,database);
             List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
             totalAmount = items.size();
             if(totalAmount ==0) {//如果没有了就提前收工
-	            	logger.debug("没有待同步考拉商品条目");
+	            	logger.debug("没有待同步苏宁商品条目");
 	            	arangoClient.close();//链接还是要关闭的
 	            	return;
             }
@@ -195,7 +214,7 @@ public class KaolaItemSync {
 		JSONObject msg = new JSONObject();
 		msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
 		msg.put("title", "导购数据同步任务结果");
-		msg.put("task", "考拉CPS链接 已同步");
+		msg.put("task", "苏宁CPS链接 已同步");
 		msg.put("time", fmt.format(new Date()));
 		msg.put("remark", "预期数量："+totalAmount
 				+ "\n实际数量："+processedAmount
