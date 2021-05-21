@@ -29,6 +29,11 @@
 		WHERE a.id = #{id}
 	</select>
 	
+	<select id="getProfitSources" resultType="String">
+		SELECT 
+		distinct(platform)
+		FROM mod_profit_share_scheme
+	</select>	
 
 	<select id="getByQuery" resultType="ProfitShareScheme">
 		SELECT 

@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.CommissionScheme;
@@ -15,4 +17,5 @@ import com.pcitech.iLife.modules.mod.entity.CommissionScheme;
 @MyBatisDao
 public interface CommissionSchemeDao extends CrudDao<CommissionScheme> {
 	public CommissionScheme getByQuery(CommissionScheme scheme);
+	public List<String> getCommissionSources();
 }

@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.ProfitShareScheme;
@@ -15,4 +17,5 @@ import com.pcitech.iLife.modules.mod.entity.ProfitShareScheme;
 @MyBatisDao
 public interface ProfitShareSchemeDao extends CrudDao<ProfitShareScheme> {
 	public ProfitShareScheme getByQuery(ProfitShareScheme query);
+	public List<String> getProfitSources();
 }

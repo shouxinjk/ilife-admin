@@ -30,6 +30,11 @@ public class CommissionSchemeService extends CrudService<CommissionSchemeDao, Co
 		return commissionSchemeDao.getByQuery(query);
 	}
 	
+	//查询所有支持的电商平台
+	public List<String> getCommissionSources(){
+		return commissionSchemeDao.getCommissionSources();
+	}
+	
 	public CommissionScheme get(String id) {
 		return super.get(id);
 	}

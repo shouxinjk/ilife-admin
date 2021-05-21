@@ -28,6 +28,12 @@ public class ProfitShareSchemeService extends CrudService<ProfitShareSchemeDao, 
 	public ProfitShareScheme getByQuery(ProfitShareScheme profitShareScheme) {
 		return profitShareSchemeDao.getByQuery(profitShareScheme);
 	}
+	
+	//查询所有支持的电商平台
+	public List<String> getProfitSources(){
+		return profitShareSchemeDao.getProfitSources();
+	}
+	
 	public ProfitShareScheme get(String id) {
 		return super.get(id);
 	}

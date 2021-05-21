@@ -265,6 +265,41 @@
             </list>
         </property>
     </bean> 		
+    
+    	<!-- 2-party分润: 每5分钟执行 -->
+    <bean id="cpsDataSyncTask2PartyProfit" class="com.pcitech.iLife.task.CalcProfit2Party"></bean>
+    <bean id="cpsDataSyncTask2PartyProfitMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTask2PartyProfit"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTask2PartyProfitTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTask2PartyProfitMethod"></property>
+        <property name="cronExpression" value="0 */5 * * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTask2PartyProfitScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTask2PartyProfitTrigger"></ref>
+            </list>
+        </property>
+    </bean> 	
+    	<!-- 1-party分润: 每5分钟执行 -->
+    <bean id="cpsDataSyncTask1PartyProfit" class="com.pcitech.iLife.task.CalcProfit"></bean>
+    <bean id="cpsDataSyncTask1PartyProfitMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTask1PartyProfit"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTask1PartyProfitTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTask1PartyProfitMethod"></property>
+        <property name="cronExpression" value="0 */5 * * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTask1PartyProfitScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTask1PartyProfitTrigger"></ref>
+            </list>
+        </property>
+    </bean>     
 	<!-- 微信选品入库：达人发送淘口令后存储到broker_seeds -->
     <bean id="brokerSeedNotifyTask" class="com.pcitech.iLife.task.BrokerSeedNotifyTask"></bean>
     <bean id="brokerSeedNotifyTaskMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
