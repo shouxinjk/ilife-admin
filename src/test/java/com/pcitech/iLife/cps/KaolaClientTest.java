@@ -3,6 +3,8 @@ package com.pcitech.iLife.cps;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +36,53 @@ public class KaolaClientTest {
 	@Autowired
 	KaolaItemSync kaolaItemSync;
 	
+	//网易开发人员比较挫，返回的汉字竟然是GB2312，还要转一次
+	public String gb2312ToUtf8(String str) {
+        String urlEncode = "" ;
+        try {
+            urlEncode = URLEncoder.encode (str, "UTF-8" );
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return urlEncode;
+	}
+
+    public String getEncoding(String str) {    
+        String encode = "GB2312";    
+       try {    
+           if (str.equals(new String(str.getBytes(encode), encode))) {    
+                String s = encode;    
+               return s;    
+            }    
+        } catch (Exception exception) {    
+        }    
+        encode = "ISO-8859-1";    
+       try {    
+           if (str.equals(new String(str.getBytes(encode), encode))) {    
+                String s1 = encode;    
+               return s1;    
+            }    
+        } catch (Exception exception1) {    
+        }    
+        encode = "UTF-8";    
+       try {    
+           if (str.equals(new String(str.getBytes(encode), encode))) {    
+                String s2 = encode;    
+               return s2;    
+            }    
+        } catch (Exception exception2) {    
+        }    
+        encode = "GBK";    
+       try {    
+           if (str.equals(new String(str.getBytes(encode), encode))) {    
+                String s3 = encode;    
+               return s3;    
+            }    
+        } catch (Exception exception3) {    
+        }    
+       return "";    
+    } 
+	
 	private List<String> getGoodsSignList(){
 		List<String> goodsSignList = new ArrayList<String>();
 		goodsSignList.add("Y932ms86eklU8LcVwvfZA33k3lQMIJzP_JJhfhOR1G");
@@ -50,6 +99,7 @@ public class KaolaClientTest {
 		try {
 			System.out.println(JsonUtil.toJson(goodsInfoResponse));
 			System.out.println(JsonUtil.toJson(goodsInfoResponse.getData().get(0).getBaseInfo().getImageList()));
+			System.err.println(getEncoding(goodsInfoResponse.getData().get(0).getBaseInfo().getBrandCountryName()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

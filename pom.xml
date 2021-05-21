@@ -134,7 +134,19 @@
             <artifactId>suning-sdk-java</artifactId>
             <version>standard</version>
         </dependency> 
- 
+        <!-- 需要本地安装 -->
+        <!-- mvn install:install-file -DgroupId=com.vip -DartifactId=osp-sdk -Dversion=1.0.0 -Dpackaging=jar -Dfile=osp-sdk.jar -->
+		<!-- mvn install:install-file -DgroupId=com.vip -DartifactId=vop-sdk -Dversion=1.0.0 -Dpackaging=jar -Dfile=vop-sdk.jar -->
+        <dependency>
+            <groupId>com.vip</groupId>
+            <artifactId>osp-sdk</artifactId>
+            <version>1.0.0</version>
+        </dependency> 
+        <dependency>
+            <groupId>com.vip</groupId>
+            <artifactId>vop-sdk</artifactId>
+            <version>1.0.0</version>
+        </dependency> 
  
  
 		 <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->

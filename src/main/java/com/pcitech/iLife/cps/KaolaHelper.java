@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -131,7 +132,7 @@ public class KaolaHelper {
 			     result.append(line);
 			} 
 			logger.debug(result.toString()); 
-			return result.toString();
+			return URLDecoder.decode(result.toString(),"utf-8");//网易同学太挫了，竟然还需要手动转码
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {

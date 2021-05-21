@@ -1,5 +1,8 @@
 package com.pcitech.iLife.task;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -119,9 +122,12 @@ public class KaolaItemSync {
 					
 					//增加类目
 					List<String> categories = new ArrayList<String>();
-					for(CategoryInfo category:good.getCategoryInfo())//增加类目
+					for(CategoryInfo category:good.getCategoryInfo()){//增加类目
+						logger.debug("[category name]"+category.getCategoryName());
 						categories.add(category.getCategoryName());
+					}
 					doc.getProperties().put("category", categories);//更新类目，包含多级分类
+					
 
 					//更新CPS链接：直接覆盖
 					Map<String,String> links = new HashMap<String,String>();
