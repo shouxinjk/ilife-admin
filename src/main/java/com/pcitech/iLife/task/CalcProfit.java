@@ -157,7 +157,8 @@ public class CalcProfit {
 		remark.append("总数："+totalAmount);
 		for(String s:source) {
 			int numPerSource = processedMap.get(s);
-			remark.append("\n"+s+"："+numPerSource);
+			if(numPerSource>0)
+				remark.append("\n"+s+"："+numPerSource);
 		}
 		remark.append("\n数量差异："+(totalAmount-processedAmount));
 		
