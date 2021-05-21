@@ -97,33 +97,41 @@ public class PddItemSync {
 				//调用API接口生成CPS链接
 				result = pddHelper.generateCpsLinksByGoodsSign(brokerId,getGoodsSignList(goodsSign));
 				Map<String,String> links = new HashMap<String,String>();
-				links.put("wap2", result.getGoodsPromotionUrlGenerateResponse().getGoodsPromotionUrlList().get(0).getMobileUrl());
-				links.put("web2", result.getGoodsPromotionUrlGenerateResponse().getGoodsPromotionUrlList().get(0).getUrl());
+				links.put("wap2", result.getGoodsPromotionUrlGenerateResponse().getGoodsPromotionUrlList().get(0).getMobileShortUrl());//采用短连接
+				links.put("web2", result.getGoodsPromotionUrlGenerateResponse().getGoodsPromotionUrlList().get(0).getShortUrl());//采用短连接
+//				links.put("wap2group", result.getGoodsPromotionUrlGenerateResponse().getGoodsPromotionUrlList().get(0).getMobileShortUrl());//采用短连接
+//				links.put("web2group", result.getGoodsPromotionUrlGenerateResponse().getGoodsPromotionUrlList().get(0).getShortUrl());//采用短连接
 				doc.getProperties().put("link", links);
 			
 				//获取商品详情，填充tags等信息
-				GoodsDetailResponse resp = pddHelper.getItemDetail(brokerId, goodsSign);
-				List<String> tags = new ArrayList<String>();
-				List<String> unifiedTags = resp.getGoodsDetails().get(0).getUnifiedTags();//商品unified tags
-				tags.add(resp.getGoodsDetails().get(0).getOptName());//商品标签
-				for(String tag:unifiedTags) {//商品unified tags里有null项 ，需要排除
-					if(null != tag && tag.trim().length() > 0 && !"null".equalsIgnoreCase(tag))
-						tags.add(tag);
+				GoodsDetailResponse resp = pddHelper.getItemDetail(brokerId, goodsSign);//TODO:注意：有可能不是多多进宝商品，返回为null，会导致异常
+				if(resp != null) {
+					List<String> tags = new ArrayList<String>();
+					List<String> unifiedTags = resp.getGoodsDetails().get(0).getUnifiedTags();//商品unified tags
+					tags.add(resp.getGoodsDetails().get(0).getOptName());//商品标签
+					for(String tag:unifiedTags) {//商品unified tags里有null项 ，需要排除
+						if(null != tag && tag.trim().length() > 0 && !"null".equalsIgnoreCase(tag))
+							tags.add(tag);
+					}
+					doc.getProperties().put("title", resp.getGoodsDetails().get(0).getGoodsName());//更新title
+					doc.getProperties().put("tags", tags);//更新类目，包含3级别分类
+					doc.getProperties().put("logo", resp.getGoodsDetails().get(0).getGoodsImageUrl());//更新首图 img
+					doc.getProperties().put("summary", resp.getGoodsDetails().get(0).getGoodsDesc());//更新简介
+					doc.getProperties().put("images", resp.getGoodsDetails().get(0).getGoodsGalleryUrls());//更新图片
+
+					//更新品牌信息到prop列表
+					Map<String,String> props = new HashMap<String,String>();
+					//如果原来已经有属性，需要继续保留
+					if(doc.getProperties().get("props") != null) {
+						Map<String,String> oldProps = (Map<String,String>)doc.getProperties().get("props");
+						props = oldProps;
+					}
+					props.put("品牌", resp.getGoodsDetails().get(0).getBrandName());//增加品牌属性
+					doc.getProperties().put("props", props);
+					//TODO 当前仅返回分类ID列表，尚未能获取分类明细。待完成
+				}else {
+					logger.warn("cannot get item detail.");
 				}
-				doc.getProperties().put("tags", tags);//更新类目，包含3级别分类
-				doc.getProperties().put("logo", resp.getGoodsDetails().get(0).getGoodsImageUrl());//更新首图 img
-				doc.getProperties().put("summary", resp.getGoodsDetails().get(0).getGoodsDesc());//更新简介
-				//更新品牌信息到prop列表
-				Map<String,String> props = new HashMap<String,String>();
-				//如果原来已经有属性，需要继续保留
-				if(doc.getProperties().get("props") != null) {
-					Map<String,String> oldProps = (Map<String,String>)doc.getProperties().get("props");
-					props = oldProps;
-				}
-				props.put("品牌", resp.getGoodsDetails().get(0).getBrandName());//增加品牌属性
-				doc.getProperties().put("props", props);
-				//TODO 当前仅返回分类ID列表，尚未能获取分类明细。待完成
-				
 				//更新doc
 				arangoClient.update("my_stuff", itemKey, doc);    	
 				processedAmount++;

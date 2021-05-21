@@ -46,7 +46,7 @@ public class PddClientTest {
 		System.out.println("now start query item details ... ");
 		String brokerId = "alexchew";
 		try {
-			GoodsDetailResponse resp = pddHelper.getItemDetail(brokerId, "Y9X2mrzObNZU8LcVwvfZAj3OWHofN1ZJ_JmVkDoMpC");
+			GoodsDetailResponse resp = pddHelper.getItemDetail(brokerId, "Y932ms86eklU8LcVwvfZA33k3lQMIJzP_JJhfhOR1G");
 			System.err.println("商品名称::"+resp.getGoodsDetails().get(0).getGoodsName());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
