@@ -132,7 +132,8 @@ public class KaolaHelper {
 			     result.append(line);
 			} 
 			logger.debug(result.toString()); 
-			return URLDecoder.decode(result.toString(),"utf-8");//网易同学太挫了，竟然还需要手动转码
+//			return URLDecoder.decode(result.toString(),"utf-8");//网易同学太挫了，竟然还需要手动转码
+			return result.toString();
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
