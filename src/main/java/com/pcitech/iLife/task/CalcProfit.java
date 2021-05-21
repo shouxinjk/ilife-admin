@@ -130,7 +130,7 @@ public class CalcProfit {
         String query = "for doc in my_stuff filter "
         		+ "doc.source in "+JSON.toJSONString(source)+" and "
         		+ "(doc.profit == null || doc.profit.type == null || (doc.profit.type != \"2-party\"  && doc.profit.type != \"3-party\"))"
-        		+ "limit 1 "//一个批次处理100条
+        		+ "limit 100 "//一个批次处理100条
         		+ "return {itemKey:doc._key,source:doc.source,category:doc.categoryId==null?\"\":doc.categoryId,price:doc.price.sale}";
         logger.error("try to query pending 1-party items.[query]"+query);
         try {
