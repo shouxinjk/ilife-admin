@@ -319,6 +319,24 @@
         </property>
     </bean>      
     
+    	<!-- 考拉商品自动入库: 每天执行一次：每天凌晨3点执行 -->
+    <bean id="cpsDataSyncTaskKaolaItemSearch" class="com.pcitech.iLife.task.KaolaItemsSearcher"></bean>
+    <bean id="cpsDataSyncTaskKaolaItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskKaolaItemSearch"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskKaolaItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskKaolaItemSearchMethod"></property>
+        <property name="cronExpression" value="0 0 3 * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskKaolaItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskKaolaItemSearchTrigger"></ref>
+            </list>
+        </property>
+    </bean>      
+    
 	<!-- 微信选品入库：达人发送淘口令后存储到broker_seeds -->
     <bean id="brokerSeedNotifyTask" class="com.pcitech.iLife.task.BrokerSeedNotifyTask"></bean>
     <bean id="brokerSeedNotifyTaskMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
