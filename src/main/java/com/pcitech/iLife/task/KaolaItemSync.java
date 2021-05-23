@@ -1,8 +1,11 @@
 package com.pcitech.iLife.task;
 
 import java.io.UnsupportedEncodingException;
+import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +35,7 @@ import com.pcitech.iLife.modules.mod.service.ClearingService;
 import com.pcitech.iLife.modules.mod.service.OrderService;
 import com.pcitech.iLife.util.ArangoDbClient;
 import com.pcitech.iLife.util.HttpClientHelper;
+import com.pdd.pop.sdk.common.util.JsonUtil;
 import com.taobao.api.ApiException;
 import com.taobao.api.response.TbkItemInfoGetResponse.NTbkItem;
 
@@ -65,8 +69,13 @@ public class KaolaItemSync {
     // 记录处理条数
     int totalAmount = 0;
     int processedAmount = 0;
-
+    
+    NumberFormat nf = null;
+    
     public KaolaItemSync() {
+		nf = NumberFormat.getNumberInstance();
+		nf.setMaximumFractionDigits(2);	// 保留两位小数
+		nf.setRoundingMode(RoundingMode.DOWN);// 如果不需要四舍五入，可以使用RoundingMode.DOWN
     }
     
     private void syncCpsLinks(BaseDocument item) {
@@ -136,11 +145,19 @@ public class KaolaItemSync {
 					doc.getProperties().put("link", links);
 
 					//更新价格：直接覆盖
-					Map<String,String> price = new HashMap<String,String>();
-					price.put("bid", ""+good.getPriceInfo().getMarketPrice());
-					price.put("sale", ""+good.getPriceInfo().getCurrentPrice());
+					Map<String,Object> price = new HashMap<String,Object>();
+					price.put("bid", parseNumber(good.getPriceInfo().getMarketPrice().doubleValue()));
+					price.put("sale", parseNumber(good.getPriceInfo().getCurrentPrice().doubleValue()));
 					doc.getProperties().put("price", price);
 					
+					//更新佣金：直接覆盖
+					Map<String,Object> profit = new HashMap<String,Object>();
+					profit.put("rate", parseNumber(good.getCommissionInfo().getCommissionRate().doubleValue()));//返回的是百分比，直接使用即可
+					profit.put("amount", parseNumber(good.getPriceInfo().getCurrentPrice().multiply(good.getCommissionInfo().getCommissionRate()).doubleValue()));
+					profit.put("type", "2-party");
+					doc.getProperties().put("profit", profit);
+					
+					logger.debug("udpate item detail.[itemKey]"+itemKey+"[doc]"+JsonUtil.transferToJson(doc));
 				}else {
 					logger.warn("查询详情失败。【SKU】"+skuId+"【URL】"+url);
 				}
@@ -220,4 +237,14 @@ public class KaolaItemSync {
         processedAmount = 0;
     }
 
+    private double parseNumber(double d) {
+//		return Double.valueOf(String.format("%.2f", d ));//会四舍五入，丢弃
+		String numStr = nf.format(d);
+		try {
+			return Double.parseDouble(numStr);
+		}catch(Exception ex) {
+			return d;
+		}
+}
+    
 }
