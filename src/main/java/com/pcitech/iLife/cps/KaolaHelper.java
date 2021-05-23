@@ -30,6 +30,8 @@ import com.pcitech.iLife.cps.kaola.GoodsInfoRequest;
 import com.pcitech.iLife.cps.kaola.GoodsInfoResponse;
 import com.pcitech.iLife.cps.kaola.OrderInfoRequest;
 import com.pcitech.iLife.cps.kaola.OrderInfoResponse;
+import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsRequest;
+import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsResponse;
 import com.pcitech.iLife.cps.kaola.ShareLinkRequest;
 import com.pcitech.iLife.cps.kaola.ShareLinkResponse;
 
@@ -49,8 +51,16 @@ public class KaolaHelper {
 		return sign;
 	}
 	
+	public QuerySelectedGoodsResponse search(QuerySelectedGoodsRequest request) {
+		//参数
+		TreeMap<String,String> map = request.getMap();
+		map.put("sign", createSign(map));
+		//请求并返回解析结果
+		return JSON.parseObject(post(map),QuerySelectedGoodsResponse.class);
+	}
+	
 	/**
-	 * 根据商品列表查询商品详情。商品ID以逗号分隔，最多10个
+	 * 根据商品列表查询商品详情。商品ID以逗号分隔，最多20个
 	 * @param brokerId
 	 * @param ids
 	 * @return

@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.JobExecutionException;
@@ -16,12 +17,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.jd.open.api.sdk.internal.JSON.JSON;
 import com.jd.open.api.sdk.internal.util.JsonUtil;
 import com.pcitech.iLife.cps.kaola.GoodsInfoResponse;
 import com.pcitech.iLife.cps.kaola.OrderInfoResponse;
+import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsRequest;
+import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsResponse;
 import com.pcitech.iLife.cps.kaola.ShareLinkResponse;
 import com.pcitech.iLife.task.KaolaItemSync;
+import com.pcitech.iLife.task.KaolaItemsSearcher;
 
 import net.minidev.json.JSONUtil;
 
@@ -35,7 +38,8 @@ public class KaolaClientTest {
 	KaolaHelper kaolaHelper;
 	@Autowired
 	KaolaItemSync kaolaItemSync;
-	
+	@Autowired
+	KaolaItemsSearcher kaolaItemSearcher;
 	//网易开发人员比较挫，返回的汉字竟然是GB2312，还要转一次
 	public String gb2312ToUtf8(String str) {
         String urlEncode = "" ;
@@ -88,6 +92,26 @@ public class KaolaClientTest {
 		goodsSignList.add("Y932ms86eklU8LcVwvfZA33k3lQMIJzP_JJhfhOR1G");
 		goodsSignList.add("Y9X2lY1QjM9U8LcVwvfZA-r_Jyi2DPTd_J1AZLvO7B");
 		return goodsSignList;
+	}
+	
+	@Test
+	public void searchItems() {
+		QuerySelectedGoodsRequest request = new QuerySelectedGoodsRequest();
+		request.setPoolName("1");//每日平价商品
+		request.setPageNo(1);//默认从第一页开始
+		request.setPageSize(20);//默认每页20条，是该接口的最小值，兼顾查询详情接口数量限制
+		
+		try {
+			//Step1:搜索得到推荐商品列表
+			QuerySelectedGoodsResponse resp = kaolaHelper.search(request);
+			System.out.println(JsonUtil.toJson(resp));
+			String skuIds = StringUtils.join(resp.getData().getGoodsIdList(),",");
+			//查询对应的商品详情
+			GoodsInfoResponse goods = kaolaHelper.getItemDetail("default", skuIds);
+			System.out.println(JsonUtil.toJson(goods));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
@@ -145,6 +169,16 @@ public class KaolaClientTest {
 	public void syncData() {
 		try {
 			kaolaItemSync.execute();
+		} catch (JobExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void searchItemTask() {
+		try {
+			kaolaItemSearcher.execute();
 		} catch (JobExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

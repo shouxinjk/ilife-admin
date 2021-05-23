@@ -146,6 +146,7 @@ public class KaolaItemSync {
 
 					//更新价格：直接覆盖
 					Map<String,Object> price = new HashMap<String,Object>();
+					price.put("currency", "￥");
 					price.put("bid", parseNumber(good.getPriceInfo().getMarketPrice().doubleValue()));
 					price.put("sale", parseNumber(good.getPriceInfo().getCurrentPrice().doubleValue()));
 					doc.getProperties().put("price", price);
@@ -188,7 +189,7 @@ public class KaolaItemSync {
         String query = "for doc in my_stuff filter "
         		+ "(doc.source == \"kaola\") and "
         		+ "(doc.status==null or doc.status.sync==null) "
-        		+ "limit 30 "//一个批次处理30条
+        		+ "limit 20 "//TODO：一个批次处理20条:API接口有限制，可以查询后按照20个分批次处理
         		+ "return {itemKey:doc._key,link:doc.link.web}";
         
         try {
