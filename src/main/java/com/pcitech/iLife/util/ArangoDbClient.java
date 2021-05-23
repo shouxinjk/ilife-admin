@@ -85,6 +85,16 @@ public class ArangoDbClient implements Serializable {
         this.arangoClient.collection(collection).updateDocument(key, document);
     }
 
+    public void upsert(String collection, String key, BaseDocument document) {
+    		//先查询是否已存在
+    		BaseDocument doc = find(collection,key);
+    		if(doc!=null && key.equals(doc.getKey())) {//已存在，则更新
+    			update(collection,key,document);
+    		}else {//否则直接插入 
+    			insert(collection,document);
+    		}
+    }
+    
     /**
      * Find a single document in the collection according to the specified key.
      *

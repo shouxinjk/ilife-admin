@@ -14,13 +14,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.pcitech.iLife.task.PddItemSync;
+import com.pcitech.iLife.task.PddItemsSearcher;
 import com.pcitech.iLife.task.TaobaoItemSync;
 import com.pdd.pop.sdk.common.util.JsonUtil;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse.GoodsDetailResponse;
+import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsSearchRequest;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse.GoodsPromotionUrlGenerateResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsSearchResponse.GoodsSearchResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsSearchResponse.GoodsSearchResponseGoodsListItem;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.GoodsZsUnitGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse.OrderListGetResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatsGetResponse.GoodsCatsGetResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatsGetResponse.GoodsCatsGetResponseGoodsCatsListItem;
 import com.taobao.api.ApiException;
 
 @RunWith(SpringJUnit4ClassRunner.class) 
@@ -34,11 +40,44 @@ public class PddClientTest {
 	@Autowired
 	PddItemSync pddSyncTask;
 	
+	@Autowired
+	PddItemsSearcher pddItemsSearcher;
+	
 	private List<String> getGoodsSignList(){
 		List<String> goodsSignList = new ArrayList<String>();
 		goodsSignList.add("Y932ms86eklU8LcVwvfZA33k3lQMIJzP_JJhfhOR1G");
 		goodsSignList.add("Y9X2lY1QjM9U8LcVwvfZA-r_Jyi2DPTd_J1AZLvO7B");
 		return goodsSignList;
+	}
+	
+	@Test
+	public void getCategory() {
+		System.out.println("now start query categories ... ");
+		long parentCategoryId = 0;
+		try {
+			GoodsCatsGetResponse resp = pddHelper.getCategory(parentCategoryId);
+			for(GoodsCatsGetResponseGoodsCatsListItem category:resp.getGoodsCatsList())
+				System.err.println("目录::[parentId]"+category.getParentCatId()+"\t[id]"+category.getCatId()+"\t[name]"+category.getCatName());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assert true;
+	}
+	
+	@Test
+	public void getCpsItems() {
+		System.out.println("now start query promotion items ... ");
+		PddDdkGoodsSearchRequest request = new PddDdkGoodsSearchRequest();
+		try {
+			GoodsSearchResponse resp = pddHelper.searchCpsItems(request);
+			for(GoodsSearchResponseGoodsListItem item:resp.getGoodsList())
+				System.err.println("商品::[goodsSign]"+item.getGoodsSign()+"\t[name]"+item.getGoodsName());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assert true;
 	}
 	
 	@Test
@@ -130,4 +169,13 @@ public class PddClientTest {
 		}
 	}
 
+	@Test
+	public void pddSearchTask() {
+		try {
+			pddItemsSearcher.execute();
+		} catch (JobExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

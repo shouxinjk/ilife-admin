@@ -19,19 +19,25 @@ import com.pdd.pop.sdk.http.PopHttpClient;
 import com.pdd.pop.sdk.http.token.AccessTokenResponse;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsDetailRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsPromotionUrlGenerateRequest;
+import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsSearchRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsZsUnitUrlGenRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkMemberAuthorityQueryRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkOrderListRangeGetRequest;
+import com.pdd.pop.sdk.http.api.pop.request.PddGoodsCatsGetRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddPopAuthTokenRefreshRequest;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse.GoodsDetailResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse.GoodsPromotionUrlGenerateResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsSearchResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsSearchResponse.GoodsSearchResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.GoodsZsUnitGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkMemberAuthorityQueryResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse.OrderListGetResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatsGetResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatsGetResponse.GoodsCatsGetResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddPopAuthTokenRefreshResponse;
 
 
@@ -50,6 +56,24 @@ public class PddHelper {
 	    return client;
 	}
 	
+	//获取商品分类
+	public GoodsCatsGetResponse getCategory(Long parentCategoryId) throws Exception {
+		PddGoodsCatsGetRequest request = new PddGoodsCatsGetRequest();
+		request.setParentCatId(parentCategoryId);
+		PddGoodsCatsGetResponse response = getClient().syncInvoke(request);
+		logger.debug(JsonUtil.transferToJson(response));
+		return response.getGoodsCatsGetResponse();
+	}
+	
+	//批量获取在推商品
+	//goods_search_response
+	public GoodsSearchResponse searchCpsItems(PddDdkGoodsSearchRequest request) throws Exception  {
+		PddDdkGoodsSearchResponse response = getClient().syncInvoke(request);
+		logger.debug(JsonUtil.transferToJson(response));
+		return response.getGoodsSearchResponse();
+	}
+	
+	//获取商品详情
 	public GoodsDetailResponse getItemDetail(String brokerId,String goodsSign) throws Exception {
         PddDdkGoodsDetailRequest request = new PddDdkGoodsDetailRequest();
         request.setCustomParameters(getCustomParams(brokerId));

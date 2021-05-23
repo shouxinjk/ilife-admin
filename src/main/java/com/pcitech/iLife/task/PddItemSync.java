@@ -66,6 +66,7 @@ public class PddItemSync {
     public PddItemSync() {
     }
     
+    //TODO 获取商品Sign列表，需要支持多个地址。否则接口调用频次过高
 	private List<String> getGoodsSignList(String goodsSign){
 		List<String> goodsSignList = new ArrayList<String>();
 		goodsSignList.add(goodsSign);

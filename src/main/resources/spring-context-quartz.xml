@@ -300,6 +300,25 @@
             </list>
         </property>
     </bean>     
+    
+    	<!-- 拼多多商品自动入库: 每天执行一次：每天凌晨2点执行 -->
+    <bean id="cpsDataSyncTaskPddItemSearch" class="com.pcitech.iLife.task.PddItemsSearcher"></bean>
+    <bean id="cpsDataSyncTaskPddItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskPddItemSearch"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskPddItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskPddItemSearchMethod"></property>
+        <property name="cronExpression" value="0 0 2 * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskPddItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskPddItemSearchTrigger"></ref>
+            </list>
+        </property>
+    </bean>      
+    
 	<!-- 微信选品入库：达人发送淘口令后存储到broker_seeds -->
     <bean id="brokerSeedNotifyTask" class="com.pcitech.iLife.task.BrokerSeedNotifyTask"></bean>
     <bean id="brokerSeedNotifyTaskMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
