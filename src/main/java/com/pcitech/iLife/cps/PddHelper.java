@@ -87,7 +87,7 @@ public class PddHelper {
 	}
 	
 	/**
-	 * 将其他拼多多推广链接转换为自己的推广链接。
+	 * 将其他拼多多推广链接转换为自己的推广链接。一次传递一条URL
 	 * @param url
 	 * @return
 	 * @throws Exception 
@@ -106,11 +106,11 @@ public class PddHelper {
 	/**
 	 * 根据GoodsSign生成导购链接。
 	 * @param brokerId 推广达人Id
-	 * @param goodsSignList 商品Sign列表。支持多个，但建议一次传递一个
+	 * @param goodsSignList 商品Sign列表。单次最多支持30条
 	 * @return
 	 * @throws Exception
 	 */
-	public PddDdkGoodsPromotionUrlGenerateResponse generateCpsLinksByGoodsSign(String  brokerId,List<String> goodsSignList) throws Exception {
+	public PddDdkGoodsPromotionUrlGenerateResponse generateCpsLinksByGoodsSign(String  brokerId,String searchId,List<String> goodsSignList) throws Exception {
 		PddDdkGoodsPromotionUrlGenerateRequest request = new PddDdkGoodsPromotionUrlGenerateRequest();
 //		request.setCashGiftId(0L);
 //		request.setCashGiftName('str');
@@ -126,7 +126,8 @@ public class PddHelper {
 		request.setCustomParameters(getCustomParams(brokerId));
 		request.setGoodsSignList(goodsSignList);
 		request.setMultiGroup(false);//false:无需拼团，true：需要拼团
-//		request.setSearchId('str');
+		if(searchId!=null && searchId.trim().length()>0)
+			request.setSearchId(searchId);
 //		request.setZsDuoId(0L);
 		PddDdkGoodsPromotionUrlGenerateResponse response = getClient().syncInvoke(request);
 		return response;

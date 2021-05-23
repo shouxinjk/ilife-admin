@@ -129,7 +129,7 @@ public class PddClientTest {
 		System.out.println("now start generate cps links by sign ... ");
 		String brokerId = "alexchew";
 		try {
-			PddDdkGoodsPromotionUrlGenerateResponse response = pddHelper.generateCpsLinksByGoodsSign(brokerId,getGoodsSignList());
+			PddDdkGoodsPromotionUrlGenerateResponse response = pddHelper.generateCpsLinksByGoodsSign(brokerId,null,getGoodsSignList());
 			System.out.println(JsonUtil.transferToJson(response));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
