@@ -301,7 +301,7 @@
         </property>
     </bean>     
     
-    	<!-- 拼多多商品自动入库: 每天执行一次：每天凌晨2点执行 -->
+    	<!-- 拼多多商品自动入库: 每4小时执行 -->
     <bean id="cpsDataSyncTaskPddItemSearch" class="com.pcitech.iLife.task.PddItemsSearcher"></bean>
     <bean id="cpsDataSyncTaskPddItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="cpsDataSyncTaskPddItemSearch"></property>
@@ -309,7 +309,7 @@
     </bean>
     <bean id="cpsDataSyncTaskPddItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskPddItemSearchMethod"></property>
-        <property name="cronExpression" value="0 0 2 * * ?"></property>
+        <property name="cronExpression" value="0 0 */4 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskPddItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -320,6 +320,24 @@
     </bean>      
     
     	<!-- 考拉商品自动入库: 每天执行一次：每天凌晨3点执行 -->
+    <bean id="cpsDataSyncTaskKaolaItemRecommend" class="com.pcitech.iLife.task.KaolaRecommendItemsSearcher"></bean>
+    <bean id="cpsDataSyncTaskKaolaItemRecommendMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskKaolaItemRecommend"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskKaolaItemRecommendTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskKaolaItemRecommendMethod"></property>
+        <property name="cronExpression" value="0 0 3 * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskKaolaItemRecommendScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskKaolaItemRecommendTrigger"></ref>
+            </list>
+        </property>
+    </bean>      
+    
+    	<!-- 考拉增量商品自动入库: 每4小时执行：待改进，后续通过接收考拉增量推送完成 -->
     <bean id="cpsDataSyncTaskKaolaItemSearch" class="com.pcitech.iLife.task.KaolaItemsSearcher"></bean>
     <bean id="cpsDataSyncTaskKaolaItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="cpsDataSyncTaskKaolaItemSearch"></property>
@@ -327,7 +345,7 @@
     </bean>
     <bean id="cpsDataSyncTaskKaolaItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskKaolaItemSearchMethod"></property>
-        <property name="cronExpression" value="0 0 3 * * ?"></property>
+        <property name="cronExpression" value="0 0 */4 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskKaolaItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -335,7 +353,7 @@
                 <ref bean="cpsDataSyncTaskKaolaItemSearchTrigger"></ref>
             </list>
         </property>
-    </bean>      
+    </bean>     
     
 	<!-- 微信选品入库：达人发送淘口令后存储到broker_seeds -->
     <bean id="brokerSeedNotifyTask" class="com.pcitech.iLife.task.BrokerSeedNotifyTask"></bean>

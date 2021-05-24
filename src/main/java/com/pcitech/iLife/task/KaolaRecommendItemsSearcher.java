@@ -29,6 +29,8 @@ import com.pcitech.iLife.cps.PddHelper;
 import com.pcitech.iLife.cps.kaola.CategoryInfo;
 import com.pcitech.iLife.cps.kaola.GoodInfo;
 import com.pcitech.iLife.cps.kaola.GoodsInfoResponse;
+import com.pcitech.iLife.cps.kaola.QueryRecommendGoodsListRequest;
+import com.pcitech.iLife.cps.kaola.QueryRecommendGoodsListResponse;
 import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsRequest;
 import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsResponse;
 import com.pcitech.iLife.modules.mod.entity.Clearing;
@@ -60,10 +62,12 @@ import org.quartz.JobExecutionException;
  * 通过API接口，搜索得到在推广商品。
  * 通过自动任务触发，每天执行一次即可。遍历所有新增的商品
  * 
+ * 该接口一次性查询推荐商品。不需要规律性调用。规律性调用使用 KaolaItemSearcher查询增量商品
+ * 
  */
 @Service
-public class KaolaItemsSearcher {
-    private static Logger logger = LoggerFactory.getLogger(KaolaItemsSearcher.class);
+public class KaolaRecommendItemsSearcher {
+    private static Logger logger = LoggerFactory.getLogger(KaolaRecommendItemsSearcher.class);
     ArangoDbClient arangoClient;
     String host = Global.getConfig("arangodb.host");
     String port = Global.getConfig("arangodb.port");
@@ -75,7 +79,7 @@ public class KaolaItemsSearcher {
     KaolaHelper kaolaHelper;
     
     //默认设置
-    int pageSize = 200;//最大单页200条
+    int pageSize = 1000;//每次最大1000条
     String urlPrefix = "https://jinbao.pinduoduo.com/goods-detail?s=";//https://jinbao.pinduoduo.com/goods-detail?s=Y9X2m1wSlN1U8LcVwvfZHeaZwozbWFjf_JQvP59gKL7
     
     // 记录处理条数
@@ -90,7 +94,7 @@ public class KaolaItemsSearcher {
     DecimalFormat df = new DecimalFormat("#.00");//double类型直接截断，保留小数点后两位，不四舍五入
 	NumberFormat nf = null;
 
-    public KaolaItemsSearcher() {
+    public KaolaRecommendItemsSearcher() {
     		nf = NumberFormat.getNumberInstance();
 		nf.setMaximumFractionDigits(2);	// 保留两位小数
 		nf.setRoundingMode(RoundingMode.DOWN);// 如果不需要四舍五入，可以使用RoundingMode.DOWN
@@ -206,79 +210,56 @@ public class KaolaItemsSearcher {
     		logger.info("Kaola cps item search job start. " + new Date());
     		processedMap = new HashMap<String,Integer>();
     		totalMap = new HashMap<String,Integer>();
-    		poolNameMap = new HashMap<String,String>();
 
-        //准备查询条件，根据推广活动或选品规则准备查询条件。按照1-19总共19种
-    		String[] poolNames = {
-			"每日平价商品",
-			"高佣必推商品",
-			"新人专享商品",
-			"会员专属商品",
-			"低价包邮商品",
-			"考拉自营爆款",
-			"考拉商家爆款",
-			"黑卡用户最爱买商品",
-			"美妆个护热销品",
-			"食品保健热销品",
-			"母婴热销品",
-			"时尚热销品",
-			"家居宠物热销品",
-			"每日秒杀商品",
-			"黑卡好价商品",
-			"高转化好物商品",
-			"开卡一单省回商品",
-			"会员专属促销选品池",
-			"好券商品"
-    		};
+        //准备查询类目，按照一级类目遍历
+    		Map<String,Long> categoryMap = new HashMap<String,Long>();
+    		categoryMap.put("宠物",110022L);
+    		categoryMap.put("服装鞋靴",9691L);
+    		categoryMap.put("个人洗护",381L);
+    		categoryMap.put("环球美食",836L);
+    		categoryMap.put("家居生活",372L);
+    		categoryMap.put("美容彩妆",437L);
+    		categoryMap.put("母婴",438L);
+    		categoryMap.put("汽车用品",8096L);
+    		categoryMap.put("生鲜",8115L);
+    		categoryMap.put("手表配饰",1092L);
+    		categoryMap.put("数码家电",440L);
+    		categoryMap.put("箱包",1025L);
+    		categoryMap.put("医药健康",837L);
+    		categoryMap.put("运动户外",7578L);
     		
     		//准备连接
     		arangoClient = new ArangoDbClient(host,port,username,password,database);
-        int poolNameIndex = 1;
-    		for(String poolName:poolNames) {//逐个分类查询，每个分类均进行遍历
-    			logger.debug("start search by poolName.[poolName]"+poolName);
-    			processedMap.put(poolName, 0);//默认设置相应分类的条数为0
-    			QuerySelectedGoodsRequest request = new QuerySelectedGoodsRequest();
-    			request.setPoolName(""+poolNameIndex);
-    			poolNameIndex++;
-    			request.setPageNo(1);//默认从第一页开始:下标从1开始
-    			request.setPageSize(pageSize);//默认每页20条，是该接口的最小值，兼顾查询详情接口数量限制
+    		for(Map.Entry<String, Long> entry:categoryMap.entrySet()) {//逐个分类查询，每个分类均进行遍历
+    			logger.debug("start search by category.[categoryName]"+entry.getKey()+"[categoryId]"+entry.getValue());
+    			processedMap.put(entry.getKey(), 0);//默认设置相应分类的条数为0
+    			QueryRecommendGoodsListRequest request = new QueryRecommendGoodsListRequest();
+    			request.setCategoryId(entry.getValue());
+    			request.setPageIndex(1);//默认从第一页开始:下标从1开始
+    			request.setPageSize(pageSize);//默认每页1000条，也充分足够了，每天每个类目增加1000条，还能卖多少啊
     			
     			//Step1:搜索得到推荐商品列表
-    			logger.debug("try to search items.[request]"+JsonUtil.transferToJson(request));
-    			QuerySelectedGoodsResponse resp = kaolaHelper.search(request);
-    			List<Long> ids = resp.getData().getGoodsIdList();
-    			//检查分页，如果有分页则先全部取回来放到列表里，秋后一起算账
-			int totalAmountPerPool = resp.getData().getTotalRecord();
-			totalMap.put(poolName,totalAmountPerPool );//默认设置相应分类的总条数
-	    		totalAmount += totalAmountPerPool;
-	    		int totalPages = (totalAmountPerPool + pageSize -1)/pageSize;
-	    		for(int i=2;i<totalPages+1;i++) {//如果有分页则逐页获取
-	    			logger.debug("start process search result by page.[pageNo]"+i+"/"+totalPages);
-	    			request.setPageNo(i);
-	    			resp = kaolaHelper.search(request);
-	    			ids.addAll(resp.getData().getGoodsIdList());
-	    		}
-    			totalMap.put(poolName, ids.size());//理论上由于已经返回了总条数，不需要重新设置。不知道分页做得对不对啊，还是掰手指头数一数，哎，多么不自信~~
-    			//由于itemDetail每次限制最大查询20条，这里需要对返回的Id列表进行切割，分别处理
+    			logger.debug("try to search recommend items.[request]"+JsonUtil.transferToJson(request));
+    			QueryRecommendGoodsListResponse resp = kaolaHelper.search(request);
+    			List<Long> ids = resp.getData();
+    			totalMap.put(entry.getKey(), ids.size());
     			int totalIds = ids.size();
     			int subListSize = 20;//每次取20条，批量查询详情
     			int subListNumbers = (totalIds+subListSize-1)/subListSize;//总共分割得到的subList数量
-    			for(int k=0;k<subListNumbers;k++) {//针对返回的list进行翻页，每次处理20条，直到结束
-        			int subListIndexFrom = k*subListSize;//默认第一个开始取
+    			for(int i=0;i<subListNumbers;i++) {//针对返回的list进行翻页，每次处理20条，直到结束
+        			int subListIndexFrom = i*subListSize;//默认第一个开始取
         			int subListAmount = (totalIds-subListIndexFrom)>subListSize?subListSize:(totalIds-subListIndexFrom);
         			int subListIndexTo = subListIndexFrom+subListAmount-1;
         			List<Long> subIds = ids.subList(subListIndexFrom, subListIndexTo);
-	    			//取得对应的20条Id
 	    			String skuIds = StringUtils.join(subIds,",");
 		    		//查询对应的商品详情
-	    			logger.debug("try to get item detail.[subList]"+k+"[from]"+subListIndexFrom+"[to]"+subListIndexTo+"[skuIds]"+skuIds);
+	    			logger.debug("try to get item detail.[subList]"+i+"[from]"+subListIndexFrom+"[to]"+subListIndexTo+"[skuIds]"+skuIds);
 	    			GoodsInfoResponse goods = kaolaHelper.getItemDetail(brokerId, skuIds);
 				for(GoodInfo item:goods.getData()) {//逐个插入
 					logger.debug(JsonUtil.transferToJson(item));
-					upsertItem(poolName,item);
+					upsertItem(entry.getKey(),item);
 				}
     			}
-	    		
     		}
 
 		//完成后关闭arangoDbClient

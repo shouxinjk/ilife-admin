@@ -20,11 +20,14 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.jd.open.api.sdk.internal.util.JsonUtil;
 import com.pcitech.iLife.cps.kaola.GoodsInfoResponse;
 import com.pcitech.iLife.cps.kaola.OrderInfoResponse;
+import com.pcitech.iLife.cps.kaola.QueryRecommendGoodsListRequest;
+import com.pcitech.iLife.cps.kaola.QueryRecommendGoodsListResponse;
 import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsRequest;
 import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsResponse;
 import com.pcitech.iLife.cps.kaola.ShareLinkResponse;
 import com.pcitech.iLife.task.KaolaItemSync;
 import com.pcitech.iLife.task.KaolaItemsSearcher;
+import com.pcitech.iLife.task.KaolaRecommendItemsSearcher;
 
 import net.minidev.json.JSONUtil;
 
@@ -38,6 +41,8 @@ public class KaolaClientTest {
 	KaolaHelper kaolaHelper;
 	@Autowired
 	KaolaItemSync kaolaItemSync;
+	@Autowired
+	KaolaRecommendItemsSearcher kaolaRecommendItemsSearcher;
 	@Autowired
 	KaolaItemsSearcher kaolaItemSearcher;
 	//网易开发人员比较挫，返回的汉字竟然是GB2312，还要转一次
@@ -96,6 +101,26 @@ public class KaolaClientTest {
 	
 	@Test
 	public void searchItems() {
+		QueryRecommendGoodsListRequest request = new QueryRecommendGoodsListRequest();
+		request.setCategoryId(1092L);
+		request.setPageIndex(1);
+		request.setPageSize(20);//只取20条，能够一次性查询详情
+		
+		try {
+			System.out.println("try to search recommend items.[request]"+JsonUtil.toJson(request));
+			QueryRecommendGoodsListResponse resp = kaolaHelper.search(request);
+			System.out.println(JsonUtil.toJson(resp));
+			String skuIds = StringUtils.join(resp.getData(),",");
+			//查询对应的商品详情
+			GoodsInfoResponse goods = kaolaHelper.getItemDetail("default", skuIds);
+			System.out.println(JsonUtil.toJson(goods));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void searchItemsIncreament() {
 		QuerySelectedGoodsRequest request = new QuerySelectedGoodsRequest();
 		request.setPoolName("1");//每日平价商品
 		request.setPageNo(1);//默认从第一页开始
@@ -176,7 +201,20 @@ public class KaolaClientTest {
 	}
 	
 	@Test
+	/**
+	 * 获取考拉推荐商品，按照目录逐个获取，执行一次即可。
+	 */
 	public void searchItemTask() {
+		try {
+			kaolaRecommendItemsSearcher.execute();
+		} catch (JobExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void searchItemTaskIncreament() {
 		try {
 			kaolaItemSearcher.execute();
 		} catch (JobExecutionException e) {

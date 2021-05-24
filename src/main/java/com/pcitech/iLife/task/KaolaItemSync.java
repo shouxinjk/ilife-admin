@@ -127,7 +127,7 @@ public class KaolaItemSync {
 					
 					//如果有subtitle，则作为summary
 					if(good.getBaseInfo().getGoodsSubTitle()!=null && good.getBaseInfo().getGoodsSubTitle().trim().length()>0)
-						doc.getProperties().put("summary", good.getBaseInfo().getGoodsSubTitle());
+						doc.getProperties().put("summary", good.getBaseInfo().getGoodsSubTitle().replaceAll("\\s+"," "));
 					
 					//增加类目
 					List<String> categories = new ArrayList<String>();
@@ -139,10 +139,11 @@ public class KaolaItemSync {
 					
 
 					//更新CPS链接：直接覆盖
-					Map<String,String> links = new HashMap<String,String>();
-					links.put("wap2", good.getLinkInfo().getShareUrl());
-					links.put("web2", good.getLinkInfo().getShareUrl());
-					doc.getProperties().put("link", links);
+					Map<String,String> link = new HashMap<String,String>();
+					link.put("wap2", good.getLinkInfo().getShareUrl());
+					link.put("web2", good.getLinkInfo().getShareUrl());
+					link.put("miniprog", good.getLinkInfo().getMiniShareUrl());
+					doc.getProperties().put("link", link);
 
 					//更新价格：直接覆盖
 					Map<String,Object> price = new HashMap<String,Object>();
@@ -189,7 +190,7 @@ public class KaolaItemSync {
         String query = "for doc in my_stuff filter "
         		+ "(doc.source == \"kaola\") and "
         		+ "(doc.status==null or doc.status.sync==null) "
-        		+ "limit 20 "//TODO：一个批次处理20条:API接口有限制，可以查询后按照20个分批次处理
+        		+ "limit 300 "//默认限制单次处理300条
         		+ "return {itemKey:doc._key,link:doc.link.web}";
         
         try {

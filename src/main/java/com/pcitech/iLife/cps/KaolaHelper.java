@@ -30,6 +30,8 @@ import com.pcitech.iLife.cps.kaola.GoodsInfoRequest;
 import com.pcitech.iLife.cps.kaola.GoodsInfoResponse;
 import com.pcitech.iLife.cps.kaola.OrderInfoRequest;
 import com.pcitech.iLife.cps.kaola.OrderInfoResponse;
+import com.pcitech.iLife.cps.kaola.QueryRecommendGoodsListRequest;
+import com.pcitech.iLife.cps.kaola.QueryRecommendGoodsListResponse;
 import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsRequest;
 import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsResponse;
 import com.pcitech.iLife.cps.kaola.ShareLinkRequest;
@@ -51,6 +53,16 @@ public class KaolaHelper {
 		return sign;
 	}
 	
+	//根据类目查询推荐商品
+	public QueryRecommendGoodsListResponse search(QueryRecommendGoodsListRequest request) {
+		//参数
+		TreeMap<String,String> map = request.getMap();
+		map.put("sign", createSign(map));
+		//请求并返回解析结果
+		return JSON.parseObject(post(map),QueryRecommendGoodsListResponse.class);
+	}
+	
+	//查询增量推荐商品
 	public QuerySelectedGoodsResponse search(QuerySelectedGoodsRequest request) {
 		//参数
 		TreeMap<String,String> map = request.getMap();
