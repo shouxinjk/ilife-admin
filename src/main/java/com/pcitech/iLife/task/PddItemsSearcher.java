@@ -146,8 +146,15 @@ public class PddItemsSearcher {
 
 		//更新doc
 		logger.debug("try to upsert pdd item.[itemKey]"+itemKey,JSON.toString(doc));
-		arangoClient.upsert("my_stuff", itemKey, doc);    	
-		processedAmount++;
+//		需要区分是否已经存在，如果已经存在则直接更新，但要避免更新profit信息，以免出发3-party分润任务
+//		arangoClient.upsert("my_stuff", itemKey, doc);   
+		BaseDocument old = arangoClient.find("my_stuff", itemKey);
+		if(old!=null && itemKey.equals(old.getKey())) {//已经存在，则直接跳过
+			//do nothing
+		}else {//否则写入
+			arangoClient.insert("my_stuff", doc);   
+			processedAmount++;
+		}
     }
     
     private double parseNumber(double d) {
