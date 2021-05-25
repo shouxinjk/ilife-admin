@@ -140,7 +140,7 @@ public class JdItemSync {
         String query = "for doc in my_stuff filter "
         		+ "(doc.source == \"jd\") and "
         		+ "(doc.status==null or doc.status.sync==null) "
-        		+ "limit 30 "//一个批次处理30条
+        		+ "limit 1000 "//一个批次处理30条
         		+ "return {itemKey:doc._key,link:doc.link.web}";
         
         try {
