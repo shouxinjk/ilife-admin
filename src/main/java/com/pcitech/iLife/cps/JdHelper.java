@@ -5,22 +5,28 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.jd.open.api.sdk.DefaultJdClient;
 import com.jd.open.api.sdk.JdClient;
 import com.jd.open.api.sdk.domain.kplunion.CategoryService.request.get.CategoryReq;
 import com.jd.open.api.sdk.domain.kplunion.CategoryService.response.get.CategoryResp;
+import com.jd.open.api.sdk.domain.kplunion.GoodsService.request.query.JFGoodsReq;
+import com.jd.open.api.sdk.domain.kplunion.GoodsService.response.query.JingfenQueryResult;
 import com.jd.open.api.sdk.domain.kplunion.GoodsService.response.query.PromotionGoodsResp;
 import com.jd.open.api.sdk.domain.kplunion.OrderService.request.query.OrderRowReq;
 import com.jd.open.api.sdk.domain.kplunion.OrderService.response.query.OrderRowResp;
 import com.jd.open.api.sdk.domain.kplunion.promotioncommon.PromotionService.request.get.PromotionCodeReq;
 import com.jd.open.api.sdk.domain.kplunion.promotioncommon.PromotionService.response.get.PromotionCodeResp;
 import com.jd.open.api.sdk.request.kplunion.UnionOpenCategoryGoodsGetRequest;
+import com.jd.open.api.sdk.request.kplunion.UnionOpenGoodsJingfenQueryRequest;
 import com.jd.open.api.sdk.request.kplunion.UnionOpenGoodsPromotiongoodsinfoQueryRequest;
 import com.jd.open.api.sdk.request.kplunion.UnionOpenOrderRowQueryRequest;
 import com.jd.open.api.sdk.request.kplunion.UnionOpenPromotionCommonGetRequest;
 import com.jd.open.api.sdk.response.kplunion.UnionOpenCategoryGoodsGetResponse;
+import com.jd.open.api.sdk.response.kplunion.UnionOpenGoodsJingfenQueryResponse;
 import com.jd.open.api.sdk.response.kplunion.UnionOpenGoodsPromotiongoodsinfoQueryResponse;
 import com.jd.open.api.sdk.response.kplunion.UnionOpenOrderRowQueryResponse;
 import com.jd.open.api.sdk.response.kplunion.UnionOpenPromotionCommonGetResponse;
@@ -29,6 +35,7 @@ import com.pcitech.iLife.common.config.Global;
 //通过拼多多接口完成商品查询获得类目信息
 @Service
 public class JdHelper {
+	private static Logger logger = LoggerFactory.getLogger(JdHelper.class);
 	JdClient client = null;
 	SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private JdClient getClient() {
@@ -41,6 +48,25 @@ public class JdHelper {
 	    return client;
 	}
 	
+	/**
+	 * 获取每日更新的优选商品
+	 * @param req
+	 * @return
+	 * @throws Exception
+	 */
+	public JingfenQueryResult search(JFGoodsReq req) throws Exception{
+		UnionOpenGoodsJingfenQueryRequest request=new UnionOpenGoodsJingfenQueryRequest();
+		request.setGoodsReq(req);
+		UnionOpenGoodsJingfenQueryResponse response=getClient().execute(request);
+		if(!"0".equalsIgnoreCase(response.getCode())) {
+			logger.debug(response.getCode()+"::"+response.getMsg());
+		}else if(response.getQueryResult().getCode() == 200){//得到商品列表了，赶紧入库找运营推广吧
+			return response.getQueryResult();
+		}else {//是不是手残干了啥事被平台限制了？
+			logger.debug(response.getQueryResult().getCode()+"::"+response.getQueryResult().getMessage());
+		}
+		return null;
+	}
 	
 	/**
 	 * 查询商品详情
@@ -49,16 +75,15 @@ public class JdHelper {
 	 * @throws Exception 
 	 */
 	public PromotionGoodsResp[] getDetail(String skuList ) throws Exception {
-		getClient();
 		UnionOpenGoodsPromotiongoodsinfoQueryRequest request=new UnionOpenGoodsPromotiongoodsinfoQueryRequest();
 		request.setSkuIds(skuList);
-		UnionOpenGoodsPromotiongoodsinfoQueryResponse response=client.execute(request);
+		UnionOpenGoodsPromotiongoodsinfoQueryResponse response=getClient().execute(request);
 		if(!"0".equalsIgnoreCase(response.getCode())) {
-			System.err.println(response.getCode()+"::"+response.getMsg());
+			logger.debug(response.getCode()+"::"+response.getMsg());
 		}else if(response.getQueryResult().getCode() == 200){//得到商品详情了，赶紧嘚瑟吧
 			return response.getQueryResult().getData();
 		}else {//是不是手残干了啥事被平台限制了？
-			System.err.println(response.getQueryResult().getCode()+"::"+response.getQueryResult().getMessage());
+			logger.debug(response.getQueryResult().getCode()+"::"+response.getQueryResult().getMessage());
 		}
 		return null;
 	}
@@ -75,7 +100,6 @@ public class JdHelper {
 	 * @throws Exception
 	 */
 	public PromotionCodeResp getCpsLink(String url/*,String pid */) throws Exception {
-		getClient();
 		UnionOpenPromotionCommonGetRequest request=new UnionOpenPromotionCommonGetRequest();
 		PromotionCodeReq promotionCodeReq=new PromotionCodeReq();
 		promotionCodeReq.setMaterialId(url);
@@ -83,13 +107,13 @@ public class JdHelper {
 		promotionCodeReq.setSiteId(Global.getConfig("jd.appId"));
 		//promotionCodeReq.setPid(pid);//注意：不能传递PID，PID仅用于推广联盟，需要标记下级推客时使用
 		request.setPromotionCodeReq(promotionCodeReq);
-		UnionOpenPromotionCommonGetResponse response=client.execute(request);
+		UnionOpenPromotionCommonGetResponse response=getClient().execute(request);
 		if(!"0".equalsIgnoreCase(response.getCode())) {
-			System.err.println(response.getCode()+"::"+response.getMsg());
+			logger.debug(response.getCode()+"::"+response.getMsg());
 		}else if(response.getGetResult().getCode() == 200){//得到CPS链接了
 			return response.getGetResult().getData();
 		}else {//是不是手残干了啥事被平台限制了？
-			System.err.println(response.getGetResult().getCode()+"::"+response.getGetResult().getMessage());
+			logger.debug(response.getGetResult().getCode()+"::"+response.getGetResult().getMessage());
 		}
 		return null;
 	}
@@ -99,25 +123,23 @@ public class JdHelper {
 	}
 	
 	public CategoryResp[] getCategory(int parentId,int grade ) throws Exception {
-		getClient();
 		UnionOpenCategoryGoodsGetRequest request=new UnionOpenCategoryGoodsGetRequest();
 		CategoryReq req=new CategoryReq();
 		req.setParentId(parentId);
 		req.setGrade(grade);
 		request.setReq(req);
-		UnionOpenCategoryGoodsGetResponse response=client.execute(request);
+		UnionOpenCategoryGoodsGetResponse response=getClient().execute(request);
 		if(!"0".equalsIgnoreCase(response.getCode())) {
-			System.err.println(response.getCode()+"::"+response.getMsg());
+			logger.debug(response.getCode()+"::"+response.getMsg());
 		}else if(response.getGetResult().getCode() == 200){//得到分类了
 			return response.getGetResult().getData();
 		}else {//是不是手残干了啥事被平台限制了？
-			System.err.println(response.getGetResult().getCode()+"::"+response.getGetResult().getMessage());
+			logger.debug(response.getGetResult().getCode()+"::"+response.getGetResult().getMessage());
 		}
 		return null;
 	}
 	
 	public OrderRowResp[] getOrder() throws Exception {
-		getClient();
 		UnionOpenOrderRowQueryRequest request=new UnionOpenOrderRowQueryRequest();
 		Calendar cal = Calendar.getInstance();
 		Date end = cal.getTime();
@@ -130,13 +152,13 @@ public class JdHelper {
 		req.setPageIndex(1);//默认 取第一页
 		req.setType(1);//订单时间查询类型(1：下单时间，2：完成时间（购买用户确认收货时间），3：更新时间
 		request.setOrderReq(req);
-		UnionOpenOrderRowQueryResponse response=client.execute(request);
+		UnionOpenOrderRowQueryResponse response=getClient().execute(request);
 		if(!"0".equalsIgnoreCase(response.getCode())) {//搞个串串，调用都不成功，赶紧debug吧
-			System.err.println(response.getCode()+"::"+response.getMsg());
+			logger.debug(response.getCode()+"::"+response.getMsg());
 		}else if(response.getQueryResult().getCode() == 200){//得到订单了，赶紧嘚瑟吧
 			return response.getQueryResult().getData();
 		}else {//是不是手残干了啥事被平台降级了？
-			System.err.println(response.getQueryResult().getCode()+"::"+response.getQueryResult().getMessage());
+			logger.debug(response.getQueryResult().getCode()+"::"+response.getQueryResult().getMessage());
 		}
 		return null;
 	}
