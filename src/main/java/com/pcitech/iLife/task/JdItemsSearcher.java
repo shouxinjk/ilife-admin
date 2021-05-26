@@ -289,7 +289,8 @@ public class JdItemsSearcher {
 		StringBuffer remark = new StringBuffer();
 		remark.append("预期数量："+totalAmount);
 		for(Map.Entry<String, Long> entry:processedMap.entrySet()) {
-			remark.append("\n"+entry.getKey()+"："+entry.getValue());
+			if(entry.getValue()>0)
+				remark.append("\n"+entry.getKey()+"："+entry.getValue());
 		}
 		remark.append("\n数量差异："+(totalAmount-processedAmount));
 		
