@@ -41,6 +41,7 @@ import com.pcitech.iLife.modules.mod.service.ProfitShareSchemeService;
 import com.pcitech.iLife.modules.sys.service.DictService;
 import com.pcitech.iLife.util.ArangoDbClient;
 import com.pcitech.iLife.util.HttpClientHelper;
+import com.pcitech.iLife.util.NumberUtil;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse.GoodsDetailResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.GoodsZsUnitGenerateResponse;
@@ -222,7 +223,7 @@ public class CalcProfit2Party {
 				map.put("warn-broker", "no broker profit share item");
 			}else {//计算达人的分润金额，并设置店返
 				double shareAmount = amount*brokerShare.getShare()/100;
-				map.put("order", shareAmount);
+				map.put("order", NumberUtil.getInstance().parseNumber(shareAmount));
 			}
 			//查找并计算上级达人分润
 			profitShareItem.setBeneficiary("parent");//特定给上级达人
@@ -231,7 +232,7 @@ public class CalcProfit2Party {
 				map.put("warn-parent", "no parent broker profit share item");
 			}else {//计算上级达人的分润金额，并设置店返
 				double shareAmount = amount*parentBrokerShare.getShare()/100;
-				map.put("team", shareAmount);
+				map.put("team", NumberUtil.getInstance().parseNumber(shareAmount));
 			}
 		}
 		
@@ -265,7 +266,7 @@ public class CalcProfit2Party {
 		try {
 	        GroovyShell shell = new GroovyShell(binding);
 	        Object value = shell.evaluate(script);//计算得到积分
-	        map.put("credit", Double.parseDouble(value.toString()));
+	        map.put("credit", NumberUtil.getInstance().parseNumber(value.toString()));
 		}catch(Exception ex) {//如果计算发生错误也使用默认链接
 			map.put("error-script", ex.getMessage());
 		}

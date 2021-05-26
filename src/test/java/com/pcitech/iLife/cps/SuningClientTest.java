@@ -21,6 +21,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pcitech.iLife.task.PddItemSync;
 import com.pcitech.iLife.task.SuningItemSync;
+import com.pcitech.iLife.task.SuningItemsSearcher;
 import com.pcitech.iLife.task.TaobaoItemSync;
 import com.pdd.pop.sdk.common.util.JsonUtil;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse.GoodsDetailResponse;
@@ -28,6 +29,7 @@ import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResp
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse.GoodsPromotionUrlGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.GoodsZsUnitGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse.OrderListGetResponse;
+import com.suning.api.entity.netalliance.SelectrecommendcommodityQueryRequest;
 import com.taobao.api.ApiException;
 
 @RunWith(SpringJUnit4ClassRunner.class) 
@@ -41,10 +43,31 @@ public class SuningClientTest {
 	@Autowired
 	SuningItemSync suningSyncTask;
 	
+	@Autowired
+	SuningItemsSearcher suningItemsSearcher;
+	
 	@Test
 	public void getCategory() {
 		try {
 			suningHelper.getCategories();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assert true;
+	}
+	
+	@Test
+	public void search() {
+		SelectrecommendcommodityQueryRequest request = new SelectrecommendcommodityQueryRequest();
+		request.setEliteId("1");
+		request.setPageIndex("0");//默认从第一页开始:下标从0开始
+		request.setSize("40");//最大40
+		request.setPicHeight("600");
+		request.setPicWidth("600");
+		try {
+			JSONArray result = suningHelper.search(request);
+			System.err.println(JsonUtil.transferToJson(result));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,6 +127,16 @@ public class SuningClientTest {
 	public void sunningSyncTask() {
 		try {
 			suningSyncTask.execute();
+		} catch (JobExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void sunningSearchTask() {
+		try {
+			suningItemsSearcher.execute();
 		} catch (JobExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

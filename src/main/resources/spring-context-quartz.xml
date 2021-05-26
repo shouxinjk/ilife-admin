@@ -301,7 +301,7 @@
         </property>
     </bean>     
     
-    	<!-- 拼多多商品自动入库: 每天 10,14,16,20点 执行 -->
+    	<!-- 拼多多商品自动入库: 每天 8,10,16,20 点 执行 -->
     <bean id="cpsDataSyncTaskPddItemSearch" class="com.pcitech.iLife.task.PddItemsSearcher"></bean>
     <bean id="cpsDataSyncTaskPddItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="cpsDataSyncTaskPddItemSearch"></property>
@@ -309,7 +309,7 @@
     </bean>
     <bean id="cpsDataSyncTaskPddItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskPddItemSearchMethod"></property>
-        <property name="cronExpression" value="0 0 10,14,16,20 * * ?"></property>
+        <property name="cronExpression" value="0 0 8,10,16,20  * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskPddItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -337,7 +337,7 @@
         </property>
     </bean>      
     
-    	<!-- 考拉增量商品自动入库: 每天白天10、14、16、20点执行：待改进，后续通过接收考拉增量推送完成 -->
+    	<!-- 考拉增量商品自动入库: 每天白天8,10,16,20 点执行：待改进，后续通过接收考拉增量推送完成 -->
     <bean id="cpsDataSyncTaskKaolaItemSearch" class="com.pcitech.iLife.task.JdItemsSearcher"></bean>
     <bean id="cpsDataSyncTaskKaolaItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="cpsDataSyncTaskKaolaItemSearch"></property>
@@ -345,7 +345,7 @@
     </bean>
     <bean id="cpsDataSyncTaskKaolaItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskKaolaItemSearchMethod"></property>
-        <property name="cronExpression" value="0 0 10,14,16,20 * * ?"></property>
+        <property name="cronExpression" value="0 10 8,10,16,20  * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskKaolaItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -355,7 +355,7 @@
         </property>
     </bean>     
     
-    	<!-- 京东增量商品自动入库: 每天白天10、14、16、20点执行 -->
+    	<!-- 京东增量商品自动入库: 每天白天8,10,16,20 点执行 -->
     <bean id="cpsDataSyncTaskJdItemSearch" class="com.pcitech.iLife.task.KaolaItemsSearcher"></bean>
     <bean id="cpsDataSyncTaskJdItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="cpsDataSyncTaskJdItemSearch"></property>
@@ -363,7 +363,7 @@
     </bean>
     <bean id="cpsDataSyncTaskJdItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskJdItemSearchMethod"></property>
-        <property name="cronExpression" value="0 0 10,14,16,20 * * ?"></property>
+        <property name="cronExpression" value="0 20 8,10,16,20 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskJdItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -372,6 +372,24 @@
             </list>
         </property>
     </bean>     
+    
+    	<!-- 苏宁商品自动入库: 每天 8,10,16,20 点 执行 -->
+    <bean id="cpsDataSyncTaskSuningItemSearch" class="com.pcitech.iLife.task.SuningItemsSearcher"></bean>
+    <bean id="cpsDataSyncTaskSuningItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskSuningItemSearch"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskSuningItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskSuningItemSearchMethod"></property>
+        <property name="cronExpression" value="0 30 8,10,16,20  * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskSuningItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskSuningItemSearchTrigger"></ref>
+            </list>
+        </property>
+    </bean>        
     
 	<!-- 微信选品入库：达人发送淘口令后存储到broker_seeds -->
     <bean id="brokerSeedNotifyTask" class="com.pcitech.iLife.task.BrokerSeedNotifyTask"></bean>

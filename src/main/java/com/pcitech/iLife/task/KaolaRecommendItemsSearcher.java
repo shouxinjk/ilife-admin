@@ -117,7 +117,7 @@ public class KaolaRecommendItemsSearcher {
 		Map<String,Object> task = new HashMap<String,Object>();
 		task.put("user", "robot-kaolaItemsSearcher");
 		task.put("executor", "robot-kaolaItemsSearcher-instance");
-		task.put("timestamp:new", new Date().getTime());
+		task.put("timestamp", new Date().getTime());
 		task.put("url", url);
 		doc.getProperties().put("task", task);
 		doc.getProperties().put("type", "commodity");
@@ -276,7 +276,8 @@ public class KaolaRecommendItemsSearcher {
 		StringBuffer remark = new StringBuffer();
 		remark.append("预期数量："+totalAmount);
 		for(Map.Entry<String, Integer> entry:processedMap.entrySet()) {
-			remark.append("\n"+entry.getKey()+"："+entry.getValue());
+			if(entry.getValue()>0)
+				remark.append("\n"+entry.getKey()+"："+entry.getValue());
 		}
 		remark.append("\n数量差异："+(totalAmount-processedAmount));
 		

@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pcitech.iLife.common.config.Global;
+import com.pdd.pop.sdk.common.util.JsonUtil;
 import com.suning.api.DefaultSuningClient;
 import com.suning.api.entity.netalliance.BacthcustomlinkQueryRequest;
 import com.suning.api.entity.netalliance.BacthcustomlinkQueryResponse;
@@ -28,6 +29,8 @@ import com.suning.api.entity.netalliance.CustompromotionurlQueryRequest;
 import com.suning.api.entity.netalliance.CustompromotionurlQueryResponse;
 import com.suning.api.entity.netalliance.OrderinfoQueryRequest;
 import com.suning.api.entity.netalliance.OrderinfoQueryResponse;
+import com.suning.api.entity.netalliance.SelectrecommendcommodityQueryRequest;
+import com.suning.api.entity.netalliance.SelectrecommendcommodityQueryResponse;
 import com.suning.api.exception.SuningApiException;
 
 //通过API接口完成商品查询获得类目信息
@@ -45,6 +48,22 @@ public class SuningHelper {
 					"json");
 		}
 	    return client;
+	}
+	
+	public JSONArray search(SelectrecommendcommodityQueryRequest request){
+		logger.debug(JsonUtil.transferToJson(request));
+		try {
+			SelectrecommendcommodityQueryResponse response = getClient().excute(request);
+			logger.debug(JsonUtil.transferToJson(response));
+			JSONObject jsonobj = JSON.parseObject(response.getBody());
+			if(jsonobj.getJSONObject("sn_responseContent").getJSONObject("sn_error")!=null) 
+				logger.warn("error occured."+jsonobj.getJSONObject("sn_responseContent").getJSONObject("sn_error").getString("error_msg"));
+			else
+				return jsonobj.getJSONObject("sn_responseContent").getJSONObject("sn_body").getJSONObject("querySelectrecommendcommodity").getJSONArray("commodityList");
+		} catch (SuningApiException e) {
+			logger.error("search items error.",e);
+		}
+		return null;
 	}
 	
 	public void getCategories() throws Exception {

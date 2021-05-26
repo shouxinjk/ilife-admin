@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
@@ -26,6 +27,7 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.utils.IdGen;
 import com.pcitech.iLife.cps.KaolaHelper;
 import com.pcitech.iLife.cps.PddHelper;
+import com.pcitech.iLife.cps.SuningHelper;
 import com.pcitech.iLife.cps.kaola.CategoryInfo;
 import com.pcitech.iLife.cps.kaola.GoodInfo;
 import com.pcitech.iLife.cps.kaola.GoodsInfoResponse;
@@ -48,6 +50,7 @@ import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsSearchResponse.GoodsSear
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse.GoodsDetailResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.GoodsZsUnitGenerateResponse;
 import com.suning.api.entity.advertise.UnitlistQueryRequest;
+import com.suning.api.entity.netalliance.SelectrecommendcommodityQueryRequest;
 import com.taobao.api.ApiException;
 import com.taobao.api.response.TbkItemInfoGetResponse.NTbkItem;
 
@@ -62,8 +65,8 @@ import org.quartz.JobExecutionException;
  * 
  */
 @Service
-public class KaolaItemsSearcher {
-    private static Logger logger = LoggerFactory.getLogger(KaolaItemsSearcher.class);
+public class SuningItemsSearcher {
+    private static Logger logger = LoggerFactory.getLogger(SuningItemsSearcher.class);
     ArangoDbClient arangoClient;
     String host = Global.getConfig("arangodb.host");
     String port = Global.getConfig("arangodb.port");
@@ -72,11 +75,11 @@ public class KaolaItemsSearcher {
     String database = Global.getConfig("arangodb.database");
     
     @Autowired
-    KaolaHelper kaolaHelper;
+    SuningHelper suningHelper;
     
     //默认设置
-    int pageSize = 200;//最大单页200条
-    String urlPrefix = "https://jinbao.pinduoduo.com/goods-detail?s=";//https://jinbao.pinduoduo.com/goods-detail?s=Y9X2m1wSlN1U8LcVwvfZHeaZwozbWFjf_JQvP59gKL7
+    int pageSize = 40;//最大单页40条
+    String urlPattern = "https://product.suning.com/supplierCode/commodityCode.html";//https://product.suning.com/0000000000/12286765453.html
     
     // 记录处理条数
     int totalAmount = 0;
@@ -90,96 +93,125 @@ public class KaolaItemsSearcher {
     DecimalFormat df = new DecimalFormat("#.00");//double类型直接截断，保留小数点后两位，不四舍五入
 	NumberFormat nf = null;
 
-    public KaolaItemsSearcher() {
+    public SuningItemsSearcher() {
     		nf = NumberFormat.getNumberInstance();
 		nf.setMaximumFractionDigits(2);	// 保留两位小数
 		nf.setRoundingMode(RoundingMode.DOWN);// 如果不需要四舍五入，可以使用RoundingMode.DOWN
     }
     
-    private void upsertItem(String poolName,GoodInfo item) {
-		String  url = item.getLinkInfo().getGoodsPCUrl();//得到唯一URL
+    private void upsertItem(String poolName,JSONObject item) {
+    		JSONObject commodityInfo = item.getJSONObject("commodityInfo");
+    		JSONObject couponInfo = item.getJSONObject("couponInfo");
+		String  url = null;
+		if(commodityInfo.getString("productUrl")!=null ) {
+			url = commodityInfo.getString("productUrl");//得到唯一URL
+			logger.debug("got url.[url]"+url);
+		}else if(commodityInfo.getString("supplierCode")!=null && commodityInfo.getString("commodityCode")!=null ) {//如果为空，则直接使用 supplierCode及commodityCode拼接
+			url = urlPattern.replace("supplierCode", commodityInfo.getString("supplierCode"));
+			url = url.replace("commodityCode", commodityInfo.getString("commodityCode"));
+			logger.debug("compose url with supplierCode and commodityCode.[url]"+url);
+		}else {
+			logger.debug("cannot get url");
+			return;//URL都没捞到，直接收工了
+		}
+
 		String itemKey = Util.md5(url);//根据URL生成唯一key
 		//准备更新doc
 		BaseDocument doc = new BaseDocument();
 		doc.setKey(itemKey);
 		doc.getProperties().put("url", url);
+		Map<String,Object> seller = new HashMap<String,Object>();
+		seller.put("name", commodityInfo.getString("supplierName"));
+		doc.getProperties().put("seller", seller);	
 		Map<String,Object> distributor = new HashMap<String,Object>();
-		distributor.put("name", "网易考拉");
+		distributor.put("name", "苏宁");
 		doc.getProperties().put("distributor", distributor);	
 		Map<String,Object> link = new HashMap<String,Object>();
 		link.put("web", url);
-		link.put("wap", item.getLinkInfo().getGoodsDetailUrl());//移动端URL
+		link.put("wap", url);//只有web地址，将就着用吧
+		link.put("coupon", couponInfo.getString("couponUrl"));
 		doc.getProperties().put("link", link);		
 		Map<String,Object> task = new HashMap<String,Object>();
-		task.put("user", "robot-kaolaItemsSearcher");
-		task.put("executor", "robot-kaolaItemsSearcher-instance");
+		task.put("user", "robot-suningItemsSearcher");
+		task.put("executor", "robot-suningItemsSearcher-instance");
 		task.put("timestamp", new Date().getTime());
 		task.put("url", url);
 		doc.getProperties().put("task", task);
 		doc.getProperties().put("type", "commodity");
-		doc.getProperties().put("source", "kaola");
+		doc.getProperties().put("source", "suning");
 
-		doc.getProperties().put("title", item.getBaseInfo().getGoodsTitle());//更新title
+		doc.getProperties().put("title", commodityInfo.getString("commodityName"));//更新title
 		
 		//更新品牌信息到prop列表
 		Map<String,String> props = new HashMap<String,String>();
-		props.put("品牌", item.getBaseInfo().getBrandName());//增加品牌属性
-		props.put("品牌国家", item.getBaseInfo().getBrandCountryName());//增加品牌国家属性
+		JSONArray parametersList = item.getJSONArray("parametersList");
+		for(int i=0;i<parametersList.size();i++) {
+			JSONObject paramObj = parametersList.getJSONObject(i);
+			props.put(paramObj.getString("parameterDesc"), paramObj.getString("parameterVal"));
+		}
 		doc.getProperties().put("props", props);
 		
 		//更新图片列表：注意脚本中已经有采集，此处使用自带的内容
 		List<String> images = new ArrayList<String>();
-		for(String img:item.getBaseInfo().getImageList())//增加展示图片
-			images.add(img);
-		for(String img:item.getBaseInfo().getDetailImgList())//增加详情图片
-			images.add(img);
+		JSONArray pictureUrlArray = commodityInfo.getJSONArray("pictureUrl");
+		for(int i=0;i<pictureUrlArray.size();i++) {
+			JSONObject pictureUrl = pictureUrlArray.getJSONObject(i);
+			images.add(pictureUrl.getString("picUrl"));
+			if("1".equalsIgnoreCase(pictureUrl.getString("locationId"))) {
+				//将第一张展示图片作为logo
+				doc.getProperties().put("logo", pictureUrl.getString("picUrl"));
+			}
+				
+		}
 		doc.getProperties().put("images", images);
-		
-		//将第一张展示图片作为logo
-		doc.getProperties().put("logo", item.getBaseInfo().getImageList().get(0));
-		
-		//如果有subtitle，则作为summary
-		if(item.getBaseInfo().getGoodsSubTitle()!=null && item.getBaseInfo().getGoodsSubTitle().trim().length()>0)
-			doc.getProperties().put("summary", item.getBaseInfo().getGoodsSubTitle().replaceAll("\\s+"," "));
-		
+		doc.getProperties().put("summary", commodityInfo.getString("sellingPoint"));//将卖点作为summary
+
 		//增加类目
 		List<String> categories = new ArrayList<String>();
-		for(CategoryInfo category:item.getCategoryInfo()){//增加类目
-			logger.debug("[category name]"+category.getCategoryName());
-			categories.add(category.getCategoryName());
-		}
+		JSONObject categoryInfo = item.getJSONObject("categoryInfo");
+		categories.add(categoryInfo.getString("firstPurchaseCategoryName"));//采购目录
+		categories.add(categoryInfo.getString("secondPurchaseCategoryName"));
+		categories.add(categoryInfo.getString("thirdPurchaseCategoryName"));
+		categories.add(categoryInfo.getString("firstSaleCategoryName"));//销售目录
+		categories.add(categoryInfo.getString("secondSaleCategoryName"));
+		categories.add(categoryInfo.getString("thirdSaleCategoryName"));
 		doc.getProperties().put("category", categories);//更新类目，包含多级分类
 
 		//更新CPS链接：在link基础上补充
-		link.put("wap2", item.getLinkInfo().getShortShareUrl());
-		link.put("web2", item.getLinkInfo().getShortShareUrl());
-		link.put("miniprog", item.getLinkInfo().getMiniShareUrl());
-		doc.getProperties().put("link", link);
+//		link.put("wap2", item.getLinkInfo().getShortShareUrl());
+//		link.put("web2", item.getLinkInfo().getShortShareUrl());
+//		link.put("miniprog", item.getLinkInfo().getMiniShareUrl());
+//		doc.getProperties().put("link", link);
 
 		//更新价格：直接覆盖
 		Map<String,Object> price = new HashMap<String,Object>();
 		price.put("currency", "￥");
-		price.put("bid", parseNumber(item.getPriceInfo().getMarketPrice().doubleValue()));
-		price.put("sale", parseNumber(item.getPriceInfo().getCurrentPrice().doubleValue()));
+		if(couponInfo.getString("couponValue")!=null&&couponInfo.getString("couponValue").trim().length()>0)
+			price.put("coupon", parseNumber(couponInfo.getString("couponValue")));//获取优惠券面额
+		price.put("sale", parseNumber(commodityInfo.getString("commodityPrice")));//没错，这个是卖价
+		price.put("bid", parseNumber(commodityInfo.getString("snPrice")));//没错，这个是原价
 		doc.getProperties().put("price", price);
 		
 		//更新佣金：直接覆盖
-		Map<String,Object> profit = new HashMap<String,Object>();
-		profit.put("rate", parseNumber(item.getCommissionInfo().getCommissionRate().doubleValue()));//返回的是百分比，直接使用即可
-		profit.put("amount", parseNumber(item.getPriceInfo().getCurrentPrice().multiply(item.getCommissionInfo().getCommissionRate()).doubleValue()));
-		profit.put("type", "2-party");
-		doc.getProperties().put("profit", profit);
+		if(couponInfo.getString("rate")!=null&&couponInfo.getString("rate").trim().length()>0) {//仅在有佣金比例返回时才处理
+			Map<String,Object> profit = new HashMap<String,Object>();
+			profit.put("rate", parseNumber(commodityInfo.getString("rate")));//返回的是百分比，直接使用即可
+			double amount = parseNumber(commodityInfo.getString("rate"))*parseNumber(commodityInfo.getString("commodityPrice"))*0.01;
+			profit.put("amount", parseNumber(""+amount));
+			profit.put("type", "2-party");
+			doc.getProperties().put("profit", profit);
+		}
 		
-		//设置基本信息更新标志为true
-		Map<String,Object> syncStatus = new HashMap<String,Object>();
-		syncStatus.put("sync", true);
-		Map<String,Object> syncTimestamp = new HashMap<String,Object>();
-		syncTimestamp.put("sync", new Date());	
-		doc.getProperties().put("status", syncStatus);
-		doc.getProperties().put("timestamp", syncTimestamp);
+		//设置基本信息更新标志：不设置，因为没有CPS链接的么，等到CPS任务更新后再设置
+//		Map<String,Object> syncStatus = new HashMap<String,Object>();
+//		syncStatus.put("sync", true);
+//		Map<String,Object> syncTimestamp = new HashMap<String,Object>();
+//		syncTimestamp.put("sync", new Date());	
+//		doc.getProperties().put("status", syncStatus);
+//		doc.getProperties().put("timestamp", syncTimestamp);
 
 		//更新doc
-		logger.debug("try to upsert kaola item.[itemKey]"+itemKey,JSON.toString(doc));
+		logger.debug("try to upsert suning item.[itemKey]"+itemKey,JSON.toString(doc));
 //		需要区分是否已经存在，如果已经存在则直接更新，但要避免更新profit信息，以免出发3-party分润任务
 //		arangoClient.upsert("my_stuff", itemKey, doc);   
 		BaseDocument old = arangoClient.find("my_stuff", itemKey);
@@ -192,100 +224,76 @@ public class KaolaItemsSearcher {
 		}
     }
     
-    private double parseNumber(double d) {
-//    		return Double.valueOf(String.format("%.2f", d ));//会四舍五入，丢弃
+    private double parseNumber(String str) {
+    		logger.debug("parse number.[input]"+str);
+    		Double d = Double.parseDouble(str);
     		String numStr = nf.format(d);
     		try {
     			return Double.parseDouble(numStr);
     		}catch(Exception ex) {
-    			return d;
+    			return 0;
     		}
     }
 
     /**
 	 * 查询待同步数据记录，并提交查询商品信息
-	 * 1，查询Arangodb中(status==null || status.sync==null) and (source=="pdd")的记录，限制30条。
-	 * 2，通过拼多多API接口查询生成商品导购链接
-	 * 3，逐条解析，并更新Arangodb商品记录
-	 * 4，处理完成后发送通知给管理者
+	 * 1，通过搜索API获取最新商品，并入库
+	 * 2，处理完成后发送通知给管理者
      */
     public void execute() throws JobExecutionException {
-    		logger.info("Kaola cps item search job start. " + new Date());
+    		logger.info("Suning cps item search job start. " + new Date());
     		processedMap = new HashMap<String,Integer>();
     		totalMap = new HashMap<String,Integer>();
     		poolNameMap = new HashMap<String,String>();
 
-        //准备查询条件，根据推广活动或选品规则准备查询条件。按照1-19总共19种
-    		String[] poolNames = {
-			"每日平价商品",
-			"高佣必推商品",
-			"新人专享商品",
-			"会员专属商品",
-			"低价包邮商品",
-			"考拉自营爆款",
-			"考拉商家爆款",
-			"黑卡用户最爱买商品",
-			"美妆个护热销品",
-			"食品保健热销品",
-			"母婴热销品",
-			"时尚热销品",
-			"家居宠物热销品",
-			"每日秒杀商品",
-			"黑卡好价商品",
-			"高转化好物商品",
-			"开卡一单省回商品",
-			"会员专属促销选品池",
-			"好券商品"
-    		};
+        //准备查询条件
+    		//默认为1,,营销id。1-小编推荐；2-实时热销榜；3-当日热推榜；4-高佣爆款榜；5-团长招商榜；6-9块9专区
+    		String poolNameStr = "1-小编推荐；2-实时热销榜；3-当日热推榜；4-高佣爆款榜；5-团长招商榜；6-9块9专区";
+    		String[] poolNameArray = poolNameStr.split("；");
+    		poolNameStr = poolNameStr.replaceAll("\\d+\\-", "");
+    		String[] poolNames = poolNameStr.split("；");
+    		int k=0;
+    		for(String str:poolNames) {
+    			logger.debug(poolNameArray[k]+"-->"+str);
+    			k++;
+    		}
     		
     		//准备连接
     		arangoClient = new ArangoDbClient(host,port,username,password,database);
         int poolNameIndex = 1;
     		for(String poolName:poolNames) {//逐个分类查询，每个分类均进行遍历
     			logger.debug("start search by poolName.[poolName]"+poolName);
+    			totalMap.put(poolName, 0);//初始化各个分类的总数量，后面查询时累计
     			processedMap.put(poolName, 0);//默认设置相应分类的条数为0
-    			QuerySelectedGoodsRequest request = new QuerySelectedGoodsRequest();
-    			request.setPoolName(""+poolNameIndex);
+    			SelectrecommendcommodityQueryRequest request = new SelectrecommendcommodityQueryRequest();
+    			request.setEliteId(""+poolNameIndex);
     			poolNameIndex++;
-    			request.setPageNo(1);//默认从第一页开始:下标从1开始
-    			request.setPageSize(pageSize);//默认每页20条，是该接口的最小值，兼顾查询详情接口数量限制
+    			request.setPageIndex("0");//默认从第一页开始:下标从0开始
+    			request.setSize(""+pageSize);//最大40
+    			request.setPicHeight("600");
+    			request.setPicWidth("600");
     			
     			//Step1:搜索得到推荐商品列表
-    			logger.debug("try to search items.[request]"+JsonUtil.transferToJson(request));
-    			QuerySelectedGoodsResponse resp = kaolaHelper.search(request);
-    			List<Long> ids = resp.getData().getGoodsIdList();
-    			//检查分页，如果有分页则先全部取回来放到列表里，秋后一起算账
-			int totalAmountPerPool = resp.getData().getTotalRecord();
-			totalMap.put(poolName,totalAmountPerPool );//默认设置相应分类的总条数
-	    		totalAmount += totalAmountPerPool;
-	    		int totalPages = (totalAmountPerPool + pageSize -1)/pageSize;
-	    		for(int i=2;i<totalPages+1;i++) {//如果有分页则逐页获取
-	    			logger.debug("start process search result by page.[pageNo]"+i+"/"+totalPages);
-	    			request.setPageNo(i);
-	    			resp = kaolaHelper.search(request);
-	    			ids.addAll(resp.getData().getGoodsIdList());
-	    		}
-    			totalMap.put(poolName, ids.size());//理论上由于已经返回了总条数，不需要重新设置。不知道分页做得对不对啊，还是掰手指头数一数，哎，多么不自信~~
-    			//由于itemDetail每次限制最大查询20条，这里需要对返回的Id列表进行切割，分别处理
-    			int totalIds = ids.size();
-    			int subListSize = 20;//每次取20条，批量查询详情
-    			int subListNumbers = (totalIds+subListSize-1)/subListSize;//总共分割得到的subList数量
-    			for(int k=0;k<subListNumbers;k++) {//针对返回的list进行翻页，每次处理20条，直到结束
-        			int subListIndexFrom = k*subListSize;//默认第一个开始取
-        			int subListAmount = (totalIds-subListIndexFrom)>subListSize?subListSize:(totalIds-subListIndexFrom);
-        			int subListIndexTo = subListIndexFrom+subListAmount-1;
-        			List<Long> subIds = ids.subList(subListIndexFrom, subListIndexTo);
-	    			//取得对应的20条Id
-	    			String skuIds = StringUtils.join(subIds,",");
-		    		//查询对应的商品详情
-	    			logger.debug("try to get item detail.[subList]"+k+"[from]"+subListIndexFrom+"[to]"+subListIndexTo+"[skuIds]"+skuIds);
-	    			GoodsInfoResponse goods = kaolaHelper.getItemDetail(brokerId, skuIds);
-				for(GoodInfo item:goods.getData()) {//逐个插入
-					logger.debug(JsonUtil.transferToJson(item));
+    			boolean hasNextPage = true;//这个返回结果比较奇葩，在每一个列表项下竟然都设置了一个isHaveData，如果为1则表示有下一页。默认认为至少有一页
+    			int pageIndex = 0;
+    			while(hasNextPage) {
+    				request.setPageIndex(""+pageIndex);//默认从第一页开始:下标从0开始
+        			logger.debug("try to search items.[page]"+pageIndex+"\t[request]"+JsonUtil.transferToJson(request));
+        			JSONArray resp = suningHelper.search(request);//得到一个商品结果列表
+        			totalMap.put(poolName,totalMap.get(poolName)+resp.size() );//默认设置相应分类的总条数
+    	    			totalAmount += resp.size();
+	    			for(int j=0;j<resp.size();j++) {//逐个遍历
+	    				JSONObject item = resp.getJSONObject(j);
+	    				logger.debug(JsonUtil.transferToJson(item));
 					upsertItem(poolName,item);
-				}
-    			}
-	    		
+					//处理奇葩的下一页标志
+					if("1".equalsIgnoreCase(item.getString("isHaveData")))//
+						hasNextPage = true;
+					else
+						hasNextPage = false;
+    					pageIndex++;
+	    			}
+    			}	    		
     		}
 
 		//完成后关闭arangoDbClient
@@ -309,7 +317,7 @@ public class KaolaItemsSearcher {
 		JSONObject msg = new JSONObject();
 		msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
 		msg.put("title", "导购数据同步任务结果");
-		msg.put("task", "考拉商品入库 已同步");
+		msg.put("task", "苏宁商品入库 已同步");
 		msg.put("time", fmt.format(new Date()));
 		msg.put("remark", remark);
 		msg.put("color", totalAmount-processedAmount==0?"#FF0000":"#000000");

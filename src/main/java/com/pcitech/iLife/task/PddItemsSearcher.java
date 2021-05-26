@@ -104,7 +104,7 @@ public class PddItemsSearcher {
 		Map<String,Object> task = new HashMap<String,Object>();
 		task.put("user", "robot-pddItemsSearcher");
 		task.put("executor", "robot-pddItemsSearcher-instance");
-		task.put("timestamp:new", new Date().getTime());
+		task.put("timestamp", new Date().getTime());
 		task.put("url", url);
 		doc.getProperties().put("task", task);
 		doc.getProperties().put("type", "commodity");
