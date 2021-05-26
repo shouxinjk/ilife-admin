@@ -187,7 +187,7 @@ public class SuningItemSync {
         String query = "for doc in my_stuff filter "
         		+ "(doc.source == \"suning\") and "
         		+ "(doc.status==null or doc.status.sync==null) "
-        		+ "limit 30 "//一个批次处理30条
+        		+ "limit 1000 "//一个批次处理30条
         		+ "return {itemKey:doc._key,web:doc.link.web,wap:doc.link.wap}";
         
         try {
