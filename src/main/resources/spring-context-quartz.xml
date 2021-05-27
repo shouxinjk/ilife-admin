@@ -391,6 +391,24 @@
         </property>
     </bean>        
     
+    	<!-- 国美商品自动入库: 每小时更新一次 -->
+    <bean id="cpsDataSyncTaskGomeItemSearch" class="com.pcitech.iLife.task.GomeItemSearcher"></bean>
+    <bean id="cpsDataSyncTaskGomeItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskGomeItemSearch"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskGomeItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskGomeItemSearchMethod"></property>
+        <property name="cronExpression" value="0 5 * * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskGomeItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskGomeItemSearchTrigger"></ref>
+            </list>
+        </property>
+    </bean>            
+    
 	<!-- 微信选品入库：达人发送淘口令后存储到broker_seeds -->
     <bean id="brokerSeedNotifyTask" class="com.pcitech.iLife.task.BrokerSeedNotifyTask"></bean>
     <bean id="brokerSeedNotifyTaskMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
