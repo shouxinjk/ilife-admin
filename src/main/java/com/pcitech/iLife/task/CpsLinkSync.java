@@ -173,6 +173,7 @@ public class CpsLinkSync {
 			processedMap.put(itemSource, processedMap.get(itemSource)+1);
 		}else {
 			logger.error("Unknown source type.[source]"+item.getProperties().get("source"));
+			processedMap.put(itemSource, processedMap.get(itemSource)==null?1:processedMap.get(itemSource)+1);
 		}
 		
 		//更新doc
@@ -228,7 +229,8 @@ public class CpsLinkSync {
 		remark.append("预期数量："+totalAmount);
 		for(String s:source) {
 			int numPerSource = processedMap.get(s);
-			remark.append("\n"+sourceName[index++]+"："+numPerSource);
+			if(numPerSource>0)
+				remark.append("\n"+sourceName[index++]+"："+numPerSource);
 		}
 		remark.append("\n数量差异："+(totalAmount-processedAmount));
 		
