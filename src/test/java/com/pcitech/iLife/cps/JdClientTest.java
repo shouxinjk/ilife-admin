@@ -39,7 +39,7 @@ import com.pcitech.iLife.util.Util;
 @ContextConfiguration(locations={"classpath:spring-context.xml","classpath:spring-context-activiti.xml","classpath:spring-context-jedis.xml","classpath:spring-context-shiro.xml"}) 
 public class JdClientTest {
 	private static Logger logger = LoggerFactory.getLogger(JdClientTest.class);
-//    ArangoDbClient arangoClient;
+    ArangoDbClient arangoClient;
     String host = Global.getConfig("arangodb.host");
     String port = Global.getConfig("arangodb.port");
     String username = Global.getConfig("arangodb.username");
@@ -113,7 +113,11 @@ public class JdClientTest {
 	@Test
 	public void getCatgory() {
 		System.out.println("now start query category list ... ");
+		  //准备连接
+		arangoClient = new ArangoDbClient(host,port,username,password,database);
 		getCategories(0,0);
+		//完成后关闭arangoDbClient
+		arangoClient.close();
 	}
 	
 	private void getCategories(int parentId,int grade) {
@@ -123,8 +127,6 @@ public class JdClientTest {
 			CategoryResp[] categories = jdHelper.getCategory(parentId,grade);
 			if(categories==null)
 				return;
-			  //准备连接
-			ArangoDbClient arangoClient = new ArangoDbClient(host,port,username,password,database);
 
 			for(CategoryResp item:categories) {
 				String itemKey = Util.md5(source+item.getId());//所有原始category保持 source+CategoryId的形式唯一识别
@@ -140,8 +142,6 @@ public class JdClientTest {
 				if(item.getGrade()<2)
 					getCategories(item.getId(),item.getGrade()+1);//递归获取下层分类
 			}
-			//完成后关闭arangoDbClient
-			arangoClient.close();
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

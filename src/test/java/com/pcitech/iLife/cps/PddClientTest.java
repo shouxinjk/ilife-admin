@@ -40,7 +40,7 @@ import com.taobao.api.ApiException;
 @ContextConfiguration(locations={"classpath:spring-context.xml","classpath:spring-context-activiti.xml","classpath:spring-context-jedis.xml","classpath:spring-context-shiro.xml"}) 
 public class PddClientTest {
 	private static Logger logger = LoggerFactory.getLogger(PddClientTest.class);
-//  ArangoDbClient arangoClient;
+  ArangoDbClient arangoClient;
   String host = Global.getConfig("arangodb.host");
   String port = Global.getConfig("arangodb.port");
   String username = Global.getConfig("arangodb.username");
@@ -65,7 +65,11 @@ public class PddClientTest {
 	@Test
 	public void getCategory() {
 		System.out.println("now start query categories ... ");
+		  //准备连接
+		arangoClient = new ArangoDbClient(host,port,username,password,database);
 		getCategories(0);
+		//完成后关闭arangoDbClient
+		arangoClient.close();
 		assert true;
 	}
 	
@@ -76,8 +80,7 @@ public class PddClientTest {
 			GoodsCatsGetResponse resp = pddHelper.getCategory(parentId);
 			if(resp==null ||  resp.getGoodsCatsList().size()==0)
 				return;
-			  //准备连接
-			ArangoDbClient arangoClient = new ArangoDbClient(host,port,username,password,database);
+
 			for(GoodsCatsGetResponseGoodsCatsListItem item:resp.getGoodsCatsList()) {
 				logger.debug("目录::[parentId]"+item.getParentCatId()+"\t[id]"+item.getCatId()+"\t[name]"+item.getCatName());
 				String itemKey = Util.md5(source + item.getCatId());//所有原始category保持 source+CategoryId的形式唯一识别
@@ -93,8 +96,6 @@ public class PddClientTest {
 //				if(item.getGrade()<2)
 				getCategories(item.getCatId());//递归获取下层分类
 			}
-			//完成后关闭arangoDbClient
-			arangoClient.close();
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

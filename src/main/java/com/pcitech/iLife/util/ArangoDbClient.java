@@ -45,6 +45,7 @@ public class ArangoDbClient implements Serializable {
 	private int PORT = 8529;
 	private String USERNAME = "username";
 	private String PASSWORD = "password";
+	private int maxConnections = 50;//默认连接数是32
 
     /**
      * The ArangoDbClient constructor.
@@ -56,7 +57,12 @@ public class ArangoDbClient implements Serializable {
         this.PORT= Integer.parseInt(port);
         this.USERNAME = username;
         this.PASSWORD = password;
-		this.arango = new ArangoDB.Builder().host(HOST, PORT).user(USERNAME).password(PASSWORD).build();
+		this.arango = new ArangoDB.Builder()
+				.host(HOST, PORT)
+				.user(USERNAME)
+				.password(PASSWORD)
+				.maxConnections(maxConnections)
+				.build();
 		this.arangoClient = this.arango.db(database);
     }
 
