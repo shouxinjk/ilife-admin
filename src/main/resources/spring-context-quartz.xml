@@ -345,7 +345,7 @@
     </bean>
     <bean id="cpsDataSyncTaskKaolaItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskKaolaItemSearchMethod"></property>
-        <property name="cronExpression" value="0 10 8,10,16,20  * * ?"></property>
+        <property name="cronExpression" value="0 15 8,10,16,20  * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskKaolaItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -363,7 +363,7 @@
     </bean>
     <bean id="cpsDataSyncTaskJdItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskJdItemSearchMethod"></property>
-        <property name="cronExpression" value="0 20 8,10,16,20 * * ?"></property>
+        <property name="cronExpression" value="0 30 8,10,16,20 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskJdItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
