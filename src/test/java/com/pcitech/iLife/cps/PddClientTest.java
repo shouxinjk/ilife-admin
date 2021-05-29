@@ -8,14 +8,20 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.arangodb.entity.BaseDocument;
+import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.task.PddItemSync;
 import com.pcitech.iLife.task.PddItemsSearcher;
 import com.pcitech.iLife.task.TaobaoItemSync;
+import com.pcitech.iLife.util.ArangoDbClient;
+import com.pcitech.iLife.util.Util;
 import com.pdd.pop.sdk.common.util.JsonUtil;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse.GoodsDetailResponse;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsSearchRequest;
@@ -33,7 +39,13 @@ import com.taobao.api.ApiException;
 @WebAppConfiguration
 @ContextConfiguration(locations={"classpath:spring-context.xml","classpath:spring-context-activiti.xml","classpath:spring-context-jedis.xml","classpath:spring-context-shiro.xml"}) 
 public class PddClientTest {
-	
+	private static Logger logger = LoggerFactory.getLogger(PddClientTest.class);
+//  ArangoDbClient arangoClient;
+  String host = Global.getConfig("arangodb.host");
+  String port = Global.getConfig("arangodb.port");
+  String username = Global.getConfig("arangodb.username");
+  String password = Global.getConfig("arangodb.password");
+  String database = Global.getConfig("arangodb.database");
 	@Autowired
 	PddHelper pddHelper;
 	
@@ -53,16 +65,41 @@ public class PddClientTest {
 	@Test
 	public void getCategory() {
 		System.out.println("now start query categories ... ");
-		long parentCategoryId = 0;
+		getCategories(0);
+		assert true;
+	}
+	
+	private void getCategories(long parentId) {
+		String source = "pdd";
+		logger.debug("now start query category list ..[parentId]"+parentId);
 		try {
-			GoodsCatsGetResponse resp = pddHelper.getCategory(parentCategoryId);
-			for(GoodsCatsGetResponseGoodsCatsListItem category:resp.getGoodsCatsList())
-				System.err.println("目录::[parentId]"+category.getParentCatId()+"\t[id]"+category.getCatId()+"\t[name]"+category.getCatName());
+			GoodsCatsGetResponse resp = pddHelper.getCategory(parentId);
+			if(resp==null ||  resp.getGoodsCatsList().size()==0)
+				return;
+			  //准备连接
+			ArangoDbClient arangoClient = new ArangoDbClient(host,port,username,password,database);
+			for(GoodsCatsGetResponseGoodsCatsListItem item:resp.getGoodsCatsList()) {
+				logger.debug("目录::[parentId]"+item.getParentCatId()+"\t[id]"+item.getCatId()+"\t[name]"+item.getCatName());
+				String itemKey = Util.md5(source + item.getCatId());//所有原始category保持 source+CategoryId的形式唯一识别
+				BaseDocument doc = new BaseDocument();
+				doc.setKey(itemKey);
+				doc.getProperties().put("source", source);
+				doc.getProperties().put("pid", ""+item.getParentCatId());//原始父id
+				doc.getProperties().put("name", ""+item.getCatName());//名称
+				doc.getProperties().put("id", ""+item.getCatId());//原始id
+				doc.getProperties().put("level", item.getLevel());//层级 
+				logger.debug("try to upsert jd category.[itemKey]"+itemKey+"[doc]"+JsonUtil.transferToJson(item));
+				arangoClient.upsert("platform_categories", itemKey, doc);  
+//				if(item.getGrade()<2)
+				getCategories(item.getCatId());//递归获取下层分类
+			}
+			//完成后关闭arangoDbClient
+			arangoClient.close();
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		assert true;
 	}
 	
 	@Test

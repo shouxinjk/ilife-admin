@@ -147,7 +147,6 @@ public class JdClientTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		assert true;
 	}
 
 	@Test
