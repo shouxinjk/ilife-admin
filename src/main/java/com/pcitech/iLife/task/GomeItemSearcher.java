@@ -211,12 +211,36 @@ public class GomeItemSearcher {
     		
     		//准备连接
     		arangoClient = new ArangoDbClient(host,port,username,password,database);
+    		/**
+    		//查询得到所有3级叶子分类，然后逐个遍历：当前有问题，gome API限制调用次数，需要调用侧处理API分时调用问题
+    		List<BaseDocument> categories = new ArrayList<BaseDocument>();
+        String query = "for doc in platform_categories filter "
+        		+ "doc.source == \"gome\" and doc.level ==3  "
+        		+ "return {id:doc.id,name:doc.name}";
+        
+        try {
+            arangoClient = new ArangoDbClient(host,port,username,password,database);
+            categories = arangoClient.query(query, null, BaseDocument.class);
+            totalAmount = categories.size();
+            if(totalAmount ==0) {//如果没有类目则表示出错了，提前收工吧
+	            	logger.debug("查询gome类目失败");
+	            	arangoClient.close();//链接还是要关闭的
+	            	return;
+            }
+        }catch(Exception ex) {
+        		logger.error("failed query gome categories.",ex);
+        }
+    		//**/
         int poolNameIndex = 1;
-    		for(String poolName:poolNames) {//逐个分类查询，每个分类均进行遍历
-    			logger.debug("start search by poolName.[poolName]"+poolName);
-    			processedMap.put(poolName, 0);//默认设置相应分类的条数为0
+//		for(BaseDocument category:categories) {//逐个分类查询，每个分类均进行遍历
+//			String poolName = category.getProperties().get("name").toString();
+		for(String poolName:poolNames) {//逐个分类查询，每个分类均进行遍历
+			logger.debug("start search by poolName.[poolName]"+poolName);
+			totalMap.put(poolName, 0);//初始化各个分类的总数量，后面查询时累计
+			processedMap.put(poolName, 0);//默认设置相应分类的条数为0
     			
     			TreeMap<String,String> request = gomeHelper.getParamMap();
+//    			request.put("category_id", category.getProperties().get("id").toString());
     			request.put("page_no", "1");//分页：默认第1页
     			request.put("page_size", ""+pageSize);//每页条数：最大10000
     			int pageNo = 1;
@@ -226,7 +250,8 @@ public class GomeItemSearcher {
     				request.put("page_no", ""+pageNo);//分页：默认第1页
     				pageNo++;
 	    			logger.debug("try to search items.[request]"+JsonUtil.transferToJson(request));
-	    			JSONObject resp = gomeHelper.getIncreasedItems(request);//仅取增量条目，全量太傻了，竟然一次性丢过来90万条数据
+	    			JSONObject resp = gomeHelper.getIncreasedItems(request);//增量查询竟然不好使
+//	    			JSONObject resp = gomeHelper.getAllItems(request);//全量很傻，竟然一次性丢过来90万条数据，需要按分类取
 				int totalAmountPerPool = resp.getIntValue("total_count");
 				totalMap.put(poolName,totalAmountPerPool );//默认设置相应分类的总条数
 		    		totalAmount += totalAmountPerPool;

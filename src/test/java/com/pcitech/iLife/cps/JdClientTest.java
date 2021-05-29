@@ -8,11 +8,16 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.arangodb.entity.BaseDocument;
 import com.jd.open.api.sdk.domain.kplunion.CategoryService.response.get.CategoryResp;
 import com.jd.open.api.sdk.domain.kplunion.GoodsService.request.query.JFGoodsReq;
 import com.jd.open.api.sdk.domain.kplunion.GoodsService.response.query.JFGoodsResp;
@@ -20,18 +25,26 @@ import com.jd.open.api.sdk.domain.kplunion.GoodsService.response.query.JingfenQu
 import com.jd.open.api.sdk.domain.kplunion.GoodsService.response.query.PromotionGoodsResp;
 import com.jd.open.api.sdk.domain.kplunion.OrderService.response.query.OrderRowResp;
 import com.jd.open.api.sdk.domain.kplunion.promotioncommon.PromotionService.response.get.PromotionCodeResp;
+import com.jd.open.api.sdk.internal.util.JsonUtil;
 import com.jd.open.api.sdk.response.kplunion.UnionOpenGoodsPromotiongoodsinfoQueryResponse;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.task.JdItemSync;
 import com.pcitech.iLife.task.JdItemsSearcher;
-import com.pdd.pop.sdk.common.util.JsonUtil;
+import com.pcitech.iLife.util.ArangoDbClient;
+import com.pcitech.iLife.util.Util;
 
 
 @RunWith(SpringJUnit4ClassRunner.class) 
 @WebAppConfiguration
 @ContextConfiguration(locations={"classpath:spring-context.xml","classpath:spring-context-activiti.xml","classpath:spring-context-jedis.xml","classpath:spring-context-shiro.xml"}) 
 public class JdClientTest {
-	
+	private static Logger logger = LoggerFactory.getLogger(JdClientTest.class);
+//    ArangoDbClient arangoClient;
+    String host = Global.getConfig("arangodb.host");
+    String port = Global.getConfig("arangodb.port");
+    String username = Global.getConfig("arangodb.username");
+    String password = Global.getConfig("arangodb.password");
+    String database = Global.getConfig("arangodb.database");
 	@Autowired
 	JdHelper jdHelper;
 	
@@ -51,12 +64,12 @@ public class JdClientTest {
 		request.setSort("desc");//asc,desc升降序,默认降序
 		request.setPid(Global.getConfig("jd.pid"));//联盟id_应用id_推广位id，三段式
 		request.setFields("hotWords,documentInfo,skuLabelInfo,promotionLabelInfo");//支持出参数据筛选，逗号','分隔，目前可用：videoInfo(视频信息),hotWords(热词),similar(相似推荐商品),documentInfo(段子信息)，skuLabelInfo（商品标签），promotionLabelInfo（商品促销标签）
-		System.out.println("try to search items.[request]"+JsonUtil.transferToJson(request));
 		try {
+			System.out.println("try to search items.[request]"+JsonUtil.toJson(request));
 			JingfenQueryResult resp = jdHelper.search(request);
 			JFGoodsResp[] jfgoods = resp.getData();
 			for(JFGoodsResp jfgood:jfgoods)
-				System.err.println(JsonUtil.transferToJson(jfgood));
+				System.err.println(JsonUtil.toJson(jfgood));
 		}catch(Exception ex) {
 			
 		}
@@ -100,11 +113,36 @@ public class JdClientTest {
 	@Test
 	public void getCatgory() {
 		System.out.println("now start query category list ... ");
+		getCategories(0,0);
+	}
+	
+	private void getCategories(int parentId,int grade) {
+		String source = "jd";
+		logger.debug("now start query category list ..[parentId]"+parentId+"[grade]"+grade);
 		try {
-			CategoryResp[] categories = jdHelper.getCategory(1318,1);
-			for(CategoryResp category:categories) {
-				System.err.println(category.getId()+":"+category.getName()+"-->"+category.getParentId()+"::"+category.getGrade());
+			CategoryResp[] categories = jdHelper.getCategory(parentId,grade);
+			if(categories==null)
+				return;
+			  //准备连接
+			ArangoDbClient arangoClient = new ArangoDbClient(host,port,username,password,database);
+
+			for(CategoryResp item:categories) {
+				String itemKey = Util.md5(source+item.getId());//所有原始category保持 source+CategoryId的形式唯一识别
+				BaseDocument doc = new BaseDocument();
+				doc.setKey(itemKey);
+				doc.getProperties().put("source", source);
+				doc.getProperties().put("pid", ""+item.getParentId());//原始父id
+				doc.getProperties().put("name", ""+item.getName());//名称
+				doc.getProperties().put("id", ""+item.getId());//原始id
+				doc.getProperties().put("level", item.getGrade());//层级 
+				logger.debug("try to upsert jd category.[itemKey]"+itemKey+"[doc]"+JsonUtil.toJson(item));
+				arangoClient.upsert("platform_categories", itemKey, doc);  
+				if(item.getGrade()<2)
+					getCategories(item.getId(),item.getGrade()+1);//递归获取下层分类
 			}
+			//完成后关闭arangoDbClient
+			arangoClient.close();
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
