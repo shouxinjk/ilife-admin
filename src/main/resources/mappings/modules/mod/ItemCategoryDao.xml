@@ -148,8 +148,8 @@
 		FROM mod_item_category a
 		<include refid="itemCategoryJoins"/>
 		<where>
-			a.del_flag = '0' 
-			AND a.parent_id = #{parentId}
+			<!-- a.del_flag = #{DEL_FLAG_NORMAL} AND  -->
+			a.parent_id = #{parentId}
 					
 		</where>		
 		order by a.sort

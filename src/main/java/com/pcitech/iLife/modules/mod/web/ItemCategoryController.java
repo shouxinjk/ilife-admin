@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -183,6 +186,136 @@ public class ItemCategoryController extends BaseController {
 		return mapList;
 	}
 	
+
+	/**
+	 * 加载系统默认分类。是标准分类。
+	 * @param id 父目录ID。为空时返回顶级目录
+	 * @param response 返回节点列表，格式如下：
+{
+	"value": "Bestsellers",
+	"id": "Bestsellers",
+	"parent": "Thrillers",
+	"opened": false,
+	"icon": {
+		"folder": "fas fa-book",
+		"openFolder": "fas fa-book-open",
+		"file": "fas fa-file"
+	},
+	"items": true
+}
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "standard-categories")
+	public List<Map<String, Object>> listStandardCategoriesByParentId( @RequestParam(required=false) String id, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,String> icon = Maps.newHashMap();
+		icon.put("folder","fas fa-book");
+		icon.put("openFolder","fas fa-book-open");
+		icon.put("file","fas fa-file");
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		String categoryId = id;//默认id接受前端传递的id值，但对于根节点，前端传递的是div的id，固定为 tree-source ，需要进行映射
+		if(id==null || id.trim().length()==0 || "tree-source".equalsIgnoreCase(id)) 
+			categoryId = "0";//默认查询根目录下的节点 
+
+		//加载子分类
+		List<ItemCategory> list = itemCategoryService.findByParentId(categoryId);
+		for (int i=0; i<list.size(); i++){
+			ItemCategory e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+//			if(!"-1".equalsIgnoreCase(id))//根节点不能加
+			map.put("parent", id);
+			map.put("value", e.getName());
+			map.put("id", e.getId());
+			map.put("opened", false);
+			map.put("items", true);//默认都认为有下级目录
+//			map.put("icon", icon);//设置图标
+			mapList.add(map);
+		}		
+		return mapList;
+	}
+	
+
+
+	/**
+	 * 加载系统默认分类。是标准分类。
+	 * @param id 父目录ID。为空时返回顶级目录
+	 * @param response 返回节点列表，格式如下：
+{
+	"value": "Bestsellers",
+	"id": "Bestsellers",
+	"parent": "Thrillers",
+	"opened": false,
+	"icon": {
+		"folder": "fas fa-book",
+		"openFolder": "fas fa-book-open",
+		"file": "fas fa-file"
+	},
+	"items": true
+}
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "third-party-categories/{source}")
+	public List<Map<String, Object>> listPlatformCategoriesByParentId( @PathVariable String source,@RequestParam(required=false) String id, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,String> icon = Maps.newHashMap();
+		icon.put("folder","fas fa-book");
+		icon.put("openFolder","fas fa-book-open");
+		icon.put("file","fas fa-file");
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		String categoryId = id;//默认id接受前端传递的id值，但对于根节点，前端传递的是div的id，固定为 tree-source ，需要进行映射
+		if(id==null || id.trim().length()==0 || "tree-target".equalsIgnoreCase(id)) 
+			categoryId = "0";//默认查询根目录下的节点 
+		
+		//仅为测试使用，消除额外添加的前缀:可以直接删除
+		//test from
+		if(id.startsWith(source+"-"))
+			categoryId = id.replace(source+"-", "");
+		//test end
+
+		//加载子分类
+		List<ItemCategory> list = itemCategoryService.findByParentId(categoryId);
+		for (int i=0; i<list.size(); i++){
+			ItemCategory e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+//			if(!"-1".equalsIgnoreCase(id))//根节点不能加
+			map.put("parent", "tree-target".equalsIgnoreCase(id)?id:(source+"-"+e.getParentId()));
+			map.put("value", source+"-"+e.getName());
+			map.put("id", source+"-"+e.getId());
+			map.put("opened", false);
+			map.put("items", true);//默认都认为有下级目录
+//			map.put("icon", icon);//设置图标
+			mapList.add(map);
+		}		
+		return mapList;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "third-party-platforms")
+	public List<Map<String, Object>> listPlatforms(HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		//加载电商平台信息，此处手动加载。TODO:后续需要修改为从数据库加载
+		String[] sourceKeyArray = {"pdd","jd","tmall","taobao","kaola","fliggy","ctrip","gome","suning","dangdang","dhc","amazon"};//source list
+		String[] sourceNameArray = {"拼多多","京东","天猫","淘宝","考拉","飞猪","携程","国美","苏宁","当当网","DHC","Amazon"};//source list
+		String[] sourceRootArray = {"0","0","0","0","0","0","0","0","0","0","0","0"};//root node of different sources
+		for(int i=0;i<sourceKeyArray.length;i++) {
+			Map<String, Object> item = Maps.newHashMap();
+			item.put("id", sourceKeyArray[i]);
+			item.put("name", sourceNameArray[i]);
+			item.put("root", sourceRootArray[i]);
+			mapList.add(item);
+		}
+		return mapList;
+	}
+	
+	/**
+	 * 在商品详情界面展示分类，用于商品信息标注
+	 * @param parentId
+	 * @param response
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "categoriesAndMeasures")
 	public List<Map<String, Object>> listCategoryAndMeasureByParentId( @RequestParam(required=false) String parentId, HttpServletResponse response) {
