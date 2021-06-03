@@ -137,7 +137,7 @@ public class CalcProfit2Party {
 	        logger.error("try to query pending 2-party items.[query]"+query);
 	        try {
 	            List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
-	            totalAmount = items.size();
+	            totalAmount += items.size();
 	            if(totalAmount ==0) {//如果没有了就提前收工
 		            	logger.debug("没有待计算2-party分润的商品条目.[source]"+s);
 		            	continue;//某个单个来源没有待计算条目，直接跳过

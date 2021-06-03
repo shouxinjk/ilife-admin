@@ -206,7 +206,7 @@ public class CpsLinkSync {
 	        logger.error("try to query pending cpsLinkSync items.[query]"+query);
 	        try {
 	            List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
-	            totalAmount = items.size();
+	            totalAmount += items.size();
 	            if(totalAmount ==0) {//如果没有了就提前收工
 		            	logger.debug("没有待同步CPS链接的商品条目.[source]"+s);
 //		            	arangoClient.close();//链接还是要关闭的
