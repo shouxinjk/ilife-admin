@@ -34,6 +34,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.BaseDocument;
+import com.pcitech.iLife.common.config.Global;
 
 public class ArangoDbClient implements Serializable {
 	private static final long serialVersionUID = 6865168830661725082L;
@@ -46,7 +47,26 @@ public class ArangoDbClient implements Serializable {
 	private String USERNAME = "username";
 	private String PASSWORD = "password";
 	private int maxConnections = 50;//默认连接数是32
+	
+	//根据默认配置获取链接
+	public ArangoDbClient() {
+		this(Global.getConfig("arangodb.host"),
+				Global.getConfig("arangodb.port"),
+				Global.getConfig("arangodb.username"),
+				Global.getConfig("arangodb.password"),
+				Global.getConfig("arangodb.database")
+			);
+	}
 
+	//根据默认配置获取链接:指定数据库
+	public ArangoDbClient(String database) {
+		this(Global.getConfig("arangodb.host"),
+				Global.getConfig("arangodb.port"),
+				Global.getConfig("arangodb.username"),
+				Global.getConfig("arangodb.password"),
+				database
+			);
+	}
     /**
      * The ArangoDbClient constructor.
      * @param conf The Arango server config

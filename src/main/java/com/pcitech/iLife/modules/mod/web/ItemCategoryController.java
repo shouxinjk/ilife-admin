@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.arangodb.entity.BaseDocument;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -36,6 +37,7 @@ import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.OccasionService;
+import com.pcitech.iLife.util.ArangoDbClient;
 
 /**
  * 商品分类Controller
@@ -266,28 +268,33 @@ public class ItemCategoryController extends BaseController {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		String categoryId = id;//默认id接受前端传递的id值，但对于根节点，前端传递的是div的id，固定为 tree-source ，需要进行映射
 		if(id==null || id.trim().length()==0 || "tree-target".equalsIgnoreCase(id)) 
-			categoryId = "0";//默认查询根目录下的节点 
+			categoryId = "0";//默认查询根目录下的节点:注意，需要将所有根目录节点均设为0
 		
-		//仅为测试使用，消除额外添加的前缀:可以直接删除
-		//test from
-		if(id.startsWith(source+"-"))
-			categoryId = id.replace(source+"-", "");
-		//test end
-
-		//加载子分类
-		List<ItemCategory> list = itemCategoryService.findByParentId(categoryId);
-		for (int i=0; i<list.size(); i++){
-			ItemCategory e = list.get(i);
-			Map<String, Object> map = Maps.newHashMap();
-//			if(!"-1".equalsIgnoreCase(id))//根节点不能加
-			map.put("parent", "tree-target".equalsIgnoreCase(id)?id:(source+"-"+e.getParentId()));
-			map.put("value", source+"-"+e.getName());
-			map.put("id", source+"-"+e.getId());
-			map.put("opened", false);
-			map.put("items", true);//默认都认为有下级目录
-//			map.put("icon", icon);//设置图标
-			mapList.add(map);
-		}		
+		ArangoDbClient arangoClient = new ArangoDbClient();
+		String query = "for doc in platform_categories " + 
+				"    filter doc.source==\""+source+"\" " + 
+				"    and doc.pid== \""+categoryId+"\" " + 
+				"    sort doc.id " + 
+				"    return " + 
+				"    {" + 
+				"        parent:doc.pid==\"0\"?\"tree-target\":doc.pid," + 
+				"        opened:false," + 
+				"        id:doc.id," + 
+				"        value:doc.name," + 
+				"        items:true" + 
+				"    }";
+        logger.error("try to query 3rd-party categories.[query]"+query);
+        try {
+            List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
+            for (BaseDocument item:items) {
+            		mapList.add(item.getProperties());
+            }
+        } catch (Exception e) {
+            logger.error("Failed to execute query.",e);
+        } finally {
+	        	//完成后关闭arangoDbClient
+	    		arangoClient.close();
+        }		
 		return mapList;
 	}
 	
