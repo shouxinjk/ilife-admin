@@ -184,7 +184,7 @@
     </bean>
     <bean id="cpsDataSyncTaskJdTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskJdMethod"></property>
-        <property name="cronExpression" value="0 */3 * * * ?"></property>
+        <property name="cronExpression" value="0 0 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskJdScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -202,7 +202,7 @@
     </bean>
     <bean id="cpsDataSyncTaskPddTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskPddMethod"></property>
-        <property name="cronExpression" value="0 */3 * * * ?"></property>
+        <property name="cronExpression" value="0 10 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskPddScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -220,7 +220,7 @@
     </bean>
     <bean id="cpsDataSyncTaskSuningTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskSuningMethod"></property>
-        <property name="cronExpression" value="0 */3 * * * ?"></property>
+        <property name="cronExpression" value="0 20 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskSuningScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -238,7 +238,7 @@
     </bean>
     <bean id="cpsDataSyncTaskCpsLinkTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskCpsLinkMethod"></property>
-        <property name="cronExpression" value="0 * * * * ?"></property>
+        <property name="cronExpression" value="0 5,15,25,35,45,55 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskCpsLinkScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -256,7 +256,7 @@
     </bean>
     <bean id="cpsDataSyncTaskKaolaTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskKaolaMethod"></property>
-        <property name="cronExpression" value="0 */3 * * * ?"></property>
+        <property name="cronExpression" value="0 30 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskKaolaScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -274,7 +274,7 @@
     </bean>
     <bean id="cpsDataSyncTask2PartyProfitTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTask2PartyProfitMethod"></property>
-        <property name="cronExpression" value="0 */5 * * * ?"></property>
+        <property name="cronExpression" value="0 3,33 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTask2PartyProfitScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -291,7 +291,7 @@
     </bean>
     <bean id="cpsDataSyncTask1PartyProfitTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTask1PartyProfitMethod"></property>
-        <property name="cronExpression" value="0 */5 * * * ?"></property>
+        <property name="cronExpression" value="0 13,43 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTask1PartyProfitScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">

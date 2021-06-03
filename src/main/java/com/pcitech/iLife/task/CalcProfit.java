@@ -124,33 +124,35 @@ public class CalcProfit {
     		source = commissionSchemeService.getCommissionSources();//获取所有支持的source
     		//初始化处理结果记录器
     		processedMap = new HashMap<String,Integer>();
+        arangoClient = new ArangoDbClient(host,port,username,password,database);
         for(String s:source) {
         		processedMap.put(s, 0);
-        }
-    		//1，查询待处理商品记录 
-        String query = "for doc in my_stuff filter "
-        		+ "doc.source in "+JSON.toJSONString(source)+" and "
-        		+ "and IS_NUMBER(doc.price.bid)  "
-        		+ "(doc.profit == null || doc.profit.type == null || (doc.profit.type != \"2-party\"  && doc.profit.type != \"3-party\"))"
-        		+ "limit 1000 "//一个批次处理100条
-        		+ "return {itemKey:doc._key,source:doc.source,category:doc.categoryId==null?\"\":doc.categoryId,price:doc.price.sale}";
-        logger.error("try to query pending 1-party items.[query]"+query);
-        try {
-            arangoClient = new ArangoDbClient(host,port,username,password,database);
-            List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
-            totalAmount = items.size();
-            if(totalAmount ==0) {//如果没有了就提前收工
-	            	logger.debug("没有待计算1-party分润的商品条目");
-	            	arangoClient.close();//链接还是要关闭的
-	            	return;
-	        }
-            for (BaseDocument item:items) {
-            		calculate(item);//逐条计算并更新ArangoDB doc
-            }
-        } catch (Exception e) {
-            logger.error("Failed to execute query.",e);
-        }
 
+	    		//1，查询待处理商品记录 
+	        String query = "for doc in my_stuff filter "
+	//        		+ "doc.source in "+JSON.toJSONString(source)+" and "//注意：slow query。需要逐个查询
+				+ "doc.source == \""+s+"\" and "        		
+	        		+ "IS_NUMBER(doc.price.bid)  and "
+	        		+ "(doc.profit == null || doc.profit.type == null || (doc.profit.type != \"2-party\"  && doc.profit.type != \"3-party\")) "
+	        		+ "limit 1000 "//一个批次处理100条
+	        		+ "return {itemKey:doc._key,source:doc.source,category:doc.categoryId==null?\"\":doc.categoryId,price:doc.price.sale}";
+	        logger.error("try to query pending 1-party items.[query]"+query);
+	        try {
+	            List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
+	            totalAmount = items.size();
+	            if(totalAmount ==0) {//如果没有了就提前收工
+		            	logger.debug("没有待计算1-party分润的商品条目.[source]"+s);
+		            	continue;//某个单个来源没有待计算条目，直接跳过
+	//	            	arangoClient.close();//链接还是要关闭的
+	//	            	return;
+		        }
+	            for (BaseDocument item:items) {
+	            		calculate(item);//逐条计算并更新ArangoDB doc
+	            }
+	        } catch (Exception e) {
+	            logger.error("Failed to execute query.",e);
+	        }
+        }
 		//完成后关闭arangoDbClient
 		arangoClient.close();
 		

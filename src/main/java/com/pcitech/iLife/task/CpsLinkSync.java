@@ -191,35 +191,34 @@ public class CpsLinkSync {
     public void execute() throws JobExecutionException {
     		//初始化处理结果记录器
     		processedMap = new HashMap<String,Integer>();
+    		arangoClient = new ArangoDbClient(host,port,username,password,database);
         for(String s:source) {
         		processedMap.put(s, 0);
-        }
-    		logger.info("CpsLink sync job start. " + new Date());
-    		
-    		//1，查询待处理商品记录 返回itemKey、商品ID、商品链接
-    		//for doc in my_stuff filter (doc.source == "pdd") and (doc.status==null or doc.status.sync==null) limit 30 return {itemKey:doc._key,id:split(doc.link.web,"id=")[1],link:doc.link.web}    		
-        String query = "for doc in my_stuff filter "
-        		+ "doc.source in "+JSON.toJSONString(source)+" and "
-        		+ "(doc.link.web2==null or doc.link.web2 == doc.link.web) "
-        		+ "limit "+numberPerTask+" "//一个批次处理200条
-        		+ "return {itemKey:doc._key,source:doc.source,web:doc.link.web,wap:doc.link.wap}";
-        logger.error("try to query pending cpsLinkSync items.[query]"+query);
-        try {
-            arangoClient = new ArangoDbClient(host,port,username,password,database);
-            List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
-            totalAmount = items.size();
-            if(totalAmount ==0) {//如果没有了就提前收工
-	            	logger.debug("没有待同步CPS链接的商品条目");
-	            	arangoClient.close();//链接还是要关闭的
-	            	return;
+	    		logger.info("CpsLink sync job start. [source]" +s);
+	    		//1，查询待处理商品记录 返回itemKey、商品ID、商品链接
+	    		//for doc in my_stuff filter (doc.source == "pdd") and (doc.status==null or doc.status.sync==null) limit 30 return {itemKey:doc._key,id:split(doc.link.web,"id=")[1],link:doc.link.web}    		
+	        String query = "for doc in my_stuff filter "
+//	        		+ "doc.source in "+JSON.toJSONString(source)+" and " //slow query
+	        		+ "doc.source == \""+s+"\" and "  
+	        		+ "(doc.link.web2==null or doc.link.web2 == doc.link.web) "
+	        		+ "limit "+numberPerTask+" "//一个批次处理200条
+	        		+ "return {itemKey:doc._key,source:doc.source,web:doc.link.web,wap:doc.link.wap}";
+	        logger.error("try to query pending cpsLinkSync items.[query]"+query);
+	        try {
+	            List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
+	            totalAmount = items.size();
+	            if(totalAmount ==0) {//如果没有了就提前收工
+		            	logger.debug("没有待同步CPS链接的商品条目.[source]"+s);
+//		            	arangoClient.close();//链接还是要关闭的
+		            	continue;
+		        }
+	            for (BaseDocument item:items) {
+	            		syncCpsLinks(item);//逐条查询CPS链接并更新ArangoDB doc
+	            }
+	        } catch (Exception e) {
+	            logger.error("Failed to execute query.",e);
 	        }
-            for (BaseDocument item:items) {
-            		syncCpsLinks(item);//逐条查询CPS链接并更新ArangoDB doc
-            }
-        } catch (Exception e) {
-            logger.error("Failed to execute query.",e);
         }
-
 		//完成后关闭arangoDbClient
 		arangoClient.close();
 		
