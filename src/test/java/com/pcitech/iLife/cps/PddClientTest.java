@@ -31,6 +31,8 @@ import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsSearchResponse.GoodsSear
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsSearchResponse.GoodsSearchResponseGoodsListItem;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.GoodsZsUnitGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse.OrderListGetResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatTemplateGetResponse.OpenApiResponsePropertiesItem;
+import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatTemplateGetResponse.OpenApiResponsePropertiesItemValuesItem;
 import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatsGetResponse.GoodsCatsGetResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatsGetResponse.GoodsCatsGetResponseGoodsCatsListItem;
 import com.taobao.api.ApiException;
@@ -95,8 +97,65 @@ public class PddClientTest {
 				arangoClient.upsert("platform_categories", itemKey, doc);  
 //				if(item.getGrade()<2)
 				getCategories(item.getCatId());//递归获取下层分类
+				//getProperties(item.getCatId());//TODO:无接口权限。获取分类属性列表及属性值列表
 			}
 
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void getProperties(long categoryId) {
+		String source = "pdd";
+		logger.debug("now start query property list ..[categoryId]"+categoryId);
+		try {
+			List<OpenApiResponsePropertiesItem> resp = pddHelper.getProperty(categoryId);
+			if(resp==null ||  resp.size()==0)
+				return;
+			for(OpenApiResponsePropertiesItem item:resp) {
+				String itemKey = Util.md5(source + item.getId());//所有原始property保持 source+propertyId的形式唯一识别
+				BaseDocument doc = new BaseDocument();
+				doc.setKey(itemKey);
+				doc.getProperties().put("source", source);
+				doc.getProperties().put("cid", ""+categoryId);//原始分类id
+				doc.getProperties().put("pid", ""+item.getParentId());//原始父id
+				doc.getProperties().put("name", ""+item.getName());//名称
+				doc.getProperties().put("id", ""+item.getId());//原始id
+				doc.getProperties().put("isKey", item.getIsKey());//
+				doc.getProperties().put("isParent", item.getIsParent());//
+				doc.getProperties().put("isSale", item.getIsSale());//
+				doc.getProperties().put("isConditionShow", item.getIsConditionShow());//
+				logger.debug("try to upsert pdd properties.[itemKey]"+itemKey+"[doc]"+JsonUtil.transferToJson(item));
+				arangoClient.upsert("platform_properties", itemKey, doc);  
+				getValues( categoryId,item.getId(),item.getValues());
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void getValues(long categoryId,long propertyId,List<OpenApiResponsePropertiesItemValuesItem> values) {
+		String source = "pdd";
+		logger.debug("now start insert property values ..[propertyId]"+propertyId);
+		try {
+			if(values==null ||  values.size()==0)
+				return;
+			for(OpenApiResponsePropertiesItemValuesItem item:values) {
+				String itemKey = Util.md5(source + item.getVid());//所有原始property保持 source+valueId的形式唯一识别
+				BaseDocument doc = new BaseDocument();
+				doc.setKey(itemKey);
+				doc.getProperties().put("source", source);
+				doc.getProperties().put("cid", ""+categoryId);//原始分类id
+				doc.getProperties().put("pid", ""+propertyId);//所属属性id
+				doc.getProperties().put("parentVids", ""+item.getParentVids());//原始父vid，是数组
+				doc.getProperties().put("value", ""+item.getValue());//属性值
+				doc.getProperties().put("vid", ""+item.getVid());//原始id
+				doc.getProperties().put("isParent", item.getIsParent());//
+				logger.debug("try to upsert pdd values.[itemKey]"+itemKey+"[doc]"+JsonUtil.transferToJson(item));
+				arangoClient.upsert("platform_values", itemKey, doc);  
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -23,6 +23,7 @@ import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsSearchRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsZsUnitUrlGenRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkMemberAuthorityQueryRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkOrderListRangeGetRequest;
+import com.pdd.pop.sdk.http.api.pop.request.PddGoodsCatTemplateGetRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddGoodsCatsGetRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddPopAuthTokenRefreshRequest;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse;
@@ -36,6 +37,8 @@ import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.Goo
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkMemberAuthorityQueryResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse.OrderListGetResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatTemplateGetResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatTemplateGetResponse.OpenApiResponsePropertiesItem;
 import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatsGetResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatsGetResponse.GoodsCatsGetResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddPopAuthTokenRefreshResponse;
@@ -63,6 +66,15 @@ public class PddHelper {
 		PddGoodsCatsGetResponse response = getClient().syncInvoke(request);
 		logger.debug(JsonUtil.transferToJson(response));
 		return response.getGoodsCatsGetResponse();
+	}
+	
+	//根据分类获取分类属性
+	public List<OpenApiResponsePropertiesItem> getProperty(Long categoryId) throws Exception{
+        PddGoodsCatTemplateGetRequest request = new PddGoodsCatTemplateGetRequest();
+        request.setCatId(categoryId);
+        PddGoodsCatTemplateGetResponse response = getClient().syncInvoke(request,Global.getConfig("pdd.accessToken"));
+        logger.debug(JsonUtil.transferToJson(response));
+        return response.getOpenApiResponse().getProperties();
 	}
 	
 	//批量获取在推商品
