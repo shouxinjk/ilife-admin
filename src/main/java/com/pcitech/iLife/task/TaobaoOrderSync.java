@@ -175,7 +175,8 @@ public class TaobaoOrderSync {
     		
     			//完成后关闭arangoDbClient
     			arangoClient.close();
-    		
+    			if(itemList.size() == 0)//啥活都没干，发啥消息
+    				return;
     			//发送处理结果到管理员
 	    		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	    	    Map<String,String> header = new HashMap<String,String>();

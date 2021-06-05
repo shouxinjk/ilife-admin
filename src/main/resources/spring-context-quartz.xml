@@ -238,7 +238,7 @@
     </bean>
     <bean id="cpsDataSyncTaskCpsLinkTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskCpsLinkMethod"></property>
-        <property name="cronExpression" value="0 5,15,25,35,45,55 * * * ?"></property>
+        <property name="cronExpression" value="0 15 9,14,18 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskCpsLinkScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -309,7 +309,7 @@
     </bean>
     <bean id="cpsDataSyncTaskPddItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskPddItemSearchMethod"></property>
-        <property name="cronExpression" value="0 0 8,10,16,20  * * ?"></property>
+        <property name="cronExpression" value="0 0 8,14,20  * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskPddItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -345,7 +345,7 @@
     </bean>
     <bean id="cpsDataSyncTaskKaolaItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskKaolaItemSearchMethod"></property>
-        <property name="cronExpression" value="0 15 8,10,16,20  * * ?"></property>
+        <property name="cronExpression" value="0 15 8,14,20  * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskKaolaItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -363,7 +363,7 @@
     </bean>
     <bean id="cpsDataSyncTaskJdItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskJdItemSearchMethod"></property>
-        <property name="cronExpression" value="0 30 8,10,16,20 * * ?"></property>
+        <property name="cronExpression" value="0 30 8,14,20 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskJdItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -381,7 +381,7 @@
     </bean>
     <bean id="cpsDataSyncTaskSuningItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskSuningItemSearchMethod"></property>
-        <property name="cronExpression" value="0 30 8,10,16,20  * * ?"></property>
+        <property name="cronExpression" value="0 45 8,16 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskSuningItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -391,7 +391,7 @@
         </property>
     </bean>        
     
-    	<!-- 国美商品自动入库: 每小时更新一次 -->
+    	<!-- 国美商品自动入库: 每天更新一次 -->
     <bean id="cpsDataSyncTaskGomeItemSearch" class="com.pcitech.iLife.task.GomeItemSearcher"></bean>
     <bean id="cpsDataSyncTaskGomeItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="cpsDataSyncTaskGomeItemSearch"></property>
@@ -399,7 +399,7 @@
     </bean>
     <bean id="cpsDataSyncTaskGomeItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskGomeItemSearchMethod"></property>
-        <property name="cronExpression" value="0 5 * * * ?"></property>
+        <property name="cronExpression" value="0 5 2 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskGomeItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -417,7 +417,7 @@
     </bean>
     <bean id="brokerSeedNotifyTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="brokerSeedNotifyTaskMethod"></property>
-        <property name="cronExpression" value="0 */1 * * * ?"></property>
+        <property name="cronExpression" value="0 * * * * ?"></property>
     </bean>
     <bean id="brokerSeedNotifyTaskScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
