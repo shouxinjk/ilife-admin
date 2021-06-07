@@ -207,10 +207,24 @@ public class ItemCategoryController extends BaseController {
 }
 	 * @return
 	 */
+	//仅包含分类
 	@ResponseBody
 	@RequestMapping(value = "standard-categories")
 	public List<Map<String, Object>> listStandardCategoriesByParentId( @RequestParam(required=false) String id, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
+		return listStandardCategoriesAndPropsByParentId(id,false);
+	}
+	
+	//包含分类以及属性
+	@ResponseBody
+	@RequestMapping(value = "standard-properties")
+	public List<Map<String, Object>> listStandardProperetiesByParentId( @RequestParam(required=false) String id, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		return listStandardCategoriesAndPropsByParentId(id,true);
+	}
+	
+	//查询标准类目及属性。
+	private List<Map<String, Object>> listStandardCategoriesAndPropsByParentId(String id,boolean withProps) {
 		Map<String,String> icon = Maps.newHashMap();
 		icon.put("folder","fas fa-book");
 		icon.put("openFolder","fas fa-book-open");
@@ -233,7 +247,25 @@ public class ItemCategoryController extends BaseController {
 			map.put("items", true);//默认都认为有下级目录
 //			map.put("icon", icon);//设置图标
 			mapList.add(map);
-		}		
+		}
+		
+		//添加属性
+		if(withProps) {
+			List<Measure> list2 =measureService.findByCategory(id);
+			for (int i=0; i<list2.size(); i++){
+				Measure e = list2.get(i);
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("parent",  id);
+				map.put("value", e.getName());
+				map.put("id", "prop-"+e.getId());//属性条目通过 prop- 前缀进行区分
+				map.put("opened", true);
+				map.put("items", false);
+				map.put("icon", icon);//设置图标
+				mapList.add(map);
+				
+			}			
+		}
+		
 		return mapList;
 	}
 	
@@ -257,10 +289,23 @@ public class ItemCategoryController extends BaseController {
 }
 	 * @return
 	 */
+	//仅返回目录
 	@ResponseBody
 	@RequestMapping(value = "third-party-categories/{source}")
 	public List<Map<String, Object>> listPlatformCategoriesByParentId( @PathVariable String source,@RequestParam(required=false) String id, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
+		return  listPlatformCategoriesAndPropsByParentId(source,id,false);
+	}
+	
+	//返回目录及属性
+	@ResponseBody
+	@RequestMapping(value = "third-party-properties/{source}")
+	public List<Map<String, Object>> listPlatformPropertiesByParentId( @PathVariable String source,@RequestParam(required=false) String id, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		return  listPlatformCategoriesAndPropsByParentId(source,id,true);
+	}	
+	
+	private List<Map<String, Object>> listPlatformCategoriesAndPropsByParentId( String source,String id, boolean withProps) {
 		Map<String,String> icon = Maps.newHashMap();
 		icon.put("folder","fas fa-book");
 		icon.put("openFolder","fas fa-book-open");
@@ -288,6 +333,32 @@ public class ItemCategoryController extends BaseController {
             List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
             for (BaseDocument item:items) {
             		mapList.add(item.getProperties());
+            }
+            
+            //添加属性
+            if(withProps) {
+		    		String propsQuery = "for doc in platform_properties " + 
+		    				"    filter doc.source==\""+source+"\" " + 
+		    				"    and doc.cid== \""+categoryId+"\" " + 
+		    				"    return " + 
+		    				"    {" + 
+//		    				"        parent:doc.pid==\""+id+"\"," + 
+//		    				"        opened:true," + 
+//		    				"        items:true," + 
+						"        id:doc._key," + 
+		    				"        value:doc.name" + 
+		    				"    }";
+		            logger.error("try to query 3rd-party properties.[query]"+propsQuery);
+		            List<BaseDocument> propItems = arangoClient.query(propsQuery, null, BaseDocument.class);
+		            for (BaseDocument propItem:propItems) {
+		            		Map<String,Object> prop = propItem.getProperties();
+		            		prop.put("parent", id);
+		            		prop.put("opened", true);
+		            		prop.put("items", false);
+		            		prop.put("id", "prop-"+prop.get("id"));//属性条目通过 prop- 前缀进行区分
+		            		prop.put("icon", icon);//设置图标
+		            		mapList.add(prop);
+		            }
             }
         } catch (Exception e) {
             logger.error("Failed to execute query.",e);
