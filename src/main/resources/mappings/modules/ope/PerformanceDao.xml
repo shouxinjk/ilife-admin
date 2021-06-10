@@ -32,6 +32,27 @@
 		<include refid="performanceJoins"/>
 		WHERE a.id = #{id}
 	</select>
+
+	<!-- 根据属性ID查询所有属性值，并根据level、markedvalue倒序排列 -->
+	<select id="findListByMeasureId" resultType="Performance">
+		SELECT 
+			<include refid="performanceColumns"/>
+		FROM ope_performance a
+		<include refid="performanceJoins"/>
+		<where>
+			a.del_flag = 0 
+			AND a.measure_id = #{measureId}							
+		</where>
+		ORDER BY a.level desc,a.marked_value desc
+	</select>
+	<!-- 根据属性值ID，更新其level及markedValue值 -->
+	<update id="updateMarkedValue">
+		UPDATE ope_performance SET 	
+			marked_value = #{markedValue},
+			level = #{level},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
 	
 	<select id="findList" resultType="Performance">
 		SELECT 

@@ -5,6 +5,7 @@ package com.pcitech.iLife.modules.ope.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,20 @@ public class PerformanceService extends CrudService<PerformanceDao, Performance>
 	@Autowired
 	MeasureService measureService;
 	
+	@Autowired
+	PerformanceDao performanceDao;
+	
 	public Performance get(String id) {
 		return super.get(id);
+	}
+	
+	public List<Performance> findListByMeasureId(String measureId) {
+		return performanceDao.findListByMeasureId(measureId);
+	}
+	
+	@Transactional(readOnly = false)
+	public void updateMarkedValue(Map<String,Object> params) {
+		performanceDao.updateMarkedValue(params);
 	}
 	
 	public List<Performance> findList(Performance performance) {

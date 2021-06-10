@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.ope.web;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +50,34 @@ public class PerformanceController extends BaseController {
 	private ItemCategoryService itemCategoryService;
 	@Autowired
 	private PerformanceService performanceService;
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/byMeasureId")
+	//根据属性ID（系统标准属性ID）查询所有属性值，并进行标注。根据level等级、markedValue倒序排列
+	public List<Performance> listCategoryByParentId( @RequestParam(required=true) String measureId, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		return performanceService.findListByMeasureId(measureId);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/updateMarkedValue")
+	//更新属性值标注，包括level、markedvalue。自动添加更新日期
+	public Map<String,String> updateMarkedValue( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) double markedValue, 
+			@RequestParam(required=true) int level, 
+			HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("id", id);
+		params.put("level", level);
+		params.put("markedValue", markedValue);
+		params.put("updateDate", new Date());
+		performanceService.updateMarkedValue(params);
+		
+		Map<String,String> result = Maps.newHashMap();
+		result.put("result", "value updated.");
+		return result;
+	}
 	
 	@ModelAttribute
 	public Performance get(@RequestParam(required=false) String id) {
