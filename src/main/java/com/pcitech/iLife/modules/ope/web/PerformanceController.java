@@ -88,7 +88,7 @@ public class PerformanceController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "rest/propvalue", method = RequestMethod.POST)
 	//根据属性值ID更新指定数据值条目，传递参数包括id,level,controlValue
-	public Map<String,String> updateValuesByMeasureId( @RequestParam(required=true) String id, 
+	public Performance updateValuesByMeasureId( @RequestParam(required=true) String id, 
 			@RequestParam(required=true) double controlValue, 
 			@RequestParam(required=true) int level, 
 			HttpServletResponse response) {
@@ -99,10 +99,10 @@ public class PerformanceController extends BaseController {
 		params.put("controlValue", controlValue);
 		params.put("updateDate", new Date());
 		performanceService.updateControlValue(params);
-		
-		Map<String,String> result = Maps.newHashMap();
-		result.put("result", "control value updated.");
-		return result;
+		return performanceService.get(id);
+//		Map<String,String> result = Maps.newHashMap();
+//		result.put("result", "control value updated.");
+//		return result;
 	}
 	
 	@ResponseBody
