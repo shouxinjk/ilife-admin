@@ -70,11 +70,33 @@ public class PerformanceController extends BaseController {
 		return performanceService.findListByMeasureId(measureId);
 	}
 	
+	//不工作。jsGrid单个记录更新时传递的是FormData
+	/**
 	@ResponseBody
 	@RequestMapping(value = "rest/propvalue", method = RequestMethod.POST)
 	//根据属性值ID更新指定数据值条目，传递参数包括id,level,controlValue
 	public Map<String,String> updateValuesByMeasureId( @RequestBody Map<String,Object> params, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
+		params.put("updateDate", new Date());
+		performanceService.updateControlValue(params);
+		
+		Map<String,String> result = Maps.newHashMap();
+		result.put("result", "control value updated.");
+		return result;
+	}
+	//**/
+	@ResponseBody
+	@RequestMapping(value = "rest/propvalue", method = RequestMethod.POST)
+	//根据属性值ID更新指定数据值条目，传递参数包括id,level,controlValue
+	public Map<String,String> updateValuesByMeasureId( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) double controlValue, 
+			@RequestParam(required=true) int level, 
+			HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("id", id);
+		params.put("level", level);
+		params.put("controlValue", controlValue);
 		params.put("updateDate", new Date());
 		performanceService.updateControlValue(params);
 		
