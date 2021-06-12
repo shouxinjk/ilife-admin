@@ -21,4 +21,6 @@ public interface PerformanceDao extends CrudDao<Performance> {
 	public List<Performance> findListByMeasureId(String measureId);
 	//更新属性值的markedValue及level
 	public void updateMarkedValue(Map<String,Object> params); 
+	//更新属性值的controlValue及level
+	public void updateControlValue(Map<String,Object> params); 	
 }

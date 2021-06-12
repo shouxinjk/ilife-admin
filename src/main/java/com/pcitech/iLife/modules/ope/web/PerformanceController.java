@@ -16,7 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -60,6 +63,27 @@ public class PerformanceController extends BaseController {
 	}
 	
 	@ResponseBody
+	@RequestMapping(value = "rest/measure/{measureId}", method = RequestMethod.GET)
+	//根据属性ID（系统标准属性ID）查询所有属性值，并进行标注。根据level等级、controlvalue倒序排列
+	public List<Performance> listValuesByMeasureId( @PathVariable String measureId, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		return performanceService.findListByMeasureId(measureId);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/propvalue", method = RequestMethod.POST)
+	//根据属性值ID更新指定数据值条目，传递参数包括id,level,controlValue
+	public Map<String,String> updateValuesByMeasureId( @RequestBody Map<String,Object> params, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		params.put("updateDate", new Date());
+		performanceService.updateControlValue(params);
+		
+		Map<String,String> result = Maps.newHashMap();
+		result.put("result", "control value updated.");
+		return result;
+	}
+	
+	@ResponseBody
 	@RequestMapping(value = "rest/updateMarkedValue")
 	//更新属性值标注，包括level、markedvalue。自动添加更新日期
 	public Map<String,String> updateMarkedValue( @RequestParam(required=true) String id, 
@@ -75,7 +99,27 @@ public class PerformanceController extends BaseController {
 		performanceService.updateMarkedValue(params);
 		
 		Map<String,String> result = Maps.newHashMap();
-		result.put("result", "value updated.");
+		result.put("result", "marked value updated.");
+		return result;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "rest/updateControlValue")
+	//更新属性值标注，包括level、controlvalue。自动添加更新日期
+	public Map<String,String> updateControlValue( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) double controlValue, 
+			@RequestParam(required=true) int level, 
+			HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("id", id);
+		params.put("level", level);
+		params.put("controlValue", controlValue);
+		params.put("updateDate", new Date());
+		performanceService.updateControlValue(params);
+		
+		Map<String,String> result = Maps.newHashMap();
+		result.put("result", "control value updated.");
 		return result;
 	}
 	

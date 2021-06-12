@@ -49,6 +49,10 @@ public class PerformanceService extends CrudService<PerformanceDao, Performance>
 	public void updateMarkedValue(Map<String,Object> params) {
 		performanceDao.updateMarkedValue(params);
 	}
+	@Transactional(readOnly = false)
+	public void updateControlValue(Map<String,Object> params) {
+		performanceDao.updateControlValue(params);
+	}
 	
 	public List<Performance> findList(Performance performance) {
 		return super.findList(performance);

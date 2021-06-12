@@ -33,7 +33,7 @@
 		WHERE a.id = #{id}
 	</select>
 
-	<!-- 根据属性ID查询所有属性值，并根据level、markedvalue倒序排列 -->
+	<!-- 根据属性ID查询所有属性值，并根据level、controlvalue倒序排列 -->
 	<select id="findListByMeasureId" resultType="Performance">
 		SELECT 
 			<include refid="performanceColumns"/>
@@ -43,7 +43,7 @@
 			a.del_flag = 0 
 			AND a.measure_id = #{measureId}							
 		</where>
-		ORDER BY a.level desc,a.marked_value desc
+		ORDER BY a.level desc,a.control_value desc
 	</select>
 	<!-- 根据属性值ID，更新其level及markedValue值 -->
 	<update id="updateMarkedValue">
@@ -53,7 +53,14 @@
 			update_date = #{updateDate}
 		WHERE id = #{id}
 	</update>
-	
+	<!-- 根据属性值ID，更新其level及controlValue值 -->
+	<update id="updateControlValue">
+		UPDATE ope_performance SET 	
+			control_value = #{controlValue},
+			level = #{level},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>	
 	<select id="findList" resultType="Performance">
 		SELECT 
 			<include refid="performanceColumns"/>
