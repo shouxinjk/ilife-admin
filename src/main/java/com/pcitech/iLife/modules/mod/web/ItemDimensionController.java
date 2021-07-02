@@ -90,6 +90,7 @@ public class ItemDimensionController extends BaseController {
 				map.put("id", "dim-"+node.getId());//对于维度节点使用 dim- 前缀进行区分
 				map.put("opened", false);
 				map.put("items", true);//默认都认为有下级
+				map.put("icon", icon);//设置图标
 				mapList.add(map);
 			}
 		}else {//否则认为是分类节点，加载子分类及子分类下的维度
@@ -141,33 +142,62 @@ public class ItemDimensionController extends BaseController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "rest/dimension/{dimensionId}", method = RequestMethod.GET)
+	@RequestMapping(value = "rest/dimension/{id}", method = RequestMethod.GET)
 	//查询指定维度下的 子维度及 属性列表，用于进行占比标注
-	public List<Map<String, Object>> listValuesByMeasureId( @PathVariable String dimensionId, HttpServletResponse response) {
+	public List<Map<String, Object>> listValuesByMeasureId( @PathVariable String id, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		//查询子维度并添加
-		ItemDimension dimension = itemDimensionService.get(dimensionId);
-		ItemDimension q = new ItemDimension();
-		q.setParent(dimension);
-		for(ItemDimension node:itemDimensionService.findList(q)) {//查询子维度列表
-			Map<String, Object> map = Maps.newHashMap();
-			map.put("id", "dim-"+node.getId());//对于维度节点使用 dim- 前缀进行区分
-			map.put("type", "维度");
-			map.put("name", node.getName());
-			map.put("weight", node.getWeight());
-			mapList.add(map);
-		}
-		//查询 维度-属性 并添加
-		ItemDimensionMeasure itemDimensionMeasure = new ItemDimensionMeasure();
-		itemDimensionMeasure.setDimension(dimension);
-		for(ItemDimensionMeasure node:itemDimensionMeasureService.findList(itemDimensionMeasure)) {//查询维度下的属性列表
-			Map<String, Object> map = Maps.newHashMap();
-			map.put("id", "prop-"+node.getId());//对于维度节点使用 prop- 前缀进行区分
-			map.put("type", "属性");
-			map.put("name", node.getName());
-			map.put("weight", node.getWeight());
-			mapList.add(map);
+		
+		if(id.startsWith("dim-")) {//如果展开的是维度节点则加载 子维度 
+			//查询子维度并添加
+			ItemDimension dimension = itemDimensionService.get(id.replace("dim-",""));
+			ItemDimension q = new ItemDimension();
+			q.setParent(dimension);
+			for(ItemDimension node:itemDimensionService.findList(q)) {//查询子维度列表
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", "dim-"+node.getId());//对于维度节点使用 dim- 前缀进行区分
+				map.put("type", "维度");
+				map.put("name", node.getName());
+				map.put("weight", node.getWeight());
+				mapList.add(map);
+			}
+			//查询 维度-属性 并添加
+			ItemDimensionMeasure itemDimensionMeasure = new ItemDimensionMeasure();
+			itemDimensionMeasure.setDimension(dimension);
+			for(ItemDimensionMeasure node:itemDimensionMeasureService.findList(itemDimensionMeasure)) {//查询维度下的属性列表
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", "prop-"+node.getId());//对于维度节点使用 prop- 前缀进行区分
+				map.put("type", "属性");
+				map.put("name", node.getName());
+				map.put("weight", node.getWeight());
+				mapList.add(map);
+			}
+		}else {//是category，则直接加载level1 维度列表
+			//添加维度节点定义：根据分类ID查找对应分类下的维度定义节点
+			ItemCategory category = itemCategoryService.get(id);
+			if(category != null) {//不对树节点根目录进行操作，仅对有意义节点操作
+				ItemDimension rootParentDimension = itemDimensionService.get("1");
+				ItemDimension q = new ItemDimension(); 
+				q.setCategory(category);
+				q.setParent(rootParentDimension);
+				//查询分类下的客观维度根节点：category为当前选中ID，并且其父节点为1。
+				List<ItemDimension> dimensionNodes = itemDimensionService.findList(q);
+				if(dimensionNodes.size()>0) {//当前在每一个分类下默认会建立一个dimension根节点，有且仅有一个，这个节点要被过滤掉。
+					ItemDimension rootDimension = dimensionNodes.get(0);//只取第一个，并开始查找子级dimension
+					q = new ItemDimension(); 
+					q.setParent(rootDimension);//仅根据父节点查询
+					dimensionNodes = itemDimensionService.findList(q);
+					for(ItemDimension node:dimensionNodes) {//组装dimension节点列表
+						Map<String, Object> map = Maps.newHashMap();
+						map.put("parent", id);
+						map.put("value", node.getName());
+						map.put("id", "dim-"+node.getId());//对于维度节点使用 dim- 前缀进行区分
+						map.put("opened", false);
+						map.put("items", true);//默认都认为有下级
+						mapList.add(map);
+					}
+				}
+			}
 		}
 		return mapList;
 	}
