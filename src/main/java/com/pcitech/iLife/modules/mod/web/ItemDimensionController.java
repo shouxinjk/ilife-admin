@@ -168,7 +168,7 @@ public class ItemDimensionController extends BaseController {
 				Map<String, Object> map = Maps.newHashMap();
 				map.put("id", "prop-"+node.getId());//对于维度节点使用 prop- 前缀进行区分
 				map.put("type", "属性");
-				map.put("name", node.getName());
+				map.put("name", node.getName()+"-"+node.getMeasure().getName());
 				map.put("weight", node.getWeight());
 				mapList.add(map);
 			}
