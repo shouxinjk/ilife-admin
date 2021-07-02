@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -39,6 +42,7 @@ import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
 import com.pcitech.iLife.modules.mod.service.TagCategoryService;
 import com.pcitech.iLife.modules.mod.service.TagsService;
+import com.pcitech.iLife.modules.ope.entity.Performance;
 
 /**
  * 关键属性Controller
@@ -57,6 +61,62 @@ public class MeasureController extends BaseController {
 	private TagsService tagsService;
 	@Autowired
 	private TagCategoryService tagCategoryService;
+	
+
+	/**
+	 * 根据categoryId加载所有measure列表，以进行VALS标注
+	 * @param categoryId 分类ID
+	 * @return List<Measure> 属性列表
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/category/{categoryId}", method = RequestMethod.GET)
+	//根据分类ID，查询该分下所有关键属性
+	public List<Measure> listValuesByMeasureId( @PathVariable String categoryId, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		return measureService.findByCategory(categoryId);
+	}
+	
+	/**
+	 * 更新属性VALS标注
+	 * @param id
+	 * @param alpha
+	 * @param beta
+	 * @param gamma
+	 * @param delte
+	 * @param epsilon
+	 * @param zeta
+	 * @param eta
+	 * @param theta
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/propvals", method = RequestMethod.POST)
+	//根据属性ID更新VALS
+	public Measure updateValuesByMeasureId( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) double alpha, 
+			@RequestParam(required=true) double beta, 
+			@RequestParam(required=true) double gamma, 
+			@RequestParam(required=true) double delte, 
+			@RequestParam(required=true) double epsilon, 
+			@RequestParam(required=true) double zeta, 
+			@RequestParam(required=true) double eta, 
+			@RequestParam(required=true) double theta, 
+			HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Measure m = measureService.get(id);
+		m.setAlpha(alpha);
+		m.setBeta(beta);
+		m.setGamma(gamma);
+		m.setDelte(delte);
+		m.setEpsilon(epsilon);
+		m.setZeta(zeta);
+		m.setEta(eta);
+		m.setTheta(theta);
+		m.setUpdateDate(new Date());
+		measureService.save(m);
+		return measureService.get(id);
+	}
 	
 	@ModelAttribute
 	public Measure get(@RequestParam(required=false) String id) {
