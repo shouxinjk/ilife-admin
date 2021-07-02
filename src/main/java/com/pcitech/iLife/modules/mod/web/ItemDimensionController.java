@@ -189,11 +189,10 @@ public class ItemDimensionController extends BaseController {
 					dimensionNodes = itemDimensionService.findList(q);
 					for(ItemDimension node:dimensionNodes) {//组装dimension节点列表
 						Map<String, Object> map = Maps.newHashMap();
-						map.put("parent", id);
-						map.put("value", node.getName());
 						map.put("id", "dim-"+node.getId());//对于维度节点使用 dim- 前缀进行区分
-						map.put("opened", false);
-						map.put("items", true);//默认都认为有下级
+						map.put("type", "维度");
+						map.put("name", node.getName());
+						map.put("weight", node.getWeight());
 						mapList.add(map);
 					}
 				}
