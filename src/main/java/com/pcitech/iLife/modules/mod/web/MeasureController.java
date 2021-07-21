@@ -147,6 +147,7 @@ public class MeasureController extends BaseController {
 			measure.setCategory(itemCategoryService.get(measure.getCategory().getId()));
 		}
 		model.addAttribute("measure", measure);
+		model.addAttribute("treeId", measure.getCategory().getId());
 		return "modules/mod/measureForm";
 	}
 

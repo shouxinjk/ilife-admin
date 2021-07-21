@@ -27,7 +27,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/measure/">商品属性列表</a></li>
+		<li><a href="${ctx}/mod/measure/?treeId=${treeId}">商品属性列表</a></li>
 		<li class="active"><a href="${ctx}/mod/measure/form?id=${measure.id}">商品属性<shiro:hasPermission name="mod:measure:edit">${not empty measure.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:measure:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="measure" action="${ctx}/mod/measure/save" method="post" class="form-horizontal">
