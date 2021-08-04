@@ -343,11 +343,12 @@ public class ItemCategoryController extends BaseController {
 		    				"    and doc.cid== \""+categoryId+"\" " + 
 		    				"    return " + 
 		    				"    {" + 
+		    				"        itemKey:doc._key,mappingName:doc.mappingName,mappingId:doc.mappingId," + 
 //		    				"        parent:doc.pid==\""+id+"\"," + 
 //		    				"        opened:true," + 
 //		    				"        items:true," + 
-						"        id:doc._key," + 
-		    				"        value:doc.name" + 
+							"        id:doc._key," + 
+							"        value:doc.mappingName==null?doc.name:concat(doc.name,\"-->\",doc.mappingName)," + 
 		    				"    }";
 		            logger.error("try to query 3rd-party properties.[query]"+propsQuery);
 		            List<BaseDocument> propItems = arangoClient.query(propsQuery, null, BaseDocument.class);
