@@ -322,10 +322,11 @@ public class ItemCategoryController extends BaseController {
 				"    sort doc.id " + 
 				"    return " + 
 				"    {" + 
+				"        itemKey:doc._key,mappingName:doc.mappingName,mappingId:doc.mappingId," + 
 				"        parent:doc.pid==\"0\"?\"tree-target\":doc.pid," + 
 				"        opened:false," + 
 				"        id:doc.id," + 
-				"        value:doc.name," + 
+				"        value:doc.mappingName==null?doc.name:concat(doc.name,\"-->\",doc.mappingName)," + 
 				"        items:true" + 
 				"    }";
         logger.error("try to query 3rd-party categories.[query]"+query);
