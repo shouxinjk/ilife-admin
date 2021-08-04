@@ -348,7 +348,7 @@ public class ItemCategoryController extends BaseController {
 //		    				"        opened:true," + 
 //		    				"        items:true," + 
 							"        id:doc._key," + 
-							"        value:doc.mappingName==null?doc.name:concat(doc.name,\"-->\",doc.mappingName)," + 
+							"        value:doc.mappingName==null?doc.name:concat(doc.name,\"-->\",doc.mappingName)" + 
 		    				"    }";
 		            logger.error("try to query 3rd-party properties.[query]"+propsQuery);
 		            List<BaseDocument> propItems = arangoClient.query(propsQuery, null, BaseDocument.class);
