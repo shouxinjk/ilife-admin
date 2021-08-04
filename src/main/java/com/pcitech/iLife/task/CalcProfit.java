@@ -98,7 +98,11 @@ public class CalcProfit {
 		doc.setKey(itemKey);
 		doc.getProperties().put("status", syncStatus);
 		//计算二方分润
-		double price = Double.parseDouble(item.getProperties().get("price").toString());
+		double price = 0;
+		try{
+			price = Double.parseDouble(item.getProperties().get("price").toString());
+		}catch(Exception ex) {
+			logger.error("Item price cannot be parsed.[price]"+item.getProperties().get("price"));		}
 		String platform = item.getProperties().get("source").toString();
 		String category = item.getProperties().get("category").toString();
 		Map<String, Object>  profit = getProfit(platform,category,price);
@@ -132,9 +136,9 @@ public class CalcProfit {
 	        String query = "for doc in my_stuff filter "
 	//        		+ "doc.source in "+JSON.toJSONString(source)+" and "//注意：slow query。需要逐个查询
 				+ "doc.source == \""+s+"\" and "        		
-	        		+ "IS_NUMBER(doc.price.bid)  and "
+//	        		+ "IS_NUMBER(doc.price.bid)  and " //注意：在使用函数时不能使用索引，导致slow query
 	        		+ "(doc.profit == null || doc.profit.type == null || (doc.profit.type != \"2-party\"  && doc.profit.type != \"3-party\")) "
-	        		+ "limit 1000 "//一个批次处理100条
+	        		+ "limit 100 "//一个批次处理100条
 	        		+ "return {itemKey:doc._key,source:doc.source,category:doc.categoryId==null?\"\":doc.categoryId,price:doc.price.sale}";
 	        logger.error("try to query pending 1-party items.[query]"+query);
 	        try {
