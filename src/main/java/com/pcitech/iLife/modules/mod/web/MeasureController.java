@@ -94,6 +94,7 @@ public class MeasureController extends BaseController {
 	@RequestMapping(value = "rest/propvals", method = RequestMethod.POST)
 	//根据属性ID更新VALS
 	public Measure updateValuesByMeasureId( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) double percentage, 
 			@RequestParam(required=true) double alpha, 
 			@RequestParam(required=true) double beta, 
 			@RequestParam(required=true) double gamma, 
@@ -105,6 +106,7 @@ public class MeasureController extends BaseController {
 			HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
 		Measure m = measureService.get(id);
+		m.setPercentage(percentage);
 		m.setAlpha(alpha);
 		m.setBeta(beta);
 		m.setGamma(gamma);
