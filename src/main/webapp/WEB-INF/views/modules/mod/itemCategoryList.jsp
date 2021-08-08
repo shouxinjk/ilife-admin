@@ -28,6 +28,7 @@
 		<table id="treeTable" class="table table-striped table-bordered table-condensed">
 			<tr>
 				<th>名称</th>
+				<th>标签</th>
 				<th>满足动机</th>
 				<th>满足诱因</th>
 				<th>适用条件</th>
@@ -43,6 +44,9 @@
 					<td><a href="${ctx}/mod/itemCategory/form?id=${tpl.id}">
 						${tpl.name}
 					</a></td>
+					<td>
+						${tpl.tags}
+					</td>					
 					<td>
 						${tpl.motivationNames}
 					</td>

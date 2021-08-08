@@ -29,6 +29,7 @@ public class ItemCategory extends TreeEntity<ItemCategory> {
 	private String expression;		// 适用条件量化
 	private String outlineTemplate;		// 摘要模版
 	private String scenarioId;		// 场景标签
+	private String tags; //该标准目录的标签 ，主要用于映射其他电商平台的目录
 	
 	public ItemCategory() {
 		super();
@@ -36,6 +37,14 @@ public class ItemCategory extends TreeEntity<ItemCategory> {
 
 	public ItemCategory(String id){
 		super(id);
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 
 	@JsonBackReference

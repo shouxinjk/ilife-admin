@@ -48,6 +48,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">标签：</label>
+			<div class="controls">
+				<form:textarea path="tags" htmlEscape="false" rows="5" maxlength="1024" class="input-xlarge"/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">满足动机：</label>
 			<div class="controls">
 				<sys:treeselect id="motivationIds" name="motivationIds" value="${itemCategory.motivationIds}" labelName="motivationNames" labelValue="${itemCategory.motivationNames}"
