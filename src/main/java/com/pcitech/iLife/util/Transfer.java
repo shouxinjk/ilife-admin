@@ -64,6 +64,7 @@ public class Transfer {
      * @param performance
      */
     
+    //Qingchun:注意，同时存在两个数据同步器，分别是创建和更新。本同步器是创建同步器，在ope_performance初次建立时即同步到分 库。后续在修改标注值时直接通过canal监听更新 。
     @Before("execution(* com.pcitech.iLife.modules.ope.service.PerformanceService.save(..)) && args(performance)")
     public void savePerformance(Performance performance) {
     		Measure m = measureService.get(performance.getMeasure().getId());
@@ -73,6 +74,7 @@ public class Transfer {
 		map.put("ref_type", "dic");//dic 、 ref，分别表示来源于引用或字典
 		map.put("object_type", "item");//item 、 person，分别表示商品标注或用户标注
 		map.put("category", m.getCategory().getId());//对于商品标注是ItemCategoryId，对于用户标注是UserCategoryId，对于dic则是具体的表名
+		map.put("property_id", m.getId());//增加属性ID存储
 		map.put("property_key", m.getProperty());
 		map.put("property", m.getName());
 		map.put("org_value", performance.getOriginalValue());
