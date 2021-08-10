@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.ope.dao;
 
+import java.util.Map;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.ope.entity.HumanMarkedValue;
@@ -14,5 +16,6 @@ import com.pcitech.iLife.modules.ope.entity.HumanMarkedValue;
  */
 @MyBatisDao
 public interface HumanMarkedValueDao extends CrudDao<HumanMarkedValue> {
-	
+	//更新或建立新的人工标注记录
+	public void upsertMarkedValue(Map<String,Object> params); 
 }

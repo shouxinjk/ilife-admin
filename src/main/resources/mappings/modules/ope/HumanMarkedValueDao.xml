@@ -71,6 +71,29 @@
 			</otherwise>
 		</choose>
 	</select>
+
+	<!-- 增加属性值标注：一个用户仅能对一个属性标注一次 -->
+	<update id="upsertMarkedValue">
+		INSERT INTO ope_human_marked_value(
+			id,
+			dimension,
+			value,
+			original_value,
+			person_id,
+			measure_id,
+			update_by,
+			update_date
+		) VALUES (
+			#{id},
+			#{dimension},
+			#{value},
+			#{originalValue},
+			#{personId},
+			#{measureId},
+			#{personId},
+			now()
+		) ON DUPLICATE KEY UPDATE value=#{value},update_date=now()
+	</update>
 	
 	<insert id="insert">
 		INSERT INTO ope_human_marked_value(

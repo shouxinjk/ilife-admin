@@ -4,7 +4,9 @@
 package com.pcitech.iLife.modules.ope.service;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +24,16 @@ import com.pcitech.iLife.modules.ope.dao.HumanMarkedValueDao;
 @Transactional(readOnly = true)
 public class HumanMarkedValueService extends CrudService<HumanMarkedValueDao, HumanMarkedValue> {
 
+	@Autowired
+	HumanMarkedValueDao humanMarkedValueDao;
+	
 	public HumanMarkedValue get(String id) {
 		return super.get(id);
+	}
+	
+	@Transactional(readOnly = false)
+	public void upsertMarkedValue(Map<String,Object> params) {
+		humanMarkedValueDao.upsertMarkedValue(params);
 	}
 	
 	public List<HumanMarkedValue> findList(HumanMarkedValue humanMarkedValue) {
