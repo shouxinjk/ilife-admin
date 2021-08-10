@@ -18,6 +18,7 @@ public class HumanMarkedValue extends DataEntity<HumanMarkedValue> {
 	private static final long serialVersionUID = 1L;
 	private String dimension;		// 维度
 	private Double value;		// 数值
+	private String originalValue;		// 数值
 	private Person person;		// 用户
 	private Item item;		// 商品
 	private Measure measure;		// 关键属性
@@ -45,6 +46,14 @@ public class HumanMarkedValue extends DataEntity<HumanMarkedValue> {
 
 	public void setValue(Double value) {
 		this.value = value;
+	}
+
+	public String getOriginalValue() {
+		return originalValue;
+	}
+
+	public void setOriginalValue(String originalValue) {
+		this.originalValue = originalValue;
 	}
 
 	public Person getPerson() {

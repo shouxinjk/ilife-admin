@@ -33,14 +33,27 @@
 	<form:form id="inputForm" modelAttribute="humanMarkedValue" action="${ctx}/ope/humanMarkedValue/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">维度：</label>
 			<div class="controls">
 				<form:input path="dimension" htmlEscape="false" maxlength="255" class="input-xlarge "/>
 			</div>
-		</div>
+		</div-->
 		<div class="control-group">
-			<label class="control-label">数值：</label>
+			<label class="control-label">关键属性：</label>
+			<div class="controls">
+				<sys:treeselect id="measure" name="measure.id" value="${humanMarkedValue.measure.id}" labelName="measure.name" labelValue="${humanMarkedValue.measure.name}"
+					title="关键属性" url="/mod/measure/listData" />
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">原始值：</label>
+			<div class="controls">
+				<form:input path="originalValue" htmlEscape="false" class="input-xlarge"/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">标注值：</label>
 			<div class="controls">
 				<form:input path="value" htmlEscape="false" class="input-xlarge  number"/>
 			</div>
@@ -57,13 +70,6 @@
 			<div class="controls">
 				<sys:treeselect id="item" name="item.id" value="${humanMarkedValue.item.id}" labelName="item.name" labelValue="${humanMarkedValue.item.name}"
 					title="商品" url="/ope/item/listData"  />
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">关键属性：</label>
-			<div class="controls">
-				<sys:treeselect id="measure" name="measure.id" value="${humanMarkedValue.measure.id}" labelName="measure.name" labelValue="${humanMarkedValue.measure.name}"
-					title="关键属性" url="/mod/measure/listData" />
 			</div>
 		</div>
 		<div class="form-actions">
