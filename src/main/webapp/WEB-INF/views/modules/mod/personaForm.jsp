@@ -44,47 +44,23 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">人生阶段：</label>
+			<label class="control-label">所属阶段：</label>
 			<div class="controls">
 				${persona.phase.name }
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">画像名称：</label>
-			<div class="controls">
-				<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">社会分层：</label>
+			<label class="control-label">所属分层：</label>
 			<div class="controls">
 				 <sys:treeselect id="hierarchy" name="hierarchy.id" value="${persona.hierarchy.id}" labelName="hierarchy.name" labelValue="${persona.hierarchy.name}"
 					title="社会分层" url="/mod/hierarchy/listData"  cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-		</div>
+		</div>		
 		<div class="control-group">
-			<label class="control-label">zeta：</label>
+			<label class="control-label">画像名称：</label>
 			<div class="controls">
-				<form:input path="zeta" htmlEscape="false" class="input-xlarge  number"/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">eta：</label>
-			<div class="controls">
-				<form:input path="eta" htmlEscape="false" class="input-xlarge  number"/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">theta：</label>
-			<div class="controls">
-				<form:input path="theta" htmlEscape="false" class="input-xlarge  number"/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">标签：</label>
-			<div class="controls">
-				<form:input path="lambda" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -101,36 +77,59 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">生理：</label>
+			<label class="control-label">VALS-生理：</label>
 			<div class="controls">
 				<form:input path="alpha" htmlEscape="false" class="input-xlarge  number"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">安全：</label>
+			<label class="control-label">VALS-安全：</label>
 			<div class="controls">
 				<form:input path="beta" htmlEscape="false" class="input-xlarge  number"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">社交：</label>
+			<label class="control-label">VALS-社交：</label>
 			<div class="controls">
 				<form:input path="gamma" htmlEscape="false" class="input-xlarge  number"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">尊重：</label>
+			<label class="control-label">VALS-尊重：</label>
 			<div class="controls">
 				<form:input path="delte" htmlEscape="false" class="input-xlarge  number"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">价值：</label>
+			<label class="control-label">VALS-价值：</label>
 			<div class="controls">
 				<form:input path="epsilon" htmlEscape="false" class="input-xlarge  number"/>
 			</div>
 		</div>
-
+		<div class="control-group">
+			<label class="control-label">能力-经济：</label>
+			<div class="controls">
+				<form:input path="zeta" htmlEscape="false" class="input-xlarge  number"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">能力-社会：</label>
+			<div class="controls">
+				<form:input path="eta" htmlEscape="false" class="input-xlarge  number"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">能力-文化：</label>
+			<div class="controls">
+				<form:input path="theta" htmlEscape="false" class="input-xlarge  number"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">偏好标签：</label>
+			<div class="controls">
+				<form:input path="lambda" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+			</div>
+		</div>
 		<div class="control-group">
 			<label class="control-label">识别规则：</label>
 			<div class="controls">

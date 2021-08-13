@@ -40,18 +40,12 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>阶段</th>
-				<th>阶层</th>
-				<th>所属分群</th>
-				<th>画像名称</th>
-				<th>标签</th>
-				<th>生理</th>
-				<th>安全</th>
-				<th>社交</th>
-				<th>尊重</th>
-				<th>价值</th>
 				<th>默认头像</th>
-				<th>画像描述</th>
+				<th>画像名称</th>
+				<th>基本信息</th>
+				<th>VALS模型</th>
+				<th>能力模型</th>
+				<th>偏好标签</th>
 				<th>识别规则</th>
 				<shiro:hasPermission name="mod:persona:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -60,46 +54,39 @@
 		<c:forEach items="${page.list}" var="persona">
 			<tr>
 				<td>
-					${persona.phase.name}
-				</td>
+					<img src="${persona.logo}"  style="max-width:75px;max-height:75px;border:0;padding:3px;">
+				</td>			
 				<td>
-					${persona.hierarchy.name}
-				</td>
-				<td>
-					${persona.parent.name}
-				</td>
-				<td><a href="${ctx}/mod/persona/form?id=${persona.id}&pid=${pid}&pType=${pType}">
+				<a href="${ctx}/mod/persona/form?id=${persona.id}&pid=${pid}&pType=${pType}">
 					${persona.name}
-				</a></td>
+				</a><br/>
+				${persona.description}
+				</td>
+				<td>
+					所属阶段：${persona.phase.name}<br/>
+					所属阶层：${persona.hierarchy.name}<br/>
+					所属分群：${persona.parent.name}
+				</td>
+				<td>
+					生理：${persona.alpha}<br/>
+					安全：${persona.beta}<br/>
+					情感：${persona.gamma}<br/>
+					尊重：${persona.delte}<br/>
+					价值：${persona.epsilon}
+				</td>
+				<td>
+					经济：${persona.zeta} (${persona.hierarchy.economyScoreMin }-${persona.hierarchy.economyScoreMax })<br/>
+					社会：${persona.eta} (${persona.hierarchy.cultureScoreMin }-${persona.hierarchy.cultureScoreMax })<br/>
+					文化：${persona.theta} (${persona.hierarchy.societyScoreMin }-${persona.hierarchy.societyScoreMax })
+				</td>
 				<td>
 					${persona.lambda}
-				</td>
-				<td>
-					${persona.alpha}
-				</td>
-				<td>
-					${persona.beta}
-				</td>
-				<td>
-					${persona.gamma}
-				</td>
-				<td>
-					${persona.delte}
-				</td>
-				<td>
-					${persona.epsilon}
-				</td>
-				<td>
-					<img src="${persona.logo}"  style="max-width:75px;max-height:75px;border:0;padding:3px;">
-				</td>
-				<td>
-					${persona.description}
 				</td>
 				<td>
 					${persona.expression}
 				</td>
 				<shiro:hasPermission name="mod:persona:edit"><td>
-    				<a href="${ctx}/mod/persona/form?id=${persona.id}&pid=${pid}&pType=${pType}">修改</a>
+    				<a href="${ctx}/mod/persona/form?id=${persona.id}&pid=${pid}&pType=${pType}">修改</a><br/>
 					<a href="${ctx}/mod/persona/delete?id=${persona.id}&pid=${pid}&pType=${pType}" onclick="return confirmx('确认要删除该用户分群吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
