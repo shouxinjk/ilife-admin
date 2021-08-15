@@ -54,6 +54,11 @@ public class ViewTemplateController extends BaseController {
 		ViewTemplate template = viewTemplateService.getByType(type);
 		result.put("success",template==null?false:true);
 		if(template !=null) {
+			result.put("name", template.getName());
+			result.put("type", template.getType());
+			result.put("format", template.getSubType());
+			result.put("description", template.getDescription());
+			
 			String expr = template.getExpression();
 			String exprUnescape = expr;
 			//unescape
