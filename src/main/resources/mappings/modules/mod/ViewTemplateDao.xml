@@ -28,6 +28,17 @@
 		WHERE a.id = #{id}
 	</select>
 	
+	<!-- 根据类型获取展示模板。仅返回优先级最高的一条记录 -->
+	<select id="getByType" resultType="ViewTemplate">
+		SELECT 
+			<include refid="viewTemplateColumns"/>
+		FROM mod_view_template a
+		<include refid="viewTemplateJoins"/>
+		WHERE a.type = #{type} 
+		ORDER BY priority desc 
+		LIMIT 1
+	</select>	
+	
 	<select id="findList" resultType="ViewTemplate">
 		SELECT 
 			<include refid="viewTemplateColumns"/>

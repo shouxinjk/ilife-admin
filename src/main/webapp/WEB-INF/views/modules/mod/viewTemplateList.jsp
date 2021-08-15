@@ -38,7 +38,7 @@
 			<tr>
 				<th>名称</th>
 				<th>类型</th>
-				<th>子类型</th>			
+				<th>格式</th>			
 				<th>优先级</th>
 				<th>描述</th>
 				<th>更新时间</th>
@@ -52,7 +52,7 @@
 					${viewTemplate.name}
 				</a></td>
 				<td>${fns:getDictLabel(viewTemplate.type, 'viewTemplateType', '-')}</td>
-				<td>${viewTemplate.subType}</td>
+				<td>${fns:getDictLabel(viewTemplate.subType, 'viewTemplateFormat', '-')}</td>
 				<td>${viewTemplate.priority}</td>
 				<td>${viewTemplate.description}</td>
 				<td>

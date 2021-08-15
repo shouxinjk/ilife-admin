@@ -14,5 +14,5 @@ import com.pcitech.iLife.modules.mod.entity.ViewTemplate;
  */
 @MyBatisDao
 public interface ViewTemplateDao extends CrudDao<ViewTemplate> {
-	
+	public ViewTemplate getByType(String type);
 }

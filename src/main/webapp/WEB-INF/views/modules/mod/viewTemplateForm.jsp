@@ -39,8 +39,9 @@
 			<div>类型：</div>
 			<form:select path="type" items="${fns:getDictList('viewTemplateType')}" itemLabel="label" itemValue="value" htmlEscape="false" style="width:270px"/>
 			<span class="help-inline"><font color="red">*</font> </span><br/><br/>
-			<div>子类型：</div>
-			<form:input path="subType" htmlEscape="false" maxlength="64" class="input-xlarge "/><br/><br/>
+			<div>格式：</div>
+			<form:select path="subType" items="${fns:getDictList('viewTemplateFormat')}" itemLabel="label" itemValue="value" htmlEscape="false" style="width:270px"/>
+			<span class="help-inline"><font color="red">*</font> </span><br/><br/>
 			<div>名称：</div>
 			<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/><br/><br/>
 			<div>优先级：</div>

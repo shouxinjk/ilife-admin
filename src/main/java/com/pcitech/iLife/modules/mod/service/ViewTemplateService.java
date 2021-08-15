@@ -5,6 +5,7 @@ package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +23,15 @@ import com.pcitech.iLife.modules.mod.dao.ViewTemplateDao;
 @Transactional(readOnly = true)
 public class ViewTemplateService extends CrudService<ViewTemplateDao, ViewTemplate> {
 
+	@Autowired
+	ViewTemplateDao viewTemplateDao;
+	
 	public ViewTemplate get(String id) {
 		return super.get(id);
+	}
+	
+	public ViewTemplate getByType(String type) {
+		return viewTemplateDao.getByType(type);
 	}
 	
 	public List<ViewTemplate> findList(ViewTemplate viewTemplate) {
