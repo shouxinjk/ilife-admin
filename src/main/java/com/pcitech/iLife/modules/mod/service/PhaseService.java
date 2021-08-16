@@ -15,6 +15,7 @@ import com.google.common.collect.Sets;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.service.CrudService;
 import com.pcitech.iLife.common.service.TreeService;
+import com.pcitech.iLife.modules.mod.entity.Persona;
 import com.pcitech.iLife.modules.mod.entity.Phase;
 import com.pcitech.iLife.modules.sys.entity.Office;
 import com.pcitech.iLife.modules.sys.entity.User;
@@ -53,6 +54,10 @@ public class PhaseService extends TreeService<PhaseDao, Phase> {
 	@Transactional(readOnly = false)
 	public void delete(Phase phase) {
 		super.delete(phase);
+	}
+	
+	public List<Phase> findByParentId(String parentId) {
+		return dao.findByParentId(parentId);
 	}
 	
 	@SuppressWarnings("unchecked")

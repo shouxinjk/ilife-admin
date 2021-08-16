@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.TreeDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
@@ -15,5 +17,6 @@ import com.pcitech.iLife.modules.mod.entity.Persona;
  */
 @MyBatisDao
 public interface PersonaDao extends TreeDao<Persona> {
-	
+	public List<Persona> findByParentId(String parentId);
+	public List<Persona> findByPhaseId(String phaseId);
 }

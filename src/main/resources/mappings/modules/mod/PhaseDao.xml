@@ -36,6 +36,14 @@
 		WHERE a.id = #{id}
 	</select>
 	
+	<select id="findByParentId" resultType="Phase">
+		SELECT 
+			<include refid="phaseColumns"/>
+		FROM mod_phase a
+		<include refid="phaseJoins"/>
+		WHERE a.parent_id = #{parentId}
+	</select>	
+	
 	<select id="findList" resultType="Phase">
 		SELECT 
 			<include refid="phaseColumns"/>

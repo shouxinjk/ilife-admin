@@ -57,6 +57,22 @@
 		WHERE a.id = #{id}
 	</select>
 	
+	<select id="findByParentId" resultType="Persona">
+		SELECT 
+			<include refid="personaColumns"/>
+		FROM mod_persona a
+		<include refid="personaJoins"/>
+		WHERE a.parent_id = #{parentId}
+	</select>	
+	
+	<select id="findByPhaseId" resultType="Persona">
+		SELECT 
+			<include refid="personaColumns"/>
+		FROM mod_persona a
+		<include refid="personaJoins"/>
+		WHERE a.parent_id = "0" and a.phase_id=#{phaseId}
+	</select>		
+	
 	<select id="findList" resultType="Persona">
 		SELECT 
 			<include refid="personaColumns"/>

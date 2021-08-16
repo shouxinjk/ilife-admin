@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,8 +27,11 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.ItemCategory;
+import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.Persona;
 import com.pcitech.iLife.modules.mod.entity.Phase;
+import com.pcitech.iLife.modules.mod.service.HierarchyService;
 import com.pcitech.iLife.modules.mod.service.PersonaService;
 import com.pcitech.iLife.modules.mod.service.PhaseService;
 
@@ -47,6 +51,93 @@ public class PersonaController extends BaseController {
 	private PersonaService personaService;
 	@Autowired
 	private PhaseService phaseService;
+	
+	//获取阶段及画像。传入的ID有两种：阶段或画像，使用前缀区分。phase-或persona-
+	@ResponseBody
+	@RequestMapping(value = "rest/tree/{id}")
+	public List<Map<String, Object>> listStandardProperetiesByParentId( @PathVariable String id, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,String> icon = Maps.newHashMap();
+		icon.put("folder","fas fa-book");
+		icon.put("openFolder","fas fa-book-open");
+		icon.put("file","fas fa-file");
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		//默认id接受前端传递的id值，但对于根节点，前端传递的是div的id，固定为 tree-source ，需要进行映射
+		if(id==null || id.trim().length()==0 || "tree-source".equalsIgnoreCase(id)) {
+			listByPhase("1",mapList);//默认首先列出所有顶级阶段，
+		}else if(id.startsWith("phase-")) {
+			listByPhase(id.replace("phase-", ""),mapList);
+		}else if(id.startsWith("persona-")) {
+			listByPersona(id.replace("persona-", ""),mapList);
+		}else {//这个就离奇了么，不知道是个啥，直接忽略
+			logger.error("Unknown id type.[id]"+id);
+			Map<String,Object> result = Maps.newHashMap();
+			result.put("success", false);
+			result.put("msg", "Unknown id type.[id]"+id);
+			mapList.add(result);
+		}
+		return mapList;
+	}
+	
+	//根据阶段查询下级阶段及画像
+	private void listByPhase(String id,List<Map<String, Object>> mapList) {
+		Map<String,String> icon = Maps.newHashMap();
+		icon.put("folder","fas fa-book");
+		icon.put("openFolder","fas fa-book-open");
+		icon.put("file","fas fa-file");
+
+		//加载阶段列表
+		List<Phase> list = phaseService.findByParentId(id);
+		for (int i=0; i<list.size(); i++){
+			Phase e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+//			if(!"-1".equalsIgnoreCase(id))//根节点不能加
+			map.put("parent", "1".equalsIgnoreCase(id)?"tree-source":"phase-"+id);//如果是顶级节点，直接挂到根节点下
+			map.put("value", e.getName());
+			map.put("id", "phase-"+e.getId());
+			map.put("opened", false);
+			map.put("items", true);//默认都认为有下级目录
+//			map.put("icon", icon);//设置图标
+			mapList.add(map);
+		}
+		
+		//添加画像列表
+		List<Persona> list2 =personaService.findByPhaseId(id);
+		for (int i=0; i<list2.size(); i++){
+			Persona e = list2.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("parent",  "phase-"+id);
+			map.put("value", e.getName());
+			map.put("id", "persona-"+e.getId());//属性条目通过 prop- 前缀进行区分
+			map.put("opened", true);
+			map.put("items", true);//可能有下级画像
+			map.put("icon", icon);//设置图标
+			mapList.add(map);
+		}			
+	}
+	
+
+	//根据阶段查询下级阶段及画像
+	private void listByPersona(String id,List<Map<String, Object>> mapList) {
+		Map<String,String> icon = Maps.newHashMap();
+		icon.put("folder","fas fa-book");
+		icon.put("openFolder","fas fa-book-open");
+		icon.put("file","fas fa-file");
+		
+		//添加画像列表
+		List<Persona> list2 =personaService.findByParentId(id);
+		for (int i=0; i<list2.size(); i++){
+			Persona e = list2.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("parent",  "persona-"+id);
+			map.put("value", e.getName());
+			map.put("id", "persona-"+e.getId());//属性条目通过 prop- 前缀进行区分
+			map.put("opened", true);
+			map.put("items", true);//可能有下级画像
+			map.put("icon", icon);//设置图标
+			mapList.add(map);
+		}			
+	}
 	
 	@ModelAttribute
 	public Persona get(@RequestParam(required=false) String id) {

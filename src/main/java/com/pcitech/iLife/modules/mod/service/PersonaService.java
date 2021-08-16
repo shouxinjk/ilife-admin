@@ -53,7 +53,13 @@ public class PersonaService extends TreeService<PersonaDao, Persona> {
 	public void delete(Persona persona) {
 		super.delete(persona);
 	}
-
+	
+	public List<Persona> findByParentId(String parentId) {
+		return dao.findByParentId(parentId);
+	}
+	public List<Persona> findByPhaseId(String phaseId) {
+		return dao.findByPhaseId(phaseId);
+	}
 	@SuppressWarnings("unchecked")
 	public List<Persona> findTree(){
 		
