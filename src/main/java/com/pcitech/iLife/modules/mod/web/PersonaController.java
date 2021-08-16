@@ -54,8 +54,8 @@ public class PersonaController extends BaseController {
 	
 	//获取阶段及画像。传入的ID有两种：阶段或画像，使用前缀区分。phase-或persona-
 	@ResponseBody
-	@RequestMapping(value = "rest/tree/{id}")
-	public List<Map<String, Object>> listStandardProperetiesByParentId( @PathVariable String id, HttpServletResponse response) {
+	@RequestMapping(value = "rest/tree")
+	public List<Map<String, Object>> listStandardProperetiesByParentId( @RequestParam(required=false) String id, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
 		Map<String,String> icon = Maps.newHashMap();
 		icon.put("folder","fas fa-book");
@@ -64,7 +64,7 @@ public class PersonaController extends BaseController {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		//默认id接受前端传递的id值，但对于根节点，前端传递的是div的id，固定为 tree-source ，需要进行映射
 		if(id==null || id.trim().length()==0 || "tree-source".equalsIgnoreCase(id)) {
-			listByPhase("1",mapList);//默认首先列出所有顶级阶段，
+			listByPhase("1",mapList);//默认首先列出所有顶级阶段，列出根节点
 		}else if(id.startsWith("phase-")) {
 			listByPhase(id.replace("phase-", ""),mapList);
 		}else if(id.startsWith("persona-")) {
@@ -109,14 +109,13 @@ public class PersonaController extends BaseController {
 			map.put("parent",  "phase-"+id);
 			map.put("value", e.getName());
 			map.put("id", "persona-"+e.getId());//属性条目通过 prop- 前缀进行区分
-			map.put("opened", true);
+			map.put("opened", false);
 			map.put("items", true);//可能有下级画像
 			map.put("icon", icon);//设置图标
 			mapList.add(map);
 		}			
 	}
 	
-
 	//根据阶段查询下级阶段及画像
 	private void listByPersona(String id,List<Map<String, Object>> mapList) {
 		Map<String,String> icon = Maps.newHashMap();
@@ -132,7 +131,7 @@ public class PersonaController extends BaseController {
 			map.put("parent",  "persona-"+id);
 			map.put("value", e.getName());
 			map.put("id", "persona-"+e.getId());//属性条目通过 prop- 前缀进行区分
-			map.put("opened", true);
+			map.put("opened", false);
 			map.put("items", true);//可能有下级画像
 			map.put("icon", icon);//设置图标
 			mapList.add(map);
