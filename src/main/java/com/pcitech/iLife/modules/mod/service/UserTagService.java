@@ -26,6 +26,10 @@ public class UserTagService extends CrudService<UserTagDao, UserTag> {
 		return super.get(id);
 	}
 	
+	public List<UserTag> findListBySubject() {
+		return dao.findListBySubject();
+	}
+	
 	public List<UserTag> findList(UserTag userTag) {
 		return super.findList(userTag);
 	}

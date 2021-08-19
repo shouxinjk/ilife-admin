@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.UserTag;
@@ -14,5 +16,5 @@ import com.pcitech.iLife.modules.mod.entity.UserTag;
  */
 @MyBatisDao
 public interface UserTagDao extends CrudDao<UserTag> {
-	
+	public List<UserTag> findListBySubject();
 }

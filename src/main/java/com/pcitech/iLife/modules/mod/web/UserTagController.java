@@ -3,23 +3,34 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.UserTagCategory;
+import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.UserTag;
 import com.pcitech.iLife.modules.mod.service.UserTagCategoryService;
 import com.pcitech.iLife.modules.mod.service.UserTagService;
@@ -32,7 +43,7 @@ import com.pcitech.iLife.modules.mod.service.UserTagService;
 @Controller
 @RequestMapping(value = "${adminPath}/mod/userTag")
 public class UserTagController extends BaseController {
-
+	private static final Logger logger = LoggerFactory.getLogger(UserTagController.class);
 	@Autowired
 	private UserTagService userTagService;
 	@Autowired
@@ -49,6 +60,53 @@ public class UserTagController extends BaseController {
 		}
 		return entity;
 	}
+	
+	//获取用户标签供标注
+	@ResponseBody
+	@RequestMapping(value = "rest/tags", method = RequestMethod.GET)
+	public List<UserTag> listUserTagsBySubject( HttpServletRequest request, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		List<UserTag> tagList = userTagService.findListBySubject();
+		return tagList;
+	}
+	
+	//选中标签后自动设置属性
+	//废弃：直接从前端访问ArangoDB完成
+	/**
+	 * 
+	 * @deprecated
+	 * @param json
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/tag", method = RequestMethod.PUT)
+	public Map<String,Object> changeTag( @RequestBody Map<String,Object> json,  HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,Object> result = Maps.newHashMap();
+		logger.debug("checking parameters.",json);
+		if(json.get("type") == null || json.get("tagId")==null|| json.get("id") == null) {
+			result.put("success", false);
+			result.put("msg", "Wrong parameters. parameters must include type(user or persona), tagId, id(id of user/persona).");
+			return result;
+		}
+		UserTag tag = userTagService.get(json.get("tagId").toString());
+		if(tag == null) {
+			logger.debug("cannot find tag by id.",json);
+			result.put("success", false);
+			result.put("msg", "Cannot find tag by id.[id]"+json.get("tagId"));
+		}else {//执行Groovy脚本设置属性值
+			if("persona".equalsIgnoreCase(json.get("type").toString())) {
+				String aql = "FOR doc in persona_personas filter doc._key='"+json.get("id")+"' update doc with {"+tag.getExpression()+"} in persona_personas return NEW";
+				logger.debug("try to update persona by AQL.",aql);
+			}else if("user".equalsIgnoreCase(json.get("type").toString())) {
+				
+			}else {//传的是个啥，重新传参
+				
+			}
+		}
+		return result;
+	}	
 	
 	@RequiresPermissions("mod:userTag:view")
 	@RequestMapping(value = {"list", ""})

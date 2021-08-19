@@ -7,6 +7,7 @@
 		a.name AS "name",
 		a.user_tag_category AS "userTagCategory.id",
 		c.name AS "userTagCategory.name",
+		c.isExclusive AS "userTagCategory.isExclusive",
 		a.expression AS "expression",
 		a.type AS "type",
 		a.measure_id AS "userMeasure.id",
@@ -26,6 +27,21 @@
 		LEFT JOIN mod_user_tag_category c ON c.id = a.user_tag_category
 		LEFT JOIN mod_user_measure m ON m.id = a.measure_id		
 	</sql>
+    
+    <!-- 根据标签主题返回，用于前端标注 -->
+	<select id="findListBySubject" resultType="UserTag">
+		SELECT 
+			<include refid="userTagColumns"/>
+		FROM mod_user_tag a
+		<include refid="userTagJoins"/>
+		<!--where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where-->		
+		<where>
+			a.del_flag = 0
+		</where>			
+		ORDER BY a.type,a.update_date DESC
+	</select>    
     
 	<select id="get" resultType="UserTag">
 		SELECT 
