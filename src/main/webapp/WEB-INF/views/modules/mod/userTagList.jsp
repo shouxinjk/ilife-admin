@@ -61,7 +61,7 @@
 					${userTag.expression}
 				</td>
 				<td>
-					${userTag.type}
+					${fns:getDictLabel(userTag.type, 'tagType', '-')}
 				</td>
 				<td>
 					${userTag.ruleOfJudgment}

@@ -64,7 +64,8 @@
 		<div class="control-group">
 			<label class="control-label">类型：</label>
 			<div class="controls">
-				<form:input path="type" htmlEscape="false" maxlength="10" class="input-xlarge "/>
+				<form:select path="type" items="${fns:getDictList('tagType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				<!--form:input path="type" htmlEscape="false" maxlength="10" class="input-xlarge "/-->
 			</div>
 		</div>
 		<div class="control-group">

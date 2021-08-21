@@ -13,6 +13,7 @@
 		a.measure_id AS "userMeasure.id",
 		m.name AS "userMeasure.name",	
 		m.property AS "userMeasure.property",	
+		m.type AS "userMeasure.propertyType",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",

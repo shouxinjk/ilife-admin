@@ -37,9 +37,10 @@
 		<thead>
 			<tr>
 				<th>名称</th>
-				<th>类别</th>
+				<th>分类</th>
 				<th>占比</th>
 				<th>属性定义</th>
+				<th>属性类型</th>
 				<th>归一化参考值</th>
 				<th>默认等级</th>
 				<th>标签</th>
@@ -64,7 +65,10 @@
 				</td>
 				<td>
 					${userMeasure.property}
-				</td>					
+				</td>	
+				<td>
+					${fns:getDictLabel(userMeasure.type, 'propertyType', '-')}
+				</td>									
 				<td>
 					${userMeasure.controlValue}
 				</td>
