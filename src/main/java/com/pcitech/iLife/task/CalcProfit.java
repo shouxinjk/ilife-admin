@@ -137,7 +137,7 @@ public class CalcProfit {
 	//        		+ "doc.source in "+JSON.toJSONString(source)+" and "//注意：slow query。需要逐个查询
 				+ "doc.source == \""+s+"\" and "        		
 //	        		+ "IS_NUMBER(doc.price.bid)  and " //注意：在使用函数时不能使用索引，导致slow query
-					+ "doc.price.bid!=null " //仅对于有price.bid才处理
+					+ "doc.price.bid!=null " //仅对于有price.bid才处理 
 //	        		+ "(doc.profit == null || doc.profit.type == null || (doc.profit.type != \"2-party\"  && doc.profit.type != \"3-party\")) "
 	        		+ "doc.status.monetize == \"pending\" "//根据状态查询，优先使用枚举值使用索引查询，需要同时完成对初始profit.type的设置
 	        		+ "update doc with {status:{monetize:\"ready\"}} in my_stuff "
