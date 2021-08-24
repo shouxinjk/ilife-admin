@@ -132,12 +132,15 @@ public class CalcProfit {
         for(String s:source) {
         		processedMap.put(s, 0);
 
-	    		//1，查询待处理商品记录 
+	    		//1，查询待处理商品记录 :使用hash索引：source-pricebid-profittype
 	        String query = "for doc in my_stuff filter "
 	//        		+ "doc.source in "+JSON.toJSONString(source)+" and "//注意：slow query。需要逐个查询
 				+ "doc.source == \""+s+"\" and "        		
 //	        		+ "IS_NUMBER(doc.price.bid)  and " //注意：在使用函数时不能使用索引，导致slow query
-	        		+ "(doc.profit == null || doc.profit.type == null || (doc.profit.type != \"2-party\"  && doc.profit.type != \"3-party\")) "
+					+ "doc.price.bid!=null " //仅对于有price.bid才处理
+//	        		+ "(doc.profit == null || doc.profit.type == null || (doc.profit.type != \"2-party\"  && doc.profit.type != \"3-party\")) "
+	        		+ "doc.status.monetize == \"pending\" "//根据状态查询，优先使用枚举值使用索引查询，需要同时完成对初始profit.type的设置
+	        		+ "update doc with {status:{monetize:\"ready\"}} in my_stuff "
 	        		+ "limit 100 "//一个批次处理100条
 	        		+ "return {itemKey:doc._key,source:doc.source,category:doc.categoryId==null?\"\":doc.categoryId,price:doc.price.sale}";
 	        logger.error("try to query pending 1-party items.[query]"+query);

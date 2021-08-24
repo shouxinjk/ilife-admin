@@ -127,7 +127,7 @@ public class CalcProfit2Party {
     		arangoClient = new ArangoDbClient(host,port,username,password,database);
         for(String s:source) {
         		processedMap.put(s, 0);//默认设置处理数量为0
-	    		//1，查询待处理商品记录 
+	    		//1，查询待处理商品记录：使用hash索引：source-pricesale-profittype-profitamount
 	        String query = "for doc in my_stuff filter "
 //	        		+ "doc.source in "+JSON.toJSONString(source)+" and "//注意：slow query。需要逐个查询
 				+ "doc.source == \""+s+"\" and "

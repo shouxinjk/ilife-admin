@@ -71,7 +71,9 @@ public class TaobaoItemSync {
     		//for doc in my_stuff filter (doc.source == "tmall" or doc.source=="taobao" or doc.source=="fliggy") and (doc.status==null or doc.status.sync==null) limit 30 return {itemKey:doc._key,id:split(doc.link.web,"id=")[1],link:doc.link.web}    		
         String query = "for doc in my_stuff filter "
         		+ "(doc.source == \"tmall\" or doc.source==\"taobao\" or doc.source==\"fliggy\") and "
-        		+ "(doc.status==null or doc.status.sync==null) "
+//        		+ "(doc.status==null or doc.status.sync==null) "
+        		+ "doc.status.crawl==\"pending\" "
+        		+ "update doc with {status:{crawl:\"ready\"}} in my_stuff "//查询时即更新状态
         		+ "limit 30 "//限定为30条
         		+ "return {itemKey:doc._key,id:split(doc.link.web,\"id=\")[1],link:doc.link.web}";
 

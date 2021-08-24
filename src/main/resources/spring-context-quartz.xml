@@ -158,7 +158,7 @@
         </property>
     </bean> 	    
 	
-	<!-- 淘宝数据类目同步: 每月15日同步一次 -->
+	<!-- 淘宝数据类目同步: 每月15日同步一次 -->	
     <bean id="cpsDataSyncTaskTaobao" class="com.pcitech.iLife.task.TaobaoItemSync"></bean>
     <bean id="cpsDataSyncTaskTaobaoMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="cpsDataSyncTaskTaobao"></property>
@@ -211,7 +211,7 @@
             </list>
         </property>
     </bean> 		
-
+    
     <!-- 苏宁数据同步: 每3分钟执行 -->
     <bean id="cpsDataSyncTaskSuning" class="com.pcitech.iLife.task.SuningItemSync"></bean>
     <bean id="cpsDataSyncTaskSuningMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -229,7 +229,7 @@
             </list>
         </property>
     </bean> 	
-	
+
 	<!-- 手动拼接CPS链接数据同步: 每分钟执行 -->
     <bean id="cpsDataSyncTaskCpsLink" class="com.pcitech.iLife.task.CpsLinkSync"></bean>
     <bean id="cpsDataSyncTaskCpsLinkMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -247,7 +247,7 @@
             </list>
         </property>
     </bean> 	
-	
+
 	<!-- 考拉数据同步: 每3分钟执行 -->
     <bean id="cpsDataSyncTaskKaola" class="com.pcitech.iLife.task.KaolaItemSync"></bean>
     <bean id="cpsDataSyncTaskKaolaMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -265,8 +265,8 @@
             </list>
         </property>
     </bean> 		
-    
-    	<!-- 2-party分润: 每5分钟执行 -->
+   
+    <!-- 2-party分润: 每5分钟执行 -->
     <bean id="cpsDataSyncTask2PartyProfit" class="com.pcitech.iLife.task.CalcProfit2Party"></bean>
     <bean id="cpsDataSyncTask2PartyProfitMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="cpsDataSyncTask2PartyProfit"></property>
