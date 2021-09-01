@@ -51,6 +51,7 @@
 				<th>名称</th>
 				<th>电商平台</th>
 				<th>链接类型</th>
+				<th>优先级</th>
 				<th>规则定义</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:linkTemplate:edit"><th>操作</th></shiro:hasPermission>
@@ -68,6 +69,9 @@
 				<td>
 					${fns:getDictLabel(linkTemplate.type, 'link_type', '-')}
 				</td>	
+				<td>
+					${linkTemplate.priority}
+				</td>				
 				<td>
 					适用条件：<br/>
 					${linkTemplate.condition}<br/>

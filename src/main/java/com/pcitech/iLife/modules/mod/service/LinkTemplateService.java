@@ -22,6 +22,10 @@ import com.pcitech.iLife.modules.mod.dao.LinkTemplateDao;
 @Transactional(readOnly = true)
 public class LinkTemplateService extends CrudService<LinkTemplateDao, LinkTemplate> {
 
+	public List<LinkTemplate> findByPriority() {
+		return dao.findByPriority();
+	}
+	
 	public LinkTemplate get(String id) {
 		return super.get(id);
 	}

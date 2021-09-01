@@ -58,6 +58,18 @@
 			</otherwise>
 		</choose>
 	</select>
+
+	<!-- 根据优先级列出所有记录 -->
+	<select id="findByPriority" resultType="LinkTemplate">
+		SELECT 
+			<include refid="linkTemplateColumns"/>
+		FROM mod_link_template a
+		<include refid="linkTemplateJoins"/>
+		<where>
+			a.del_flag = 0
+		</where>		
+		ORDER BY a.priority DESC
+	</select>
 	
 	<select id="findAllList" resultType="LinkTemplate">
 		SELECT 
