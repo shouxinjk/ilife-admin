@@ -67,4 +67,19 @@ public class TaobaoHelper {
 		return rsp.getData()==null?null:rsp.getData().getModel();	
 	}
 	
+	/**
+	public String convertTaobaoToken(String token) {
+//		TaobaoClient client = new DefaultTaobaoClient(url, appkey, secret);
+		getClient();
+		TbkTpwdConvertRequest req = new TbkTpwdConvertRequest();
+		req.setPasswordContent("￥2k12308DjviP￥");
+		req.setAdzoneId(12312312L);
+		req.setDx("1");
+		req.setUcrowdId(1L);
+		TbkTpwdConvertResponse rsp = client.execute(req);
+		System.out.println(rsp.getBody());
+	}
+	
+	//**/
+	
 }

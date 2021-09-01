@@ -123,7 +123,7 @@ public class BrokerPerformanceNotifyTask{
         			msg.put("orders", task.getCountOrder());
         			msg.put("members", task.getCountTeam());
         			msg.put("amountBuy", task.getAmountBuy());
-        			msg.put("amountCreidt", task.getAmountCredit());
+        			msg.put("amountCredit", task.getAmountCredit());
         			msg.put("amountOrder", task.getAmountOrder());
         			msg.put("amountTeam", task.getAmountTeam());
         			msg.put("taskType", task.getTaskType());
