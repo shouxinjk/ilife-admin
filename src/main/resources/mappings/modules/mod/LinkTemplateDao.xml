@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.LinkTemplateDao">
+    
+	<sql id="linkTemplateColumns">
+		a.id AS "id",
+		a.platform AS "platform",
+		a.type AS "type",
+		a.name AS "name",
+		a.`condition` AS "condition",
+		a.expression AS "expression",
+		a.priority AS "priority",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag",
+		a.description AS "description"
+	</sql>
+	
+	<sql id="linkTemplateJoins">
+	</sql>
+    
+	<select id="get" resultType="LinkTemplate">
+		SELECT 
+			<include refid="linkTemplateColumns"/>
+		FROM mod_link_template a
+		<include refid="linkTemplateJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="LinkTemplate">
+		SELECT 
+			<include refid="linkTemplateColumns"/>
+		FROM mod_link_template a
+		<include refid="linkTemplateJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="platform != null and platform != ''">
+				AND a.platform = #{platform}
+			</if>
+			<if test="type != null and type != ''">
+				AND a.type = #{type}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="LinkTemplate">
+		SELECT 
+			<include refid="linkTemplateColumns"/>
+		FROM mod_link_template a
+		<include refid="linkTemplateJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_link_template(
+			id,
+			platform,
+			type,
+			name,
+			`condition`,
+			expression,
+			priority,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag,
+			description
+		) VALUES (
+			#{id},
+			#{platform},
+			#{type},
+			#{name},
+			#{condition},
+			#{expression},
+			#{priority},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag},
+			#{description}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_link_template SET 	
+			platform = #{platform},
+			type = #{type},
+			name = #{name},
+			`condition` = #{condition},
+			expression = #{expression},
+			priority = #{priority},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			description = #{description}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_link_template SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
