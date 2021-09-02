@@ -88,7 +88,12 @@ public class PddOrderSync {
 //		order.setCommissionSettlement();//留空，等着后面结算更新
 		order.setItem(item.getGoodsName());
 		order.setOrderTime(new Date(item.getOrderPayTime()));//以订单支付时间为准
-		Broker broker = brokerService.get(item.getCustomParameters());//跟踪码就是达人ID：注意需要解析自定义参数：构建链接时传递参数为{brokerId:xxxx}
+		//customParameter格式为：{"uid":"20434335","brokerId":"o8HmJ1EdIUR8iZRwaq1T7D_nPIYc"}
+		String brokerId = "system";
+		Map<String,String> customParam = JSONObject.parseObject(item.getCustomParameters(),new TypeReference<Map<String,String>>(){});
+		if(customParam.get("brokerId")!=null)
+			brokerId = customParam.get("brokerId");
+		Broker broker = brokerService.get(brokerId);//跟踪码就是达人ID：注意需要解析自定义参数：构建链接时传递参数为{uid:xx,brokerId:xxxx}
 		order.setBroker(broker);
 		order.setNotification("pending");//不用管通知状态，后续通知任务会自动更新
 		order.setStatus("pending");
