@@ -146,24 +146,26 @@ public class SuningHelper {
 //		request.setCheckParam(true);//api入参校验逻辑开关，当测试稳定之后建议设置为 false 或者删除该行
 
 		try {
-		 BacthcustomlinkQueryResponse response = getClient().excute(request);
-		 JSONObject jsonObj = JSON.parseObject(response.getBody());
-		 logger.debug(response.getBody());
-		if(jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_error")!=null) 
-			logger.warn("error occured."+jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_error").getString("error_msg"));
-		else {
-			 //注意：返回值有错误，未能正确封装为JSON数组，只能通过字符串手动处理，这帮傻缺~~~
-			 String linkStr = jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_body").getJSONObject("queryBacthcustomlink").getString("shortLink");
-			 String[] links = linkStr.split("\\[|,|\\]");
-			 return links;
-		}
+			 BacthcustomlinkQueryResponse response = getClient().excute(request);
+			 JSONObject jsonObj = JSON.parseObject(response.getBody());
+			 logger.debug(response.getBody());
+			if(jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_error")!=null) 
+				logger.warn("error occured."+jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_error").getString("error_msg"));
+			else {
+				 //注意：返回值有错误，未能正确封装为JSON数组，只能通过字符串手动处理，这帮傻缺~~~
+				 String linkStr = jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_body").getJSONObject("queryBacthcustomlink").getString("shortLink");
+				 String[] links = linkStr.split("\\[|,|\\]");
+				 return links;
+			}
 		} catch (SuningApiException e) {
-		 e.printStackTrace();
+			e.printStackTrace();
 		}
 		return null;
 	}
 	
-	public void getOrder() {
+	//有点玄幻，根据接口JSON返回结构推测的结构，如果出错，实不意外，hiahiahiahia~~~
+	//参考：https://open.suning.com/ospos/apipage/toApiMethodDetailMenuNew.do?interCode=suning.netalliance.orderinfo.query
+	public JSONArray getOrders() {
 		//参数:按照时间段查询
 		Calendar cal = Calendar.getInstance();
 		Date end = cal.getTime();
@@ -175,15 +177,23 @@ public class SuningHelper {
 		request.setEndTime(""+end.getTime());
 //		request.setOrderId("35499999921");
 		request.setPageNo(1);//查询页码
-		request.setPageSize(200);//默认查询条数
+		request.setPageSize(50);//默认查询条数
 //		request.setCheckParam(true);//api入参校验逻辑开关，当测试稳定之后建议设置为 false 或者删除该行
 
 		try {
-		 OrderinfoQueryResponse response = getClient().excute(request);
-		 //TODO 待完善。当前还没有订单的么
-		 System.out.println("返回json/xml格式数据 :" + response.getBody());
+			 OrderinfoQueryResponse response = getClient().excute(request);
+			logger.debug("返回json/xml格式数据 :" + response.getBody());
+			 JSONObject jsonObj = JSON.parseObject(response.getBody());
+			if(jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_error")!=null) {
+				logger.warn("error occured."+jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_error").getString("error_msg"));
+			}else {
+				 //恭喜恭喜，可能是个大坑，API文档说的不清不楚，根据JSON返回数据结构，应该是个数组
+				JSONArray orders= jsonObj.getJSONObject("sn_responseContent").getJSONObject("sn_body").getJSONArray("queryOrderinfo");
+				return orders;
+			}
 		} catch (SuningApiException e) {
-		 e.printStackTrace();
+			e.printStackTrace();
 		}
+		return null;
 	}
 }

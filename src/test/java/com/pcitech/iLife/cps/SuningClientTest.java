@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.pcitech.iLife.task.PddItemSync;
 import com.pcitech.iLife.task.SuningItemSync;
 import com.pcitech.iLife.task.SuningItemsSearcher;
+import com.pcitech.iLife.task.SuningOrderSync;
 import com.pcitech.iLife.task.TaobaoItemSync;
 import com.pdd.pop.sdk.common.util.JsonUtil;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse.GoodsDetailResponse;
@@ -41,7 +42,9 @@ public class SuningClientTest {
 	SuningHelper suningHelper;
 	
 	@Autowired
-	SuningItemSync suningSyncTask;
+	SuningItemSync suningItemSync;
+	@Autowired
+	SuningOrderSync suningOrderSync;
 	
 	@Autowired
 	SuningItemsSearcher suningItemsSearcher;
@@ -108,6 +111,19 @@ public class SuningClientTest {
 		assert true;
 	}
 	
+	
+	@Test
+	public void getOrders() {
+		try {
+			JSONArray result = suningHelper.getOrders();
+			System.err.println(JSONArray.toJSONString(result));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assert true;
+	}
+	
 	@Test
 	public void convertLinks() {
 		String brokerId = "default";
@@ -124,9 +140,19 @@ public class SuningClientTest {
 	}
 	
 	@Test
-	public void sunningSyncTask() {
+	public void sunningItemSync() {
 		try {
-			suningSyncTask.execute();
+			suningItemSync.execute();
+		} catch (JobExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void sunningOrderSync() {
+		try {
+			suningOrderSync.execute();
 		} catch (JobExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
