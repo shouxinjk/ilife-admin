@@ -87,12 +87,13 @@ public class KaolaItemSync {
 		//设置状态。注意，需要设置index=pending 等待重新索引。只要有CPS链接，就可以推广了
 		//状态更新
 		Map<String,Object> status = new HashMap<String,Object>();
-		status.put("sync", "ready");
+		status.put("crawl", "ready");//更新商品详情
+		status.put("sync", "pending");//重要：CPS链接是通过CPS任务完成，本任务仅更新商品详情，构建CPS链接
 		status.put("index", "pending");//等待重新索引
 		doc.getProperties().put("status", status);
 		//时间戳更新
 		Map<String,Object> timestamp = new HashMap<String,Object>();
-		timestamp.put("sync", new Date());//CPS链接生成时间
+		timestamp.put("crawl", new Date());//CPS链接生成时间
 		doc.getProperties().put("timestamp", timestamp);
 		
 		String  url = item.getProperties().get("link").toString();

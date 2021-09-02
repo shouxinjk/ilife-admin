@@ -152,7 +152,7 @@ public class CpsLinkSync {
 			doc.getProperties().put("link", links);
 			processedMap.put(itemSource, processedMap.get(itemSource)+1);
 		}else if("kaola".equalsIgnoreCase(itemSource)) {
-			String prefix = "https://cps.kaola.com/cps/zhuankeLogin?unionId=zhuanke_701412896&tc1=default&tc2=default&showWapBanner=0&targetUrl=";
+			String prefix = "https://cps.kaola.com/cps/zhuankeLogin?unionId=zhuanke_701412896&tc1=system&tc2=system&showWapBanner=0&targetUrl=";
 			Map<String,String> links = new HashMap<String,String>();
 			links.put("web2", prefix+item.getProperties().get("web"));
 			links.put("wap2", prefix+item.getProperties().get("wap"));
