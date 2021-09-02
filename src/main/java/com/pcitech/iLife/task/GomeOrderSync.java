@@ -149,7 +149,7 @@ public class GomeOrderSync {
 		JSONObject msg = new JSONObject();
 		msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
 		msg.put("title", "订单同步任务结果");
-		msg.put("task", "苏宁订单数据 已同步");
+		msg.put("task", "国美订单数据 已同步");
 		msg.put("time", fmt.format(new Date()));
 		msg.put("remark", "订单总数："+totalAmount
 				+ "\n入库数量："+processedAmount);

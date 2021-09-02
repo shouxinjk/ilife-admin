@@ -63,7 +63,7 @@ public class PddOrderSync {
     
     private void syncOrder(OrderListGetResponseOrderListItem item) {
     	//itemKey是受控的，自动生成一个
-		String itemKey = Util.md5("jd"+item.getOrderSn());
+		String itemKey = Util.md5("pdd"+item.getOrderSn());
 		
 		//管他三七二十一，全部存储
 		Map<String,Object> props = JSONObject.parseObject(JSON.toJSONString(item),new TypeReference<Map<String,Object>>(){});
@@ -80,7 +80,7 @@ public class PddOrderSync {
 		//接下来写入Order
 		Order order = new Order();
 		order.setId(itemKey);//与NoSQL保持一致
-		order.setPlatform("jd");
+		order.setPlatform("pdd");
 		order.setOrderNo(""+item.getOrderSn());
 		order.setTraceCode(item.getCustomParameters());
 		order.setAmount(item.getOrderAmount()/100);//返回为分的long型
@@ -145,7 +145,7 @@ public class PddOrderSync {
 		JSONObject msg = new JSONObject();
 		msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
 		msg.put("title", "订单同步任务结果");
-		msg.put("task", "京东订单数据 已同步");
+		msg.put("task", "拼多多订单数据 已同步");
 		msg.put("time", fmt.format(new Date()));
 		msg.put("remark", "订单总数："+totalAmount
 				+ "\n入库数量："+processedAmount);

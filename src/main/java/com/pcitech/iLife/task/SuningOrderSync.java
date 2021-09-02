@@ -143,7 +143,7 @@ public class SuningOrderSync {
 		//接下来写入Order
 		Order order = new Order();
 		order.setId(itemKey);//与NoSQL保持一致
-		order.setPlatform("kaola");
+		order.setPlatform("suning");
 		order.setOrderNo(item.getString("orderId"));
 		order.setTraceCode(item.getJSONObject("orderStatus").getString("traceId"));
 		order.setAmount(Long.parseLong(item.getJSONObject("amountInfo").getString("payAmount"))/100);//单位是分:以实际支付金额为准
