@@ -99,11 +99,19 @@ public class CpsLinkSync {
 		String itemKey = item.getProperties().get("itemKey").toString();
 		//准备更新doc
 		BaseDocument doc = new BaseDocument();
-		Map<String,Object> syncStatus = new HashMap<String,Object>();
-		syncStatus.put("index", "pending");//直接更新为“待索引”状态
 		doc.setKey(itemKey);
-		doc.getProperties().put("status", syncStatus);
+		//设置状态。注意，需要设置index=pending 等待重新索引。只要有CPS链接，就可以推广了
+		//状态更新
+		Map<String,Object> status = new HashMap<String,Object>();
+		status.put("sync", "ready");
+		status.put("index", "pending");//等待重新索引
+		doc.getProperties().put("status", status);
+		//时间戳更新
+		Map<String,Object> timestamp = new HashMap<String,Object>();
+		timestamp.put("sync", new Date());//CPS链接生成时间
+		doc.getProperties().put("timestamp", timestamp);
 		
+		//TODO：注意：管理端提供了CPS链接模板管理功能，但此处直接hard code了，导致CPS链接模板失效。需要调整为根据CPS链接模板生成
 		//根据source类型分别处理链接
 		String  itemSource = item.getProperties().get("source").toString();
 		if("dhc".equalsIgnoreCase(itemSource)) {
