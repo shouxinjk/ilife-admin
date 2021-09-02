@@ -136,13 +136,23 @@ public class PddItemsSearcher {
 		double commssion = salePrice*item.getPromotionRate()*0.001;//千分比，转换为元
 		profit.put("amount",parseNumber(commssion));//单位为元
 		doc.getProperties().put("profit", profit);	
-		//注意，新增加的内容作为待同步条目，需要等待PddItemSync完成CPS链接补充
-//		Map<String,Object> syncStatus = new HashMap<String,Object>();
-//		syncStatus.put("sync", true);
-//		Map<String,Object> syncTimestamp = new HashMap<String,Object>();
-//		syncTimestamp.put("sync", new Date());	
-//		doc.getProperties().put("status", syncStatus);
-//		doc.getProperties().put("timestamp", syncTimestamp);
+		//设置状态。注意，需要设置sync=pending 等待计算CPS链接
+		//状态更新
+		Map<String,Object> status = new HashMap<String,Object>();
+		status.put("crawl", "ready");
+		status.put("sync", "pending");//等待生成CPS链接
+		status.put("classify", "pending");
+		status.put("satisify", "pending");//这个要在classify之后才执行
+		status.put("measure", "pending");
+		status.put("evaluate", "pending");
+		status.put("monitize", "pending");//等待计算3-party分润
+		status.put("poetize", "pending");//实际上这个要在classify之后才执行
+		status.put("index", "pending");//先入库一次，能够立即看到：注意这时候没有CPS，不能推广
+		doc.getProperties().put("status", status);
+		//时间戳更新
+		Map<String,Object> timestamp = new HashMap<String,Object>();
+		timestamp.put("crawl", new Date());//入库时间
+		doc.getProperties().put("timestamp", timestamp);
 
 		//更新doc
 		logger.debug("try to upsert pdd item.[itemKey]"+itemKey,JSON.toString(doc));
@@ -257,10 +267,10 @@ public class PddItemsSearcher {
 		if(totalAmount == 0)//啥活都没干，发啥消息
 			return;
 		//发送处理结果到管理员
-    		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    	    Map<String,String> header = new HashMap<String,String>();
-    	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
-    	    JSONObject result = null;
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    Map<String,String> header = new HashMap<String,String>();
+	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
+	    JSONObject result = null;
 		JSONObject msg = new JSONObject();
 		msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
 		msg.put("title", "导购数据同步任务结果");

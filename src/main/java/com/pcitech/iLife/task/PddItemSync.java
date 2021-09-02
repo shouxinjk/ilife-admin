@@ -82,13 +82,17 @@ public class PddItemSync {
 		String  url = item.getProperties().get("link").toString();
 		//准备更新doc
 		BaseDocument doc = new BaseDocument();
-		Map<String,Object> syncStatus = new HashMap<String,Object>();
-		syncStatus.put("sync", true);
-		Map<String,Object> syncTimestamp = new HashMap<String,Object>();
-		syncTimestamp.put("sync", new Date());	
 		doc.setKey(itemKey);
-		doc.getProperties().put("status", syncStatus);
-		doc.getProperties().put("timestamp", syncTimestamp);
+		//设置状态。注意，需要设置index=pending 等待重新索引。只要有CPS链接，就可以推广了
+		//状态更新
+		Map<String,Object> status = new HashMap<String,Object>();
+		status.put("sync", "ready");
+		status.put("index", "pending");//等待重新索引
+		doc.getProperties().put("status", status);
+		//时间戳更新
+		Map<String,Object> timestamp = new HashMap<String,Object>();
+		timestamp.put("sync", new Date());//CPS链接生成时间
+		doc.getProperties().put("timestamp", timestamp);
 		
 		//匹配获取goodsSign
 		String goodsSign = item.getProperties().get("sign").toString();
@@ -156,8 +160,8 @@ public class PddItemSync {
         String query = "for doc in my_stuff filter "
         		+ "(doc.source == \"pdd\") and "
 //        		+ "(doc.status==null or doc.status.sync==null) "
-        		+ "doc.status.crawl==\"pending\" "
-        		+ "update doc with {status:{crawl:\"ready\"}} in my_stuff "//查询时即更新状态
+        		+ "doc.status.sync==\"pending\" "
+        		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态
         		+ "sort doc.searchId desc "//根据searchId排序，便于批量生成CPS link
         		+ "limit 1000 "//一个批次处理30条
         		+ "return {itemKey:doc._key,link:doc.link.web,sign:REGEX_REPLACE(doc.link.web,\"http.+s=\",\"\"),searchId:doc.searchId==null?\"-\":doc.searchId}";
