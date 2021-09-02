@@ -27,6 +27,7 @@ import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsResponse;
 import com.pcitech.iLife.cps.kaola.ShareLinkResponse;
 import com.pcitech.iLife.task.KaolaItemSync;
 import com.pcitech.iLife.task.KaolaItemsSearcher;
+import com.pcitech.iLife.task.KaolaOrderSync;
 import com.pcitech.iLife.task.KaolaRecommendItemsSearcher;
 
 import net.minidev.json.JSONUtil;
@@ -41,6 +42,8 @@ public class KaolaClientTest {
 	KaolaHelper kaolaHelper;
 	@Autowired
 	KaolaItemSync kaolaItemSync;
+	@Autowired
+	KaolaOrderSync kaolaOrderSync;
 	@Autowired
 	KaolaRecommendItemsSearcher kaolaRecommendItemsSearcher;
 	@Autowired
@@ -191,9 +194,19 @@ public class KaolaClientTest {
 	}
 	
 	@Test
-	public void syncData() {
+	public void syncItem() {
 		try {
 			kaolaItemSync.execute();
+		} catch (JobExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void syncOrder() {
+		try {
+			kaolaOrderSync.execute();
 		} catch (JobExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
