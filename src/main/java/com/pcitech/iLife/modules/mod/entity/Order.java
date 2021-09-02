@@ -20,9 +20,9 @@ public class Order extends DataEntity<Order> {
 	private String platform;		// 电商平台
 	private String orderNo;		// 原始订单号
 	private String traceCode;		// 跟踪码
-	private String amount;		// 订单金额
-	private String commissionEstimate;		// 预估佣金
-	private String commissionSettlement;		// 结算佣金
+	private double amount;		// 订单金额
+	private double commissionEstimate;		// 预估佣金
+	private double commissionSettlement;		// 结算佣金
 	private String item;		// 商品名称
 	private Date orderTime;		// 订单完成时间
 	private Broker broker;		// 达人
@@ -64,27 +64,27 @@ public class Order extends DataEntity<Order> {
 		this.traceCode = traceCode;
 	}
 	
-	public String getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 	
-	public String getCommissionEstimate() {
+	public double getCommissionEstimate() {
 		return commissionEstimate;
 	}
 
-	public void setCommissionEstimate(String commissionEstimate) {
+	public void setCommissionEstimate(double commissionEstimate) {
 		this.commissionEstimate = commissionEstimate;
 	}
 	
-	public String getCommissionSettlement() {
+	public double getCommissionSettlement() {
 		return commissionSettlement;
 	}
 
-	public void setCommissionSettlement(String commissionSettlement) {
+	public void setCommissionSettlement(double commissionSettlement) {
 		this.commissionSettlement = commissionSettlement;
 	}
 	

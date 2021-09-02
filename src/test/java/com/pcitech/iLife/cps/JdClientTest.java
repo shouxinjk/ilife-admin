@@ -30,6 +30,7 @@ import com.jd.open.api.sdk.response.kplunion.UnionOpenGoodsPromotiongoodsinfoQue
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.task.JdItemSync;
 import com.pcitech.iLife.task.JdItemsSearcher;
+import com.pcitech.iLife.task.JdOrderSync;
 import com.pcitech.iLife.util.ArangoDbClient;
 import com.pcitech.iLife.util.Util;
 
@@ -50,7 +51,8 @@ public class JdClientTest {
 	
 	@Autowired
 	JdItemSync jdItemSync;
-	
+	@Autowired
+	JdOrderSync jdOrderSync;
 	@Autowired
 	JdItemsSearcher jdItemsSearcher;
 	
@@ -167,9 +169,19 @@ public class JdClientTest {
 		}
 		assert true;
 	}
+
+	@Test
+	public void syncJdOrder() {
+		try {
+			jdOrderSync.execute();
+		} catch (JobExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	@Test
-	public void syncJdData() {
+	public void syncJdItem() {
 		try {
 			jdItemSync.execute();
 		} catch (JobExecutionException e) {

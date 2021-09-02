@@ -153,12 +153,13 @@ public class JdHelper {
 		req.setType(1);//订单时间查询类型(1：下单时间，2：完成时间（购买用户确认收货时间），3：更新时间
 		request.setOrderReq(req);
 		UnionOpenOrderRowQueryResponse response=getClient().execute(request);
+		logger.debug(response.getCode()+"::"+response.getMsg());
 		if(!"0".equalsIgnoreCase(response.getCode())) {//搞个串串，调用都不成功，赶紧debug吧
-			logger.debug(response.getCode()+"::"+response.getMsg());
+			logger.warn(response.getCode()+"::"+response.getMsg());
 		}else if(response.getQueryResult().getCode() == 200){//得到订单了，赶紧嘚瑟吧
 			return response.getQueryResult().getData();
 		}else {//是不是手残干了啥事被平台降级了？
-			logger.debug(response.getQueryResult().getCode()+"::"+response.getQueryResult().getMessage());
+			logger.warn(response.getQueryResult().getCode()+"::"+response.getQueryResult().getMessage());
 		}
 		return null;
 	}

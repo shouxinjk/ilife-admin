@@ -173,7 +173,7 @@ public class PddHelper {
 	 * @return
 	 */
 	private String  getCustomParams() {
-		return getCustomParams("default");
+		return getCustomParams("system");
 	}
 	
 	/**
