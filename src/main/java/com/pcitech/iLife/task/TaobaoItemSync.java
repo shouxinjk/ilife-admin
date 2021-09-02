@@ -72,8 +72,8 @@ public class TaobaoItemSync {
         String query = "for doc in my_stuff filter "
         		+ "(doc.source == \"tmall\" or doc.source==\"taobao\" or doc.source==\"fliggy\") and "
 //        		+ "(doc.status==null or doc.status.sync==null) "
-        		+ "doc.status.crawl==\"pending\" "
-        		+ "update doc with {status:{crawl:\"ready\"}} in my_stuff "//查询时即更新状态
+        		+ "doc.status.sync==\"pending\" "
+        		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态
         		+ "limit 30 "//限定为30条
         		+ "return {itemKey:doc._key,id:split(doc.link.web,\"id=\")[1],link:doc.link.web}";
 
@@ -153,13 +153,16 @@ public class TaobaoItemSync {
 	    			String itemKey = itemMap.get(id);
 				logger.info("try to update unchanged item.[itemKey]"+itemKey);
 				BaseDocument doc = new BaseDocument();
-				Map<String,Object> syncStatus = new HashMap<String,Object>();
-				syncStatus.put("sync", true);
-				Map<String,Object> syncTimestamp = new HashMap<String,Object>();
-				syncTimestamp.put("sync", new Date());			
-				doc.setKey(itemKey);
-				doc.getProperties().put("status", syncStatus);
-				doc.getProperties().put("timestamp", syncTimestamp);
+				//设置状态。注意，需要设置index=pending 等待重新索引。只要有CPS链接，就可以推广了
+				//状态更新
+				Map<String,Object> status = new HashMap<String,Object>();
+				status.put("sync", "ready");
+				status.put("index", "pending");//等待重新索引
+				doc.getProperties().put("status", status);
+				//时间戳更新
+				Map<String,Object> timestamp = new HashMap<String,Object>();
+				timestamp.put("sync", new Date());//CPS链接生成时间
+				doc.getProperties().put("timestamp", timestamp);
 				
 				//生成淘口令:注意，如果没有淘口令会直接忽略，不做变化
 				//由于在同步目录中仅有部分，剩余部分也要同步淘口令
@@ -167,7 +170,7 @@ public class TaobaoItemSync {
 				String link = itemLinks.get(id);//根据当前商品ID获取对应url
 				try {
 					String tbToken = taobaoHelper.getTaobaoToken(link);
-					if(tbToken!=null && tbToken.indexOf("￥")>-1) {
+					if(tbToken!=null && tbToken.trim().length()>0) {
 						links.put("token", tbToken);
 						doc.getProperties().put("link", links);
 					}else {
