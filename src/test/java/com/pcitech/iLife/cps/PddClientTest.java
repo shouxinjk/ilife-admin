@@ -19,6 +19,7 @@ import com.arangodb.entity.BaseDocument;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.task.PddItemSync;
 import com.pcitech.iLife.task.PddItemsSearcher;
+import com.pcitech.iLife.task.PddOrderSync;
 import com.pcitech.iLife.task.TaobaoItemSync;
 import com.pcitech.iLife.util.ArangoDbClient;
 import com.pcitech.iLife.util.Util;
@@ -31,6 +32,7 @@ import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsSearchResponse.GoodsSear
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsSearchResponse.GoodsSearchResponseGoodsListItem;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.GoodsZsUnitGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse.OrderListGetResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse.OrderListGetResponseOrderListItem;
 import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatTemplateGetResponse.OpenApiResponsePropertiesItem;
 import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatTemplateGetResponse.OpenApiResponsePropertiesItemValuesItem;
 import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatsGetResponse.GoodsCatsGetResponse;
@@ -52,8 +54,9 @@ public class PddClientTest {
 	PddHelper pddHelper;
 	
 	@Autowired
-	PddItemSync pddSyncTask;
-	
+	PddItemSync pddItemSync;
+	@Autowired
+	PddOrderSync pddOrderSync;
 	@Autowired
 	PddItemsSearcher pddItemsSearcher;
 	
@@ -212,8 +215,8 @@ public class PddClientTest {
 		System.out.println("now start query orders ... ");
 		String brokerId = "alexchew";
 		try {
-			OrderListGetResponse resp = pddHelper.getOrders();
-			System.err.println("orders::"+JsonUtil.transferToJson(resp));
+			List<OrderListGetResponseOrderListItem> orders = pddHelper.getOrders();
+			System.err.println("orders::"+JsonUtil.transferToJson(orders));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -257,9 +260,19 @@ public class PddClientTest {
 	}
 	
 	@Test
-	public void pddSyncTask() {
+	public void pddOrderSyncTask() {
 		try {
-			pddSyncTask.execute();
+			pddOrderSync.execute();
+		} catch (JobExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void pddItemSyncTask() {
+		try {
+			pddItemSync.execute();
 		} catch (JobExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

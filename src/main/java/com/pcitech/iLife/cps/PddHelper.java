@@ -37,6 +37,7 @@ import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.Goo
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkMemberAuthorityQueryResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse.OrderListGetResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse.OrderListGetResponseOrderListItem;
 import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatTemplateGetResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatTemplateGetResponse.OpenApiResponsePropertiesItem;
 import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatsGetResponse;
@@ -150,7 +151,7 @@ public class PddHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public OrderListGetResponse getOrders() throws Exception {
+	public List<OrderListGetResponseOrderListItem> getOrders() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		Date end = cal.getTime();
 		cal.add(Calendar.MINUTE, -30);//每半小时查询一次
@@ -164,8 +165,8 @@ public class PddHelper {
         request.setQueryOrderType(0);//订单类型：1-推广订单；2-直播间订单
         request.setStartTime(sdf.format(from));//支付起始时间，格式: "yyyy-MM-dd HH:mm:ss" ，比如 "2020-12-01 00:00:00"
         PddDdkOrderListRangeGetResponse response = getClient().syncInvoke(request);
-        System.out.println(JsonUtil.transferToJson(response));
-        return response.getOrderListGetResponse();
+        logger.debug(JsonUtil.transferToJson(response));
+        return response.getOrderListGetResponse().getOrderList();
 	}
 	
 	/**
