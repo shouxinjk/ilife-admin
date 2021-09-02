@@ -83,13 +83,18 @@ public class KaolaItemSync {
 
 		//准备更新doc
 		BaseDocument doc = new BaseDocument();
-		Map<String,Object> syncStatus = new HashMap<String,Object>();
-		syncStatus.put("sync", true);
-		Map<String,Object> syncTimestamp = new HashMap<String,Object>();
-		syncTimestamp.put("sync", new Date());	
 		doc.setKey(itemKey);
-		doc.getProperties().put("status", syncStatus);
-		doc.getProperties().put("timestamp", syncTimestamp);
+		//设置状态。注意，需要设置index=pending 等待重新索引。只要有CPS链接，就可以推广了
+		//状态更新
+		Map<String,Object> status = new HashMap<String,Object>();
+		status.put("sync", "ready");
+		status.put("index", "pending");//等待重新索引
+		doc.getProperties().put("status", status);
+		//时间戳更新
+		Map<String,Object> timestamp = new HashMap<String,Object>();
+		timestamp.put("sync", new Date());//CPS链接生成时间
+		doc.getProperties().put("timestamp", timestamp);
+		
 		String  url = item.getProperties().get("link").toString();
 		
 		try {
@@ -190,8 +195,8 @@ public class KaolaItemSync {
         String query = "for doc in my_stuff filter "
         		+ "(doc.source == \"kaola\") and "
 //        		+ "(doc.status==null or doc.status.sync==null) "
-        		+ "doc.status.crawl==\"pending\" "
-        		+ "update doc with {status:{crawl:\"ready\"}} in my_stuff "//查询时即更新状态
+        		+ "doc.status.sync==\"pending\" "
+        		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态
         		+ "limit 300 "//默认限制单次处理300条
         		+ "return {itemKey:doc._key,link:doc.link.web}";
         
