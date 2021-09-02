@@ -34,6 +34,7 @@ import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsRequest;
 import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsResponse;
 import com.pcitech.iLife.cps.kaola.ShareLinkResponse;
 import com.pcitech.iLife.task.GomeItemSearcher;
+import com.pcitech.iLife.task.GomeOrderSync;
 import com.pcitech.iLife.task.KaolaItemSync;
 import com.pcitech.iLife.task.KaolaItemsSearcher;
 import com.pcitech.iLife.task.KaolaRecommendItemsSearcher;
@@ -60,6 +61,9 @@ public class GomeClientTest {
 	
 	@Autowired
 	GomeItemSearcher gomeItemSearcher;
+	
+	@Autowired
+	GomeOrderSync gomeOrderSync;
 	
 	@Test
 	public void getCategories() {
@@ -201,6 +205,16 @@ public class GomeClientTest {
 	public void searchItemByCategory() {
 		try {
 			gomeItemSearcher.execute();
+		} catch (JobExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void syncOrder() {
+		try {
+			gomeOrderSync.execute();
 		} catch (JobExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
