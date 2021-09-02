@@ -96,9 +96,9 @@ public class JdClientTest {
 	public void queryCpsLink() {
 		System.out.println("now start query cps link ... ");
 		String[] urls = {
-				"https://item.jd.com/10026018651372.html",
-				"https://item.jd.com/10036087811730.html",
-				"https://item.jd.com/100008463265.html"
+				"https://item.jd.com/10035168338846.html",
+				"https://item.jd.com/10022780362421.html",
+				"https://item.jd.com/100007754639.html"
 		};
 		try {
 			for(String url:urls) {

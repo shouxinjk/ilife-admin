@@ -71,13 +71,17 @@ public class JdItemSync {
 
 		//准备更新doc
 		BaseDocument doc = new BaseDocument();
-		Map<String,Object> syncStatus = new HashMap<String,Object>();
-		syncStatus.put("sync", true);
-		Map<String,Object> syncTimestamp = new HashMap<String,Object>();
-		syncTimestamp.put("sync", new Date());	
 		doc.setKey(itemKey);
-		doc.getProperties().put("status", syncStatus);
-		doc.getProperties().put("timestamp", syncTimestamp);
+		//设置状态。注意，需要设置index=pending 等待重新索引。只要有CPS链接，就可以推广了
+		//状态更新
+		Map<String,Object> status = new HashMap<String,Object>();
+		status.put("sync", "ready");
+		status.put("index", "pending");//等待重新索引
+		doc.getProperties().put("status", status);
+		//时间戳更新
+		Map<String,Object> timestamp = new HashMap<String,Object>();
+		timestamp.put("sync", new Date());//CPS链接生成时间
+		doc.getProperties().put("timestamp", timestamp);
 		
 		try {
 			//调用API接口生成CPS链接
@@ -140,8 +144,8 @@ public class JdItemSync {
         String query = "for doc in my_stuff filter "
         		+ "(doc.source == \"jd\") and "
 //        		+ "(doc.status==null or doc.status.sync==null) "
-        		+ "doc.status.crawl==\"pending\" "
-        		+ "update doc with {status:{crawl:\"ready\"}} in my_stuff "//查询时即更新状态
+        		+ "doc.status.sync==\"pending\" "
+        		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态：仅更新记录状态，index状态需要根据计算结果设置
         		+ "limit 1000 "//一个批次处理30条
         		+ "return {itemKey:doc._key,link:doc.link.web}";
         
@@ -166,10 +170,10 @@ public class JdItemSync {
 		if(totalAmount == 0)//啥活都没干，发啥消息
 			return;
 		//发送处理结果到管理员
-    		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    	    Map<String,String> header = new HashMap<String,String>();
-    	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
-    	    JSONObject result = null;
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    Map<String,String> header = new HashMap<String,String>();
+	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
+	    JSONObject result = null;
 		JSONObject msg = new JSONObject();
 		msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
 		msg.put("title", "导购数据同步任务结果");

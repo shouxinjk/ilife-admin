@@ -92,10 +92,16 @@ public class CalcProfit2Party {
 		logger.debug("calculate 2-party profit.[itemKey]"+itemKey);
 		//准备更新doc
 		BaseDocument doc = new BaseDocument();
-		Map<String,Object> syncStatus = new HashMap<String,Object>();
-		syncStatus.put("index", "pending");//直接更新为“待索引”状态
 		doc.setKey(itemKey);
-		doc.getProperties().put("status", syncStatus);
+		//状态更新
+		Map<String,Object> status = new HashMap<String,Object>();
+		status.put("index", "pending");//重新提交“待索引”：需要在cps链接生成后会再次提交
+		status.put("monitize", "ready");//分佣计算完成
+		doc.getProperties().put("status", status);
+		//时间戳更新
+		Map<String,Object> timestamp = new HashMap<String,Object>();
+		timestamp.put("monitize", new Date());//分佣计算完成时间
+		doc.getProperties().put("timestamp", timestamp);
 		//计算二方分润
 		double price = Double.parseDouble(item.getProperties().get("price").toString());
 		double amount = Double.parseDouble(item.getProperties().get("amount").toString());
