@@ -79,6 +79,7 @@ public class PddOrderSync {
 		
 		//接下来写入Order
 		Order order = new Order();
+		order.setStatus("pending");//等待清分
 		order.setId(itemKey);//与NoSQL保持一致
 		order.setPlatform("pdd");
 		order.setOrderNo(""+item.getOrderSn());
