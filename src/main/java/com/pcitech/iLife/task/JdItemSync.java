@@ -87,7 +87,7 @@ public class JdItemSync {
 			//调用API接口生成CPS链接
 			PromotionCodeResp result=null;
 			String  url = item.getProperties().get("link").toString();
-			result = jdHelper.getCpsLink(url);
+			result = jdHelper.getCpsLink(url,"system");
 			if(result!=null) {
 				Map<String,String> links = new HashMap<String,String>();
 				links.put("wap2", result.getClickURL());
@@ -137,7 +137,7 @@ public class JdItemSync {
 	 * 4，处理完成后发送通知给管理者
      */
     public void execute() throws JobExecutionException {
-    		logger.info("Pinduoduo item sync job start. " + new Date());
+    		logger.info("item sync job start. " + new Date());
     		
     		//1，查询待处理商品记录 返回itemKey、商品ID、商品链接
     		//for doc in my_stuff filter (doc.source == "jd") and (doc.status==null or doc.status.sync==null) limit 30 return {itemKey:doc._key,id:split(doc.link.web,"id=")[1],link:doc.link.web}    		

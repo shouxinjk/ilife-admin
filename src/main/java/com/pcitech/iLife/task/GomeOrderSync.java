@@ -78,6 +78,7 @@ public class GomeOrderSync {
 		doc.setKey(itemKey);//装上我们自己定义的识别ID，避免多个平台间ID冲突
 		doc.setProperties(props);//设置所有原始订单信息
 		doc.getProperties().put("timestamp", new Date());//加一个我们自己的同步时间戳
+		doc.getProperties().put("source", "gome");//标记来源
 		
 		//写入 arangodb
 		arangoClient.insert("order", doc);    
@@ -88,7 +89,7 @@ public class GomeOrderSync {
 		order.setId(itemKey);//与NoSQL保持一致
 		order.setPlatform("gome");
 		order.setOrderNo(item.getString("order_id"));
-//		order.setTraceCode(item.getJSONObject("orderStatus").getString("traceId"));//糟糕：国美没有跟踪码，无法识别对应到达人
+		order.setTraceCode(item.getString("_feedback"));//通过feedback参数获取，注意有下划线前缀
 		order.setAmount(item.getDoubleValue("product_price"));
 		order.setCommissionEstimate(item.getDoubleValue("commission"));
 //		order.setCommissionSettlement(Long.parseLong(item.getJSONObject("amountInfo").getString("settleAmount"))/100);//接口里没有结算金额
@@ -101,7 +102,8 @@ public class GomeOrderSync {
 			logger.error("parse order time error.",e);
 		}
 		order.setOrderTime(orderTime);
-		Broker broker = brokerService.get("system");//注意：不能跟踪达人，直接使用平台默认账户
+		Broker broker = brokerService.get(item.getString("_feedback"));
+		if(broker==null)broker=brokerService.get("system");//如果找不到，则直接使用平台默认账户
 		order.setBroker(broker);
 		order.setNotification("pending");//不用管通知状态，后续通知任务会自动更新
 		order.setStatus("pending");

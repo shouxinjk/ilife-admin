@@ -91,7 +91,7 @@ public class JdItemsSearcher {
     Map<String,Long> totalMap = null;
     Map<String,String> poolNameMap = null;
     
-    String brokerId = "default";//默认设置为default
+    String brokerId = "system";//默认设置为default
     
     DecimalFormat df = new DecimalFormat("#.00");//double类型直接截断，保留小数点后两位，不四舍五入
 	NumberFormat nf = null;

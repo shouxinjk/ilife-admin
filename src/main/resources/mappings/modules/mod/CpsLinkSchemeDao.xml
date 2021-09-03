@@ -33,7 +33,10 @@
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
 		<if test="platform != null and platform != ''">
 			AND a.platform = #{platform}
-		</if>		
+		</if>	
+		<if test="category != null and category != ''">
+			AND a.category = #{category}
+		</if>				
 		LIMIT 1
 	</select>
 	

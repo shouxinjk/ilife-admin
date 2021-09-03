@@ -55,7 +55,7 @@ public class CpsDataExchangeController extends BaseController {
     String username = Global.getConfig("arangodb.username");
     String password = Global.getConfig("arangodb.password");
     String database = Global.getConfig("arangodb.database");
-    String brokerId = "default";
+    String brokerId = "system";
     // 记录处理条数
     int totalAmount = 0;
     int processedAmount = 0;

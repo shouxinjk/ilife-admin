@@ -105,7 +105,7 @@ public class KaolaItemSync {
 			Matcher m=p.matcher(url); 
 			while(m.find()) { //仅处理第一个即可
 			    String skuId = m.group(); 
-			    GoodsInfoResponse goods = kaolaHelper.getItemDetail("default", skuId);
+			    GoodsInfoResponse goods = kaolaHelper.getItemDetail("system", skuId);//默认使用系统达人
 				if(goods != null && goods.getData()!=null && goods.getData().size()>0) {
 					GoodInfo good = goods.getData().get(0);
 					
@@ -189,7 +189,7 @@ public class KaolaItemSync {
 	 * 4，处理完成后发送通知给管理者
      */
     public void execute() throws JobExecutionException {
-    		logger.info("Pinduoduo item sync job start. " + new Date());
+    		logger.info("item sync job start. " + new Date());
     		
     		//1，查询待处理商品记录 返回itemKey、商品ID、商品链接
     		//for doc in my_stuff filter (doc.source == "jd") and (doc.status==null or doc.status.sync==null) limit 30 return {itemKey:doc._key,id:split(doc.link.web,"id=")[1],link:doc.link.web}    		

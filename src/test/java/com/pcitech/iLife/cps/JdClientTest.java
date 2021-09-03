@@ -102,7 +102,7 @@ public class JdClientTest {
 		};
 		try {
 			for(String url:urls) {
-				PromotionCodeResp resp = jdHelper.getCpsLink(url);
+				PromotionCodeResp resp = jdHelper.getCpsLink(url,"system");
 				System.err.println(url+"-->"+(resp==null?"没有导购链接":resp.getClickURL()));
 			}
 		} catch (Exception e) {

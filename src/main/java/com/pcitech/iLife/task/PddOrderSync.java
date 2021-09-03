@@ -73,6 +73,7 @@ public class PddOrderSync {
 		doc.setKey(itemKey);//装上我们自己定义的识别ID，避免多个平台间ID冲突
 		doc.setProperties(props);//设置所有原始订单信息
 		doc.getProperties().put("timestamp", new Date());//加一个我们自己的同步时间戳
+		doc.getProperties().put("source", "pdd");//标记来源
 		
 		//写入 arangodb
 		arangoClient.insert("order", doc);    

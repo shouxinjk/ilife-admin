@@ -3,34 +3,45 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.jd.open.api.sdk.domain.kplunion.promotioncommon.PromotionService.response.get.PromotionCodeResp;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
+import com.pcitech.iLife.cps.CpsLinkHelper;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.entity.CpsLinkScheme;
 import com.pcitech.iLife.modules.mod.entity.TraceCode;
 import com.pcitech.iLife.modules.mod.service.CpsLinkSchemeService;
 import com.pcitech.iLife.modules.mod.service.TraceCodeService;
+import com.pdd.pop.sdk.common.util.JsonUtil;
+import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -43,12 +54,15 @@ import groovy.lang.GroovyShell;
 @Controller
 @RequestMapping(value = "${adminPath}/mod/cpsLinkScheme")
 public class CpsLinkSchemeController extends BaseController {
-
+	private static Logger logger = LoggerFactory.getLogger(CpsLinkSchemeController.class);
 	@Autowired
 	private CpsLinkSchemeService cpsLinkSchemeService;
 	@Autowired
 	private TraceCodeService traceCodeService;
 	
+	@Autowired
+	CpsLinkHelper cpsLinkHelper;
+    
 	@ModelAttribute
 	public CpsLinkScheme get(@RequestParam(required=false) String id) {
 		CpsLinkScheme entity = null;
@@ -118,64 +132,6 @@ public class CpsLinkSchemeController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "rest/cpslink", method = RequestMethod.GET)
 	public Map<String, Object> getCpsLink(@RequestParam String brokerId,@RequestParam String source, @RequestParam String url, @RequestParam String category,HttpServletRequest request, HttpServletResponse response, Model model) {
-		Map<String, Object> map = Maps.newHashMap();
-		
-		//根据source查询是否存在CPS链接规则
-		CpsLinkScheme query = new CpsLinkScheme();
-		query.setCategory(category);
-		query.setPlatform(source);
-		CpsLinkScheme scheme = cpsLinkSchemeService.getByQuery(query);
-		if(scheme == null) {//如果不存在链接规则，则直接返回
-			map.put("status", false);//默认认为直接采用原始
-			map.put("description", "no cps scheme");
-			return map;
-		}else {//查询broker推广位并根据脚本计算得到链接
-			//根据brokerId及source查询推广位
-			Broker broker = new Broker();
-			broker.setId(brokerId);
-			
-			TraceCode traceCode = new TraceCode();
-			traceCode.setBroker(broker);
-			traceCode.setPlatform(source);
-			traceCode = traceCodeService.getByBrokerAndPlatform(traceCode);
-			if(traceCode==null) {//没有该达人的推广位，则尝试查询system达人的推广位
-				traceCode = new TraceCode();
-				traceCode.setPlatform(source);
-				broker.setId("system");
-				traceCode.setBroker(broker);
-				traceCode = traceCodeService.getByBrokerAndPlatform(traceCode);
-				if(traceCode == null) {//如果连system都没有推广位，那就完蛋了，直接返回false显示原始链接
-					map.put("status", false);
-					map.put("description", "no system trace code.");
-					return map;
-				}else {//用system达人的推广位计算链接
-					map.put("status", true);
-					map.put("broker", "system");
-					map.put("description", "use system trace code.");
-				}
-			}else {//有则使用对应达人的推广位计算链接
-				map.put("status", true);
-				map.put("broker", brokerId);
-				map.put("description", "use broker specified trace code.");
-			}
-			
-			//获取脚本进行计算，样例如下：
-			//注意：脚本中字符串操作需要用单引号，双引号表示模板消息，会出现解析错误
-			//return url+'?TypeID=2&AllianceID='+traceCode+'&sid=1611278&ouid=&app=0101X00&'
-			Binding binding = new Binding();
-			binding.setVariable("source",source);
-			binding.setVariable("category",category);
-			binding.setVariable("url",url);
-			binding.setVariable("traceCode",traceCode.getCode());
-			try {
-		        GroovyShell shell = new GroovyShell(binding);
-		        Object value = shell.evaluate(scheme.getScript());//计算得到目标url
-		        map.put("link", value.toString());
-			}catch(Exception ex) {//如果计算发生错误也使用默认链接
-				map.put("status", false);
-				map.put("description", ex.getMessage());
-			}
-	        return map;
-		}
+		return cpsLinkHelper.getCpsLink(brokerId, source, url, category, true);//需要同时生成SDK调用链接，包括pdd、jd、suning、kaola
 	}
 }

@@ -99,10 +99,11 @@ public class JdHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public PromotionCodeResp getCpsLink(String url/*,String pid */) throws Exception {
+	public PromotionCodeResp getCpsLink(String url/*,String pid */,String ext1) throws Exception {
 		UnionOpenPromotionCommonGetRequest request=new UnionOpenPromotionCommonGetRequest();
 		PromotionCodeReq promotionCodeReq=new PromotionCodeReq();
 		promotionCodeReq.setMaterialId(url);
+		promotionCodeReq.setExt1(ext1);//设置达人推广跟踪码
 		//promotionCodeReq.setUnionId(Long.parseLong(Global.getConfig("jd.unionId")));
 		promotionCodeReq.setSiteId(Global.getConfig("jd.appId"));
 		//promotionCodeReq.setPid(pid);//注意：不能传递PID，PID仅用于推广联盟，需要标记下级推客时使用

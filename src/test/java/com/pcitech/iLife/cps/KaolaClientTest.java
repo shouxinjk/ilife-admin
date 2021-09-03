@@ -115,7 +115,7 @@ public class KaolaClientTest {
 			System.out.println(JsonUtil.toJson(resp));
 			String skuIds = StringUtils.join(resp.getData(),",");
 			//查询对应的商品详情
-			GoodsInfoResponse goods = kaolaHelper.getItemDetail("default", skuIds);
+			GoodsInfoResponse goods = kaolaHelper.getItemDetail("system", skuIds);
 			System.out.println(JsonUtil.toJson(goods));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -135,7 +135,7 @@ public class KaolaClientTest {
 			System.out.println(JsonUtil.toJson(resp));
 			String skuIds = StringUtils.join(resp.getData().getGoodsIdList(),",");
 			//查询对应的商品详情
-			GoodsInfoResponse goods = kaolaHelper.getItemDetail("default", skuIds);
+			GoodsInfoResponse goods = kaolaHelper.getItemDetail("system", skuIds);
 			System.out.println(JsonUtil.toJson(goods));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -145,7 +145,7 @@ public class KaolaClientTest {
 	@Test
 	public void getItemDetail() {
 		System.out.println("now start query item details ... ");
-		String brokerId = "default";
+		String brokerId = "system";
 		String goodsIds = "8248852,1488637,5680881";
 		GoodsInfoResponse goodsInfoResponse = kaolaHelper.getItemDetail(brokerId, goodsIds);
 		try {
@@ -183,7 +183,7 @@ public class KaolaClientTest {
 		links.add("https://cps.kaola.com/cps/zhuankeLogin?unionId=zhuanke_701412896&tc1=default&showWapBanner=0&targetUrl=https%3A%2F%2Fm-goods.kaola.com%2Fproduct%2F8248852.html%3F__da_dad3e203_5c4e7c4025b92c00");
 		links.add("http://lu.kaola.com/1OF4Ga");
 		links.add("https://goods.kaola.com/product/6241234.html");
-		ShareLinkResponse shareLinkResponse = kaolaHelper.convertLinks("default", links);
+		ShareLinkResponse shareLinkResponse = kaolaHelper.convertLinks("system", links);
 		try {
 			System.out.println(JsonUtil.toJson(shareLinkResponse));
 		} catch (IOException e) {

@@ -67,7 +67,7 @@ public class PddItemSync {
     int processedAmount = 0;
     
     //默认设置brokerId
-    String brokerId = "default";
+    String brokerId = "system";
     
     //准备本地goodSign列表
     Map<String,List<String>> goodsSignListMap = null;//注意：需要根据searchId分别准备SignList
@@ -192,7 +192,7 @@ public class PddItemSync {
             for(Map.Entry<String, List<String>> entry:goodsSignListMap.entrySet()) {
             		String searchId = entry.getKey();
             		List<String> goodsSigns = entry.getValue();
-            		String brokerId = "default";
+            		String brokerId = "system";
             		try {
             			logger.debug("generate cps links by searchId.[searchId]"+searchId,goodsSigns);
             			PddDdkGoodsPromotionUrlGenerateResponse response = pddHelper.generateCpsLinksByGoodsSign(brokerId,"-".equalsIgnoreCase(searchId)?null:searchId,goodsSigns);

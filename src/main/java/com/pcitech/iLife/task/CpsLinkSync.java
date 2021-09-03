@@ -20,6 +20,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.google.gson.Gson;
 import com.pcitech.iLife.common.config.Global;
+import com.pcitech.iLife.cps.CpsLinkHelper;
 import com.pcitech.iLife.cps.PddHelper;
 import com.pcitech.iLife.modules.mod.entity.Clearing;
 import com.pcitech.iLife.modules.mod.entity.Order;
@@ -81,10 +82,11 @@ public class CpsLinkSync {
     String username = Global.getConfig("arangodb.username");
     String password = Global.getConfig("arangodb.password");
     String database = Global.getConfig("arangodb.database");
-    
+	@Autowired
+	CpsLinkHelper cpsLinkHelper;
     //待处理的来源列表
-    String[] source = {"dhc","tongcheng","dangdang","kaola","gome","amazon","ctrip"};
-    String[] sourceName = {"DHC","同程","当当","考拉","国美","亚马逊","携程"};
+    String[] source = {"dhc","tongcheng","dangdang"/*,"kaola"*/,"gome","amazon","ctrip"};
+    String[] sourceName = {"DHC","同程","当当"/*,"考拉"*/,"国美","亚马逊","携程"};
     int numberPerTask = 1000;//每次任务同步处理条数： 每分钟100条
     
     // 记录处理条数
@@ -111,12 +113,26 @@ public class CpsLinkSync {
 		timestamp.put("sync", new Date());//CPS链接生成时间
 		doc.getProperties().put("timestamp", timestamp);
 		
+		//准备接收链接
+		Map<String,String> links = new HashMap<String,String>();
+		String  itemSource = item.getProperties().get("source").toString();
+		String url = item.getProperties().get("web").toString();
+		Map<String, Object> result = cpsLinkHelper.getCpsLink("system", itemSource, url, null, false);//通过SDK调用的URL不包括在内，如：pdd、jd、suning、kaola
+		if(Boolean.parseBoolean(result.get("status").toString())){//获得CPS链接
+			links.put("web2", result.get("link").toString());
+			links.put("wap2", result.get("link").toString()//移动端链接采用完全相同的方法得到
+					.replace(item.getProperties().get("web").toString(), item.getProperties().get("wap").toString()));
+			doc.getProperties().put("link", links);
+		}else {
+			logger.error("failed convert cps link.[source]"+item.getProperties().get("source")+" [url]"+item.getProperties().get("web"));
+		}
 		//TODO：注意：管理端提供了CPS链接模板管理功能，但此处直接hard code了，导致CPS链接模板失效。需要调整为根据CPS链接模板生成
 		//根据source类型分别处理链接
-		String  itemSource = item.getProperties().get("source").toString();
+		/*
+		
 		if("dhc".equalsIgnoreCase(itemSource)) {
 			String prefix = "?ad_cps=70130084&";
-			Map<String,String> links = new HashMap<String,String>();
+			
 			if(item.getProperties().get("web").toString().indexOf("?")>0)
 				links.put("web2", item.getProperties().get("web").toString().replace("?", prefix));
 			else
@@ -128,7 +144,6 @@ public class CpsLinkSync {
 				links.put("wap2", item.getProperties().get("wap")+ prefix);
 			
 			doc.getProperties().put("link", links);
-			processedMap.put(itemSource, processedMap.get(itemSource)+1);
 		}else if("tongcheng".equalsIgnoreCase(itemSource)) {
 			String prefix = "?refid=29240070&";
 			Map<String,String> links = new HashMap<String,String>();
@@ -143,47 +158,41 @@ public class CpsLinkSync {
 				links.put("wap2", item.getProperties().get("wap")+ prefix);
 			
 			doc.getProperties().put("link", links);
-			processedMap.put(itemSource, processedMap.get(itemSource)+1);
 		}else if("dangdang".equalsIgnoreCase(itemSource)) {
 			String prefix = "http://union.dangdang.com/transfer.php?from=P-316079&ad_type=10&sys_id=1&backurl=";
 			Map<String,String> links = new HashMap<String,String>();
 			links.put("web2", prefix+item.getProperties().get("web"));
 			links.put("wap2", prefix+item.getProperties().get("wap"));
 			doc.getProperties().put("link", links);
-			processedMap.put(itemSource, processedMap.get(itemSource)+1);
-		}else if("kaola".equalsIgnoreCase(itemSource)) {
+		}else if("kaola".equalsIgnoreCase(itemSource)) {//考拉链接已经在sync过程中进行处理：此处需要去掉
 			String prefix = "https://cps.kaola.com/cps/zhuankeLogin?unionId=zhuanke_701412896&tc1=system&tc2=system&showWapBanner=0&targetUrl=";
 			Map<String,String> links = new HashMap<String,String>();
 			links.put("web2", prefix+item.getProperties().get("web"));
 			links.put("wap2", prefix+item.getProperties().get("wap"));
 			doc.getProperties().put("link", links);
-			processedMap.put(itemSource, processedMap.get(itemSource)+1);
 		}else if("gome".equalsIgnoreCase(itemSource)) {
 			String prefix = "?cmpid=cps_2552_25169_default&sid=2552&wid=25169&feedback=default";
 			Map<String,String> links = new HashMap<String,String>();
 			links.put("web2", item.getProperties().get("web")+prefix);
 			links.put("wap2", item.getProperties().get("wap")+prefix);
 			doc.getProperties().put("link", links);
-			processedMap.put(itemSource, processedMap.get(itemSource)+1);
 		}else if("amazon".equalsIgnoreCase(itemSource)) {
 			String prefix = "?tag=ilife-23";
 			Map<String,String> links = new HashMap<String,String>();
 			links.put("web2", item.getProperties().get("web")+prefix);
 			links.put("wap2", item.getProperties().get("wap")+prefix);
 			doc.getProperties().put("link", links);
-			processedMap.put(itemSource, processedMap.get(itemSource)+1);
 		}else if("ctrip".equalsIgnoreCase(itemSource)) {
 			String prefix = "?TypeID=2&AllianceID=8045&sid=1611278&ouid=&app=0101X00&";
 			Map<String,String> links = new HashMap<String,String>();
 			links.put("web2", item.getProperties().get("web")+prefix);
 			links.put("wap2", item.getProperties().get("wap")+prefix);
 			doc.getProperties().put("link", links);
-			processedMap.put(itemSource, processedMap.get(itemSource)+1);
 		}else {
 			logger.error("Unknown source type.[source]"+item.getProperties().get("source"));
-			processedMap.put(itemSource, processedMap.get(itemSource)==null?1:processedMap.get(itemSource)+1);
 		}
-		
+		//**/
+		processedMap.put(itemSource, processedMap.get(itemSource)==null?1:processedMap.get(itemSource)+1);
 		//更新doc
 		arangoClient.update("my_stuff", itemKey, doc);    	
 		processedAmount++;

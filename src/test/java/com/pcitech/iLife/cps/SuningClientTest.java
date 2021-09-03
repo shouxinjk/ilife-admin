@@ -80,7 +80,7 @@ public class SuningClientTest {
 	
 	@Test
 	public void getDetail() {
-		String brokerId = "default";//默认都认为是平台自己生成的
+		String brokerId = "system";//默认都认为是平台自己生成的
 		String url = "https://product.suning.com/0000000000/12208306208.html";
 		Pattern p=Pattern.compile("(\\d+)/(\\d+)"); 
 		Matcher m=p.matcher(url); 
@@ -98,7 +98,7 @@ public class SuningClientTest {
 	
 	@Test
 	public void generateCpsLink() {
-		String brokerId = "default";
+		String brokerId = "system";
 		String url = "https://product.suning.com/0000000000/12208306208.html";
 		try {
 			JSONObject result = suningHelper.generateCpsLink(brokerId,url);
@@ -126,7 +126,7 @@ public class SuningClientTest {
 	
 	@Test
 	public void convertLinks() {
-		String brokerId = "default";
+		String brokerId = "system";
 		String urls = "https://product.suning.com/0000000000/12208306208.html,https://product.suning.com/0000000000/000000011908462305.html,https://product.suning.com/0000000000/12208306208.html,https://product.suning.com/0000000000/000000011908462305.html";
 		try {
 			String[] links = suningHelper.convertLinks(brokerId, urls);

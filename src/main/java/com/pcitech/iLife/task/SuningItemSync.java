@@ -84,15 +84,15 @@ public class SuningItemSync {
 		
 		String  webUrl = item.getProperties().get("web").toString();
 		String  wapUrl = item.getProperties().get("wap").toString();
-		String brokerId = "default";//默认都认为是平台自己生成的
+		String brokerId = "system";//默认都认为是平台自己生成的
 		
 		try {
 			//更新CPS链接：直接覆盖
 			Map<String,String> links = new HashMap<String,String>();
-			JSONObject result = suningHelper.generateCpsLink("default", webUrl);
+			JSONObject result = suningHelper.generateCpsLink("system", webUrl);
 			if(result != null) //部分商品可能获取失败：会导致链接不会被更新
 				links.put("web2", URLDecoder.decode(result.getString("extendUrl"))+"&sub_user="+brokerId);
-			result = suningHelper.generateCpsLink("default", wapUrl);
+			result = suningHelper.generateCpsLink("system", wapUrl);
 			if(result != null) //部分商品可能获取失败：会导致链接不会被更新
 				links.put("wap2", URLDecoder.decode(result.getString("extendUrl"))+"&sub_user="+brokerId);
 			doc.getProperties().put("link", links);
