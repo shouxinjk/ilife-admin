@@ -88,7 +88,7 @@ public class KaolaItemSync {
 		//状态更新
 		Map<String,Object> status = new HashMap<String,Object>();
 		status.put("crawl", "ready");//更新商品详情
-		status.put("sync", "pending");//重要：CPS链接是通过CPS任务完成，本任务仅更新商品详情，构建CPS链接
+		status.put("sync", "ready");//已经包含有CPS连接，直接使用
 		status.put("index", "pending");//等待重新索引
 		doc.getProperties().put("status", status);
 		//时间戳更新

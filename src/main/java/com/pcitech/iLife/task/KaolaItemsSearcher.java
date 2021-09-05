@@ -170,13 +170,23 @@ public class KaolaItemsSearcher {
 		profit.put("type", "2-party");
 		doc.getProperties().put("profit", profit);
 		
-		//设置基本信息更新标志为true
-		Map<String,Object> syncStatus = new HashMap<String,Object>();
-		syncStatus.put("sync", true);
-		Map<String,Object> syncTimestamp = new HashMap<String,Object>();
-		syncTimestamp.put("sync", new Date());	
-		doc.getProperties().put("status", syncStatus);
-		doc.getProperties().put("timestamp", syncTimestamp);
+		//设置状态。注意，需要设置sync=pending 等待计算CPS链接
+		//状态更新
+		Map<String,Object> status = new HashMap<String,Object>();
+		status.put("crawl", "ready");
+		status.put("sync", "ready");//CPS链接已经包含，直接使用
+		status.put("classify", "pending");
+		status.put("satisify", "pending");//这个要在classify之后才执行
+		status.put("measure", "pending");
+		status.put("evaluate", "pending");
+		status.put("monitize", "pending");//等待计算3-party分润
+		status.put("poetize", "pending");//实际上这个要在classify之后才执行
+		status.put("index", "pending");//先入库一次，能够立即看到：注意这时候没有CPS，不能推广
+		doc.getProperties().put("status", status);
+		//时间戳更新
+		Map<String,Object> timestamp = new HashMap<String,Object>();
+		timestamp.put("crawl", new Date());//入库时间
+		doc.getProperties().put("timestamp", timestamp);
 
 		//更新doc
 		logger.debug("try to upsert kaola item.[itemKey]"+itemKey,JSON.toString(doc));
