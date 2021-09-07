@@ -14,6 +14,7 @@
 		a.expr_duration AS "exprDuration",
 		a.trigger_direction AS "triggerDirection",
 		a.trigger_type AS "triggerType",
+		a.trigger_actions AS "triggerActions",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -92,6 +93,7 @@
 			expr_duration,
 			trigger_direction,
 			trigger_type,
+			trigger_actions,
 			create_by,
 			create_date,
 			update_by,
@@ -108,6 +110,7 @@
 			#{exprDuration},
 			#{triggerDirection},
 			#{triggerType},
+			#{triggerActions},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -127,6 +130,7 @@
 			expr_duration = #{exprDuration},
 			trigger_direction=#{triggerDirection},
 			trigger_type=#{triggerType},
+			trigger_actions=#{triggerActions},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}

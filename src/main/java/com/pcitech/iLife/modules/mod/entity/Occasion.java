@@ -23,6 +23,7 @@ public class Occasion extends DataEntity<Occasion> {
 	private String exprDuration;		// expr_duration
 	private String triggerDirection; //内在/外在
 	private String triggerType;//主动被动
+	private String triggerActions;//事件列表JSON
 	private String expression;		// expression
 	
 	public Occasion() {
@@ -100,6 +101,14 @@ public class Occasion extends DataEntity<Occasion> {
 
 	public void setTriggerType(String triggerType) {
 		this.triggerType = triggerType;
+	}
+
+	public String getTriggerActions() {
+		return triggerActions;
+	}
+
+	public void setTriggerActions(String triggerActions) {
+		this.triggerActions = triggerActions;
 	}
 
 	public String getExpression() {

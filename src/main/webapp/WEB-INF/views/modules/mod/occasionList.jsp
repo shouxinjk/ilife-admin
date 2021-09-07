@@ -36,15 +36,15 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>名称</th>
 				<th>类别</th>
-				<th>主动/被动</th>
+				<th>名称</th>
 				<th>内在/外在</th>
-				<th>匹配用户</th>
-				<th>匹配商品类别</th>
-				<th>触发条件</th>
-				<th>触发条件量化</th>
-				<th>持续时间</th>
+				<th>主动/被动</th>
+				<!--th>匹配用户</th>
+				<th>匹配商品类别</th-->
+				<th>期望效果</th>
+				<th>开始时间</th>
+				<th>结束时间</th>
 				<shiro:hasPermission name="mod:occasion:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -58,17 +58,17 @@
 					${occasion.occasionCategory.name}
 				</td>
 				<td>
-					${fns:getDictLabel(occasion.triggerDirection, 'insideOrOutside', '无')}
+					${fns:getDictLabel(occasion.triggerDirection, 'insideOrOutside', '-')}
 				</td>
 				<td>
-					${fns:getDictLabel(occasion.triggerType, 'activeOrPassive', '无')}
+					${fns:getDictLabel(occasion.triggerType, 'activeOrPassive', '-')}
 				</td>
-				<td>
+				<!--td>
 					${occasion.exprUser}
 				</td>
 				<td>
 					${occasion.exprItem}
-				</td>
+				</td-->
 				<td>
 					${occasion.exprTrigger}
 				</td>
