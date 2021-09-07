@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -28,6 +30,7 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.MotivationCategory;
+import com.pcitech.iLife.modules.mod.entity.Occasion;
 import com.pcitech.iLife.modules.mod.entity.Phase;
 import com.pcitech.iLife.modules.mod.entity.UserCategory;
 import com.pcitech.iLife.modules.mod.entity.UserMeasure;
@@ -64,6 +67,20 @@ public class MotivationController extends BaseController {
 			entity = new Motivation();
 		}
 		return entity;
+	}
+	
+	/**
+	 * 根据occasionId获取所有关联的动机
+	 * @param occasionId
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/byOccasion/{occasionId}", method = RequestMethod.GET)
+	public List<Motivation> getNees(@PathVariable String occasionId,HttpServletRequest request, HttpServletResponse response, Model model) {
+		return motivationService.findByOccasionId(occasionId);
 	}
 	
 	@RequiresPermissions("mod:motivation:view")

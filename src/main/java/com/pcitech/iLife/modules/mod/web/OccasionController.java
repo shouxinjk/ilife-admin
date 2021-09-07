@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -26,6 +28,7 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.Occasion;
 import com.pcitech.iLife.modules.mod.entity.OccasionCategory;
@@ -59,6 +62,12 @@ public class OccasionController extends BaseController {
 			entity = new Occasion();
 		}
 		return entity;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/{occasionId}", method = RequestMethod.GET)
+	public Occasion getOccasionById(@PathVariable String occasionId,HttpServletRequest request, HttpServletResponse response, Model model) {
+		return occasionService.get(occasionId);
 	}
 	
 	@RequiresPermissions("mod:occasion:view")

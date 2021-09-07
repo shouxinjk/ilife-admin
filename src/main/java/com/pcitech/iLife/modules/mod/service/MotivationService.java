@@ -32,6 +32,10 @@ public class MotivationService extends CrudService<MotivationDao, Motivation> {
 	@Autowired
 	private PhaseDao phaseDao;
 	
+	public List<Motivation> findByOccasionId(String id){
+		return dao.findByOccasionId(id);
+	}
+	
 	public Motivation get(String id) {
 		return super.get(id);
 	}

@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.Motivation;
@@ -16,4 +18,7 @@ import com.pcitech.iLife.modules.mod.entity.Motivation;
 public interface MotivationDao extends CrudDao<Motivation> {
 	
 	public String getMotivationNames(String motivationIds);
+	
+	public List<Motivation> findByOccasionId(String id);
+	
 }
