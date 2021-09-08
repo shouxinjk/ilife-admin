@@ -8,7 +8,7 @@
 		a.category_id AS "occasionCategory.id",
 		oc.name AS "occasionCategory.name",
 		a.expr_user AS "exprUser",
-		(SELECT group_concat(name) FROM mod_item_category WHERE occasion_ids like concat('%',a.id,'%')) AS "exprItem",
+		"-" AS "exprItem",
 		a.expr_trigger AS "exprTrigger",
 		a.expression AS "expression",
 		a.expr_duration AS "exprDuration",
@@ -22,6 +22,27 @@
 		a.update_date AS "updateDate",
 		a.del_flag AS "delFlag"
 	</sql>
+	
+	<sql id="occasionColumns-obselete">
+		a.id AS "id",
+		a.name AS "name",
+		a.category_id AS "occasionCategory.id",
+		oc.name AS "occasionCategory.name",
+		a.expr_user AS "exprUser",
+		(SELECT group_concat(name) FROM mod_item_category WHERE occasion_ids like concat('%',a.id,'%')) AS "exprItem",
+		a.expr_trigger AS "exprTrigger",
+		a.expression AS "expression",
+		a.expr_duration AS "exprDuration",
+		a.trigger_direction AS "triggerDirection",
+		a.trigger_type AS "triggerType",
+		a.trigger_actions AS "triggerActions",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>	
 	
 	<sql id="occasionJoins">
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
