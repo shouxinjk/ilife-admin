@@ -54,12 +54,12 @@
 			<div>触发条件（开始时间）：</div>
 			<form:input path="expression" htmlEscape="false" maxlength="100" class="input-xlarge "/><br/><br/>
 			<div>持续时间（截止时间）：</div>
-			<form:input path="exprTrigger" htmlEscape="false" maxlength="100" class="input-xlarge "/><br/><br/>
-			来源类别：<form:radiobuttons path="triggerDirection" items="${fns:getDictList('insideOrOutside')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/><br/><br/>
-			触发类别：<form:radiobuttons path="triggerType" items="${fns:getDictList('activeOrPassive')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
+			<form:input path="exprDuration" htmlEscape="false" maxlength="100" class="input-xlarge "/><br/><br/>
+			来源类别：<form:radiobuttons path="triggerDirection" items="${fns:getDictList('insideOrOutside')}" value="${occasion.triggerDirection}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/><br/><br/>
+			触发类别：<form:radiobuttons path="triggerType" items="${fns:getDictList('activeOrPassive')}" value="${occasion.triggerType}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
 		</td>
 		<td valign="top">
-			<div>事件表达式（参见模板管理中【运营事件通知】）：</div>
+			<div>事件表达式（支持多个事件定义，，参见模板管理中【运营事件通知】）：</div>
 			<form:textarea path="triggerActions" htmlEscape="false" rows="20" style="width:95%"/>	
 		</td>
 		</tr>
