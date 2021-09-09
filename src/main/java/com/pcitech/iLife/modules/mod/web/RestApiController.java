@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -32,14 +36,20 @@ import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
+import com.pcitech.iLife.modules.mod.entity.Occasion;
 import com.pcitech.iLife.modules.mod.entity.ProfitShareScheme;
 import com.pcitech.iLife.modules.mod.service.BoardItemService;
 import com.pcitech.iLife.modules.mod.service.BoardService;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
+import com.pcitech.iLife.modules.mod.service.MotivationService;
+import com.pcitech.iLife.modules.mod.service.OccasionService;
 import com.pcitech.iLife.modules.ope.entity.Performance;
 import com.pcitech.iLife.modules.ope.service.PerformanceService;
+import com.pcitech.iLife.util.HttpClientHelper;
+
+import me.chanjar.weixin.common.error.WxErrorException;
 
 /**
  * Restful API Controller
@@ -62,6 +72,10 @@ public class RestApiController extends BaseController {
 	private MeasureService measureService;
 	@Autowired
 	private PerformanceService performanceService;
+	@Autowired
+	private OccasionService occasionService;
+	@Autowired
+	private MotivationService motivationService;
 	//获取所有board
 	@ResponseBody
 	@RequestMapping(value = "boards")
@@ -238,6 +252,77 @@ public class RestApiController extends BaseController {
 		performanceService.save(performance);
 		result.put("status",true);
 		result.put("description","performance created successfully");
+		return result;
+	}
+	
+	/**
+	 * 接收occasionId并且执行相应的通知任务，包括公众号推送、企业朋友圈、企业群推送等
+	 * @param occasionId
+	 * @param params
+	 * @return
+	 * @throws WxErrorException
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/trigger/occasion/{occasionId}", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> trigOccasion(@PathVariable String occasionId, @RequestBody Map<String,String> params) throws WxErrorException, IOException {
+		Map<String, Object> result = Maps.newHashMap();
+		result.put("status", false);
+		logger.debug("try to send occasion notification message.[occasionId]"+occasionId);
+		//得到occasion定义
+		Occasion occasion = occasionService.get(occasionId);
+		if(occasion == null) {
+			result.put("msg", "cannot find occasion by id.[id]"+occasionId);
+			return result;
+		}
+		
+		//根据occasion的事件定义逐个处理：使用JSONObject获取对象
+		String actionsStr = occasion.getTriggerActions();
+		JSONArray actions = JSONObject.parseArray(org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(actionsStr));//需要unescape
+		if(actions == null || actions.size()==0) {
+			result.put("msg", "no actions found.[id]"+occasionId);
+			return result;
+		}
+		//逐个处理
+		result.put("totalActions", actions.size());
+		int processedActions = 0;
+		for(int i=0;i<actions.size();i++) {
+			JSONObject action = actions.getJSONObject(i);
+			JSONObject ret = new JSONObject();
+			switch(action.getString("type")){
+			case "notify-cp-company-broker"://企业微信达人群
+			case "notify-cp-broker-customer"://企业微信达人客户群
+			case "notify-cp-broker-moment"://企业微信达人朋友圈
+				HttpClientHelper.getInstance().post(
+						Global.getConfig("wework.templateMessenge")+"/"+action.getString("type"), 
+						action.getJSONObject("content"),null);//由企业微信处理。包括查询条目等
+				result.put("status", true);
+				result.put("msg", "send cp message");
+				processedActions++;
+				break;
+			case "notify-mp-company"://公众号面向所有
+			case "notify-mp-broker"://公众号面向达人
+			case "notify-mp-customer"://公众号面非达人用户
+				HttpClientHelper.getInstance().post(
+						Global.getConfig("wechat.templateMessenge")+"/"+action.getString("type"), 
+						action.getJSONObject("content"),null);//由公众号处理，包括查询条目等
+				result.put("status", true);
+				result.put("msg", "send mp message");
+				processedActions++;
+				break;
+			case "boost-needs"://调整need权重
+				//TODO : 需要匹配用户，并调整其need权重。或者写入分析库，由分析系统完成调整
+				result.put("status", true);
+				result.put("msg", "boost needs weight.");
+				processedActions++;
+				break;
+			default:
+				//do nothing
+				result.put("status", false);
+				result.put("msg", "unkonw action type.");
+			}
+		}
+		result.put("processedActions", processedActions);
 		return result;
 	}
 }
