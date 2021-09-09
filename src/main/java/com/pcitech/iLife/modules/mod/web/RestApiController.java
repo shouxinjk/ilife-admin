@@ -265,10 +265,10 @@ public class RestApiController extends BaseController {
 	 */
 	@RequestMapping(value = "/trigger/occasion/{occasionId}", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> trigOccasion(@PathVariable String occasionId, @RequestBody Map<String,String> params) throws WxErrorException, IOException {
+	public Map<String, Object> trigOccasion(@PathVariable String occasionId, @RequestBody JSONObject json) throws WxErrorException, IOException {
 		Map<String, Object> result = Maps.newHashMap();
 		result.put("status", false);
-		logger.debug("try to send occasion notification message.[occasionId]"+occasionId);
+		logger.debug("try to send occasion notification message.[occasionId]"+occasionId+"[json]"+JSONObject.toJSONString(json));
 		//得到occasion定义
 		Occasion occasion = occasionService.get(occasionId);
 		if(occasion == null) {
@@ -283,8 +283,10 @@ public class RestApiController extends BaseController {
 			result.put("msg", "no actions found.[id]"+occasionId);
 			return result;
 		}
+		logger.debug("got occassion actions.[json]"+JSONObject.toJSONString(json));
 		//逐个处理
 		result.put("totalActions", actions.size());
+		Map<String,Object> actionMap = Maps.newHashMap();
 		int processedActions = 0;
 		for(int i=0;i<actions.size();i++) {
 			JSONObject action = actions.getJSONObject(i);
@@ -299,6 +301,7 @@ public class RestApiController extends BaseController {
 				result.put("status", true);
 				result.put("msg", "send cp message");
 				processedActions++;
+				actionMap.put(action.getString("type"),true);
 				break;
 			case "notify-mp-company"://公众号面向所有
 			case "notify-mp-broker"://公众号面向达人
@@ -309,20 +312,24 @@ public class RestApiController extends BaseController {
 				result.put("status", true);
 				result.put("msg", "send mp message");
 				processedActions++;
+				actionMap.put(action.getString("type"),true);
 				break;
 			case "boost-needs"://调整need权重
 				//TODO : 需要匹配用户，并调整其need权重。或者写入分析库，由分析系统完成调整
 				result.put("status", true);
 				result.put("msg", "boost needs weight.");
 				processedActions++;
+				actionMap.put(action.getString("type"),true);
 				break;
 			default:
 				//do nothing
+				actionMap.put(action.getString("type"),false);
 				result.put("status", false);
 				result.put("msg", "unkonw action type.");
 			}
 		}
 		result.put("processedActions", processedActions);
+		result.put("processedMap", actionMap);
 		return result;
 	}
 }
