@@ -36,8 +36,8 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>类别</th>
 				<th>名称</th>
+				<th>分类</th>
 				<th>内在/外在</th>
 				<th>主动/被动</th>
 				<!--th>匹配用户</th>
