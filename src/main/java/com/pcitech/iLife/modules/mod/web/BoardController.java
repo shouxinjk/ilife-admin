@@ -29,9 +29,14 @@ import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Board;
+import com.pcitech.iLife.modules.mod.entity.BoardItem;
+import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.entity.Clearing;
 import com.pcitech.iLife.modules.mod.entity.ProfitShareScheme;
+import com.pcitech.iLife.modules.mod.service.BoardItemService;
 import com.pcitech.iLife.modules.mod.service.BoardService;
+import com.pcitech.iLife.modules.mod.service.BrokerService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 内容看板管理Controller
@@ -44,6 +49,11 @@ public class BoardController extends BaseController {
 
 	@Autowired
 	private BoardService boardService;
+	@Autowired
+	private BrokerService brokerService;
+	@Autowired
+	private BoardItemService boardItemService;
+	
 	
 	@ModelAttribute
 	public Board get(@RequestParam(required=false) String id) {
@@ -119,6 +129,7 @@ public class BoardController extends BaseController {
 		return boardService.findByBrokerId(map);
 	}
 	
+	//查询所有board
 	@ResponseBody
 	@RequestMapping(value = "rest/all-boards", method = RequestMethod.GET)
 	public List<Board> getAllBoards(@RequestParam int offset,@RequestParam int size,HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -128,6 +139,7 @@ public class BoardController extends BaseController {
 		return boardService.findAllBoards(map);
 	}
 	
+	//新建board
 	@ResponseBody
 	@RequestMapping(value = "rest/board", method = RequestMethod.POST)
 	public Map<String, Object> createNewBoard(@RequestBody Board board,HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -140,6 +152,7 @@ public class BoardController extends BaseController {
 		return result;
 	}
 	
+	//修改board
 	@ResponseBody
 	@RequestMapping(value = "rest/board/{id}", method = RequestMethod.PUT)
 	public Map<String, Object> modifyBoard(@PathVariable String id,@RequestBody Board board,HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -162,6 +175,7 @@ public class BoardController extends BaseController {
 		return result;
 	}
 	
+	//获取指定board
 	@ResponseBody
 	@RequestMapping(value = "rest/board/{id}", method = RequestMethod.GET)
 	public Map<String, Object> getBoardById(@PathVariable String id,HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -174,6 +188,42 @@ public class BoardController extends BaseController {
 			result.put("status",true);
 			result.put("description","Board found successfully");
 			result.put("data", old);
+		}
+		return result;
+	}
+	
+	//复制board：保持内容完全一致，只修改broker信息
+	@ResponseBody
+	@RequestMapping(value = "rest/board/clone/{id}/{brokerId}", method = RequestMethod.POST)
+	public Map<String, Object> cloneBoardById(@PathVariable String id,@PathVariable String brokerId,HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> result = Maps.newHashMap();
+		Board old = boardService.get(id);
+		Broker broker = brokerService.get(brokerId);
+		if(old == null) {
+			result.put("status",false);
+			result.put("description","Board does not exist. [id]"+id);
+		}else if(broker == null) {
+			result.put("status",false);
+			result.put("description","Broker does not exist. [id]"+brokerId);
+		}else {
+			Board board = old;
+			String idstr = Util.md5(id+brokerId);
+			board.setBroker(broker);
+			board.setId(idstr);
+			board.setIsNewRecord(true);//新建board
+			boardService.save(board);
+			board = boardService.get(idstr);
+			//查询boardItem并建立到新的board下
+			List<BoardItem> items = boardItemService.findByBoardId(idstr);
+			for(BoardItem item:items) {
+				item.setId(Util.get32UUID());
+				item.setIsNewRecord(true);//新建boarditem
+				item.setBoard(board);
+				boardItemService.save(item);
+			}
+			result.put("status",true);
+			result.put("description","Board cloned successfully");
+			result.put("data", board);
 		}
 		return result;
 	}
