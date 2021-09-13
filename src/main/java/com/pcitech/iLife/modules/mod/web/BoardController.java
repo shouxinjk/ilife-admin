@@ -207,7 +207,8 @@ public class BoardController extends BaseController {
 			result.put("description","Broker does not exist. [id]"+brokerId);
 		}else {
 			Board board = old;
-			String idstr = Util.md5(id+brokerId);
+			//String idstr = Util.md5(id+brokerId);
+			String idstr = Util.get32UUID();//不限制克隆条数，采用随机ID
 			board.setBroker(broker);
 			board.setId(idstr);
 			board.setIsNewRecord(true);//新建board
