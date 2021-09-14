@@ -144,6 +144,10 @@ public class BoardController extends BaseController {
 	@RequestMapping(value = "rest/board", method = RequestMethod.POST)
 	public Map<String, Object> createNewBoard(@RequestBody Board board,HttpServletRequest request, HttpServletResponse response, Model model) {
 		Map<String, Object> result = Maps.newHashMap();
+		if(board.getId()==null || board.getId().trim().length()==0) {//如果没有ID则随机补充ID，并新建
+			board.setId(Util.get32UUID());
+			board.setIsNewRecord(true);
+		}
 		boardService.save(board);
 		result.put("status",true);
 		result.put("description","Board created successfully");
