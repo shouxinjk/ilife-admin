@@ -62,8 +62,9 @@ public class PddClientTest {
 	
 	private List<String> getGoodsSignList(){
 		List<String> goodsSignList = new ArrayList<String>();
-		goodsSignList.add("Y932ms86eklU8LcVwvfZA33k3lQMIJzP_JJhfhOR1G");
-		goodsSignList.add("Y9X2lY1QjM9U8LcVwvfZA-r_Jyi2DPTd_J1AZLvO7B");
+//		goodsSignList.add("Y932ms86eklU8LcVwvfZA33k3lQMIJzP_JJhfhOR1G");
+//		goodsSignList.add("Y9X2lY1QjM9U8LcVwvfZA-r_Jyi2DPTd_J1AZLvO7B");
+		goodsSignList.add("Y9z2mpv0s75U8LcRwfDZiwjpSCbSG3--_JSPiTICPj");
 		return goodsSignList;
 	}
 	
@@ -227,7 +228,7 @@ public class PddClientTest {
 	@Test
 	public void generateCpsLinksByGoodsSign() {
 		System.out.println("now start generate cps links by sign ... ");
-		String brokerId = "alexchew";
+		String brokerId = "o8HmJ1Mx11Me6UxkOybDdOgbSEac";
 		try {
 			PddDdkGoodsPromotionUrlGenerateResponse response = pddHelper.generateCpsLinksByGoodsSign(brokerId,null,getGoodsSignList());
 			System.out.println(JsonUtil.transferToJson(response));

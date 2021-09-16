@@ -27,11 +27,13 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/ope/humanMarkedValue/">数据标注列表</a></li>
-		<li class="active"><a href="${ctx}/ope/humanMarkedValue/form?id=${humanMarkedValue.id}">数据标注<shiro:hasPermission name="ope:humanMarkedValue:edit">${not empty humanMarkedValue.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="ope:humanMarkedValue:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/ope/humanMarkedValue/?treeId=${pid}&treeModule=${pType}">数据标注列表</a></li>
+		<li class="active"><a href="${ctx}/ope/humanMarkedValue/form?id=${humanMarkedValue.id}&pid=${pid}&pType=${pType}">数据标注<shiro:hasPermission name="ope:humanMarkedValue:edit">${not empty humanMarkedValue.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="ope:humanMarkedValue:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="humanMarkedValue" action="${ctx}/ope/humanMarkedValue/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<input type="hidden" id="pid" name="pid" value="${pid}"/>
+		<input type="hidden" id="pType" name="pType" value="${pType}"/>			
 		<sys:message content="${message}"/>		
 		<!--div class="control-group">
 			<label class="control-label">维度：</label>

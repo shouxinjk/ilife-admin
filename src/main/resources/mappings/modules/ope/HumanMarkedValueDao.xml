@@ -42,8 +42,11 @@
 		FROM ope_human_marked_value a
 		<include refid="humanMarkedValueJoins"/>
 		<where>
-			a.del_flag = #{DEL_FLAG_NORMAL}
+			a.del_flag = #{DEL_FLAG_NORMAL} 
 		</where>
+		<if test="measure != null and measure.id != ''">
+			AND a.measure_id = #{measure.id}
+		</if>		
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
