@@ -44,7 +44,7 @@
 		<c:forEach items="${page.list}" var="traceCode">
 			<tr>
 				<td>${traceCode.code}</td>			
-				<td>${traceCode.platform}</td>	
+				<td>${fns:getDictLabel(traceCode.platform, 'platform', '-')}</td>	
 				<td>${traceCode.broker.name}</td>				
 				<td><a href="${ctx}/mod/traceCode/form?id=${traceCode.id}">
 					<fmt:formatDate value="${traceCode.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
