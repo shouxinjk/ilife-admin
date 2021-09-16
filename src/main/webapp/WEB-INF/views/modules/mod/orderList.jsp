@@ -52,7 +52,7 @@
 		<c:forEach items="${page.list}" var="order">
 			<tr>
 				<td><a href="${ctx}/mod/order/form?id=${order.id}">${order.orderNo}</a></td>
-				<td>${order.platform}</td>
+				<td>${fns:getDictLabel(order.platform, 'platform', '-')}</td>
 				<td>${order.traceCode}</td>
 				<td>${order.amount}</td>
 				<td>${order.commissionEstimate}</td>

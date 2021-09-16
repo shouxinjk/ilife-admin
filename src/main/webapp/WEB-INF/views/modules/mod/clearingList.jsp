@@ -57,7 +57,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="clearing">
 			<tr>
-				<td>${clearing.platform}</td>
+				<td>${fns:getDictLabel(clearing.platform, 'platform', '-')}</td>
 				<td>${clearing.order.orderNo}</td>
 				<td>${clearing.amountOrder}</td>
 				<td>${clearing.amountCommission}</td>
