@@ -43,7 +43,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="cpsLinkScheme">
 			<tr>
-				<td>${cpsLinkScheme.platform}</td>
+				<td>${fns:getDictLabel(cpsLinkScheme.platform, 'platform', '-')}</td>
 				<td>${cpsLinkScheme.category}</td>	
 				<td>${cpsLinkScheme.script}</td>		
 				<td>
