@@ -50,7 +50,7 @@
 		<div class="control-group">
 			<label class="control-label">电商平台：</label>
 			<div class="controls">
-				<form:input path="platform" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				<form:select path="platform" items="${fns:getDictList('platform')}" itemLabel="label" itemValue="value" htmlEscape="false" style="width:270px"/>
 			</div>
 		</div>
 		<div class="control-group">

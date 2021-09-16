@@ -43,7 +43,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="creditScheme">
 			<tr>
-				<td>${creditScheme.platform}</td>
+				<td>${fns:getDictLabel(creditScheme.platform, 'platform', '-')}</td>
 				<td>${creditScheme.category}</td>
 				<td>${creditScheme.script}</td>			
 				<td>

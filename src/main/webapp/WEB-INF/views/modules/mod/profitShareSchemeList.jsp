@@ -48,7 +48,7 @@
 			<tr>
 				<td>${profitShareScheme.name}</td>
 				<td>${fns:getDictLabel(profitShareScheme.type, 'shareProfitType', '-')}</td>
-				<td>${profitShareScheme.platform}</td>
+				<td>${fns:getDictLabel(profitShareScheme.platform, 'platform', '-')}</td>
 				<td>${profitShareScheme.category}</td>
 				<td>${fns:getDictLabel(profitShareScheme.status, 'yes_no', '-')}</td>
 				<td>${profitShareScheme.priority}</td>

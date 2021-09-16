@@ -46,7 +46,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="commissionScheme">
 			<tr>
-				<td>${commissionScheme.platform}</td>
+				<td>${fns:getDictLabel(commissionScheme.platform, 'platform', '-')}</td>
 				<td>${commissionScheme.category}</td>
 				<td>${fns:getDictLabel(commissionScheme.type, 'commissionType', '-')}</td>
 				<td>${commissionScheme.amount}</td>
