@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.jd.open.api.sdk.internal.JSON.JSON;
 import com.pcitech.iLife.common.config.Global;
@@ -29,6 +30,7 @@ import com.pcitech.iLife.util.ArangoDbClient;
 import com.pcitech.iLife.util.HttpClientHelper;
 import com.pdd.pop.sdk.common.util.JsonUtil;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse.GoodsPromotionUrlGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse.GoodsPromotionUrlGenerateResponseGoodsPromotionUrlListItem;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse.GoodsDetailResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.GoodsZsUnitGenerateResponse;
@@ -100,8 +102,32 @@ public class PddItemSync {
 		try {
 			//从上一步已经准备好的map里取得链接
 			Map<String,String> links = new HashMap<String,String>();
-			links.put("wap2", cpsLinkMapWap.get(goodsSign));//采用短连接
-			links.put("web2", cpsLinkMapWeb.get(goodsSign));//采用短连接
+			if(cpsLinkMapWap.get(goodsSign)==null) {//重要：部分情况下不能正确生成CPS链接，此处需要进行特殊处理 TODO 当前为临时解决方案，需要了解上一步生成失败原因
+				logger.warn("cannot find cps link from prepared-map. try to generate single one.");
+				//针对当前goodsign单独请求CPS链接
+				List<String> goodSignList = Lists.newArrayList();
+				goodSignList.add(goodsSign);
+				try {
+					PddDdkGoodsPromotionUrlGenerateResponse response = pddHelper.generateCpsLinksByGoodsSign(brokerId,null,goodSignList);
+					GoodsPromotionUrlGenerateResponseGoodsPromotionUrlListItem result = response.getGoodsPromotionUrlGenerateResponse().getGoodsPromotionUrlList().get(0);
+					if(result.getMobileShortUrl()==null) {//如果还是没拿到，那就真的没招了，赶紧再去对接口找原因
+						logger.warn("cannot generate cps link by goodsign. disable this item.");
+						status.put("index", "ready");//因为没有wap2，不需要索引
+						doc.getProperties().put("status", status);
+					}else {
+						logger.debug("generate cps link by goodsign successfully.");
+						links.put("wap2", result.getMobileShortUrl());//采用短连接
+						links.put("web2", result.getShortUrl());
+					}
+				}catch(Exception ex) {
+					logger.error("failed generate cps link by goodsign",ex);
+					status.put("index", "ready");//因为没有wap2，不需要索引
+					doc.getProperties().put("status", status);
+				}
+			}else {
+				links.put("wap2", cpsLinkMapWap.get(goodsSign));//采用短连接
+				links.put("web2", cpsLinkMapWeb.get(goodsSign));//采用短连接
+			}
 			doc.getProperties().put("link", links);
 			logger.debug("get links from local buffered map.[itemKey]"+itemKey+"[goodsSign]"+goodsSign+"[links]"+JsonUtil.transferToJson(links));
 		

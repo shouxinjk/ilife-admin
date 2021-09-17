@@ -64,7 +64,7 @@ public class PddClientTest {
 		List<String> goodsSignList = new ArrayList<String>();
 //		goodsSignList.add("Y932ms86eklU8LcVwvfZA33k3lQMIJzP_JJhfhOR1G");
 //		goodsSignList.add("Y9X2lY1QjM9U8LcVwvfZA-r_Jyi2DPTd_J1AZLvO7B");
-		goodsSignList.add("Y9z2mpv0s75U8LcRwfDZiwjpSCbSG3--_JSPiTICPj");
+		goodsSignList.add("Y9X2m5w0QUlU8LcRwfDZiTXpvAkzF4kx_J6zypCKUl");//https://jinbao.pinduoduo.com/goods-detail?s=Y9X2m5w0QUlU8LcRwfDZiTXpvAkzF4kx_J6zypCKUl
 		return goodsSignList;
 	}
 	
@@ -201,7 +201,7 @@ public class PddClientTest {
 		System.out.println("now start generate cps links by url ... ");
 		String brokerId = "alexchew";
 		try {
-			GoodsZsUnitGenerateResponse resp = pddHelper.generateCpsLinksByUrl(brokerId,"https://mobile.yangkeduo.com/duo_coupon_landing.html?goods_id=244713040093&pid=20434335_206807608&goods_sign=Y9H2mpBGVklU8LcTwvfZAiQpGnpkFLvf_JQh6J0oGX4&customParameters=%7B%22uid%22%3A%2220434335%22%2C%22brokerId%22%3A%22default%22%7D&cpsSign=CC_210518_20434335_206807608_42f6b8466c9b619e8171d8f0e054339c&duoduo_type=2");
+			GoodsZsUnitGenerateResponse resp = pddHelper.generateCpsLinksByUrl(brokerId,"https://mobile.yangkeduo.com/duo_coupon_landing.html?goods_id=244713040093&pid=20434335_206807608&goods_sign=Y9X2m5w0QUlU8LcRwfDZiTXpvAkzF4kx_J6zypCKUl&customParameters=%7B%22uid%22%3A%2220434335%22%2C%22brokerId%22%3A%22default%22%7D&cpsSign=CC_210518_20434335_206807608_42f6b8466c9b619e8171d8f0e054339c&duoduo_type=2");
 			System.err.println("Mobile URL::"+resp.getMobileUrl());
 			System.err.println("Web URL::"+resp.getUrl());
 		} catch (Exception e) {
