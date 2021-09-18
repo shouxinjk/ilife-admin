@@ -189,7 +189,7 @@ public class PddItemSync {
         		+ "doc.status.sync==\"pending\" "
         		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态
         		+ "sort doc.searchId desc "//根据searchId排序，便于批量生成CPS link
-        		+ "limit 1000 "//一个批次处理30条
+        		+ "limit 100 "//一个批次处理30条
         		+ "return {itemKey:doc._key,link:doc.link.web,sign:REGEX_REPLACE(doc.link.web,\"http.+s=\",\"\"),searchId:doc.searchId==null?\"-\":doc.searchId}";
         
         try {

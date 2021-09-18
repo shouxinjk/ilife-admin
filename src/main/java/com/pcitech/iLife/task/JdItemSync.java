@@ -146,7 +146,7 @@ public class JdItemSync {
 //        		+ "(doc.status==null or doc.status.sync==null) "
         		+ "doc.status.sync==\"pending\" "
         		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态：仅更新记录状态，index状态需要根据计算结果设置
-        		+ "limit 1000 "//一个批次处理30条
+        		+ "limit 100 "//一个批次处理30条
         		+ "return {itemKey:doc._key,link:doc.link.web}";
         
         try {

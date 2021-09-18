@@ -198,7 +198,7 @@ public class KaolaItemSync {
 //        		+ "(doc.status==null or doc.status.sync==null) "
         		+ "doc.status.sync==\"pending\" "
         		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态
-        		+ "limit 300 "//默认限制单次处理300条
+        		+ "limit 100 "//默认限制单次处理300条
         		+ "return {itemKey:doc._key,link:doc.link.web}";
         
         try {
