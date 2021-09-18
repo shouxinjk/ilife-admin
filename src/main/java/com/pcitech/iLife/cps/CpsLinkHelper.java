@@ -100,6 +100,7 @@ public class CpsLinkHelper {
 				if(traceCode == null) {//如果连system都没有推广位，表示不需要根据推广位计算链接，traceCode参数不会传递到脚本
 					map.put("status", false);
 					map.put("description", "no system trace code. [important] do not use traceCode in cpsScheme!!!");
+					//注意：对于通过SDK生成CPS的情况，即使没有trace code也可以继续生成，因为不会使用trace code参数。此处不终止处理
 					//return map;
 				}else {//用system达人的推广位计算链接
 					map.put("status", true);
@@ -123,6 +124,7 @@ public class CpsLinkHelper {
 					try {
 						PddDdkGoodsPromotionUrlGenerateResponse ret = pddHelper.generateCpsLinksByGoodsSign(brokerId,null,goodsSignList);//直接用brokerId跟踪
 						map.put("link", ret.getGoodsPromotionUrlGenerateResponse().getGoodsPromotionUrlList().get(0).getMobileShortUrl());//返回移动端短连接
+						map.put("status", true);
 					} catch (Exception e) {
 						String msg = "failed generate cps link for borker.[brokerId]"+brokerId+"[url]"+url;
 						logger.error(msg,e);
@@ -134,6 +136,7 @@ public class CpsLinkHelper {
 					try {
 						PromotionCodeResp ret = jdHelper.getCpsLink(url,brokerId);//直接用brokerId作为ext1跟踪参数
 						map.put("link", ret.getClickURL());
+						map.put("status", true);
 					}catch(Exception ex) {
 						String msg = "failed generate cps link for borker.[brokerId]"+brokerId+"[url]"+url;
 						logger.error(msg,ex);
@@ -148,6 +151,7 @@ public class CpsLinkHelper {
 					    String skuId = m.group(); 
 					    GoodsInfoResponse goods = kaolaHelper.getItemDetail(brokerId, skuId);//使用达人ID跟踪
 					    map.put("link", goods.getData().get(0).getLinkInfo().getShareUrl());
+					    map.put("status", true);
 					    return map;
 					}
 					map.put("status", false);
@@ -157,6 +161,7 @@ public class CpsLinkHelper {
 					JSONObject ret = suningHelper.generateCpsLink(brokerId, url);
 					if(ret != null) {
 						map.put("link", URLDecoder.decode(ret.getString("extendUrl"))+"&sub_user="+brokerId);
+						map.put("status", true);
 					}else { //部分商品可能获取失败：会导致链接不会被更新
 						map.put("status", false);
 						map.put("description", "failed generate cps link for borker.[brokerId]"+brokerId+"[url]"+url);

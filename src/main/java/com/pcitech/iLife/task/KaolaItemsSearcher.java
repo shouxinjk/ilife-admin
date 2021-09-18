@@ -289,11 +289,16 @@ public class KaolaItemsSearcher {
 	    			String skuIds = StringUtils.join(subIds,",");
 		    		//查询对应的商品详情
 	    			logger.debug("try to get item detail.[subList]"+k+"[from]"+subListIndexFrom+"[to]"+subListIndexTo+"[skuIds]"+skuIds);
-	    			GoodsInfoResponse goods = kaolaHelper.getItemDetail(brokerId, skuIds);
-				for(GoodInfo item:goods.getData()) {//逐个插入
-					logger.debug(JsonUtil.transferToJson(item));
-					upsertItem(poolName,item);
-				}
+	    			GoodsInfoResponse goods = new GoodsInfoResponse();
+	    			try{
+	    				goods = kaolaHelper.getItemDetail(brokerId, skuIds);
+	    			}catch(Exception ex) {
+	    				logger.error("failed to get item detail.",ex);
+	    			}
+					for(GoodInfo item:goods.getData()) {//逐个插入
+						logger.debug(JsonUtil.transferToJson(item));
+						upsertItem(poolName,item);
+					}
     			}
 	    		
     		}
