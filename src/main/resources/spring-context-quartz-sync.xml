@@ -167,6 +167,24 @@
             </list>
         </property>
     </bean>      
+
+    	<!-- 美团商品自动入库: 每天执行一次：每天凌晨2点执行 -->
+    <bean id="cpsDataSyncTaskMeituanItemSearch" class="com.pcitech.iLife.task.MeituanItemSearcher"></bean>
+    <bean id="cpsDataSyncTaskMeituanItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskMeituanItemSearch"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskMeituanItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskMeituanItemSearchMethod"></property>
+        <property name="cronExpression" value="0 20 10,14 * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskMeituanItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskMeituanItemSearchTrigger"></ref>
+            </list>
+        </property>
+    </bean>  
     
     	<!-- 考拉商品自动入库: 每天执行一次：每天凌晨3点执行 -->
     <bean id="cpsDataSyncTaskKaolaItemRecommend" class="com.pcitech.iLife.task.KaolaRecommendItemsSearcher"></bean>

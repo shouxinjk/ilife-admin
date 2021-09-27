@@ -43,6 +43,24 @@
         </property>
     </bean> 
     
+	<!-- 美团订单同步: 每半小时执行 -->
+    <bean id="cpsOrderSyncTaskMeituan" class="com.pcitech.iLife.task.MeituanOrderSync"></bean>
+    <bean id="cpsOrderSyncTaskMeituanMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsOrderSyncTaskMeituan"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsOrderSyncTaskMeituanTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsOrderSyncTaskMeituanMethod"></property>
+        <property name="cronExpression" value="0 */30 * * * ?"></property>
+    </bean>
+    <bean id="cpsOrderSyncTaskMeituanScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsOrderSyncTaskMeituanTrigger"></ref>
+            </list>
+        </property>
+    </bean>     
+    
 	<!-- 考拉订单同步: 每半小时执行 -->
     <bean id="cpsOrderSyncTaskKaola" class="com.pcitech.iLife.task.KaolaOrderSync"></bean>
     <bean id="cpsOrderSyncTaskKaolaMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
