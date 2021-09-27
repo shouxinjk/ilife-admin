@@ -220,7 +220,7 @@ public class BoardController extends BaseController {
 			boardService.save(board);
 			board = boardService.get(idstr);
 			//查询boardItem并建立到新的board下
-			List<BoardItem> items = boardItemService.findByBoardId(old.getId());
+			List<BoardItem> items = boardItemService.findByBoardId(id);
 			for(BoardItem item:items) {
 				item.setId(Util.get32UUID());
 				item.setIsNewRecord(true);//新建boarditem
