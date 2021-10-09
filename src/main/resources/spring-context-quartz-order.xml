@@ -97,6 +97,24 @@
         </property>
     </bean>     
     
+	<!-- 唯品会订单同步: 每半小时执行 -->
+    <bean id="cpsOrderSyncTaskVip" class="com.pcitech.iLife.task.VipOrderSync"></bean>
+    <bean id="cpsOrderSyncTaskVipMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsOrderSyncTaskVip"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsOrderSyncTaskVipTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsOrderSyncTaskVipMethod"></property>
+        <property name="cronExpression" value="0 */30 * * * ?"></property>
+    </bean>
+    <bean id="cpsOrderSyncTaskVipScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsOrderSyncTaskVipTrigger"></ref>
+            </list>
+        </property>
+    </bean> 
+    
 	<!-- 国美订单同步: 每半小时执行 -->
     <bean id="cpsOrderSyncTaskGome" class="com.pcitech.iLife.task.GomeOrderSync"></bean>
     <bean id="cpsOrderSyncTaskGomeMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

@@ -97,6 +97,24 @@
         </property>
     </bean> 	
 
+	<!-- 唯品会数据同步: 每3分钟执行 -->
+    <bean id="cpsDataSyncTaskVip" class="com.pcitech.iLife.task.VipItemSync"></bean>
+    <bean id="cpsDataSyncTaskVipMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskVip"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskVipTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskVipMethod"></property>
+        <property name="cronExpression" value="0 37 * * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskVipScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskVipTrigger"></ref>
+            </list>
+        </property>
+    </bean> 
+
 	<!-- 考拉数据同步: 每3分钟执行 -->
     <bean id="cpsDataSyncTaskKaola" class="com.pcitech.iLife.task.KaolaItemSync"></bean>
     <bean id="cpsDataSyncTaskKaolaMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -257,6 +275,24 @@
             </list>
         </property>
     </bean>        
+
+    	<!-- 唯品会商品自动入库: 每天更新一次 -->
+    <bean id="cpsDataSyncTaskVipItemSearch" class="com.pcitech.iLife.task.VipItemSearcher"></bean>
+    <bean id="cpsDataSyncTaskVipItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskVipItemSearch"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskVipItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskVipItemSearchMethod"></property>
+        <property name="cronExpression" value="0 15 3,7 * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskVipItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskVipItemSearchTrigger"></ref>
+            </list>
+        </property>
+    </bean> 
     
     	<!-- 国美商品自动入库: 每天更新一次 -->
     <bean id="cpsDataSyncTaskGomeItemSearch" class="com.pcitech.iLife.task.GomeItemSearcher"></bean>
