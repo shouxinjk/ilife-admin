@@ -28,6 +28,7 @@ import com.pcitech.iLife.modules.mod.service.CpsLinkSchemeService;
 import com.pcitech.iLife.modules.mod.service.TraceCodeService;
 import com.pcitech.iLife.modules.mod.web.CpsLinkSchemeController;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse;
+import com.vip.adp.api.open.service.UrlInfo;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -51,6 +52,8 @@ public class CpsLinkHelper {
     KaolaHelper kaolaHelper;
     @Autowired
     SuningHelper suningHelper;
+    @Autowired
+    VipHelper vipHelper;
     
     /**
      * 动态生成CPS链接。包括两种类型：
@@ -163,6 +166,17 @@ public class CpsLinkHelper {
 						map.put("link", URLDecoder.decode(ret.getString("extendUrl"))+"&sub_user="+brokerId);
 						map.put("status", true);
 					}else { //部分商品可能获取失败：会导致链接不会被更新
+						map.put("status", false);
+						map.put("description", "failed generate cps link for borker.[brokerId]"+brokerId+"[url]"+url);
+					}
+					return map;
+				case "vip":
+					try {
+						List<UrlInfo> result = vipHelper.generateCpsLinkByUrl( brokerId, url,"wechat");
+						map.put("link", result.get(0).getLongUrl());
+						map.put("status", true);
+					} catch (Exception ex) {
+						logger.error("failed generate vip cps link.",ex);
 						map.put("status", false);
 						map.put("description", "failed generate cps link for borker.[brokerId]"+brokerId+"[url]"+url);
 					}
