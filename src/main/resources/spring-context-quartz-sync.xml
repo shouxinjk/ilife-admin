@@ -294,7 +294,7 @@
         </property>
     </bean> 
     
-    	<!-- 国美商品自动入库: 每天更新一次 -->
+    	<!-- 国美商品自动入库: 每小时增量更新一次 -->
     <bean id="cpsDataSyncTaskGomeItemSearch" class="com.pcitech.iLife.task.GomeItemSearcher"></bean>
     <bean id="cpsDataSyncTaskGomeItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="cpsDataSyncTaskGomeItemSearch"></property>
@@ -302,7 +302,7 @@
     </bean>
     <bean id="cpsDataSyncTaskGomeItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskGomeItemSearchMethod"></property>
-        <property name="cronExpression" value="0 5 2 * * ?"></property>
+        <property name="cronExpression" value="0 50 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskGomeItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">

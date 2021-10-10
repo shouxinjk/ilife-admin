@@ -80,8 +80,7 @@ public class GomeItemSearcher {
     
     //默认设置
     int pageSize = 100;//最大单页200条
-    String urlPrefix = "https://jinbao.pinduoduo.com/goods-detail?s=";//https://jinbao.pinduoduo.com/goods-detail?s=Y9X2m1wSlN1U8LcVwvfZHeaZwozbWFjf_JQvP59gKL7
-    
+
     // 记录处理条数
     int totalAmount = 0;
     int processedAmount = 0;
@@ -95,12 +94,18 @@ public class GomeItemSearcher {
 	NumberFormat nf = null;
 
     public GomeItemSearcher() {
-    		nf = NumberFormat.getNumberInstance();
+    	nf = NumberFormat.getNumberInstance();
 		nf.setMaximumFractionDigits(2);	// 保留两位小数
 		nf.setRoundingMode(RoundingMode.DOWN);// 如果不需要四舍五入，可以使用RoundingMode.DOWN
     }
     
     private void upsertItem(String poolName,JSONObject item) {
+    	//过滤掉无效项：无库存或已下架的
+    	//库存状态(0无库存1有库存)
+    	//更新状态(5下架4上架 -1 商品无效)
+    	if(item.getIntValue("stock_status")==0 || item.getIntValue("update_status")==-1)
+    		return;
+    	
 		String  url = item.getString("product_url");//得到唯一URL
 		String itemKey = Util.md5(url);//根据URL生成唯一key
 		//准备更新doc
@@ -132,13 +137,19 @@ public class GomeItemSearcher {
 			doc.getProperties().put("props", props);
 		}
 		
-		//更新图片列表：只有一张
+		//更新图片列表：逗号分隔
 		List<String> images = new ArrayList<String>();
-		images.add(item.getString("picture_url"));
+		String[] imgList = item.getString("picture_url").split(",");//图片是逗号分隔
+		boolean hasLogo = false;
+		for(String img:imgList) {
+			images.add(img);
+			if(!hasLogo) {
+				//将第一张展示图片作为logo
+				doc.getProperties().put("logo", img);
+				hasLogo = true;
+			}
+		}
 		doc.getProperties().put("images", images);
-		
-		//将第一张展示图片作为logo
-		doc.getProperties().put("logo", item.getString("picture_url"));
 		
 		//设置summary
 		doc.getProperties().put("summary", item.getString("service_desc"));
@@ -197,88 +208,68 @@ public class GomeItemSearcher {
 		BaseDocument old = arangoClient.find("my_stuff", itemKey);
 		if(old!=null && itemKey.equals(old.getKey())) {//已经存在，则直接跳过
 			//do nothing
+			logger.debug("ignore existed item.[itemKey]"+itemKey);
 		}else {//否则写入
 			arangoClient.insert("my_stuff", doc);   
 			processedMap.put(poolName, processedMap.get(poolName)+1);
 			processedAmount++;
 		}
     }
+    
+    /**
+     * 分页查询商品信息。初次使用全量同步，后续使用增量同步。后台每小时更新一次
+     * @param poolName
+     */
+    private void searchItems(String poolName) {
+    	logger.debug("start search by poolName.[poolName]"+poolName);
+		totalMap.put(poolName, 0);//初始化各个分类的总数量，后面查询时累计
+		processedMap.put(poolName, 0);//默认设置相应分类的条数为0
+			
+		TreeMap<String,String> request = gomeHelper.getParamMap();
+		request.put("page_no", "1");//分页：默认第1页
+		request.put("page_size", ""+pageSize);//每页条数：最大10000
+		int pageNo = 1;
+		boolean hasNextPage = true;
+		while(hasNextPage) {//至少会有一页，先查查看
+			logger.debug("start process search result by page.[pageNo]"+pageNo);
+			request.put("page_no", ""+pageNo);//分页：默认第1页
+			logger.debug("try to search items.[request]"+JsonUtil.transferToJson(request));
+    		JSONObject resp = gomeHelper.getIncreasedItems(request);//增量查询每小时更新一次，需要将定时任务设置为每小时触发
+//			JSONObject resp = gomeHelper.getAllItems(request);//全量很傻，竟然一次性丢过来90万条数据，仅在上线时执行一次 即可
+			int totalAmountPerPool = resp.getIntValue("total_count");
+			totalMap.put(poolName,totalAmountPerPool );//默认设置相应分类的总条数
+    		totalAmount += totalAmountPerPool;
+    		int totalPages = (totalAmountPerPool + pageSize -1)/pageSize;
+    		if(pageNo>totalPages)
+    			hasNextPage = false;
+    		//逐条处理
+			logger.debug("try to deal with item detail.[resp]"+JsonUtil.transferToJson(resp));
+			JSONArray itemArray = resp.getJSONArray("items");
+			for(int j=0;j<itemArray.size();j++) {//逐个插入
+				JSONObject item = itemArray.getJSONObject(j);
+				logger.debug(JsonUtil.transferToJson(item));
+				upsertItem(poolName,item);
+			}
+			//翻页
+			pageNo++;
+		}
+    }
 
     /**
 	 * 查询待同步数据记录，并提交查询商品信息
-	 * 1，查询Arangodb中(status==null || status.sync==null) and (source=="pdd")的记录，限制30条。
-	 * 2，通过拼多多API接口查询生成商品导购链接
-	 * 3，逐条解析，并更新Arangodb商品记录
-	 * 4，处理完成后发送通知给管理者
      */
     public void execute() throws JobExecutionException {
-    		logger.info("Gomme cps item search job start. " + new Date());
-    		processedMap = new HashMap<String,Integer>();
-    		totalMap = new HashMap<String,Integer>();
-    		poolNameMap = new HashMap<String,String>();
+		logger.info("Gomme cps item search job start. " + new Date());
+		processedMap = new HashMap<String,Integer>();
+		totalMap = new HashMap<String,Integer>();
+		poolNameMap = new HashMap<String,String>();
 
         //TODO 准备查询条件。预留，可以根据类目逐个查询，不需要获取数据库全部商品
-    		String[] poolNames = {"所有类目"};
+    	String[] poolNames = {"所有类目"};
     		
-    		//准备连接
-    		arangoClient = new ArangoDbClient(host,port,username,password,database);
-    		/**
-    		//查询得到所有3级叶子分类，然后逐个遍历：当前有问题，gome API限制调用次数，需要调用侧处理API分时调用问题
-    		List<BaseDocument> categories = new ArrayList<BaseDocument>();
-        String query = "for doc in platform_categories filter "
-        		+ "doc.source == \"gome\" and doc.level ==3  "
-        		+ "return {id:doc.id,name:doc.name}";
-        
-        try {
-            arangoClient = new ArangoDbClient(host,port,username,password,database);
-            categories = arangoClient.query(query, null, BaseDocument.class);
-            totalAmount = categories.size();
-            if(totalAmount ==0) {//如果没有类目则表示出错了，提前收工吧
-	            	logger.debug("查询gome类目失败");
-	            	arangoClient.close();//链接还是要关闭的
-	            	return;
-            }
-        }catch(Exception ex) {
-        		logger.error("failed query gome categories.",ex);
-        }
-    		//**/
-        int poolNameIndex = 1;
-//		for(BaseDocument category:categories) {//逐个分类查询，每个分类均进行遍历
-//			String poolName = category.getProperties().get("name").toString();
 		for(String poolName:poolNames) {//逐个分类查询，每个分类均进行遍历
-			logger.debug("start search by poolName.[poolName]"+poolName);
-			totalMap.put(poolName, 0);//初始化各个分类的总数量，后面查询时累计
-			processedMap.put(poolName, 0);//默认设置相应分类的条数为0
-    			
-    			TreeMap<String,String> request = gomeHelper.getParamMap();
-//    			request.put("category_id", category.getProperties().get("id").toString());
-    			request.put("page_no", "1");//分页：默认第1页
-    			request.put("page_size", ""+pageSize);//每页条数：最大10000
-    			int pageNo = 1;
-    			boolean hasNextPage = true;
-    			while(hasNextPage) {//至少会有一页，先查查看
-    				logger.debug("start process search result by page.[pageNo]"+pageNo);
-    				request.put("page_no", ""+pageNo);//分页：默认第1页
-    				pageNo++;
-	    			logger.debug("try to search items.[request]"+JsonUtil.transferToJson(request));
-	    			JSONObject resp = gomeHelper.getIncreasedItems(request);//增量查询竟然不好使
-//	    			JSONObject resp = gomeHelper.getAllItems(request);//全量很傻，竟然一次性丢过来90万条数据，需要按分类取
-				int totalAmountPerPool = resp.getIntValue("total_count");
-				totalMap.put(poolName,totalAmountPerPool );//默认设置相应分类的总条数
-		    		totalAmount += totalAmountPerPool;
-		    		int totalPages = (totalAmountPerPool + pageSize -1)/pageSize;
-		    		if(pageNo>totalPages)
-		    			hasNextPage = false;
-		    		//逐条处理
-	    			logger.debug("try to deal with item detail.[resp]"+JsonUtil.transferToJson(resp));
-	    			JSONArray itemArray = resp.getJSONArray("items");
-				for(int j=0;j<itemArray.size();j++) {//逐个插入
-					JSONObject item = itemArray.getJSONObject(j);
-					logger.debug(JsonUtil.transferToJson(item));
-					upsertItem(poolName,item);
-				}
-    			}
-    		}
+			searchItems(poolName);
+    	}
 
 		//完成后关闭arangoDbClient
 		arangoClient.close();

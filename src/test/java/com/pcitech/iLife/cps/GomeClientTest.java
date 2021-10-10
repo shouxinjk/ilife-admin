@@ -202,7 +202,7 @@ public class GomeClientTest {
 	}
 	
 	@Test
-	public void searchItemByCategory() {
+	public void searchItem() {
 		try {
 			gomeItemSearcher.execute();
 		} catch (JobExecutionException e) {

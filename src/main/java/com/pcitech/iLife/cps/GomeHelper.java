@@ -130,7 +130,7 @@ public class GomeHelper {
 	private JSONObject post(TreeMap<String,String> map) {
 		//参数处理
 		String params = getParams(map);//将参数转换为键值对
-		logger.error(Global.getConfig("gome.api.http") + params);
+		logger.debug(Global.getConfig("gome.api.http") + params);
 		
 		// 创建Get请求
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
