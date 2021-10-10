@@ -149,6 +149,9 @@ public class VipOrderSync {
     	//2，查询已结算订单
     	//完成后关闭arangoDbClient
     	arangoClient.close();
+    	
+		if(totalAmount == 0)//啥活都没干，发啥消息
+			return;
     		
 		//来个甜点：发送处理结果到管理员，甜到齁死人的那种
 		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
