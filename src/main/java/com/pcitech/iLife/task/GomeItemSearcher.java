@@ -138,6 +138,8 @@ public class GomeItemSearcher {
 		}
 		
 		//更新图片列表：逗号分隔
+		if(item.getString("picture_url")==null)//竟然有空的！！！
+			return;
 		List<String> images = new ArrayList<String>();
 		String[] imgList = item.getString("picture_url").split(",");//图片是逗号分隔
 		boolean hasLogo = false;
@@ -169,6 +171,8 @@ public class GomeItemSearcher {
 //		doc.getProperties().put("link", link);
 
 		//更新价格：直接覆盖
+		if(item.getDoubleValue("sale_price")==0)//如果无售价则直接跳过
+			return;
 		Map<String,Object> price = new HashMap<String,Object>();
 		price.put("currency", "￥");
 		price.put("bid", NumberUtil.getInstance().parseNumber(item.getString("list_price")));
@@ -264,6 +268,9 @@ public class GomeItemSearcher {
 		totalMap = new HashMap<String,Integer>();
 		poolNameMap = new HashMap<String,String>();
 
+		//准备连接
+		arangoClient = new ArangoDbClient(host,port,username,password,database);
+		
         //TODO 准备查询条件。预留，可以根据类目逐个查询，不需要获取数据库全部商品
     	String[] poolNames = {"所有类目"};
     		
@@ -273,8 +280,10 @@ public class GomeItemSearcher {
 
 		//完成后关闭arangoDbClient
 		arangoClient.close();
+		/**
 		if(totalAmount == 0)//啥活都没干，发啥消息
 			return;
+		//**/
 		//组装通知信息
 		StringBuffer remark = new StringBuffer();
 		remark.append("预期数量："+totalAmount);
