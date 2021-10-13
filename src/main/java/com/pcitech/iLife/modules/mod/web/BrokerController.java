@@ -167,6 +167,30 @@ public class BrokerController extends BaseController {
 	}
 	
 	/**
+	 * 根据openid设置状态，在取消关注时使用
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/disableBrokersByOpenid/{openid}", method = RequestMethod.POST)
+	public Map<String,Object> disableBroker(@PathVariable String openid, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String,Object> map = Maps.newHashMap();
+		map.put("success", false);
+		map.put("message", "the use  is not a broker.");
+		Broker broker = brokerService.getByOpenid(openid);//根据openid获取父级达人
+		if(broker == null)//如果未找到对应的达人直接返回空
+			return map;
+		broker.setStatus("offline");
+		try {
+			brokerService.save(broker);
+			map.put("success", true);
+			map.put("message", "the broker is now disabled.");
+		}catch(Exception ex) {
+			map.put("success", false);
+			map.put("message", "error occured while disable broker.[openid]"+openid);
+		}
+		return map;
+	}
+	
+	/**
 	 * 根据id获取下级达人列表
 	 */
 	@ResponseBody

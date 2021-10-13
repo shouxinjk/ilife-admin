@@ -140,7 +140,7 @@
         </property>
     </bean>         
     
-	<!-- 清单数据推送: 每天早上8点钟执行 -->
+	<!-- 清单数据推送: 每周一、周四下午推送一次 -->
     <bean id="newBoardBroadcastTask" class="com.pcitech.iLife.task.NewBoardBroadcast"></bean>
     <bean id="newBoardBroadcastMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="newBoardBroadcastTask"></property>
@@ -148,7 +148,7 @@
     </bean>
     <bean id="newBoardBroadcastTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="newBoardBroadcastMethod"></property>
-        <property name="cronExpression" value="0 0 8,16 * * ?"></property>
+        <property name="cronExpression" value="0 0 16 ? * MON,THU"></property>
     </bean>
     <bean id="newBoardBroadcastScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
