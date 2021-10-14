@@ -141,7 +141,7 @@
     </bean>         
     
 	<!-- 清单数据推送: 每周一、周四下午推送一次 -->
-    <bean id="newBoardBroadcastTask" class="com.pcitech.iLife.task.NewBoardBroadcast"></bean>
+    <!-- bean id="newBoardBroadcastTask" class="com.pcitech.iLife.task.NewBoardBroadcast"></bean>
     <bean id="newBoardBroadcastMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="newBoardBroadcastTask"></property>
         <property name="targetMethod" value="execute"></property>
@@ -156,7 +156,7 @@
                 <ref bean="newBoardBroadcastTrigger"></ref>
             </list>
         </property>
-    </bean> 	             
+    </bean --> 	             
     
 	<!-- 微信选品入库：达人发送淘口令后存储到broker_seeds -->
     <bean id="brokerSeedNotifyTask" class="com.pcitech.iLife.task.BrokerSeedNotifyTask"></bean>

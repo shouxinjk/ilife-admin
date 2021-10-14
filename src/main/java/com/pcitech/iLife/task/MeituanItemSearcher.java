@@ -254,10 +254,10 @@ public class MeituanItemSearcher {
 
 		//完成后关闭arangoDbClient
 		arangoClient.close();
-		/**
+
 		if(totalAmount == 0)//啥活都没干，发啥消息
 			return;
-		//**/
+
 		//组装通知信息
 		StringBuffer remark = new StringBuffer();
 		remark.append("预期数量："+totalAmount);
