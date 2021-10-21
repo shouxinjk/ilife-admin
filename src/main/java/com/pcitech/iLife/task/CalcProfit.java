@@ -106,7 +106,8 @@ public class CalcProfit {
 		//计算二方分润
 		double price = 0;
 		try{
-			price = Double.parseDouble(item.getProperties().get("price").toString());
+			//部分情况下数据采集带有千分位分隔符，直接去掉
+			price = Double.parseDouble(item.getProperties().get("price").toString().replaceAll(",", ""));
 		}catch(Exception ex) {
 			logger.error("Item price cannot be parsed.[price]"+item.getProperties().get("price"));		}
 		String platform = item.getProperties().get("source").toString();
