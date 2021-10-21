@@ -39,6 +39,10 @@ public class BrokerService extends CrudService<BrokerDao, Broker> {
 		return brokerDao.getMoney(id);
 	}	
 	
+	public int countChilds(String id) {
+		return brokerDao.countChilds(id);
+	}
+	
 	public List<Broker> findList(Broker broker) {
 		return super.findList(broker);
 	}

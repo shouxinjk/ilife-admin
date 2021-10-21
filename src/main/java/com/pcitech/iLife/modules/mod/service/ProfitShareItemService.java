@@ -30,6 +30,10 @@ public class ProfitShareItemService extends CrudService<ProfitShareItemDao, Prof
 		return profitShareItemDao.getByQuery(profitShareItem);
 	}
 	
+	public List<ProfitShareItem> findListByQuery(ProfitShareItem profitShareItem) {
+		return profitShareItemDao.findListByQuery(profitShareItem);
+	}
+	
 	public ProfitShareItem get(String id) {
 		return super.get(id);
 	}

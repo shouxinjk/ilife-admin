@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pcitech.iLife.common.persistence.CrudDao;
@@ -16,7 +18,9 @@ import com.pcitech.iLife.modules.mod.entity.ProfitShareItem;
  */
 @MyBatisDao
 public interface ProfitShareItemDao extends CrudDao<ProfitShareItem> {
-	
+	//查询并返回单个记录
 	public ProfitShareItem getByQuery(ProfitShareItem query);
+	//查询并返回多个记录
+	public List<ProfitShareItem> findListByQuery(ProfitShareItem query);
 	
 }

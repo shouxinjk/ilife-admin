@@ -21,4 +21,7 @@ public interface BrokerDao extends CrudDao<Broker> {
 	
 	//根据id查询达人收益信息
 	public Map<String,Object> getMoney(String id);
+	
+	//根据id查询下级数量
+	public int countChilds(String id);
 }

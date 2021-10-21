@@ -56,6 +56,10 @@
 		<include refid="moneyJoins"/>
 		WHERE a.id = #{id}
 	</select>
+
+	<select id="countChilds" resultType="Integer">
+		SELECT count(*) FROM mod_broker a WHERE a.parent_id = #{id}
+	</select>
     
 	<select id="get" resultType="Broker">
 		SELECT 

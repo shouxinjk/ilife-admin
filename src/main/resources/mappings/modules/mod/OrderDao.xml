@@ -56,6 +56,12 @@
 		<include refid="orderJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>	
+			<if test="platform != null and platform != ''">
+				AND a.platform = #{platform}
+			</if>					
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
