@@ -6,22 +6,41 @@
 	default-lazy-init="false">
 
 	<description>Quartz Configuration for clearing and notification </description>
-	
+
 	<!-- 订单清算自动任务 -->
-    <bean id="clearingNotifyJob" class="com.pcitech.iLife.task.BrokerClearingNotifyTask"></bean>
-    <bean id="clearingNotifyMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="clearingNotifyJob"></property>
+    <bean id="orderClearingJob" class="com.pcitech.iLife.task.BrokerorderClearingTask"></bean>
+    <bean id="orderClearingMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="orderClearingJob"></property>
         <property name="targetMethod" value="execute"></property>
         <!--property name="arguments" value="from xml"></property-->
     </bean>
-    <bean id="clearingNotifyTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail" ref="clearingNotifyMethod"></property>
-        <property name="cronExpression" value="0 */1 * * * ?"></property>
+    <bean id="orderClearingTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="orderClearingMethod"></property>
+        <property name="cronExpression" value="0 */5 * * * ?"></property>
     </bean>
-    <bean id="clearingNotifyScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    <bean id="orderClearingScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
-                <ref bean="clearingNotifyTrigger"></ref>
+                <ref bean="orderClearingTrigger"></ref>
+            </list>
+        </property>
+    </bean>
+	
+	<!-- 订单清算通知 -->
+    <bean id="orderClearingNotifyJob" class="com.pcitech.iLife.task.BrokerorderClearingNotifyTask"></bean>
+    <bean id="orderClearingNotifyMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="orderClearingNotifyJob"></property>
+        <property name="targetMethod" value="execute"></property>
+        <!--property name="arguments" value="from xml"></property-->
+    </bean>
+    <bean id="orderClearingNotifyTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="orderClearingNotifyMethod"></property>
+        <property name="cronExpression" value="0 */3 * * * ?"></property>
+    </bean>
+    <bean id="orderClearingNotifyScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="orderClearingNotifyTrigger"></ref>
             </list>
         </property>
     </bean>
