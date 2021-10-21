@@ -118,10 +118,10 @@ public class ClearOrder {
         	if(pageNo>page.getTotalPage()-1)
         		hasMore=false;
     	}
-    	/**
+
 		if(totalAmount == 0)//啥活都没干，发啥消息
 			return;
-		//**/
+
 		//组装通知信息
 		StringBuffer remark = new StringBuffer();
 		remark.append("总数："+totalAmount);
