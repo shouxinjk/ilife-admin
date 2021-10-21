@@ -17,6 +17,7 @@ import com.pcitech.iLife.modules.mod.entity.Clearing;
 import com.pcitech.iLife.modules.mod.entity.Order;
 import com.pcitech.iLife.modules.mod.service.ClearingService;
 import com.pcitech.iLife.modules.mod.service.OrderService;
+import com.pcitech.iLife.modules.sys.service.DictService;
 import com.pcitech.iLife.util.HttpClientHelper;
 
 import org.quartz.Job;
@@ -28,7 +29,7 @@ import org.quartz.JobExecutionException;
  */
 public class BrokerClearingNotifyTask {
     private static Logger logger = LoggerFactory.getLogger(BrokerClearingNotifyTask.class);
-    
+
     @Autowired
     ClearingService clearingService;
 
