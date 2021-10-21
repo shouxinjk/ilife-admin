@@ -165,8 +165,10 @@ public class ClearOrder {
      * 清分  
      */
     private void clear(Order order) {
-    	//预处理：如果订单PID为空，则统一认为是平台订单。各个平台有锁定收益规则，非直接订单pid为空
-    	//TODO 
+    	//预处理：如果订单broker为空，则统一认为是平台订单。各个平台有锁定收益规则，非直接订单pid为空
+    	if(order.getBroker()==null || order.getBroker().getId()==null || order.getBroker().getId().trim().length()==0) {
+    		order.setBroker(brokerService.get("system"));
+    	}
     	
 		//0，获取上级达人、上上级达人
 		Map<String,String> brokers = getBrokers(order.getBroker());
@@ -299,12 +301,12 @@ public class ClearOrder {
 	    Broker broker = brokerService.get(broker_id);
 	    if ( broker!=null ) {
 	        Broker parentBroker = broker.getParent();//上级达人ID
-	        if(parentBroker == null)
+	        if(parentBroker == null  || parentBroker.getId().trim().length()==0)
 	        		return broker_id;//如果parent 为空则返回达人自己
 	        return parentBroker.getId();
 	    }else {//如果没有上级达人则返回自己
-	    		logger.debug("has no parent broker.");
-	    		return broker_id;
+    		logger.debug("has no parent broker.");
+    		return broker_id;
 	    }
     }
     
