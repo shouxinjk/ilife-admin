@@ -49,7 +49,7 @@ public class VipHelper {
 	
 	//生成一个UUID，作为requestId
 	private String getRequestId() {
-		return UUID.randomUUID().toString();
+		return Util.get32UUID();
 	}
 	
 	private ClientInvocationContext getContext() {
