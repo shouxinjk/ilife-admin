@@ -156,6 +156,7 @@ public class SuningOrderSync {
 		order.setItem(item.getJSONObject("orderStatus").getString("itemTitle"));
 		order.setOrderTime(new Date(Long.parseLong(item.getJSONObject("timeInfo").getString("payTime"))));//以付款时间为准
 		Broker broker = brokerService.get(item.getJSONObject("orderStatus").getString("traceId"));//traceId就是达人ID
+		if(broker==null)broker=brokerService.get("system");//如果找不到，则直接使用平台默认账户
 		order.setBroker(broker);
 		order.setNotification("pending");//不用管通知状态，后续通知任务会自动更新
 		order.setStatus("pending");

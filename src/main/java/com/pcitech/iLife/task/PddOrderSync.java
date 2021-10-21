@@ -96,6 +96,7 @@ public class PddOrderSync {
 		if(customParam.get("brokerId")!=null)
 			brokerId = customParam.get("brokerId");
 		Broker broker = brokerService.get(brokerId);//跟踪码就是达人ID：注意需要解析自定义参数：构建链接时传递参数为{uid:xx,brokerId:xxxx}
+		if(broker==null)broker=brokerService.get("system");//如果找不到，则直接使用平台默认账户
 		order.setBroker(broker);
 		order.setNotification("pending");//不用管通知状态，后续通知任务会自动更新
 		order.setStatus("pending");

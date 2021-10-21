@@ -92,6 +92,7 @@ public class VipOrderSync {
 		order.setItem(item.getDetailList().get(0).getGoodsName());
 		order.setOrderTime(new Date(item.getOrderTime()));
 		Broker broker = brokerService.get(item.getPid());//跟踪码就是达人ID
+		if(broker==null)broker=brokerService.get("system");//如果找不到，则直接使用平台默认账户
 		order.setBroker(broker);
 		order.setNotification("pending");//不用管通知状态，后续通知任务会自动更新
 		order.setStatus("pending");
