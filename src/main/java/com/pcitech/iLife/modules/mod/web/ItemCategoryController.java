@@ -437,4 +437,46 @@ public class ItemCategoryController extends BaseController {
 		return mapList;
 	}
 	
+	
+	/**
+	 * 一次性加载全部类目信息，用于商品标注。
+	 * 类目采用三级结构。返回数据结构为
+	 * [
+	 * {id:1,label:"1"},
+	 * {id:1,label:"2"},
+	 * {id:1,label:"3",children:[
+	 * 		{id:1,label:"31"},
+	 * 		{id:1,label:"32"}
+	 * 	]}
+	 * ]
+	 * @param parentId
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "all-categories")
+	public List<Map<String, Object>> listAllCategories( @RequestParam(required=false) String parentId, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		if(parentId==null || parentId.trim().length()==0) parentId = "1";//默认查询根目录下的节点
+		return listAllCategoriesByParentId(parentId);
+	}
+	private List<Map<String, Object>> listAllCategoriesByParentId(String parentId) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		//加载子分类
+		List<ItemCategory> list = itemCategoryService.findByParentId(parentId);
+		for (int i=0; i<list.size(); i++){
+			ItemCategory item = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", item.getId());
+			map.put("label", item.getName());
+			//递归获取下级节点
+			List<Map<String, Object>> childs = listAllCategoriesByParentId(item.getId());
+			if(childs.size()>0)
+				map.put("children", childs);
+			mapList.add(map);
+		}	
+		return mapList;
+	}
+	
 }
+
