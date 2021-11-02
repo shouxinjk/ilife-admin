@@ -207,6 +207,7 @@ public class SuningItemsSearcher {
 		Map<String,Object> status = new HashMap<String,Object>();
 		status.put("crawl", "ready");
 		status.put("sync", "pending");//等待生成CPS链接
+		status.put("load", "pending");
 		status.put("classify", "pending");
 		status.put("satisify", "pending");//这个要在classify之后才执行
 		status.put("measure", "pending");

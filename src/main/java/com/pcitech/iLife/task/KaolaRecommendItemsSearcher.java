@@ -179,6 +179,7 @@ public class KaolaRecommendItemsSearcher {
 		Map<String,Object> status = new HashMap<String,Object>();
 		status.put("crawl", "ready");
 		status.put("sync", "ready");//链接包含，直接使用
+		status.put("load", "pending");
 		status.put("classify", "pending");
 		status.put("satisify", "pending");//这个要在classify之后才执行
 		status.put("measure", "pending");

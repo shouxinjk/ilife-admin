@@ -173,6 +173,7 @@ public class MeituanItemSearcher {
 		Map<String,Object> status = new HashMap<String,Object>();
 		status.put("crawl", "ready");
 		status.put("sync", "ready");//CPS链接已经获取了，不用再次重新生成
+		status.put("load", "pending");
 		status.put("classify", "pending");
 		status.put("satisify", "pending");//这个要在classify之后才执行
 		status.put("measure", "pending");
