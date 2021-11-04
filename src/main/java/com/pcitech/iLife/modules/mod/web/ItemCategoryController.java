@@ -37,6 +37,8 @@ import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.OccasionService;
+import com.pcitech.iLife.modules.sys.entity.Dict;
+import com.pcitech.iLife.modules.sys.service.DictService;
 import com.pcitech.iLife.util.ArangoDbClient;
 
 /**
@@ -56,6 +58,8 @@ public class ItemCategoryController extends BaseController {
 	private OccasionService occasionService;
 	@Autowired
 	private MeasureService measureService;
+	@Autowired
+	private DictService dictService;
 	
 	@ModelAttribute
 	public ItemCategory get(@RequestParam(required=false) String id) {
@@ -377,6 +381,17 @@ public class ItemCategoryController extends BaseController {
 		response.setContentType("application/json; charset=UTF-8");
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		//加载电商平台信息，此处手动加载。TODO:后续需要修改为从数据库加载
+		Dict dict = new Dict();
+		dict.setType("platform");
+		List<Dict> platforms = dictService.findList(dict);
+		for(Dict platform:platforms) {
+			Map<String, Object> item = Maps.newHashMap();
+			item.put("id", platform.getValue());
+			item.put("name", platform.getLabel());
+			item.put("root", "0");//默认根目录都为0
+			mapList.add(item);
+		}
+		/**
 		String[] sourceKeyArray = {"pdd","jd","tmall","taobao","kaola","fliggy","ctrip","gome","suning","dangdang","dhc","amazon"};//source list
 		String[] sourceNameArray = {"拼多多","京东","天猫","淘宝","考拉","飞猪","携程","国美","苏宁","当当网","DHC","Amazon"};//source list
 		String[] sourceRootArray = {"0","0","0","0","0","0","0","0","0","0","0","0"};//root node of different sources
@@ -387,6 +402,7 @@ public class ItemCategoryController extends BaseController {
 			item.put("root", sourceRootArray[i]);
 			mapList.add(item);
 		}
+		//**/
 		return mapList;
 	}
 	
