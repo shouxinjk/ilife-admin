@@ -6,6 +6,7 @@ package com.pcitech.iLife.modules.ope.entity;
 import org.hibernate.validator.constraints.Length;
 
 import com.pcitech.iLife.common.persistence.DataEntity;
+import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 
 /**
@@ -21,6 +22,7 @@ public class HumanMarkedValue extends DataEntity<HumanMarkedValue> {
 	private String originalValue;		// 数值
 	private Person person;		// 用户
 	private Item item;		// 商品
+	private ItemCategory category; //类目
 	private Measure measure;		// 关键属性
 	
 	public HumanMarkedValue() {
@@ -78,6 +80,14 @@ public class HumanMarkedValue extends DataEntity<HumanMarkedValue> {
 
 	public void setMeasure(Measure measure) {
 		this.measure = measure;
+	}
+
+	public ItemCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ItemCategory category) {
+		this.category = category;
 	}
 
 	

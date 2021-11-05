@@ -55,35 +55,12 @@ public class PerformanceController extends BaseController {
 	@Autowired
 	private PerformanceService performanceService;
 	
-	/**
+	//根据measureId及categoryId查询performance值
 	@ResponseBody
-	@RequestMapping(value = "rest/byMeasureId")
-	//根据属性ID（系统标准属性ID）查询所有属性值，并进行标注。根据level等级、markedValue倒序排列
-	public List<Performance> listCategoryByParentId( @RequestParam(required=true) String measureId, HttpServletResponse response) {
-		response.setContentType("application/json; charset=UTF-8");
-		return performanceService.findListByMeasureId(measureId);
-	}
-		//**/
-	
-	//jqGrid获取数据不能通过parameter传递，只能通过pathvariable进行
-	@ResponseBody
-	@RequestMapping(value = "rest/jqgrid/{measureId}/{categoryId}", method = RequestMethod.GET)
+	@RequestMapping(value = "rest/values/{measureId}/{categoryId}", method = RequestMethod.GET)
 	//根据属性ID（系统标准属性ID）查询所有属性值，并进行标注。根据level等级、controlvalue倒序排列
 	public List<Performance> listValuesByMeasureIdAndCategoryIdForJqGrid( @PathVariable String measureId,@PathVariable String categoryId, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
-		//return performanceService.findListByMeasureId(measureId);
-		Map<String,String> params = Maps.newHashMap();
-		params.put("categoryId", categoryId);
-		params.put("measureId", measureId);
-		return performanceService.findListByMeasureAndCategory(params);
-	}
-	
-	@ResponseBody
-	@RequestMapping(value = "rest/values", method = RequestMethod.GET)
-	//根据属性ID（系统标准属性ID）查询所有属性值，并进行标注。根据level等级、controlvalue倒序排列
-	public List<Performance> listValuesByMeasureIdAndCategoryId( @RequestParam(required=true) String measureId,@RequestParam(required=true) String categoryId, HttpServletResponse response) {
-		response.setContentType("application/json; charset=UTF-8");
-		//return performanceService.findListByMeasureId(measureId);
 		Map<String,String> params = Maps.newHashMap();
 		params.put("categoryId", categoryId);
 		params.put("measureId", measureId);

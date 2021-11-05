@@ -11,6 +11,8 @@
 		pe.nickname AS "person.nickname",
 		a.item_id AS "item.id",
 		it.name AS "item.name",
+		a.category_id AS "category.id",
+		c.name AS "category.name",		
 		a.measure_id AS "measure.id",
 		me.name AS "measure.name",
 		a.create_by AS "createBy.id",
@@ -25,6 +27,7 @@
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
 		LEFT JOIN ope_person pe ON pe.id = a.person_id
 		LEFT JOIN ope_item it ON it.id = a.item_id
+		LEFT JOIN mod_item_category c ON c.id = a.category_id
 		LEFT JOIN mod_measure me ON me.id = a.measure_id
 	</sql>
     
@@ -43,10 +46,13 @@
 		<include refid="humanMarkedValueJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL} 
-		</where>
-		<if test="measure != null and measure.id != ''">
-			AND a.measure_id = #{measure.id}
-		</if>		
+			<if test="category != null and category.id != ''">
+				AND a.category_id = #{category.id}
+			</if>				
+			<if test="measure != null and measure.id != ''">
+				AND a.measure_id = #{measure.id}
+			</if>				
+		</where>	
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -64,6 +70,12 @@
 		<include refid="humanMarkedValueJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="category != null and category.id != ''">
+				AND a.category_id = #{category.id}
+			</if>				
+			<if test="measure != null and measure.id != ''">
+				AND a.measure_id = #{measure.id}
+			</if>				
 		</where>		
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -83,6 +95,7 @@
 			value,
 			original_value,
 			person_id,
+			category_id,
 			measure_id,
 			update_by,
 			update_date
@@ -92,6 +105,7 @@
 			#{value},
 			#{originalValue},
 			#{personId},
+			#{categoryId},
 			#{measureId},
 			#{personId},
 			now()
@@ -106,6 +120,7 @@
 			original_value,
 			person_id,
 			item_id,
+			category_id,
 			measure_id,
 			create_by,
 			create_date,
@@ -119,6 +134,7 @@
 			#{originalValue},
 			#{person.id},
 			#{item.id},
+			#{category.id},
 			#{measure.id},
 			#{createBy.id},
 			#{createDate},
@@ -135,6 +151,7 @@
 			original_value = #{originalValue},
 			person_id = #{person.id},
 			item_id = #{item.id},
+			category_id = #{category.id},
 			measure_id = #{measure.id},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}

@@ -76,7 +76,7 @@ public class HumanMarkedValueController extends BaseController {
 	public Map<String,String> updateValuesByMeasureId( @RequestBody Map<String,Object> params, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
 		Map<String,String> result = Maps.newHashMap();
-		if(params.get("measureId")==null || params.get("personId")==null || params.get("originalValue")==null || params.get("value")==null) {
+		if(params.get("categoryId")==null || params.get("measureId")==null || params.get("personId")==null || params.get("originalValue")==null || params.get("value")==null) {
 			result.put("result", "error");
 			result.put("msg", "Both measureId/personId/originalValue/Value are required.");
 			return result;
@@ -97,32 +97,34 @@ public class HumanMarkedValueController extends BaseController {
 	
 	@RequiresPermissions("ope:humanMarkedValue:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(HumanMarkedValue humanMarkedValue,String treeId,String treeModule,String topType,  HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String list(HumanMarkedValue humanMarkedValue,String treeId,String pId,String treeModule,String topType,  HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeModule.equals("measure")){
-			humanMarkedValue.setMeasure(new Measure(treeId));
+			humanMarkedValue.setMeasure(measureService.get(treeId));
+			humanMarkedValue.setCategory(itemCategoryService.get(pId));
 		}else{//否则提示选择属性
 			model.addAttribute("message","选择属性查看标注。");
 			return "treeData/none";
 		}
 		Page<HumanMarkedValue> page = humanMarkedValueService.findPage(new Page<HumanMarkedValue>(request, response), humanMarkedValue); 
 		model.addAttribute("page", page);
-		model.addAttribute("pid", treeId);
+		model.addAttribute("treeId", treeId);
+		model.addAttribute("pId", pId);
 		model.addAttribute("pType", treeModule);
 		return "modules/ope/humanMarkedValueList";
 	}
 
 	@RequiresPermissions("ope:humanMarkedValue:view")
 	@RequestMapping(value = "form")
-	public String form(HumanMarkedValue humanMarkedValue, String pid,String pType, Model model) {
-		Measure measure=new Measure();
+	public String form(HumanMarkedValue humanMarkedValue,String treeId, String pId,String pType, Model model) {
 		if(pType.equals("measure")){
-			measure = measureService.get(pid);
-			humanMarkedValue.setMeasure(measure);
+			humanMarkedValue.setMeasure(measureService.get(treeId));
+			humanMarkedValue.setCategory(itemCategoryService.get(pId));
 		}else {//否则提示选择属性
 			model.addAttribute("message","选择属性查看标注。");
 			return "treeData/none";
 		}
-		model.addAttribute("pid", pid);
+		model.addAttribute("treeId", treeId);
+		model.addAttribute("pId", pId);
 		model.addAttribute("pType", pType);
 		model.addAttribute("humanMarkedValue", humanMarkedValue);
 		return "modules/ope/humanMarkedValueForm";
@@ -130,12 +132,12 @@ public class HumanMarkedValueController extends BaseController {
 
 	@RequiresPermissions("ope:humanMarkedValue:edit")
 	@RequestMapping(value = "save")
-	public String save(HumanMarkedValue humanMarkedValue,String pid,String pType,  Model model, RedirectAttributes redirectAttributes) {
+	public String save(HumanMarkedValue humanMarkedValue,String treeId,String pId,String pType,  Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, humanMarkedValue)){
-			return form(humanMarkedValue,pid,pType, model);
+			return form(humanMarkedValue,treeId,pId,pType, model);
 		}
 		if(humanMarkedValue.getMeasure() == null){//不知道为啥，前端传进来的measure信息丢失了，手动补一次
-			humanMarkedValue.setMeasure(measureService.get(pid));
+			humanMarkedValue.setMeasure(measureService.get(pId));
 		}
 		try {//注意：一个用户仅能建立一条标注数据，这里有唯一性校验问题
 			humanMarkedValueService.save(humanMarkedValue);
@@ -144,15 +146,15 @@ public class HumanMarkedValueController extends BaseController {
 			logger.error("failed to save human marked value.",ex);
 			addMessage(redirectAttributes, "保存标注失败。请确认一个用户对一个属性仅能添加一条记录。");
 		}
-		return "redirect:"+Global.getAdminPath()+"/ope/humanMarkedValue/?treeId="+pid+"&treeModule="+pType+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/ope/humanMarkedValue/?treeId="+treeId+"&pId="+pId+"&treeModule="+pType+"&repage";
 	}
 	
 	@RequiresPermissions("ope:humanMarkedValue:edit")
 	@RequestMapping(value = "delete")
-	public String delete(HumanMarkedValue humanMarkedValue,String pid,String pType, RedirectAttributes redirectAttributes) {
+	public String delete(HumanMarkedValue humanMarkedValue,String treeId,String pId,String pType, RedirectAttributes redirectAttributes) {
 		humanMarkedValueService.delete(humanMarkedValue);
 		addMessage(redirectAttributes, "删除数据标注成功");
-		return "redirect:"+Global.getAdminPath()+"/ope/humanMarkedValue/?treeId="+pid+"&treeModule="+pType+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/ope/humanMarkedValue/?treeId="+treeId+"&pId="+pId+"&treeModule="+pType+"&repage";
 	}
 
 	///////////tree data//////////////

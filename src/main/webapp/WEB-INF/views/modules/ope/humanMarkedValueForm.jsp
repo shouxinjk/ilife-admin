@@ -27,12 +27,13 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/ope/humanMarkedValue/?treeId=${pid}&treeModule=${pType}">数据标注列表</a></li>
-		<li class="active"><a href="${ctx}/ope/humanMarkedValue/form?id=${humanMarkedValue.id}&pid=${pid}&pType=${pType}">数据标注<shiro:hasPermission name="ope:humanMarkedValue:edit">${not empty humanMarkedValue.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="ope:humanMarkedValue:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/ope/humanMarkedValue/?treeId=${treeId}&pId=${pId}&treeModule=${pType}">数据标注列表</a></li>
+		<li class="active"><a href="${ctx}/ope/humanMarkedValue/form?id=${humanMarkedValue.id}&treeId=${treeId}&pId=${pId}&pType=${pType}">数据标注<shiro:hasPermission name="ope:humanMarkedValue:edit">${not empty humanMarkedValue.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="ope:humanMarkedValue:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="humanMarkedValue" action="${ctx}/ope/humanMarkedValue/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<input type="hidden" id="pid" name="pid" value="${pid}"/>
+		<input type="hidden" id="treeId" name="treeId" value="${treeId}"/>
+		<input type="hidden" id="pId" name="pId" value="${pId}"/>
 		<input type="hidden" id="pType" name="pType" value="${pType}"/>			
 		<sys:message content="${message}"/>		
 		<!--div class="control-group">
@@ -41,6 +42,13 @@
 				<form:input path="dimension" htmlEscape="false" maxlength="255" class="input-xlarge "/>
 			</div>
 		</div-->
+		<div class="control-group">
+			<label class="control-label">所属类目：</label>
+			<div class="controls">
+				<sys:treeselect id="category" name="category.id" value="${humanMarkedValue.category.id}" labelName="category.name" labelValue="${humanMarkedValue.category.name}"
+					title="所属类目" url="/mod/itemCategory/listData" />
+			</div>
+		</div>		
 		<div class="control-group">
 			<label class="control-label">关键属性：</label>
 			<div class="controls">

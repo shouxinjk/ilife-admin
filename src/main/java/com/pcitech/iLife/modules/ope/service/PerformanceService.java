@@ -50,10 +50,6 @@ public class PerformanceService extends CrudService<PerformanceDao, Performance>
 		return performanceDao.findListByMeasureAndCategory(params);
 	}
 	
-	public List<Performance> findListByMeasureId(String measureId) {
-		return performanceDao.findListByMeasureId(measureId);
-	}
-	
 	@Transactional(readOnly = false)
 	public void updateMarkedValue(Map<String,Object> params) {
 		performanceDao.updateMarkedValue(params);
