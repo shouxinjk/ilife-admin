@@ -15,7 +15,7 @@
 		$(document).ready(function(){
 			var setting = {view:{selectedMulti:false},data:{simpleData:{enable:true}}};
 			var zNodes=[
-		            <c:forEach items="${list}" var="tpl">{id:'${tpl.id}', pId:'${not empty tpl.parent?tpl.parent.id:0}', name:"${tpl.name}", url:"${ctx}/${url}/?treeId=${tpl.businessId}&treeModule=${tpl.module}&topType=${tpl.topType}&topId=${tpl.topId}", target:"commonMainFrame"},
+		            <c:forEach items="${list}" var="tpl">{id:'${tpl.id}', pId:'${not empty tpl.parent?tpl.parent.id:0}', name:"${tpl.name}", url:"${ctx}/${url}/?treeId=${tpl.businessId}&pId=${not empty tpl.parent?tpl.parent.id:0}&treeModule=${tpl.module}&topType=${tpl.topType}&topId=${tpl.topId}", target:"commonMainFrame"},
 		            </c:forEach>];
 			for(var i=0; i<zNodes.length; i++) {
 				// 移除父节点

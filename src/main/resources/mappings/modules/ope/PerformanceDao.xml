@@ -4,8 +4,10 @@
     
 	<sql id="performanceColumns">
 		a.id AS "id",
+		a.category_id AS "category.id",
+		c.name AS "category.name",
 		a.measure_id AS "measure.id",
-		m.name AS "measure.name",
+		m.name AS "measure.name",		
 		a.marked_value AS "markedValue",
 		a.original_value AS "originalValue",
 		a.normalized_value AS "normalizedValue",
@@ -23,6 +25,7 @@
 	<sql id="performanceJoins">
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_measure m ON m.id = a.measure_id
+		LEFT JOIN mod_item_category c ON c.id = a.category_id
 	</sql>
     
 	<select id="get" resultType="Performance">
@@ -32,7 +35,30 @@
 		<include refid="performanceJoins"/>
 		WHERE a.id = #{id}
 	</select>
-
+	
+	<!-- 根据categoryId查找有标注值，但定义在其他类目，的属性列表 -->	
+	<select id="findInheritMeasures" resultType="java.util.HashMap">
+		SELECT 
+		DISTINCT p.measure_id as measureId,m.category as measureCategoryId,m.name as measureName
+		FROM ope_performance p 
+		LEFT JOIN mod_measure m on m.id=p.measure_id 
+		WHERE p.category_id = #{categoryId} 
+		AND m.category != #{categoryId} 
+	</select>	
+	
+	<!-- 根据categoryId及measureId查询所有属性标注。，并根据level、controlvalue倒序排列 -->
+	<select id="findListByMeasureAndCategory" resultType="Performance">
+		SELECT 
+			<include refid="performanceColumns"/>
+		FROM ope_performance a
+		<include refid="performanceJoins"/>
+		<where>
+			a.del_flag = 0 
+			AND a.measure_id = #{measureId}	
+			AND a.category_id = #{categoryId}							
+		</where>
+		ORDER BY a.level desc,a.control_value desc
+	</select>
 	<!-- 根据属性ID查询所有属性值，并根据level、controlvalue倒序排列 -->
 	<select id="findListByMeasureId" resultType="Performance">
 		SELECT 
@@ -61,6 +87,7 @@
 			update_date = #{updateDate}
 		WHERE id = #{id}
 	</update>	
+	
 	<select id="findList" resultType="Performance">
 		SELECT 
 			<include refid="performanceColumns"/>
@@ -68,6 +95,9 @@
 		<include refid="performanceJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="category != null and category.id != ''">
+				AND a.category_id = #{category.id}
+			</if>				
 			<if test="measure != null and measure.id != ''">
 				AND a.measure_id = #{measure.id}
 			</if>	
@@ -92,6 +122,15 @@
 		<include refid="performanceJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="category != null and category.id != ''">
+				AND a.category_id = #{category.id}
+			</if>				
+			<if test="measure != null and measure.id != ''">
+				AND a.measure_id = #{measure.id}
+			</if>	
+			<if test="dimension != null and dimension.id != ''">
+				AND a.dimension_id = #{dimension.id}
+			</if>				
 		</where>		
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -106,6 +145,7 @@
 	<insert id="insert">
 		INSERT INTO ope_performance(
 			id,
+			category_id,
 			measure_id,
 			marked_value,
 			original_value,
@@ -120,6 +160,7 @@
 			del_flag
 		) VALUES (
 			#{id},
+			#{category.id},
 			#{measure.id},
 			#{markedValue},
 			#{originalValue},
@@ -137,6 +178,7 @@
 	
 	<update id="update">
 		UPDATE ope_performance SET 	
+			category_id = #{category.id},
 			measure_id = #{measure.id},
 			marked_value = #{markedValue},
 			original_value = #{originalValue},

@@ -27,14 +27,23 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/ope/performance/?treeId=${pid}&treeModule=${pType}">标注列表</a></li>
-		<li class="active"><a href="${ctx}/ope/performance/form?id=${performance.id}&pid=${pid}&pType=${pType}">标注<shiro:hasPermission name="ope:performance:edit">${not empty performance.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="ope:performance:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/ope/performance/?treeId=${pId}&treeModule=${pType}">标注列表</a></li>
+		<li class="active"><a href="${ctx}/ope/performance/form?id=${performance.id}&treeId=${treeId}&pId=${pId}&pType=${pType}">标注<shiro:hasPermission name="ope:performance:edit">${not empty performance.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="ope:performance:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="performance" action="${ctx}/ope/performance/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<input type="hidden" id="pid" name="pid" value="${pid}"/>
+		<input type="hidden" id="treeId" name="treeId" value="${treeId}"/>
+		<input type="hidden" id="pId" name="pId" value="${pId}"/>
 		<input type="hidden" id="pType" name="pType" value="${pType}"/>	
 		<sys:message content="${message}"/>		
+		<div class="control-group">
+			<label class="control-label">所属类目：</label>
+			<div class="controls">
+				<sys:treeselect id="category" name="category.id" value="${performance.category.id}" labelName="category.name" labelValue="${performance.category.name}"
+					title="所属类目" url="/mod/itemCategory/treeData"  cssClass="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
 		<div class="control-group">
 			<label class="control-label">关键属性：</label>
 			<div class="controls">
@@ -42,7 +51,7 @@
 					title="关键属性" url="/mod/measure/treeData"  cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-		</div>
+		</div>		
 		<div class="control-group">
 			<label class="control-label">标注值：</label>
 			<div class="controls">

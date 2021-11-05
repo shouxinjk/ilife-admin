@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -54,6 +55,7 @@ public class PerformanceController extends BaseController {
 	@Autowired
 	private PerformanceService performanceService;
 	
+	/**
 	@ResponseBody
 	@RequestMapping(value = "rest/byMeasureId")
 	//根据属性ID（系统标准属性ID）查询所有属性值，并进行标注。根据level等级、markedValue倒序排列
@@ -61,13 +63,27 @@ public class PerformanceController extends BaseController {
 		response.setContentType("application/json; charset=UTF-8");
 		return performanceService.findListByMeasureId(measureId);
 	}
+		//**/
 	
 	@ResponseBody
-	@RequestMapping(value = "rest/measure/{measureId}", method = RequestMethod.GET)
+	@RequestMapping(value = "rest/values/{measureId}/{categoryId}", method = RequestMethod.GET)
 	//根据属性ID（系统标准属性ID）查询所有属性值，并进行标注。根据level等级、controlvalue倒序排列
-	public List<Performance> listValuesByMeasureId( @PathVariable String measureId, HttpServletResponse response) {
+	public List<Performance> listValuesByMeasureIdAndCategoryId( @PathVariable String measureId,@PathVariable String categoryId, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
-		return performanceService.findListByMeasureId(measureId);
+		//return performanceService.findListByMeasureId(measureId);
+		Map<String,String> params = Maps.newHashMap();
+		params.put("categoryId", categoryId);
+		params.put("measureId", measureId);
+		return performanceService.findListByMeasureAndCategory(params);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/values", method = RequestMethod.GET)
+	//根据measureId、categoryId查找在指定类目指定属性下的标注值。根据level等级、controlvalue倒序排列
+	//参数：measureId,categoryId
+	public List<Performance> listValuesByMeasureAndCategory( @RequestBody Map<String,String> params, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		return performanceService.findListByMeasureAndCategory(params);
 	}
 	
 	//不工作。jsGrid单个记录更新时传递的是FormData
@@ -159,32 +175,37 @@ public class PerformanceController extends BaseController {
 	
 	@RequiresPermissions("ope:performance:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(Performance performance,String treeId,String treeModule,String topType,  HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String list(Performance performance,String treeId,String pId,String treeModule,String topType,  HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeModule.equals("measure")){
 			performance.setMeasure(new Measure(treeId));
+			performance.setCategory(new ItemCategory(pId));//增加类目过滤。注意：仅在选中节点为Measure时，其pId是CategoryId
 		}else{//否则提示选择属性
 			model.addAttribute("message","选择属性查看标注。");
 			return "treeData/none";
 		}
 		Page<Performance> page = performanceService.findPage(new Page<Performance>(request, response), performance);
 		model.addAttribute("page", page);
-		model.addAttribute("pid", treeId);
+		model.addAttribute("treeId", treeId);//记录当前选中的measureId
+		model.addAttribute("pId", pId);//记录当前选中的categoryId
 		model.addAttribute("pType", treeModule);
 		return "modules/ope/performanceList";
 	}
 
 	@RequiresPermissions("ope:performance:view")
 	@RequestMapping(value = "form")
-	public String form(Performance performance,String pid,String pType,  Model model) {
+	public String form(Performance performance,String treeId,String pId,String pType,  Model model) {
 		Measure measure=new Measure();
 		if(pType.equals("measure")){
-			measure = measureService.get(pid);
+			measure = measureService.get(treeId);//treeId记录当前选中的measureId
 			performance.setMeasure(measure);
+			performance.setCategory(itemCategoryService.get(pId));//pId记录当前选中的categoryId
+			//model.addAttribute("categoryId", measure.getCategory().getId());//设置当前类目ID
 		}else {//否则提示选择属性
 			model.addAttribute("message","选择属性查看标注。");
 			return "treeData/none";
 		}
-		model.addAttribute("pid", pid);
+		model.addAttribute("treeId", treeId);//记录当前选中的measureId
+		model.addAttribute("pId", pId);//记录当前选中的categoryId
 		model.addAttribute("pType", pType);
 		model.addAttribute("performance", performance);
 		return "modules/ope/performanceForm";
@@ -192,24 +213,27 @@ public class PerformanceController extends BaseController {
 
 	@RequiresPermissions("ope:performance:edit")
 	@RequestMapping(value = "save")
-	public String save(Performance performance,String pid,String pType,  Model model, RedirectAttributes redirectAttributes) {
+	public String save(Performance performance,String treeId,String pId,String pType,  Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, performance)){
-			return form(performance,pid,pType,model);
+			return form(performance,treeId,pId,pType,model);
 		}
 		if(performance.getMeasure() == null){//不知道为啥，前端传进来的measure信息丢失了，手动补一次
-			performance.setMeasure(measureService.get(pid));
+			performance.setMeasure(measureService.get(treeId));
+		}
+		if(performance.getCategory() == null){//不知道为啥，前端传进来的measure信息丢失了，手动补一次
+			performance.setCategory(itemCategoryService.get(pId));
 		}
 		performanceService.save(performance);
 		addMessage(redirectAttributes, "保存标注成功");
-		return "redirect:"+Global.getAdminPath()+"/ope/performance/?treeId="+pid+"&treeModule="+pType+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/ope/performance/?treeId="+treeId+"&pId="+pId+"&treeModule="+pType+"&repage";
 	}
 	
 	@RequiresPermissions("ope:performance:edit")
 	@RequestMapping(value = "delete")
-	public String delete(Performance performance,String pid,String pType,  RedirectAttributes redirectAttributes) {
+	public String delete(Performance performance,String treeId,String pId,String pType,  RedirectAttributes redirectAttributes) {
 		performanceService.delete(performance);
 		addMessage(redirectAttributes, "删除标注成功");
-		return "redirect:"+Global.getAdminPath()+"/ope/performance/?treeId="+pid+"&treeModule="+pType+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/ope/performance/?treeId="+treeId+"&pId="+pId+"&treeModule="+pType+"&repage";
 	}
 	
 
@@ -299,7 +323,7 @@ public class PerformanceController extends BaseController {
 				map.put("pId", e.getParentId());
 				map.put("name", e.getName());
 				mapList.add(map);
-				//查询该类别下的属性
+				//查询该类别下的直接属性：属性定义及属性值均在当前类目下
 				Measure query = new Measure();
 				query.setCategory(e);
 				List<Measure> props = measureService.findList(query);

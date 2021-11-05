@@ -6,6 +6,7 @@ package com.pcitech.iLife.modules.ope.entity;
 import org.hibernate.validator.constraints.Length;
 
 import com.pcitech.iLife.common.persistence.DataEntity;
+import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 
 /**
@@ -16,6 +17,7 @@ import com.pcitech.iLife.modules.mod.entity.Measure;
 public class Performance extends DataEntity<Performance> {
 	
 	private static final long serialVersionUID = 1L;
+	private ItemCategory category;		// 关键属性
 	private Measure measure;		// 关键属性
 	private Double markedValue;		// 标注值
 	private String originalValue;		// 原始值
@@ -30,6 +32,14 @@ public class Performance extends DataEntity<Performance> {
 
 	public Performance(String id){
 		super(id);
+	}
+
+	public ItemCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ItemCategory category) {
+		this.category = category;
 	}
 
 	public Measure getMeasure() {

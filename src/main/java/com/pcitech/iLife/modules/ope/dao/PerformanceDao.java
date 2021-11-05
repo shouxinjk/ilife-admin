@@ -17,6 +17,11 @@ import com.pcitech.iLife.modules.ope.entity.Performance;
  */
 @MyBatisDao
 public interface PerformanceDao extends CrudDao<Performance> {
+	//根据categoryId查找继承属性列表
+	public List<Map<String,String>> findInheritMeasures(String categoryId);
+	
+	//根据measureId查询属性值列表
+	public List<Performance> findListByMeasureAndCategory(Map<String,String> params);
 	//根据measureId查询属性值列表
 	public List<Performance> findListByMeasureId(String measureId);
 	//更新属性值的markedValue及level

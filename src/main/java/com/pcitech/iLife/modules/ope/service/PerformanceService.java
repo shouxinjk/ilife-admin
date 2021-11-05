@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.persistence.TreeNode;
 import com.pcitech.iLife.common.service.CrudService;
@@ -39,6 +40,14 @@ public class PerformanceService extends CrudService<PerformanceDao, Performance>
 	
 	public Performance get(String id) {
 		return super.get(id);
+	}
+	
+	public List<Map<String,String>> findInheritMeasures(String categoryId) {
+		return performanceDao.findInheritMeasures(categoryId);
+	}
+	
+	public List<Performance> findListByMeasureAndCategory(Map<String,String> params) {
+		return performanceDao.findListByMeasureAndCategory(params);
 	}
 	
 	public List<Performance> findListByMeasureId(String measureId) {
@@ -94,6 +103,20 @@ public class PerformanceService extends CrudService<PerformanceDao, Performance>
 				leaf.setId(item.getId());
 				leaf.setBusinessId(item.getId());
 				leaf.setName(item.getName());
+				leaf.setParent(new TreeNode(category.getId()));
+				//leaf.setParentIds(category.getParentIds());
+				//leaf.setSort(item.getSort());
+				leaf.setModule("measure");
+				leaf.setTopType("itemCategory");
+				list.add(leaf);
+			}
+			//查询该类别下的继承属性：属性定义在上级类目，但数值标注在当前类目。仅显示已经建立数值的条目。
+			List<Map<String,String>> inheritProps = findInheritMeasures(category.getId());
+			for(Map<String,String> prop:inheritProps) {
+				TreeNode leaf=new TreeNode();
+				leaf.setId(prop.get("measureId"));
+				leaf.setBusinessId(prop.get("measureId"));
+				leaf.setName("[*]"+prop.get("measureName"));
 				leaf.setParent(new TreeNode(category.getId()));
 				//leaf.setParentIds(category.getParentIds());
 				//leaf.setSort(item.getSort());
