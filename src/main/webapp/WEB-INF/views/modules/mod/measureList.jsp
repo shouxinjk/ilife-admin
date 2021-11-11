@@ -41,12 +41,12 @@
 		<thead>
 			<tr>
 				<th>类别</th>
-				<th>维度</th>
+				<!--th>维度</th-->
 				<th>key</th>
 				<th>名称</th>
-				<th>占比</th>
+				<!--th>占比</th>
 				<th>参照值</th>
-				<th>默认等级</th>
+				<th>默认等级</th-->
 				<th>alpha</th>
 				<th>beta</th>
 				<th>gamma</th>
@@ -57,7 +57,9 @@
 				<th>theta</th>	
 				<th>lambda</th>					
 				<th>标签</th>
-				<th>自动标注</th>
+				<th>归一化类型</th>
+				<th>多值策略</th>
+				<th>标注类型</th>
 				<th>Dict</th>
 				<th>Refer</th>
 				<shiro:hasPermission name="mod:measure:edit"><th>操作</th></shiro:hasPermission>
@@ -69,24 +71,24 @@
 				<td>
 					${measure.category.name}
 				</td>
-				<td>
+				<!--td>
 					${measure.itemDimension.name}
-				</td>
+				</td-->
 				<td>
 					${measure.property}
 				</td>
 				<td><a href="${ctx}/mod/measure/form?id=${measure.id}">
 					${measure.name}
 				</a></td>
-				<td>
+				<!--td>
 					${measure.percentage}
 				</td>
 				<td>
 					${measure.controlValue}
-				</td>
+				</td-->
 				<td>
-					${measure.defaultLevel}
-				</td>
+					${measure.defaultScore}
+				</td>				
 				<td>
 					${measure.alpha}
 				</td>
@@ -117,6 +119,8 @@
 				<td>
 					${measure.tags}
 				</td>	
+				<td>${fns:getDictLabel(measure.normalizeType, 'normalizeType', '-')}</td>
+				<td>${fns:getDictLabel(measure.multiValueFunc, 'multiValueFunc', '-')}</td>
 				<td>${fns:getDictLabel(measure.autoLabelType, 'autoLabelType', '-')}</td>
 				<td>${fns:getDictLabel(measure.autoLabelDict, 'autoLabelDictItem', '-')}</td>	
 				<td>${measure.autoLabelCategory.name}</td>			

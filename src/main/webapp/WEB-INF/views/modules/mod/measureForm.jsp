@@ -42,14 +42,14 @@
 			</div>
 		</div>
 
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">维度：</label>
 			<div class="controls">
 				<sys:treeselect id="itemDimension" name="itemDimension.id" value="${measure.itemDimension.id}" labelName="itemDimension.name" labelValue="${measure.itemDimension.name}"
 								title="维度" url="/mod/itemDimension/treeData"  notAllowSelectRoot="true" cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-		</div>
+		</div-->
 		<div class="control-group">
 			<label class="control-label">属性定义：</label>
 			<div class="controls">
@@ -62,7 +62,7 @@
 				<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">属性占比：</label>
 			<div class="controls">
 				<form:input path="percentage" htmlEscape="false" class="input-xlarge "/>
@@ -73,19 +73,19 @@
 			<div class="controls">
 				<form:input path="controlValue" htmlEscape="false" class="input-xlarge "/>
 			</div>
-		</div>
+		</div-->
 		<div class="control-group">
 			<label class="control-label">默认评分：</label>
 			<div class="controls">
 				<form:input path="defaultScore" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">默认等级：</label>
 			<div class="controls">
 				<form:input path="defaultLevel" htmlEscape="false" maxlength="8" class="input-xlarge "/>
 			</div>
-		</div>
+		</div-->
 	<div class="control-group">
 			<label class="control-label">脚本表达式：</label>
 			<div class="controls">
@@ -159,19 +159,31 @@
 			</div>
 		</div>		
 		<div class="control-group">
-			<label class="control-label">自动标注：</label>
+			<label class="control-label">归一化方法：</label>
+			<div class="controls">
+				<form:select path="normalizeType" items="${fns:getDictList('normalizeType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</div>
+		</div>	
+		<div class="control-group">
+			<label class="control-label">多值策略：</label>
+			<div class="controls">
+				<form:select path="multiValueFunc" items="${fns:getDictList('multiValueFunc')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</div>
+		</div>				
+		<div class="control-group">
+			<label class="control-label">标注类型：</label>
 			<div class="controls">
 				<form:select path="autoLabelType" items="${fns:getDictList('autoLabelType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 			</div>
 		</div>		
 		<div class="control-group">
-			<label class="control-label">从字典标注：</label>
+			<label class="control-label">字典引用：</label>
 			<div class="controls">
 				<form:select path="autoLabelDict" items="${fns:getDictList('autoLabelDictItem')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 			</div>
 		</div>		
 		<div class="control-group">
-			<label class="control-label">Refer引用标注：</label>
+			<label class="control-label">Refer类目：</label>
 			<div class="controls">
 				 <sys:treeselect id="autoLabelCategory" name="autoLabelCategory.id" value="${measure.autoLabelCategory.id}" labelName="autoLabelCategory.name" labelValue="${measure.autoLabelCategory.name}"
 					title="商品分类" url="/mod/itemCategory/treeData" notAllowSelectRoot="true"/>

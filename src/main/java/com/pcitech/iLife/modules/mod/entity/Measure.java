@@ -38,6 +38,8 @@ public class Measure extends DataEntity<Measure> {
 	private ItemCategory autoLabelCategory;		// 自动标注引用类别
 	private String autoLabelDict;		// 自动标注引用字典
 	private String autoLabelType;		// 自动标注引用字典
+	private String normalizeType;		// 归一化类型，支持min-max、max-min、logx、logx-reverse、exp、exp-reverse
+	private String multiValueFunc;		// 多值处理方法，支持min、max、sum、avg
 	
 	public Measure() {
 		super();
@@ -135,6 +137,22 @@ public class Measure extends DataEntity<Measure> {
 
 	public void setAutoLabelType(String autoLabelType) {
 		this.autoLabelType = autoLabelType;
+	}
+
+	public String getNormalizeType() {
+		return normalizeType;
+	}
+
+	public void setNormalizeType(String normalizeType) {
+		this.normalizeType = normalizeType;
+	}
+
+	public String getMultiValueFunc() {
+		return multiValueFunc;
+	}
+
+	public void setMultiValueFunc(String multiValueFunc) {
+		this.multiValueFunc = multiValueFunc;
 	}
 
 	@Length(min=0, max=100, message="类型长度必须介于 0 和 100 之间")
