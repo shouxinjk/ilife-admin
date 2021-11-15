@@ -45,17 +45,17 @@
 				<th>key</th>
 				<th>名称</th>
 				<!--th>占比</th>
-				<th>参照值</th>
-				<th>默认等级</th-->
-				<th>alpha</th>
-				<th>beta</th>
-				<th>gamma</th>
-				<th>delte</th>
-				<th>epsilon</th>	
-				<th>zeta</th>
-				<th>eta</th>
-				<th>theta</th>	
-				<th>lambda</th>					
+				<th>参照值</th-->
+				<th>默认分值</th>
+				<th>a</th>
+				<th>b</th>
+				<th>c</th>
+				<th>d</th>
+				<th>e</th>	
+				<th>x</th>
+				<th>y</th>
+				<th>z</th>	
+				<th>style</th>					
 				<th>标签</th>
 				<th>归一化类型</th>
 				<th>多值策略</th>
