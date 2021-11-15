@@ -18,10 +18,13 @@
 		            <c:forEach items="${list}" var="tpl">{id:'${tpl.id}', pId:'${not empty tpl.parent?tpl.parent.id:0}', name:"${tpl.name}", url:"${ctx}/${url}/?treeId=${tpl.businessId}&pId=${not empty tpl.parent?tpl.parent.id:0}&treeModule=${tpl.module}&topType=${tpl.topType}&topId=${tpl.topId}", target:"commonMainFrame"},
 		            </c:forEach>];
 			for(var i=0; i<zNodes.length; i++) {
+				<%--
 				// 移除父节点
 				if (zNodes[i] && zNodes[i].id == 1){
 					zNodes.splice(i, 1);
-				}<%--
+				}
+				
+				<%--
 				// 并将没有关联关系的父节点，改为父节点
 				var isExistParent = false;
 				for(var j=0; j<zNodes.length; j++) {
@@ -41,11 +44,13 @@
 			for(var i=0; i<nodes.length; i++) {
 				tree.expandNode(nodes[i], true, true, false);
 			}
+			<%--
 			// 展开第二级节点
 			nodes = tree.getNodesByParam("level", 1);
 			for(var i=0; i<nodes.length; i++) {
 				tree.expandNode(nodes[i], true, true, false);
 			}
+			--%>
 			wSize();
 		});
 		$(window).resize(function(){
