@@ -63,6 +63,48 @@ public class ItemDimensionController extends BaseController {
 		return entity;
 	}
 
+	//根据category获取相应的客观评价树。
+	//自动根据category及parentId=1查询得到根节点
+	@ResponseBody
+	@RequestMapping(value = "rest/dim-tree-by-category", method = RequestMethod.GET)
+	public List<Map<String, Object>> listDiemensionTreeForSunburstChartByCategory(String categoryId) {
+		ItemCategory category = itemCategoryService.get(categoryId);
+		ItemDimension root = new ItemDimension(); 
+		root.setId("1");//指定该目录下ID为1的记录为根节点
+		ItemDimension q = new ItemDimension(); 
+		q.setCategory(category);
+		q.setParent(root);
+		
+		List<ItemDimension> nodes = itemDimensionService.findList(q);
+		if(nodes !=null && nodes.size()>0)
+			return listDiemensionTreeForSunburstChart(categoryId,nodes.get(0).getId());
+		else {//否则尝试查询root.id=categoryId的记录
+			return listDiemensionTreeForSunburstChart(categoryId,categoryId);
+		}
+	}
+
+	/**
+	 * 获取指定节点下的维度树。用于客观评价图形化显示。sunburst。
+	 * 输入为父维度ID（顶级维度与所属类目ID相同），输出为所有子维度name及weight。嵌套输出。
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/dim-tree", method = RequestMethod.GET)
+	public List<Map<String, Object>> listDiemensionTreeForSunburstChart(String categoryId,String parentId) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		ItemDimension parentDimension = itemDimensionService.get(parentId);//以当前维度为父节点查询
+		ItemCategory category = itemCategoryService.get(categoryId);
+		ItemDimension q = new ItemDimension(); 
+		q.setParent(parentDimension);
+		q.setCategory(category);
+		for(ItemDimension node:itemDimensionService.findList(q)) {//组装dimension节点列表
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("name", node.getName());
+			map.put("weight", node.getWeight());
+			map.put("children",listDiemensionTreeForSunburstChart(node.getCategory().getId(),node.getId()));//迭代获取所有下级维度
+			mapList.add(map);
+		}
+		return mapList;
+	}
 
 	/**
 	 * 查询 分类-维度-属性 树结构数据
@@ -212,7 +254,7 @@ public class ItemDimensionController extends BaseController {
 		map.put("id", id);//保持原始id
 		if(id.startsWith("dim-")) {//对维度占比进行更新
 			ItemDimension itemDimension = itemDimensionService.get(id.replace("dim-", ""));
-			itemDimension.setWeight(""+weight);
+			itemDimension.setWeight(weight);
 			itemDimensionService.save(itemDimension);
 			itemDimension = itemDimensionService.get(id.replace("dim-", ""));
 			map.put("type", "维度");
@@ -248,7 +290,9 @@ public class ItemDimensionController extends BaseController {
 			rootDimension.setName(category.getName());
 			rootDimension.setDescription("root dimension");
 			rootDimension.setCategory(category);
-			rootDimension.setWeight("100");
+			rootDimension.setId(treeId);//默认顶级节点ID与category保持一致
+			rootDimension.setIsNewRecord(true);
+			rootDimension.setWeight(100);
 			itemDimensionService.save(rootDimension);
 		}
 		List<ItemDimension> sourcelist = itemDimensionService.findTree(category);

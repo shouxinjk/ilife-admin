@@ -22,7 +22,7 @@ public class ItemDimension extends TreeEntity<ItemDimension> {
 	private ItemCategory category;		// 类别
 	private String name;		// 名称
 	private String description;		// 描述
-	private String weight;		// 占比
+	private double weight;		// 占比
 	
 	public ItemDimension() {
 		super();
@@ -76,11 +76,11 @@ public class ItemDimension extends TreeEntity<ItemDimension> {
 		this.description = description;
 	}
 	
-	public String getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(String weight) {
+	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 	
