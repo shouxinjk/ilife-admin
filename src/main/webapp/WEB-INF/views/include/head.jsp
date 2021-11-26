@@ -16,6 +16,8 @@
 <script src="${ctxStatic}/jquery-jbox/2.3/jquery.jBox-2.3.min.js" type="text/javascript"></script>
 <script src="${ctxStatic}/My97DatePicker/WdatePicker.js" type="text/javascript"></script>
 <script src="${ctxStatic}/common/mustache.min.js" type="text/javascript"></script>
+<link href="${ctxStatic}/star-rating-svg/star-rating-svg.css" type="text/css" rel="stylesheet" />
+<script src="${ctxStatic}/star-rating-svg/jquery.star-rating-svg.min.js" type="text/javascript"></script>
 <link href="${ctxStatic}/common/iLife.css" type="text/css" rel="stylesheet" />
 <script src="${ctxStatic}/common/iLife.js" type="text/javascript"></script>
 <script type="text/javascript">var ctx = '${ctx}', ctxStatic='${ctxStatic}';</script>
