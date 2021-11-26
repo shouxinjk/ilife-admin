@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.dict.dao.DictMaterialDao">
+    
+	<sql id="dictMaterialColumns">
+		a.id AS "id",
+		a.category AS "category",
+		a.label AS "label",
+		a.score AS "score",
+		a.description AS "description",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="dictMaterialJoins">
+	</sql>
+    
+	<select id="get" resultType="DictMaterial">
+		SELECT 
+			<include refid="dictMaterialColumns"/>
+		FROM dict_material a
+		<include refid="dictMaterialJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DictMaterial">
+		SELECT 
+			<include refid="dictMaterialColumns"/>
+		FROM dict_material a
+		<include refid="dictMaterialJoins"/>
+		<where>
+			
+			<if test="category != null and category != ''">
+				AND a.category LIKE CONCAT('%', #{category}, '%')
+			</if>
+			<if test="label != null and label != ''">
+				AND a.label  LIKE CONCAT('%', #{label}, '%')
+			</if>
+			<if test="score != null and score != ''">
+				AND a.score = #{score}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DictMaterial">
+		SELECT 
+			<include refid="dictMaterialColumns"/>
+		FROM dict_material a
+		<include refid="dictMaterialJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO dict_material(
+			id,
+			category,
+			label,
+			score,
+			description,
+			create_date,
+			update_date
+		) VALUES (
+			#{id},
+			#{category},
+			#{label},
+			#{score},
+			#{description},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE dict_material SET 	
+			category = #{category},
+			label = #{label},
+			score = #{score},
+			description = #{description},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM dict_material
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 根据属性值ID，更新markedValue值（即score） -->
+	<update id="updateMarkedValue">
+		UPDATE dict_material SET 	
+			score = #{markedValue},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>	
+	
+</mapper>

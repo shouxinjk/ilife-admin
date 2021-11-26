@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>标注管理</title>
+	<title>电商平台字典管理管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -23,7 +23,7 @@
 				        console.log("dude, now try update rating.[old]"+itemValue,itemId,currentRating);
 				        $.ajax({
 				            type: "GET",
-				            url: $("#sxContextPath").val()+"/ope/performance/rest/updateMarkedValue?id="+itemId+"&level="+currentRating+"&markedValue="+currentRating,
+				            url: $("#sxContextPath").val()+"/dict/dictPlatform/rest/updateMarkedValue?id="+itemId+"&markedValue="+currentRating,
 				            headers:{
 				                "Content-Type":"application/json",
 				                "Accept":"application/json"
@@ -50,70 +50,64 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/ope/performance/">标注列表</a></li>
-		<shiro:hasPermission name="ope:performance:edit"><li><a href="${ctx}/ope/performance/form?treeId=${treeId}&pId=${pId}&pType=${pType}">标注添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/dict/dictPlatform/">电商平台字典列表</a></li>
+		<shiro:hasPermission name="dict:dictPlatform:edit"><li><a href="${ctx}/dict/dictPlatform/form">电商平台字典添加</a></li></shiro:hasPermission>
 	</ul>
-	<form:form id="searchForm" modelAttribute="performance" action="${ctx}/ope/performance/?treeId=${treeId}&pId=${pId}&treeModule=${pType}" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="dictPlatform" action="${ctx}/dict/dictPlatform/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input id="sxContextPath" name="sxContextPath" type="hidden" value="${ctx}"/>
+		<ul class="ul-form">
+			<li><label>类别：</label>
+				<form:input path="category" htmlEscape="false" maxlength="32" class="input-medium"/>
+			</li>
+			<li><label>字典值：</label>
+				<form:input path="label" htmlEscape="false" maxlength="50" class="input-medium"/>
+			</li>
+			<li><label>字典分：</label>
+				<form:input path="score" htmlEscape="false" class="input-medium"/>
+			</li>
+			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="clearfix"></li>
+		</ul>
 	</form:form>
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>所属类目</th>
-				<th>关键属性</th>
-				<th>原始值/Label</th>
-				<!--th>所属维度</th>
-				<th>等级</th>
-				<th>归一值</th>
-				<th>对照值</th-->
-				<th>标注值/mvalue</th>
-				<th>更新者</th>
-				<th>更新时间</th>
-				<shiro:hasPermission name="ope:performance:edit"><th>操作</th></shiro:hasPermission>
+				<th>Logo</th>
+				<th>类别</th>
+				<th>平台名称</th>
+				<th>字典分</th>
+				<th>描述</th>
+				<th>修改时间</th>
+				<shiro:hasPermission name="dict:dictPlatform:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="performance">
+		<c:forEach items="${page.list}" var="dictPlatform">
 			<tr>
 				<td>
-					${performance.category.name}
+					<img src="${dictPlatform.logo}" alt="${dictPlatform.label}" style="height:40px"/>
 				</td>			
 				<td>
-					${performance.measure.name}
+					${dictPlatform.category}
 				</td>
+				<td><a href="${ctx}/dict/dictPlatform/form?id=${dictPlatform.id}">
+					${dictPlatform.label}
+				</a></td>
 				<td>
-					${performance.originalValue}
-				</td>				
-				<!--td>
-					${performance.dimension}
-				</td>								
-				<td>
-					${performance.level}
-				</td>
-				<td>
-					${performance.normalizedValue}
-				</td>
-				<td>
-					${performance.controlValue}
-				</td>
-				<td>
-					${performance.markedValue}
-				</td-->
-				<td>
-					<div class="rating" id="rate-${performance.id}" data-id="${performance.id}" data-markedValue="${performance.markedValue}"></div>
+					<div class="rating" id="rate-${dictPlatform.id}" data-id="${dictPlatform.id}" data-markedValue="${dictPlatform.score}"></div>
 				</td>				
 				<td>
-					${performance.updateBy.name}
+					${dictPlatform.description}
 				</td>
 				<td>
-					<fmt:formatDate value="${performance.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${dictPlatform.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<shiro:hasPermission name="ope:performance:edit"><td>
-    				<a href="${ctx}/ope/performance/form?id=${performance.id}&treeId=${treeId}&pId=${pId}&pType=${pType}">修改</a>
-					<a href="${ctx}/ope/performance/delete?id=${performance.id}&treeId=${treeId}&pId=${pId}&pType=${pType}" onclick="return confirmx('确认要删除该标注吗？', this.href)">删除</a>
+				<shiro:hasPermission name="dict:dictPlatform:edit"><td>
+    				<a href="${ctx}/dict/dictPlatform/form?id=${dictPlatform.id}">修改</a>
+					<a href="${ctx}/dict/dictPlatform/delete?id=${dictPlatform.id}" onclick="return confirmx('确认要删除该电商平台字典吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

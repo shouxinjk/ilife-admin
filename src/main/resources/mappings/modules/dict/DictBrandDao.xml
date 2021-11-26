@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.dict.dao.DictBrandDao">
+    
+	<sql id="dictBrandColumns">
+		a.id AS "id",
+		a.logo AS "logo",
+		a.country AS "country",
+		a.description AS "description",
+		a.category AS "category.id",
+		c.name AS "category.name",
+		a.label AS "label",
+		a.score AS "score",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="dictBrandJoins">
+		LEFT JOIN mod_item_category c ON c.id = a.category
+	</sql>
+    
+	<select id="get" resultType="DictBrand">
+		SELECT 
+			<include refid="dictBrandColumns"/>
+		FROM dict_brand a
+		<include refid="dictBrandJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DictBrand">
+		SELECT 
+			<include refid="dictBrandColumns"/>
+		FROM dict_brand a
+		<include refid="dictBrandJoins"/>
+		<where>
+			
+			<if test="country != null and country != ''">
+				AND a.country = #{country}
+			</if>
+			<if test="description != null and description != ''">
+				AND a.description = #{description}
+			</if>
+			<if test="category != null and category != '' and category.id != null">
+				AND a.category = #{category.id}
+			</if>
+			<if test="label != null and label != ''">
+				AND a.label  LIKE CONCAT('%', #{label}, '%')
+			</if>
+			<if test="score != null and score != ''">
+				AND a.score = #{score}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DictBrand">
+		SELECT 
+			<include refid="dictBrandColumns"/>
+		FROM dict_brand a
+		<include refid="dictBrandJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO dict_brand(
+			id,
+			logo,
+			country,
+			description,
+			category,
+			label,
+			score,
+			create_date,
+			update_date
+		) VALUES (
+			#{id},
+			#{logo},
+			#{country},
+			#{description},
+			#{category.id},
+			#{label},
+			#{score},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE dict_brand SET 	
+			logo = #{logo},
+			country = #{country},
+			description = #{description},
+			category = #{category.id},
+			label = #{label},
+			score = #{score},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM dict_brand
+		WHERE id = #{id}
+	</update>
+
+	<!-- 根据属性值ID，更新markedValue值（即score） -->
+	<update id="updateMarkedValue">
+		UPDATE dict_brand SET 	
+			score = #{markedValue},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
