@@ -77,10 +77,11 @@ public class DictBrandController extends BaseController {
 	@RequiresPermissions("dict:dictBrand:view")
 	@RequestMapping(value = "form")
 	public String form(DictBrand dictBrand,String treeId,String pId,String pType,  Model model) {
-		model.addAttribute("dictBrand", dictBrand);
 		model.addAttribute("treeId", treeId);//记录当前选中的measureId
 		model.addAttribute("pId", pId);//记录当前选中的categoryId
 		model.addAttribute("pType", pType);
+		dictBrand.setCategory(itemCategoryService.get(treeId));//pId记录当前选中的categoryId
+		model.addAttribute("dictBrand", dictBrand);
 		return "modules/dict/dictBrandForm";
 	}
 
