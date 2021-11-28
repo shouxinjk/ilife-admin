@@ -188,7 +188,14 @@
 				 <sys:treeselect id="autoLabelCategory" name="autoLabelCategory.id" value="${measure.autoLabelCategory.id}" labelName="autoLabelCategory.name" labelValue="${measure.autoLabelCategory.name}"
 					title="商品分类" url="/mod/itemCategory/treeData" notAllowSelectRoot="true"/>
 			</div>
-		</div>			
+		</div>	
+		<div class="control-group">
+			<label class="control-label">标签类目：</label>
+			<div class="controls">
+				 <sys:treeselect id="autoLabelTagCategory" name="autoLabelTagCategory.id" value="${measure.autoLabelTagCategory.id}" labelName="autoLabelTagCategory.name" labelValue="${measure.autoLabelTagCategory.name}"
+					title="标签分类" url="/mod/tagCategory/treeData" notAllowSelectRoot="true"/>
+			</div>
+		</div>				
 		<div class="form-actions">
 			<shiro:hasPermission name="mod:measure:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

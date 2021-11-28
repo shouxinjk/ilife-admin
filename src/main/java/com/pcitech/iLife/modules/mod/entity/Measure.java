@@ -36,6 +36,7 @@ public class Measure extends DataEntity<Measure> {
 	private double theta=0.2;		// 成本：文化
 	private String lambda;		// 偏好表达式
 	private ItemCategory autoLabelCategory;		// 自动标注引用类别
+	private TagCategory autoLabelTagCategory;		// 自动标注标签类别：将自动把tagging、tags打散写入该属性下
 	private String autoLabelDict;		// 自动标注引用字典
 	private String autoLabelType;		// 自动标注引用字典
 	private String normalizeType;		// 归一化类型，支持min-max、max-min、logx、logx-reverse、exp、exp-reverse
@@ -121,6 +122,14 @@ public class Measure extends DataEntity<Measure> {
 
 	public void setAutoLabelCategory(ItemCategory autoLabelCategory) {
 		this.autoLabelCategory = autoLabelCategory;
+	}
+
+	public TagCategory getAutoLabelTagCategory() {
+		return autoLabelTagCategory;
+	}
+
+	public void setAutoLabelTagCategory(TagCategory autoLabelTagCategory) {
+		this.autoLabelTagCategory = autoLabelTagCategory;
 	}
 
 	public String getAutoLabelDict() {
