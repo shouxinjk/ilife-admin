@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.validator.constraints.Length;
 
 import com.pcitech.iLife.common.persistence.DataEntity;
+import com.pcitech.iLife.modules.sys.entity.Office;
 
 /**
  * 达人管理Entity
@@ -16,6 +17,7 @@ import com.pcitech.iLife.common.persistence.DataEntity;
 public class Broker extends DataEntity<Broker> {
 	
 	private static final long serialVersionUID = 1L;
+	private Office orgnization;	// 归属公司
 	private Broker parent;		// 上级达人
 	private String openid;		// openid
 	private String name;		// 真实姓名
@@ -151,6 +153,14 @@ public class Broker extends DataEntity<Broker> {
 
 	public void setQrcodeUrl(String qrcodeUrl) {
 		this.qrcodeUrl = qrcodeUrl;
+	}
+
+	public Office getOrgnization() {
+		return orgnization;
+	}
+
+	public void setOrgnization(Office orgnization) {
+		this.orgnization = orgnization;
 	}
 	
 }

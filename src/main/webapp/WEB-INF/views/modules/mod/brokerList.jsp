@@ -38,16 +38,17 @@
 			<tr>
 				<th>OpenId</th>
 				<th>姓名</th>
+				<th>机构</th>
 				<th>上级达人</th>
 				<th>电话</th>
 				<th>二维码</th>
-				<th>邮件</th>
+				<!--th>邮件</th-->
 				<th>层级</th>
 				<th>等级</th>
 				<th>账户状态</th>
-				<th>升级状态</th>
+				<!--th>升级状态</th-->
 				<th>注册时间</th>
-				<th>更新时间</th>
+				<!--th>更新时间</th-->
 				<shiro:hasPermission name="mod:broker:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -58,20 +59,21 @@
 					${broker.openid}
 				</a></td>
 				<td>${broker.name}</td>
+				<td>${broker.orgnization.name}</td>
 				<td>${broker.parent.name}</td>				
 				<td>${broker.phone}</td>	
 				<td>${broker.qrcodeUrl== null?"无":"已生成"}</td>		
-				<td>${broker.email}</td>	
+				<!--td>${broker.email}</td-->	
 				<td>${broker.hierarchy}</td>	
 				<td>${broker.level}</td>	
 				<td>${broker.status}</td>	
-				<td>${broker.upgrade}</td>	
+				<!--td>${broker.upgrade}</td-->	
 				<td>
 					<fmt:formatDate value="${broker.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>		
-				<td>
+				<!--td>
 					<fmt:formatDate value="${broker.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
+				</td-->
 				<shiro:hasPermission name="mod:broker:edit"><td>
     				<a href="${ctx}/mod/broker/form?id=${broker.id}">修改</a>
 					<a href="${ctx}/mod/broker/delete?id=${broker.id}" onclick="return confirmx('确认要删除该推广达人吗？', this.href)">删除</a>

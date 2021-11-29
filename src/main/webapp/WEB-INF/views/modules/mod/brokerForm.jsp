@@ -34,6 +34,13 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
+			<label class="control-label">所属机构:</label>
+			<div class="controls">
+                <sys:treeselect id="orgnization" name="orgnization.id" value="${broker.orgnization.id}" labelName="orgnization.name" labelValue="${broker.orgnization.name}"
+					title="机构" url="/sys/office/treeData?type=1" cssClass="required"/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">上级达人：</label>
 			<div class="controls">
 				<sys:treeselect id="parent" name="parent.id" value="${broker.parent.id}" labelName="parent.name" labelValue="${broker.parent.name}"

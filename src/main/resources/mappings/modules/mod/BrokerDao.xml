@@ -5,6 +5,8 @@
 	<sql id="brokerColumns">
 		a.parent_id AS "parent.id",
 		p.name AS "parent.name",
+		a.orgnization_id AS "orgnization.id",
+		org.name AS "orgnization.name",
 		a.id AS "id",
 		a.openid AS "openid",
 		a.name AS "name",
@@ -26,7 +28,8 @@
 	</sql>
 	
 	<sql id="brokerJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN sys_user uu ON uu.id = a.update_by 
+		LEFT JOIN sys_office org ON org.id = a.orgnization_id 
 		LEFT JOIN mod_broker p ON p.id = a.parent_id	
 	</sql>
     
@@ -128,6 +131,7 @@
 	<insert id="insert">
 		INSERT INTO mod_broker(
 			parent_id,
+			orgnization_id,
 			id,
 			openid,
 			name,
@@ -148,6 +152,7 @@
 			del_flag
 		) VALUES (
 			#{parent.id},
+			#{orgnization.id},
 			#{id},
 			#{openid},
 			#{name},
@@ -172,6 +177,7 @@
 	<update id="update">
 		UPDATE mod_broker SET 	
 			parent_id = #{parent.id},
+			orgnization_id = #{orgnization.id},
 			openid = #{openid},
 			name = #{name},
 			phone = #{phone},

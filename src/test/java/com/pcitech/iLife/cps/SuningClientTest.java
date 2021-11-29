@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -19,17 +21,23 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.arangodb.entity.BaseDocument;
+import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.task.PddItemSync;
 import com.pcitech.iLife.task.SuningItemSync;
 import com.pcitech.iLife.task.SuningItemsSearcher;
 import com.pcitech.iLife.task.SuningOrderSync;
 import com.pcitech.iLife.task.TaobaoItemSync;
+import com.pcitech.iLife.util.ArangoDbClient;
+import com.pcitech.iLife.util.Util;
 import com.pdd.pop.sdk.common.util.JsonUtil;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse.GoodsDetailResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse.GoodsPromotionUrlGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.GoodsZsUnitGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkOrderListRangeGetResponse.OrderListGetResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatsGetResponse.GoodsCatsGetResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddGoodsCatsGetResponse.GoodsCatsGetResponseGoodsCatsListItem;
 import com.suning.api.entity.netalliance.SelectrecommendcommodityQueryRequest;
 import com.taobao.api.ApiException;
 
@@ -37,6 +45,13 @@ import com.taobao.api.ApiException;
 @WebAppConfiguration
 @ContextConfiguration(locations={"classpath:spring-context.xml","classpath:spring-context-activiti.xml","classpath:spring-context-jedis.xml","classpath:spring-context-shiro.xml"}) 
 public class SuningClientTest {
+	private static Logger logger = LoggerFactory.getLogger(SuningClientTest.class);
+	 ArangoDbClient arangoClient;
+	  String host = Global.getConfig("arangodb.host");
+	  String port = Global.getConfig("arangodb.port");
+	  String username = Global.getConfig("arangodb.username");
+	  String password = Global.getConfig("arangodb.password");
+	  String database = Global.getConfig("arangodb.database");
 	
 	@Autowired
 	SuningHelper suningHelper;
@@ -48,7 +63,7 @@ public class SuningClientTest {
 	
 	@Autowired
 	SuningItemsSearcher suningItemsSearcher;
-	
+
 	@Test
 	public void getCategory() {
 		try {
@@ -57,8 +72,51 @@ public class SuningClientTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	@Test
+	public void getCategory() {
+		System.out.println("now start query categories ... ");
+		  //准备连接
+		arangoClient = new ArangoDbClient(host,port,username,password,database);
+		getCategories(0);
+		//完成后关闭arangoDbClient
+		arangoClient.close();
 		assert true;
 	}
+	
+	private void getCategories(long parentId) {
+		String source = "pdd";
+		logger.debug("now start query category list ..[parentId]"+parentId);
+		try {
+			GoodsCatsGetResponse resp = suningHelper.getCategory(parentId);
+			if(resp==null ||  resp.getGoodsCatsList().size()==0)
+				return;
+
+			for(GoodsCatsGetResponseGoodsCatsListItem item:resp.getGoodsCatsList()) {
+				logger.debug("目录::[parentId]"+item.getParentCatId()+"\t[id]"+item.getCatId()+"\t[name]"+item.getCatName());
+				String itemKey = Util.md5(source + item.getCatId());//所有原始category保持 source+CategoryId的形式唯一识别
+				BaseDocument doc = new BaseDocument();
+				doc.setKey(itemKey);
+				doc.getProperties().put("source", source);
+				doc.getProperties().put("pid", ""+item.getParentCatId());//原始父id
+				doc.getProperties().put("name", ""+item.getCatName());//名称
+				doc.getProperties().put("id", ""+item.getCatId());//原始id
+				doc.getProperties().put("level", item.getLevel());//层级 
+				logger.debug("try to upsert jd category.[itemKey]"+itemKey+"[doc]"+JsonUtil.transferToJson(item));
+				arangoClient.upsert("platform_categories", itemKey, doc);  
+//				if(item.getGrade()<2)
+				getCategories(item.getCatId());//递归获取下层分类
+				//getProperties(item.getCatId());//TODO:无接口权限。获取分类属性列表及属性值列表
+			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	//**/
 	
 	@Test
 	public void search() {

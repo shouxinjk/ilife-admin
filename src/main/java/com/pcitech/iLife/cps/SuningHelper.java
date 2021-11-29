@@ -71,8 +71,8 @@ public class SuningHelper {
 		CommoditycategoryList commoditycategoryList= new CommoditycategoryList();
 		commoditycategoryList.setGrade("1");
 		commoditycategoryList.setParentId("R0103");
-		commoditycategoryList.setSaleCategoryId("R0103");
-		commoditycategoryList.setSaleGrade("1");
+//		commoditycategoryList.setSaleCategoryId("R0103");
+//		commoditycategoryList.setSaleGrade("1");
 		List<CommoditycategoryList> commoditycategoryListList =new ArrayList<CommoditycategoryList>();
 		commoditycategoryListList.add(commoditycategoryList);
 		request.setCommoditycategoryList(commoditycategoryListList);
