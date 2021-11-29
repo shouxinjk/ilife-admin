@@ -76,6 +76,7 @@
 	<update id="updateMarkedValue">
 		UPDATE ope_performance SET 	
 			marked_value = #{markedValue},
+			isReady = 0,
 			level = #{level},
 			update_date = #{updateDate}
 		WHERE id = #{id}
