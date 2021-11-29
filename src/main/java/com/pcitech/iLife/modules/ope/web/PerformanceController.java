@@ -204,6 +204,7 @@ public class PerformanceController extends BaseController {
 		if(performance.getCategory() == null){//不知道为啥，前端传进来的measure信息丢失了，手动补一次
 			performance.setCategory(itemCategoryService.get(pId));
 		}
+		performance.setIsReady(0);//强制同步
 		performanceService.save(performance);
 		addMessage(redirectAttributes, "保存标注成功");
 		return "redirect:"+Global.getAdminPath()+"/ope/performance/?treeId="+treeId+"&pId="+pId+"&treeModule="+pType+"&repage";

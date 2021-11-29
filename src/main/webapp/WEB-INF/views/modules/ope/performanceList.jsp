@@ -70,6 +70,7 @@
 				<th>归一值</th>
 				<th>对照值</th-->
 				<th>标注值/mvalue</th>
+				<th>同步状态</th>
 				<th>更新者</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="ope:performance:edit"><th>操作</th></shiro:hasPermission>
@@ -104,7 +105,10 @@
 				</td-->
 				<td>
 					<div class="rating" id="rate-${performance.id}" data-id="${performance.id}" data-markedValue="${performance.markedValue}"></div>
-				</td>				
+				</td>	
+				<td>
+					${fns:getDictLabel(performance.isReady, 'yes_no', '')}
+				</td>							
 				<td>
 					${performance.updateBy.name}
 				</td>

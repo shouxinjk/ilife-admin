@@ -25,6 +25,7 @@ public class Performance extends DataEntity<Performance> {
 	private Double controlValue;		// 对照值
 	private Integer level;		// 等级
 	private String dimension;		// 所属维度
+	private Integer isReady; //是否已经同步：1-已同步 0-待同步
 	
 	public Performance() {
 		super();
@@ -97,6 +98,14 @@ public class Performance extends DataEntity<Performance> {
 
 	public void setDimension(String dimension) {
 		this.dimension = dimension;
+	}
+
+	public Integer getIsReady() {
+		return isReady;
+	}
+
+	public void setIsReady(Integer isReady) {
+		this.isReady = isReady;
 	}
 	
 }
