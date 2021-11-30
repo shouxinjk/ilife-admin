@@ -6,9 +6,74 @@
 	<meta name="decorator" content="default"/>
 	<%@include file="/WEB-INF/views/include/treetable.jsp" %>
 	<script type="text/javascript">
+		var sxdebug=false;
+		var sections=[];//记录所有待汇总的section，即父节点列表
         $(document).ready(function() {
             $("#treeTableDimension").treeTable({expandLevel : 5});
+            
+            //注册监听事件
+            registerEventListener();
+            //经所有上层节点放入section列表，等待汇总
+            $("input[data-section^='sec-']").each((index, item) => {
+            	var sectionId = $(item).data("section");
+                if(sxdebug)console.log("got section.[index]"+index,sectionId);
+                if(sections.indexOf(sectionId)<0){
+                	sections.push(sectionId);
+                }
+              });
+            if(sxdebug)console.log("all sections.",sections);
+            //检查sum是否为100
+            checkWeightSum();
         });
+		
+		//注册监听事件：修改weight后立即生效
+		function registerEventListener(){
+			//监听所有weight input
+            $("input[data-section^='sec-']").each((index, item) => {
+            	var inputId = $(item).attr("id");
+            	if(sxdebug)console.log("got input.[index]"+index,inputId);
+                $("#"+inputId).blur(function(e){
+                	var weight2 = $("#"+e.currentTarget.id).val();
+                	if(sxdebug)console.log("start change weight.",e.currentTarget.id,weight2);
+                    var data = {
+                    		id:e.currentTarget.id,
+                    		weight:Number(weight2)
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: $("#sxContextPath").val()+"/mod/itemDimension/rest/weight",
+                        data: data,        
+			            success:function(result){
+			            	if(sxdebug)console.log("update weight done.",result);   
+			                //重新计算
+			                checkWeightSum();
+			            }
+                    });
+                }); 
+              });
+		}
+        
+		//根据section，汇总其下所有节点的weight，如果不等于100则高亮显示
+        function checkWeightSum(){
+        	sections.forEach((section, index) => {
+        		if(sxdebug)console.log("sum section.[section]"+index,section);
+				//获取该section下的所有节点，并汇总其weight值
+				var sum = 0;
+                $("input[data-entry^='"+section+"']").each((index, item) => {
+                	var weight = Number($(item).val());
+                	if(sxdebug)console.log("got entry.[index]"+index,weight,sum);
+                    sum+=weight;
+                });
+                if(sum!=100){
+                	if(sxdebug)console.log("section sum is not 100. [section]"+section);
+                	$("input[data-section='"+section+"']").css("color","red");
+                	$("input[data-section='"+section+"']").css("background-color","#FFB7C5");
+                }else{
+                	$("input[data-section='"+section+"']").css("color","black");
+                	$("input[data-section='"+section+"']").css("background-color","#fff");
+                }
+              });
+        }
 
         function updateSort() {
             loading('正在提交，请稍等...');
@@ -25,32 +90,29 @@
 	</ul>
 	<sys:message content="${message}"/>
 	<form id="listForm" method="post">
+	<input id="sxContextPath" name="sxContextPath" type="hidden" value="${ctx}"/>
 	<table id="treeTableDimension" class="table table-striped table-bordered table-condensed">
 
 			<tr>
 				<th>名称</th>
 				<th>描述</th>
 				<th>占比</th>
-                <th style="text-align:center;">排序</th>
 				<shiro:hasPermission name="mod:itemDimension:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 
 
 		<c:forEach items="${list}" var="row">
 			<tr id="${row.id}" pId="${row.parent.id ne '1'?row.parent.id:'0'}">
-				<td><a href="${ctx}/mod/itemDimensionMeasure/list?dimensionId=${row.id}&categoryId=${treeId}&dimension.id=${row.id}&category.id=${treeId}">
+				<td>
+				<input type="hidden" name="ids" value="${row.id}"/>
+				<a href="${ctx}/mod/itemDimensionMeasure/list?dimensionId=${row.id}&categoryId=${treeId}&dimension.id=${row.id}&category.id=${treeId}">
 					${row.name}
 				</a></td>
 				<td>
 					${row.description}
 				</td>					
 				<td>
-					${row.weight}
-				</td>
-				<td style="text-align:center;">
-					<shiro:hasPermission name="mod:itemCategory:edit">
-						<input type="hidden" name="ids" value="${row.id}"/>
-					</shiro:hasPermission>
+					<input type="text" value="${row.weight}" id="${row.type ne 'dimension'?'prop-':'dim-'}${row.id}" data-section="sec-${row.parent.id}" data-entry="sec-${row.parent.id}-${row.id}" style="width:60px;"/>
 				</td>
 				<td>
 					<shiro:hasPermission name="mod:itemDimension:edit">
