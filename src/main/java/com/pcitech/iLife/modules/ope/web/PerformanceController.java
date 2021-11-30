@@ -113,7 +113,8 @@ public class PerformanceController extends BaseController {
 		Map<String,Object> params = Maps.newHashMap();
 		params.put("id", id);
 		params.put("level", level);
-		params.put("markedValue", markedValue);//注意：实际将同时设置isReady=0，分析系统将自动读取
+		params.put("isReady", 0);//注意：实际将同时设置isReady=0，分析系统将自动读取
+		params.put("markedValue", markedValue);
 		params.put("updateDate", new Date());
 		performanceService.updateMarkedValue(params);
 		
