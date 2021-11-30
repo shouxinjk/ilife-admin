@@ -6,6 +6,7 @@ package com.pcitech.iLife.modules.mod.service;
 import java.util.List;
 import java.util.Set;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Sets;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.sys.entity.User;
@@ -48,6 +49,9 @@ public class ItemDimensionService extends TreeService<ItemDimensionDao, ItemDime
 		super.delete(itemDimension);
 	}
 
+	/**
+	装载客观评价列表。仅返回指定目录的结果
+	*/
 	public List<ItemDimension> findTree(ItemCategory category){
 		List<ItemDimension> list;
 		User user = UserUtils.getUser();

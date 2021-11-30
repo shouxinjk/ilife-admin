@@ -215,8 +215,12 @@ public class MeasureController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "listData")
-	public List<Map<String, Object>> listData(Measure measure, HttpServletRequest request, HttpServletResponse response, Model model) {
+//	public List<Map<String, Object>> listData(Measure measure, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public List<Map<String, Object>> listData(@RequestParam(required=false) String extId,  HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
+		ItemCategory category = itemCategoryService.get(extId);//根据category过滤
+		Measure measure = new Measure();
+		measure.setCategory(category);
 		List<Measure> list =measureService.findList(measure);
 		for (int i=0; i<list.size(); i++){
 			Measure e = list.get(i);
@@ -229,9 +233,38 @@ public class MeasureController extends BaseController {
 //				map.put("isParent", true);
 //			}
 			mapList.add(map);
-			
 		}
+		
+		//检查上级目录的继承属性
+		listInheritMeasures(category,mapList);
+		
 		return mapList;
+	}
+	
+	/**
+	 * 根据目录逐层检查父级目录的属性
+	 * @param category
+	 * @param mapList
+	 */
+	private void listInheritMeasures(ItemCategory category, List<Map<String, Object>> mapList) {
+		ItemCategory parent = category.getParent();
+		if(parent == null || parent.getId() == category.getId())
+			return;
+		Measure measure = new Measure();
+		measure.setCategory(parent);
+		List<Measure> list =measureService.findList(measure);
+		for (int i=0; i<list.size(); i++){
+			Measure e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", e.getId());
+			map.put("pId", "0");
+			map.put("pIds", "0");
+			map.put("name", "["+parent.getName()+"]"+e.getName());
+			mapList.add(map);
+		}
+		
+		//检查上级目录的继承属性
+		listInheritMeasures(parent,mapList);
 	}
 	
 	@ResponseBody

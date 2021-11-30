@@ -28,7 +28,8 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/mod/itemDimension/list?treeId=${itemDimension.category.id}">客观评价列表</a></li>
-		<li class="active"><a href="${ctx}/mod/itemDimension/form?id=${itemDimension.id}&parent.id=${itemDimension.parent.id}">客观评价<shiro:hasPermission name="mod:itemDimension:edit">${not empty itemDimension.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:itemDimension:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a href="${ctx}/mod/itemDimension/form?id=${itemDimension.id}&parent.id=${itemDimension.parent.id}">添加评价节点</a></li>
+		<shiro:hasPermission name="mod:itemDimensionMeasure:edit"><li><a href="${ctx}/mod/itemDimensionMeasure/form?category.id=${itemDimension.category.id}">添加属性节点</a></li></shiro:hasPermission>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="itemDimension" action="${ctx}/mod/itemDimension/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
@@ -38,7 +39,7 @@
 			<label class="control-label">上级父级编号:</label>
 			<div class="controls">
 				<sys:treeselect id="parent" name="parent.id" value="${itemDimension.parent.id}" labelName="parent.name" labelValue="${itemDimension.parent.name}"
-					title="父级编号" url="/mod/itemDimension/treeData" extId="${itemDimension.id}" cssClass="" allowClear="true"/>
+					title="父级编号" url="/mod/itemDimension/treeData" extId="${itemDimension.category.id}" cssClass="" allowClear="true"/>
 			</div>
 		</div>
 		<div class="control-group">

@@ -81,8 +81,12 @@ public class ItemDimensionMeasureController extends BaseController {
 	public String form(ItemDimensionMeasure itemDimensionMeasure, Model model) {
 		if(itemDimensionMeasure.getId() == null) {//对于新添加记录需要根据ID补充dimension和category
 			itemDimensionMeasure.setCategory(itemCategoryService.get(itemDimensionMeasure.getCategory().getId()));
-			itemDimensionMeasure.setDimension(itemDimensionService.get(itemDimensionMeasure.getDimension().getId()));
-			itemDimensionMeasure.setName(itemDimensionMeasure.getCategory().getName()+"-"+itemDimensionMeasure.getDimension().getName());
+			if(itemDimensionMeasure.getDimension()!=null && itemDimensionMeasure.getDimension().getId()!=null)//从标签页开始添加不带有dimension信息，只有从维度操作列添加带有该信息
+				itemDimensionMeasure.setDimension(itemDimensionService.get(itemDimensionMeasure.getDimension().getId()));
+			if(itemDimensionMeasure.getDimension()!=null && itemDimensionMeasure.getDimension().getId()!=null)//从标签页开始添加不带有dimension信息，只有从维度操作列添加带有该信息
+				itemDimensionMeasure.setName(itemDimensionMeasure.getCategory().getName()+"-"+itemDimensionMeasure.getDimension().getName());
+			else
+				itemDimensionMeasure.setName(itemDimensionMeasure.getCategory().getName());
 		}
 		model.addAttribute("itemDimensionMeasure", itemDimensionMeasure);
 		return "modules/mod/itemDimensionMeasureForm";
@@ -98,7 +102,10 @@ public class ItemDimensionMeasureController extends BaseController {
 //		redirectAttributes.addAttribute("dimensionId", itemDimensionMeasure.getDimension().getId());
 //		redirectAttributes.addAttribute("categoryId", itemDimensionMeasure.getCategory().getId());
 		addMessage(redirectAttributes, "保存客观评价明细成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/itemDimensionMeasure/?dimension.id="+itemDimensionMeasure.getDimension().getId()+"&category.id="+itemDimensionMeasure.getCategory().getId()+"&repage";
+//		return "redirect:"+Global.getAdminPath()+"/mod/itemDimensionMeasure/?dimension.id="+itemDimensionMeasure.getDimension().getId()+"&category.id="+itemDimensionMeasure.getCategory().getId()+"&repage";
+		//返回维度列表界面
+		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?treeId="+itemDimensionMeasure.getCategory().getId()+"&repage";
+
 	}
 	
 	@RequiresPermissions("mod:itemDimensionMeasure:edit")
@@ -108,7 +115,9 @@ public class ItemDimensionMeasureController extends BaseController {
 //		redirectAttributes.addAttribute("categoryId", itemDimensionMeasure.getCategory().getId());
 		itemDimensionMeasureService.delete(itemDimensionMeasure);
 		addMessage(redirectAttributes, "删除客观评价明细成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/itemDimensionMeasure/?dimension.id="+itemDimensionMeasure.getDimension().getId()+"&category.id="+itemDimensionMeasure.getCategory().getId()+"&repage";
+//		return "redirect:"+Global.getAdminPath()+"/mod/itemDimensionMeasure/?dimension.id="+itemDimensionMeasure.getDimension().getId()+"&category.id="+itemDimensionMeasure.getCategory().getId()+"&repage";
+		//返回维度列表界面
+		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?treeId="+itemDimensionMeasure.getCategory().getId()+"&repage";
 	}
 	//*/
 	

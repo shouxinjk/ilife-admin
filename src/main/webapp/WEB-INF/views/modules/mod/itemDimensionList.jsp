@@ -20,7 +20,8 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/mod/itemDimension/list?treeId=${treeId}">客观评价列表</a></li>
-		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${treeId}">客观评价添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${treeId}">添加评价节点</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="mod:itemDimensionMeasure:edit"><li><a href="${ctx}/mod/itemDimensionMeasure/form?category.id=${treeId}">添加属性节点</a></li></shiro:hasPermission>
 	</ul>
 	<sys:message content="${message}"/>
 	<form id="listForm" method="post">
@@ -49,16 +50,14 @@
 				<td style="text-align:center;">
 					<shiro:hasPermission name="mod:itemCategory:edit">
 						<input type="hidden" name="ids" value="${row.id}"/>
-						<input name="sorts" type="text" value="${row.sort}" style="width:50px;margin:0;padding:0;text-align:center;">
-					</shiro:hasPermission><shiro:lacksPermission name="mod:itemCategory:edit">
-					${row.sort}
-				</shiro:lacksPermission>
+					</shiro:hasPermission>
 				</td>
 				<td>
 					<shiro:hasPermission name="mod:itemDimension:edit">
-						<a href="${ctx}/mod/itemDimension/form?id=${row.id}">修改</a>
-						<a href="${ctx}/mod/itemDimension/delete?id=${row.id}" onclick="return confirmx('确认要删除该维度及所有子维度吗？', this.href)">删除</a>
-						<a href="${ctx}/mod/itemDimension/form?parent.id=${row.id}&category.id=${row.category.id}">添加下级维度</a>
+						<a href="${ctx}/mod/${row.type ne 'dimension'?'itemDimensionMeasure':'itemDimension'}/form?id=${row.id}">修改</a>
+						<a href="${ctx}/mod/${row.type ne 'dimension'?'itemDimensionMeasure':'itemDimension'}/delete?id=${row.id}" onclick="return confirmx('确认要删除吗？', this.href)">删除</a>
+						<a href="${ctx}/mod/itemDimension/form?parent.id=${row.id}&category.id=${row.category.id}">添加节点</a>
+						<a href="${ctx}/mod/itemDimensionMeasure/form?dimension.id=${row.id}&category.id=${row.category.id}">添加属性</a>
 					</shiro:hasPermission>							
 				</td>			
 			</tr>

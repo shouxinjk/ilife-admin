@@ -28,12 +28,13 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/mod/itemDimension/list?treeId=${itemDimensionMeasure.category.id}">客观评价列表</a></li>
-		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${itemDimensionMeasure.category.id}">客观评价添加</a></li></shiro:hasPermission>	
-		<li><a href="${ctx}/mod/itemDimensionMeasure/list?dimensionId=${itemDimensionMeasure.dimension.id}&categoryId=${itemDimensionMeasure.category.id}">评价明细列表</a></li>
-		<li class="active"><a href="${ctx}/mod/itemDimensionMeasure/form?id=${itemDimensionMeasure.id}&category.id=${itemDimensionMeasure.category.id}&dimension.id=${itemDimensionMeasure.dimension.id}">评价明细<shiro:hasPermission name="mod:itemDimensionMeasure:edit">${not empty itemDimensionMeasure.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:itemDimensionMeasure:edit">查看</shiro:lacksPermission></a></li>
+		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${itemDimensionMeasure.category.id}">添加评价节点</a></li></shiro:hasPermission>	
+		<!--li><a href="${ctx}/mod/itemDimensionMeasure/list?dimensionId=${itemDimensionMeasure.dimension.id}&categoryId=${itemDimensionMeasure.category.id}">评价明细列表</a></li-->
+		<li class="active"><a href="${ctx}/mod/itemDimensionMeasure/form?id=${itemDimensionMeasure.id}&category.id=${itemDimensionMeasure.category.id}&dimension.id=${itemDimensionMeasure.dimension.id}">添加属性节点</a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="itemDimensionMeasure" action="${ctx}/mod/itemDimensionMeasure/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<form:hidden path="category.id" value="${itemDimensionMeasure.category.id}"/>
 		<sys:message content="${message}"/>	
 		<div class="control-group">
 			<label class="control-label">名称：</label>
@@ -41,19 +42,19 @@
 				<form:input path="name" htmlEscape="false" maxlength="20" class="input-xlarge "/>
 			</div>
 		</div>		
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">所属分类：</label>
 			<div class="controls">
 				<sys:treeselect id="category" name="category.id" value="${itemDimensionMeasure.category.id}" labelName="category.name" labelValue="${itemDimensionMeasure.category.name}"
 								title="所属分类" url="/mod/itemCategory/treeData" cssClass="required" disabled="disabled"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-		</div>			
+		</div-->			
 		<div class="control-group">
 			<label class="control-label">评价维度：</label>
 			<div class="controls">
 				<sys:treeselect id="dimension" name="dimension.id" value="${itemDimensionMeasure.dimension.id}" labelName="dimension.name" labelValue="${itemDimensionMeasure.dimension.name}"
-								title="评价维度" url="/mod/itemDimension/treeData" cssClass="required" disabled="disabled"/>
+								title="评价维度" url="/mod/itemDimension/treeData" extId="${itemDimensionMeasure.category.id}" cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -61,7 +62,7 @@
 			<label class="control-label">关键属性：</label>
 			<div class="controls">
 				<sys:treeselect id="measure" name="measure.id" value="${itemDimensionMeasure.measure.id}" labelName="measure.name" labelValue="${itemDimensionMeasure.measure.name}"
-					title="关键属性" url="/mod/measure/listData"  cssClass="required"/>
+					title="关键属性" url="/mod/measure/listData" extId="${itemDimensionMeasure.category.id}"  cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>			
 		</div>

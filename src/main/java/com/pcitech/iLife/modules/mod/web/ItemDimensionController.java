@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -34,6 +35,7 @@ import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.ItemDimensionMeasureService;
 import com.pcitech.iLife.modules.mod.service.ItemDimensionService;
+import com.pcitech.iLife.modules.mod.service.MeasureService;
 
 /**
  * 商品维度Controller
@@ -48,6 +50,8 @@ public class ItemDimensionController extends BaseController {
 	private ItemDimensionService itemDimensionService;
 	@Autowired
 	private ItemCategoryService itemCategoryService;
+	@Autowired
+	private MeasureService measureService;
 	@Autowired
 	private ItemDimensionMeasureService itemDimensionMeasureService;
 	
@@ -277,7 +281,7 @@ public class ItemDimensionController extends BaseController {
 	@RequiresPermissions("mod:itemDimension:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(ItemDimension itemDimension,String treeId, HttpServletRequest request, HttpServletResponse response, Model model) {
-		List<ItemDimension> list = Lists.newArrayList();
+//		List<ItemDimension> list = Lists.newArrayList();
 		//检查顶级dimension节点是否存在，如果不存在则创建
 		ItemCategory category = itemCategoryService.get(treeId);
 		ItemDimension rootParentDimension = itemDimensionService.get("1");
@@ -295,11 +299,99 @@ public class ItemDimensionController extends BaseController {
 			rootDimension.setWeight(100);
 			itemDimensionService.save(rootDimension);
 		}
-		List<ItemDimension> sourcelist = itemDimensionService.findTree(category);
-		ItemDimension.sortList(list, sourcelist, "1",true);
+//		List<ItemDimension> sourcelist = itemDimensionService.findTree(category);
+//		ItemDimension.sortList(list, sourcelist, "1",true);
+		
+		List<JSONObject> list = findDimensionAndMeasure(category);
 		model.addAttribute("list", list);
 		model.addAttribute("treeId", treeId);
 		return "modules/mod/itemDimensionList";
+	}
+	
+	/**
+	 * 装载客观评价维度及关联的属性
+	 * @param category
+	 * @return
+	 */
+	private List<JSONObject> findDimensionAndMeasure(ItemCategory category){
+		List<JSONObject> nodes = Lists.newArrayList();
+		//先查出root dimension
+		ItemDimension rootDimension = itemDimensionService.get(category.getId());
+		if(rootDimension == null) {//如果根据cagtegory ID查询不存在，则查询该类目下ID为1的记录
+			logger.debug("no root dimension found by category id.[category id]"+category.getId());
+			ItemDimension parent = new ItemDimension();
+			parent.setId("1");
+			ItemDimension q = new ItemDimension();
+			q.setCategory(category);
+			q.setParent(parent);
+			List<ItemDimension> roots = itemDimensionService.findList(q);
+			if(roots== null || roots.size()==0) {
+				logger.debug("no root dimension found by category and root=1.[category]"+category.getId());
+				return nodes;
+			}else {
+				logger.debug("got root dimension by category and id=1.[category]"+category.getId());
+				rootDimension = roots.get(0);
+			}
+		}
+		//添加本级节点
+		JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(rootDimension);
+		node.put("type", "dimension");
+		node.put("id", rootDimension.getId());
+		node.put("parent", rootDimension.getParent());
+		node.put("category", category);
+		node.put("name", rootDimension.getName());
+		node.put("weight", rootDimension.getWeight());
+		node.put("description", rootDimension.getDescription());
+		nodes.add(node);
+		//递归遍历子节点
+		loadDimensionAndMeasureCascade(category,rootDimension,nodes);
+		return nodes;
+	}
+	
+	//递归获取所有下级节点与关联属性
+	private void loadDimensionAndMeasureCascade(ItemCategory category,ItemDimension dimension, List<JSONObject> nodes) {
+		//查询所有下级节点
+		ItemDimension q = new ItemDimension();
+		q.setParent(dimension);
+		List<ItemDimension> dimensions = itemDimensionService.findList(q);
+		for(ItemDimension item:dimensions) {
+			//添加本级节点
+			JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(item);
+			node.put("type", "dimension");
+			node.put("id", item.getId());
+			node.put("parent", item.getParent());
+			node.put("category", category);
+			node.put("name", item.getName());
+			node.put("weight", item.getWeight());
+			node.put("description", item.getDescription());
+			nodes.add(node);
+			loadDimensionAndMeasureCascade(category,item,nodes);//递归遍历
+		}
+		//查询所有关联属性
+		ItemDimensionMeasure dimensionMeasure = new ItemDimensionMeasure();
+		dimensionMeasure.setDimension(dimension);
+		List<ItemDimensionMeasure> dimensionMeasures = itemDimensionMeasureService.findList(dimensionMeasure);
+		for(ItemDimensionMeasure item:dimensionMeasures) {
+			//需要判定measure是否是继承得到
+			Measure measure = measureService.get(item.getMeasure());
+			//添加属性
+			JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(item);
+			node.put("type", "measure");
+			node.put("id", item.getId());
+			node.put("parent", dimension);//将dimension作为parent设置
+			node.put("category", category);
+			logger.debug("[measure.category.id]"+measure.getCategory().getId()+"[dimension.category.id]"+category.getId());
+			if(measure==null) {
+				node.put("name", "-"+item.getName());//表示measure在建立后被删除
+			}else if(measure.getCategory().getId().equalsIgnoreCase(category.getId())) {//是继承属性
+				node.put("name", "○"+measure.getName());
+			}else {
+				node.put("name", "๏"+measure.getName());
+			}
+			node.put("weight", item.getWeight());
+			node.put("description", item.getDescription());
+			nodes.add(node);
+		}
 	}
 
 	@RequiresPermissions("mod:itemDimension:view")
@@ -365,7 +457,10 @@ public class ItemDimensionController extends BaseController {
 	@RequestMapping(value = "treeData")
 	public List<Map<String, Object>> treeData(@RequestParam(required=false) String extId, HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<ItemDimension> list = itemDimensionService.findTree(null);
+		//ItemDimension dimension = itemDimensionService.get(extId);//得到当前发起操作的dimension
+		//List<ItemDimension> list = itemDimensionService.findTree(dimension==null?null:dimension.getCategory());
+		ItemCategory category = itemCategoryService.get(extId);//传递的extId为categoryId
+		List<ItemDimension> list = itemDimensionService.findTree(category);
 		for (int i=0; i<list.size(); i++){
 			ItemDimension e = list.get(i);
 			if (StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
