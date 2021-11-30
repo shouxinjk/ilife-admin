@@ -119,9 +119,9 @@ public class ItemDimensionController extends BaseController {
 			if(measure==null) {
 				node.put("name", "-"+item.getName());//表示measure在建立后被删除
 			}else if(measure.getCategory().getId().equalsIgnoreCase(category.getId())) {//是继承属性
-				node.put("name", "○"+measure.getName());
-			}else {
 				node.put("name", "๏"+measure.getName());
+			}else {
+				node.put("name", "○"+measure.getName());
 			}
 			node.put("weight", item.getWeight());
 			mapList.add(node);
@@ -410,9 +410,9 @@ public class ItemDimensionController extends BaseController {
 			if(measure==null) {
 				node.put("name", "-"+item.getName());//表示measure在建立后被删除
 			}else if(measure.getCategory().getId().equalsIgnoreCase(category.getId())) {//是继承属性
-				node.put("name", "○"+measure.getName());
-			}else {
 				node.put("name", "๏"+measure.getName());
+			}else {
+				node.put("name", "○"+measure.getName());
 			}
 			node.put("weight", item.getWeight());
 			node.put("description", item.getDescription());
