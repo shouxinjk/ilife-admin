@@ -107,6 +107,26 @@ public class ItemDimensionController extends BaseController {
 			map.put("children",listDiemensionTreeForSunburstChart(node.getCategory().getId(),node.getId()));//迭代获取所有下级维度
 			mapList.add(map);
 		}
+		//获取关联的属性节点
+		ItemDimensionMeasure dimensionMeasure = new ItemDimensionMeasure();
+		dimensionMeasure.setDimension(parentDimension);
+		List<ItemDimensionMeasure> dimensionMeasures = itemDimensionMeasureService.findList(dimensionMeasure);
+		for(ItemDimensionMeasure item:dimensionMeasures) {
+			//需要判定measure是否是继承得到
+			Measure measure = measureService.get(item.getMeasure());
+			//添加属性
+			Map<String, Object> node = Maps.newHashMap();
+			if(measure==null) {
+				node.put("name", "-"+item.getName());//表示measure在建立后被删除
+			}else if(measure.getCategory().getId().equalsIgnoreCase(category.getId())) {//是继承属性
+				node.put("name", "○"+measure.getName());
+			}else {
+				node.put("name", "๏"+measure.getName());
+			}
+			node.put("weight", item.getWeight());
+			mapList.add(node);
+		}
+		
 		return mapList;
 	}
 
