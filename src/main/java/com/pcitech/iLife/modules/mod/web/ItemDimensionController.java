@@ -297,7 +297,13 @@ public class ItemDimensionController extends BaseController {
 			rootDimension.setId(treeId);//默认顶级节点ID与category保持一致
 			rootDimension.setIsNewRecord(true);
 			rootDimension.setWeight(100);
-			itemDimensionService.save(rootDimension);
+			try {
+				//对于顶级节点，由于根节点与默认顶级节点ID均为1，会导致错误。直接忽略
+				itemDimensionService.save(rootDimension);
+			}catch(Exception ex) {
+				//do nothing
+				logger.debug("failed create root dimension.[category]"+treeId,ex);
+			}
 		}
 //		List<ItemDimension> sourcelist = itemDimensionService.findTree(category);
 //		ItemDimension.sortList(list, sourcelist, "1",true);
