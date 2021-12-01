@@ -62,6 +62,11 @@
                 $("input[data-entry^='"+section+"']").each((index, item) => {
                 	var weight = Number($(item).val());
                 	if(sxdebug)console.log("got entry.[index]"+index,weight,sum);
+                	if(weight>0&&weight<=100){
+                		$(item).css("border-color","#silver");
+                	}else{
+                		$(item).css("border-color","#FFA7C5");
+                	}
                     sum+=weight;
                 });
                 if(sum!=100){
@@ -96,7 +101,8 @@
 			<tr>
 				<th>名称</th>
 				<th>描述</th>
-				<th>占比</th>
+				<th>script</th>
+				<th>占比%</th>
 				<shiro:hasPermission name="mod:itemDimension:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 
@@ -110,9 +116,10 @@
 				</a></td>
 				<td>
 					${row.description}
-				</td>					
+				</td>	
+				<td>${row.type eq 'dimension'?'weighted-sum':'none'}</td>				
 				<td>
-					<input type="text" value="${row.weight}" id="${row.type ne 'dimension'?'prop-':'dim-'}${row.id}" data-section="sec-${row.parent.id}" data-entry="sec-${row.parent.id}-${row.id}" style="width:60px;"/>
+					<input type="text" value="${row.weight}" id="${row.type ne 'dimension'?'prop-':'dim-'}${row.id}" data-section="sec-${row.parent.id}" data-entry="sec-${row.parent.id}-${row.id}" style="width:60px;margin:0 auto;padding:0;height:20px;font-size:12px;"/>
 				</td>
 				<td>
 					<shiro:hasPermission name="mod:itemDimension:edit">
