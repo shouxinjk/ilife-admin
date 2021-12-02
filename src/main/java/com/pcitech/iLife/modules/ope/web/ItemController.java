@@ -63,7 +63,7 @@ public class ItemController extends BaseController {
 		Page<Item> page = itemService.findPage(new Page<Item>(request, response), item); 
 		model.addAttribute("page", page);
 //		return "modules/ope/itemList";
-		return "redirect:http://www.shouxinjk.net/list-admin/index.html?hideHeaderBar=true&classify="+treeId;//直接跳转到商品标注界面
+		return "redirect:http://www.shouxinjk.net/list-admin/index.html?classify="+treeId;//直接跳转到商品标注界面，需要保留header显示，提供搜索及排序功能
 	}
 
 	@RequiresPermissions("ope:item:view")
