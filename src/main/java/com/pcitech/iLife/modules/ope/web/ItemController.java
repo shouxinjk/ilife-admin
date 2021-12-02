@@ -59,10 +59,11 @@ public class ItemController extends BaseController {
 	
 	@RequiresPermissions("ope:item:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(Item item, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String list(Item item, String treeId,HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<Item> page = itemService.findPage(new Page<Item>(request, response), item); 
 		model.addAttribute("page", page);
-		return "modules/ope/itemList";
+//		return "modules/ope/itemList";
+		return "redirect:http://www.shouxinjk.net/list-admin/index.html?hideHeaderBar=true&classify="+treeId;//直接跳转到商品标注界面
 	}
 
 	@RequiresPermissions("ope:item:view")
