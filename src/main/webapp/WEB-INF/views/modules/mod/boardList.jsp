@@ -19,7 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/mod/board/">Board列表</a></li>
-		<shiro:hasPermission name="mod:board:edit"><li><a href="${ctx}/mod/board/form">Board添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="mod:board:edit"><li><a href="${ctx}/mod/board/form">Board添加</a></li></shiro:hasPermission>	
 	</ul>
 	<form:form id="searchForm" modelAttribute="board" action="${ctx}/mod/board/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -50,7 +50,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="board">
 			<tr>
-				<td><a href="${ctx}/mod/board/form?id=${board.id}">
+				<td><a href="${ctx}/mod/boardItem/?boardId=${board.id}">
 					${board.title}
 				</a></td>
 				<td>${board.broker.name}</td>

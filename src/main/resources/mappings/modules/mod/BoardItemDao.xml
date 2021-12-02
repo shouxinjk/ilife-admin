@@ -48,6 +48,9 @@
 		<include refid="boardItemJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="board != null and board.id != null and board.id != ''">
+				AND a.board_id = #{board.id}
+			</if>
 			<if test="title != null and title != ''">
 				AND a.title LIKE 
 					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>

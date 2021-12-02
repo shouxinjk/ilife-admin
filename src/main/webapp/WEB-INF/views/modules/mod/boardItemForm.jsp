@@ -27,10 +27,12 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/boardItem/">Board条目列表</a></li>
-		<li class="active"><a href="${ctx}/mod/boardItem/form?id=${boardItem.id}">Board条目<shiro:hasPermission name="mod:boardItem:edit">${not empty boardItem.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:boardItem:edit">查看</shiro:lacksPermission></a></li>
+		<shiro:hasPermission name="mod:board:view"><li><a href="${ctx}/mod/board/">Board列表</a></li></shiro:hasPermission>	
+		<shiro:hasPermission name="mod:board:edit"><li><a href="${ctx}/mod/board/form?id=${boardId}">Board修改</a></li></shiro:hasPermission>			
+		<shiro:hasPermission name="mod:boardItem:view"><li><a href="${ctx}/mod/boardItem/?boardId=${boardId}">商品列表</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/mod/boardItem/form?id=${boardItem.id}">商品<shiro:hasPermission name="mod:boardItem:edit">${not empty boardItem.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:boardItem:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
-	<form:form id="inputForm" modelAttribute="boardItem" action="${ctx}/mod/boardItem/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="boardItem" action="${ctx}/mod/boardItem/save?boardId=${boardId}" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">

@@ -30,6 +30,7 @@ import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.BoardItem;
 import com.pcitech.iLife.modules.mod.service.BoardItemService;
+import com.pcitech.iLife.modules.mod.service.BoardService;
 
 /**
  * 看板条目明细管理Controller
@@ -39,7 +40,8 @@ import com.pcitech.iLife.modules.mod.service.BoardItemService;
 @Controller
 @RequestMapping(value = "${adminPath}/mod/boardItem")
 public class BoardItemController extends BaseController {
-
+	@Autowired
+	private BoardService boardService;
 	@Autowired
 	private BoardItemService boardItemService;
 	
@@ -57,36 +59,43 @@ public class BoardItemController extends BaseController {
 	
 	@RequiresPermissions("mod:boardItem:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(BoardItem boardItem, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String list(BoardItem boardItem, String boardId, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Board board = boardService.get(boardId);
+		boardItem.setBoard(board);
 		Page<BoardItem> page = boardItemService.findPage(new Page<BoardItem>(request, response), boardItem); 
+		model.addAttribute("boardId", boardId);
 		model.addAttribute("page", page);
 		return "modules/mod/boardItemList";
 	}
 
 	@RequiresPermissions("mod:boardItem:view")
 	@RequestMapping(value = "form")
-	public String form(BoardItem boardItem, Model model) {
+	public String form(BoardItem boardItem,String boardId,  Model model) {
+		Board board = boardService.get(boardId);
+		boardItem.setBoard(board);
+		model.addAttribute("boardId", boardId);
 		model.addAttribute("boardItem", boardItem);
 		return "modules/mod/boardItemForm";
 	}
 
 	@RequiresPermissions("mod:boardItem:edit")
 	@RequestMapping(value = "save")
-	public String save(BoardItem boardItem, Model model, RedirectAttributes redirectAttributes) {
+	public String save(BoardItem boardItem,String boardId, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, boardItem)){
-			return form(boardItem, model);
+			return form(boardItem,boardId, model);
 		}
 		boardItemService.save(boardItem);
+		model.addAttribute("boardId", boardId);
 		addMessage(redirectAttributes, "保存看板条目明细管理成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/boardItem/?repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/boardItem/?boardId="+boardId+"&repage";
 	}
 	
 	@RequiresPermissions("mod:boardItem:edit")
 	@RequestMapping(value = "delete")
-	public String delete(BoardItem boardItem, RedirectAttributes redirectAttributes) {
+	public String delete(BoardItem boardItem,String boardId, RedirectAttributes redirectAttributes) {
 		boardItemService.delete(boardItem);
 		addMessage(redirectAttributes, "删除看板条目明细管理成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/boardItem/?repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/boardItem/?boardId="+boardId+"&repage";
 	}
 	
 	@ResponseBody

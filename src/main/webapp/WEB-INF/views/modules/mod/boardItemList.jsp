@@ -18,8 +18,10 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/mod/boardItem/">看板条目明细管理列表</a></li>
-		<shiro:hasPermission name="mod:boardItem:edit"><li><a href="${ctx}/mod/boardItem/form">看板条目明细管理添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="mod:board:view"><li><a href="${ctx}/mod/board/">Board列表</a></li></shiro:hasPermission>	
+		<shiro:hasPermission name="mod:board:edit"><li><a href="${ctx}/mod/board/form?id=${boardId}">Board修改</a></li></shiro:hasPermission>		
+		<li class="active"><a href="${ctx}/mod/boardItem/">商品列表</a></li>
+		<shiro:hasPermission name="mod:boardItem:edit"><li><a href="${ctx}/mod/boardItem/form?boardId=${boardItem.board.id}">商品添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="boardItem" action="${ctx}/mod/boardItem/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -55,8 +57,8 @@
 					<fmt:formatDate value="${boardItem.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="mod:boardItem:edit"><td>
-    				<a href="${ctx}/mod/boardItem/form?id=${boardItem.id}">修改</a>
-					<a href="${ctx}/mod/boardItem/delete?id=${boardItem.id}" onclick="return confirmx('确认要删除该看板条目明细管理吗？', this.href)">删除</a>
+    				<a href="${ctx}/mod/boardItem/form?boardId=${boardItem.board.id}&id=${boardItem.id}">修改</a>
+					<a href="${ctx}/mod/boardItem/delete?boardId=${boardItem.board.id}&id=${boardItem.id}" onclick="return confirmx('确认要删除该商品吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
