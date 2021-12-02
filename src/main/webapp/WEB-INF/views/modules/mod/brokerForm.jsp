@@ -37,7 +37,7 @@
 			<label class="control-label">所属机构:</label>
 			<div class="controls">
                 <sys:treeselect id="orgnization" name="orgnization.id" value="${broker.orgnization.id}" labelName="orgnization.name" labelValue="${broker.orgnization.name}"
-					title="机构" url="/sys/office/treeData?type=1" cssClass="required"/>
+					title="机构" url="/sys/office/treeData?type=1"/>
 			</div>
 		</div>		
 		<div class="control-group">
@@ -77,12 +77,12 @@
 				<form:input path="email" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">层级：</label>
 			<div class="controls">
 				<form:input path="hierarchy" htmlEscape="false" maxlength="11" class="input-xlarge "/>
 			</div>
-		</div>
+		</div-->
 		<div class="control-group">
 			<label class="control-label">身份证号码：</label>
 			<div class="controls">

@@ -83,6 +83,10 @@ public class BrokerController extends BaseController {
 		if (!beanValidator(model, broker)){
 			return form(broker, model);
 		}
+		//检查达人等级：强制达人等级=parent等级+1
+		Broker parent = brokerService.get(broker.getParent().getId());//注意需要另外获取，broker.parent内不包含hierarchy信息
+		broker.setHierarchy(parent.getHierarchy()+1);
+		
 		brokerService.save(broker);
 		addMessage(redirectAttributes, "保存推广达人成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/broker/?repage";

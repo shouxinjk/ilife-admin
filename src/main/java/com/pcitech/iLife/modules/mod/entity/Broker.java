@@ -23,7 +23,7 @@ public class Broker extends DataEntity<Broker> {
 	private String name;		// 真实姓名
 	private String phone;		// 电话号码
 	private String email;		// 邮件
-	private String hierarchy;		// 层级
+	private int hierarchy;		// 层级
 	private String securityNo;		// 身份证号码
 	private String level;		// 等级
 	private String alipayAccount;		// 支付宝账号
@@ -84,12 +84,11 @@ public class Broker extends DataEntity<Broker> {
 		this.email = email;
 	}
 	
-	@Length(min=0, max=11, message="层级长度必须介于 0 和 11 之间")
-	public String getHierarchy() {
+	public int getHierarchy() {
 		return hierarchy;
 	}
 
-	public void setHierarchy(String hierarchy) {
+	public void setHierarchy(int hierarchy) {
 		this.hierarchy = hierarchy;
 	}
 	
