@@ -309,7 +309,7 @@ public class ItemCategoryController extends BaseController {
 		return  listPlatformCategoriesAndPropsByParentId(source,id,true);
 	}	
 	
-	private List<Map<String, Object>> listPlatformCategoriesAndPropsByParentId( String source,String id, boolean withProps) {
+	private List<Map<String, Object>> listPlatformCategoriesAndPropsByParentId( String source,String id,boolean withProps) {
 		Map<String,String> icon = Maps.newHashMap();
 		icon.put("folder","fas fa-book");
 		icon.put("openFolder","fas fa-book-open");
@@ -320,6 +320,30 @@ public class ItemCategoryController extends BaseController {
 			categoryId = "0";//默认查询根目录下的节点:注意，需要将所有根目录节点均设为0
 		
 		ArangoDbClient arangoClient = new ArangoDbClient();
+		
+		//查询获得当前目录的名称，用于查询无cid的属性
+		String categoryName = "";
+		if(withProps) {
+			String query = "for doc in platform_categories " + 
+					"    filter doc.source==\""+source+"\" " + 
+					"    and doc.id== \""+categoryId+"\" " + 
+					"    return " + 
+					"    {" + 
+					"        name:doc.name" + 
+					"    }";
+	        logger.error("try to query 3rd-party category.[query]"+query);
+	        try {
+	            List<BaseDocument> items = arangoClient.query(query, null, BaseDocument.class);
+	            for (BaseDocument item:items) {
+	            		Map<String,Object> props = item.getProperties();
+	            		categoryName = props.get("name").toString();
+	            		break;
+	            }
+	        }catch(Exception ex) {
+	        	logger.debug("failed query parent category.[id]"+categoryId);
+	        }
+		}
+
 		String query = "for doc in platform_categories " + 
 				"    filter doc.source==\""+source+"\" " + 
 				"    and doc.pid== \""+categoryId+"\" " + 
@@ -344,7 +368,7 @@ public class ItemCategoryController extends BaseController {
             if(withProps) {
 		    		String propsQuery = "for doc in platform_properties " + 
 		    				"    filter doc.source==\""+source+"\" " + 
-		    				"    and doc.cid== \""+categoryId+"\" " + 
+		    				"    and (doc.cid== \""+categoryId+"\" or doc.category == \""+categoryName+"\") " + 
 		    				"    return " + 
 		    				"    {" + 
 		    				"        itemKey:doc._key,mappingName:doc.mappingName,mappingId:doc.mappingId," + 
