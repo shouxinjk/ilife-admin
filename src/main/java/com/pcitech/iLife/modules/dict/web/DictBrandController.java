@@ -16,7 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -29,10 +32,14 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.dict.entity.DictBrand;
 import com.pcitech.iLife.modules.dict.service.DictBrandService;
+import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
+import com.pcitech.iLife.util.Util;
+
+import me.chanjar.weixin.common.error.WxErrorException;
 
 /**
  * 品牌字典管理Controller
@@ -175,6 +182,31 @@ public class DictBrandController extends BaseController {
 		
 		Map<String,String> result = Maps.newHashMap();
 		result.put("result", "marked value updated.");
+		return result;
+	}
+	
+	/**
+	 * 添加品牌数据
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest", method = RequestMethod.POST)
+	public Map<String, Object> addNewBrand(/*@PathVariable String id,*/@RequestBody DictBrand brand, HttpServletRequest request, HttpServletResponse response, Model model) throws WxErrorException{
+		Map<String, Object> result = Maps.newHashMap();
+		result.put("status",false);
+		result.put("description","Failed add brand");
+		brand.setCreateDate(new Date());
+		brand.setUpdateDate(new Date());
+		if(brand.getId()==null)
+			brand.setId(Util.md5(brand.getCategory()!=null?brand.getCategory().getId():""+brand.getLabel()));
+		brand.setIsNewRecord(true);
+		try {//直接作为新纪录存储，可能出现保存失败，直接忽略
+			dictBrandService.save(brand);
+		}catch(Exception ex) {
+			result.put("msg", ex.getMessage());
+		}
+		result.put("status",true);
+		result.put("description","Brand saved successfully");
+		result.put("data", brand);
 		return result;
 	}
 
