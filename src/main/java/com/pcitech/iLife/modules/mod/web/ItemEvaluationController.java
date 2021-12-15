@@ -84,6 +84,7 @@ public class ItemEvaluationController extends BaseController {
 			rootDimension.setCategory(category);
 			rootDimension.setWeight("100");
 			rootDimension.setFeatured(false);
+			rootDimension.setPropKey("");
 			rootDimension.setType("ignore");
 			rootDimension.setScript("no-script");
 			itemEvaluationService.save(rootDimension);
@@ -136,6 +137,7 @@ public class ItemEvaluationController extends BaseController {
 		parentNode.setWeight("100");
 		parentNode.setFeatured(false);
 		parentNode.setType("ignore");
+		parentNode.setPropKey("");
 		parentNode.setScript("no-script");
 		itemEvaluationService.save(parentNode);
 		//query node
@@ -200,6 +202,7 @@ public class ItemEvaluationController extends BaseController {
 		if (itemEvaluation.getSort() == null){
 			itemEvaluation.setSort(30);
 		}
+		itemEvaluation.setFeatured(false);
 		model.addAttribute("itemEvaluation", itemEvaluation);
 		return "modules/mod/itemEvaluationForm";
 	}

@@ -23,7 +23,34 @@ public class ItemDimension extends TreeEntity<ItemDimension> {
 	private String name;		// 名称
 	private String description;		// 描述
 	private double weight;		// 占比
+	private String script;		// script：评价脚本
+	private boolean featured;		// featured
+	private String propKey;		// 键名，用于计算引用
 	
+	public String getScript() {
+		return script;
+	}
+
+	public void setScript(String script) {
+		this.script = script;
+	}
+
+	public boolean isFeatured() {
+		return featured;
+	}
+
+	public void setFeatured(boolean featured) {
+		this.featured = featured;
+	}
+
+	public String getPropKey() {
+		return propKey;
+	}
+
+	public void setPropKey(String propKey) {
+		this.propKey = propKey;
+	}
+
 	public ItemDimension() {
 		super();
 	}

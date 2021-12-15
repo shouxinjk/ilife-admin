@@ -49,6 +49,27 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">propKey：</label>
+			<div class="controls">
+				<form:input path="propKey" htmlEscape="false" class="input-xlarge "/>
+			</div>
+		</div>			
+		<div class="control-group">
+			<label class="control-label">是否特征:</label>
+			<div class="controls">
+				<form:select path="featured">
+					<form:options items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> “是”代表特征评价</span>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">算法：</label>
+			<div class="controls">
+				<form:input path="script" htmlEscape="false" class="input-xlarge "/>
+			</div>
+		</div>			
+		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">
 				<form:textarea path="description" htmlEscape="false" rows="4" class="input-xxlarge "/>

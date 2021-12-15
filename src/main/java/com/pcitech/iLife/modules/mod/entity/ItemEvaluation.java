@@ -27,7 +27,15 @@ public class ItemEvaluation extends TreeEntity<ItemEvaluation> {
 	private String script;		// script：评价脚本
 	private boolean featured;		// featured
 	private ItemCategory category;		// category
-	
+	private String propKey;		// 键名，用于计算引用
+	public String getPropKey() {
+		return propKey;
+	}
+
+	public void setPropKey(String propKey) {
+		this.propKey = propKey;
+	}
+
 	public ItemEvaluation() {
 		super();
 	}

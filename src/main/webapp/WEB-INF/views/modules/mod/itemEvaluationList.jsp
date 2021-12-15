@@ -28,6 +28,7 @@
 
 			<tr>
 				<th>名称</th>
+				<th>Key</th>
 				<th>特征</th>
 				<th>类型</th>
 				<th>算法</th>
@@ -43,6 +44,9 @@
 				<td><a href="${ctx}/mod/itemEvaluationDimension/list?evaluationId=${row.id}&categoryId=${treeId}&evaluation.id=${row.id}&category.id=${treeId}">
 					${row.name}
 				</a></td>
+				<td>
+					${row.propKey}
+				</td>				
 				<td>
 					${row.featured}
 				</td>

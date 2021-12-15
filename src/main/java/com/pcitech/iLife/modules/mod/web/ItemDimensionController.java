@@ -316,6 +316,7 @@ public class ItemDimensionController extends BaseController {
 			rootDimension.setCategory(category);
 			rootDimension.setId(treeId);//默认顶级节点ID与category保持一致
 			rootDimension.setIsNewRecord(true);
+			rootDimension.setFeatured(false);
 			rootDimension.setWeight(100);
 			try {
 				//对于顶级节点，由于根节点与默认顶级节点ID均为1，会导致错误。直接忽略
@@ -368,6 +369,9 @@ public class ItemDimensionController extends BaseController {
 		node.put("name", rootDimension.getName());
 		node.put("weight", rootDimension.getWeight());
 		node.put("description", rootDimension.getDescription());
+		node.put("propKey", rootDimension.getPropKey());
+		node.put("featured", rootDimension.isFeatured());
+		node.put("script", rootDimension.getScript());
 		nodes.add(node);
 		//递归遍历子节点
 		loadDimensionAndMeasureCascade(category,rootDimension,nodes);
@@ -390,6 +394,9 @@ public class ItemDimensionController extends BaseController {
 			node.put("name", item.getName());
 			node.put("weight", item.getWeight());
 			node.put("description", item.getDescription());
+			node.put("propKey", item.getPropKey());
+			node.put("featured", item.isFeatured());
+			node.put("script", item.getScript());
 			nodes.add(node);
 			loadDimensionAndMeasureCascade(category,item,nodes);//递归遍历
 		}
@@ -452,6 +459,7 @@ public class ItemDimensionController extends BaseController {
 		if (itemDimension.getSort() == null){
 			itemDimension.setSort(30);
 		}
+		itemDimension.setFeatured(false);
 		model.addAttribute("itemDimension", itemDimension);
 		return "modules/mod/itemDimensionForm";
 	}
