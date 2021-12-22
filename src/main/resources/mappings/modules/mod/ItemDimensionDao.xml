@@ -44,6 +44,9 @@
 			<if test="category != null and category.id != null and category.id != ''">
 				AND a.category = #{category.id}
 			</if>
+			<if test="featured">
+				AND a.featured = 1
+			</if>
 			<if test="parent != null and parent.id != null and parent.id != ''">
 				AND a.parent_id = #{parent.id}
 			</if>

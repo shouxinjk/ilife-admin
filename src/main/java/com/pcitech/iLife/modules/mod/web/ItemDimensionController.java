@@ -129,6 +129,22 @@ public class ItemDimensionController extends BaseController {
 		
 		return mapList;
 	}
+	
+	/**
+	 * 根据categoryId获取所有特征维度定义。返回维度列表
+	 * 参数：
+	 * categoryId：类目ID
+	 *
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/featured-dimension", method = RequestMethod.GET)
+	public List<ItemDimension> listFeaturedDimensionByCategoryId(String categoryId) {
+		ItemCategory category = itemCategoryService.get(categoryId);
+		ItemDimension q = new ItemDimension(); 
+		q.setCategory(category);
+		q.setFeatured(true);//仅返回featured节点
+		return itemDimensionService.findList(q);
+	}
 
 	/**
 	 * 查询 分类-维度-属性 树结构数据

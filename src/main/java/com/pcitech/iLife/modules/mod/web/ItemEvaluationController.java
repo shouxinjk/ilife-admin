@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -169,6 +170,22 @@ public class ItemEvaluationController extends BaseController {
 			i += 10;
 			k++;
 		}
+	}
+	
+	/**
+	 * 根据categoryId获取所有特征维度定义。返回维度列表
+	 * 参数：
+	 * categoryId：类目ID
+	 *
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/featured-evaluation", method = RequestMethod.GET)
+	public List<ItemEvaluation> listFeaturedEvaluationByCategoryId(String categoryId) {
+		ItemCategory category = itemCategoryService.get(categoryId);
+		ItemEvaluation q = new ItemEvaluation(); 
+		q.setCategory(category);
+		q.setFeatured(true);//仅返回featured节点
+		return itemEvaluationService.findList(q);
 	}
 	
 	@RequiresPermissions("mod:itemEvaluation:view")
