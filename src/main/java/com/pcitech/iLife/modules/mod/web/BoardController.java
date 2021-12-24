@@ -170,6 +170,7 @@ public class BoardController extends BaseController {
 			old.setDescription(board.getDescription());
 			old.setKeywords(board.getKeywords());
 			old.setTags(board.getTags());
+			old.setLogo(board.getLogo());
 			boardService.save(old);
 			result.put("status",true);
 			result.put("description","Board modified successfully");
