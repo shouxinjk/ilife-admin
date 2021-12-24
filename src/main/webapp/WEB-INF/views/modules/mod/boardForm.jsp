@@ -47,9 +47,21 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">Logo：</label>
+			<div class="controls">
+				<form:textarea path="logo" htmlEscape="false" maxlength="512" class="input-xlarge" rows="5"/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label"></label>
+			<div class="controls">
+				<img src="${board.logo}" width="200"/>
+			</div>
+		</div>			
+		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">
-				<form:input path="description" htmlEscape="false" class="input-xlarge "/>
+				<form:textarea path="description" htmlEscape="false" class="input-xlarge " rows="5"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -61,13 +73,13 @@
 		<div class="control-group">
 			<label class="control-label">标签：</label>
 			<div class="controls">
-				<form:input path="tags" htmlEscape="false" maxlength="255" class="input-xlarge "/>
+				<form:textarea path="tags" htmlEscape="false" maxlength="255" class="input-xlarge " rows="5"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">关键词：</label>
 			<div class="controls">
-				<form:input path="keywords" htmlEscape="false" maxlength="512" class="input-xlarge "/>
+				<form:textarea path="keywords" htmlEscape="false" maxlength="512" class="input-xlarge " rows="5"/>
 			</div>
 		</div>
 		<div class="control-group">

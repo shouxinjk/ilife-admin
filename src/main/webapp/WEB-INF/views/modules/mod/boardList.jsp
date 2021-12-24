@@ -36,6 +36,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>Logo</th>
 				<th>标题</th>
 				<th>创建者</th>
 				<th>标签</th>
@@ -50,6 +51,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="board">
 			<tr>
+				<td align="center"><img src="${board.logo}" style="object-fit: cover; height:60px"/></td>
 				<td><a href="${ctx}/mod/boardItem/?boardId=${board.id}">
 					${board.title}
 				</a></td>
