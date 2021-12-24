@@ -5,6 +5,7 @@
 	<sql id="boardColumns">
 		a.id AS "id",
 		a.title AS "title",
+		a.logo AS "logo",
 		a.description AS "description",
 		a.type AS "type",
 		a.tags AS "tags",
@@ -117,6 +118,7 @@
 			id,
 			broker_id,
 			title,
+			logo,
 			description,
 			type,
 			tags,
@@ -131,6 +133,7 @@
 			#{id},
 			#{broker.id},
 			#{title},
+			#{logo},
 			#{description},
 			#{type},
 			#{tags},
@@ -148,6 +151,7 @@
 		UPDATE mod_board SET 	
 			broker_id = #{broker.id},
 			title = #{title},
+			logo = #{logo},
 			description = #{description},
 			type = #{type},
 			tags = #{tags},

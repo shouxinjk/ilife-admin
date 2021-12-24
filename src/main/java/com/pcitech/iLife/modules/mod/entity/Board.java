@@ -16,6 +16,7 @@ public class Board extends DataEntity<Board> {
 	
 	private static final long serialVersionUID = 1L;
 	private String title;		// 标题
+	private String logo;	//logo
 	private String description;		// 描述
 	private String type;		// 类型：静态、动态
 	private String tags;		// 标签
@@ -40,6 +41,14 @@ public class Board extends DataEntity<Board> {
 		this.title = title;
 	}
 	
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+
 	public Broker getBroker() {
 		return broker;
 	}
