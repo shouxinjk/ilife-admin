@@ -80,9 +80,9 @@ public class FastDFSUtils {
                 e.printStackTrace();
             }
         }
-        storageServer = null;
-        trackerServer = null;
-        storageClient = null;
-        trackerClient = null;
+//        storageServer = null;
+//        trackerServer = null;
+//        storageClient = null;
+//        trackerClient = null;
     }
 }
