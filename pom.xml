@@ -148,7 +148,24 @@
             <artifactId>vop-sdk</artifactId>
             <version>1.0.0</version>
         </dependency> 
- 
+		<!-- https://mvnrepository.com/artifact/org.csource/fastdfs-client-java -->
+		<dependency>
+		    <groupId>org.csource</groupId>
+		    <artifactId>fastdfs-client-java</artifactId>
+		    <version>1.29-SNAPSHOT</version>
+		</dependency>
+
+ 		<!-- freemarker -->
+		<dependency>
+		  <groupId>org.freemarker</groupId>
+		  <artifactId>freemarker</artifactId>
+		  <version>2.3.31</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context-support</artifactId>
+		    <version>4.2.8.RELEASE</version>
+		</dependency>
  
 		 <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>

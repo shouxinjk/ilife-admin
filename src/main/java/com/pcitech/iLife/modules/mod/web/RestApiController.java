@@ -4,11 +4,17 @@
 package com.pcitech.iLife.modules.mod.web;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.alibaba.fastjson.JSON;
@@ -38,6 +45,7 @@ import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.Occasion;
 import com.pcitech.iLife.modules.mod.entity.ProfitShareScheme;
+import com.pcitech.iLife.modules.mod.entity.ViewTemplate;
 import com.pcitech.iLife.modules.mod.service.BoardItemService;
 import com.pcitech.iLife.modules.mod.service.BoardService;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
@@ -45,10 +53,14 @@ import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.OccasionService;
+import com.pcitech.iLife.modules.mod.service.ViewTemplateService;
 import com.pcitech.iLife.modules.ope.entity.Performance;
 import com.pcitech.iLife.modules.ope.service.PerformanceService;
+import com.pcitech.iLife.util.FastDFSUtils;
 import com.pcitech.iLife.util.HttpClientHelper;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 import me.chanjar.weixin.common.error.WxErrorException;
 
 /**
@@ -60,6 +72,8 @@ import me.chanjar.weixin.common.error.WxErrorException;
 @RequestMapping(value = "${adminPath}/rest/api")
 public class RestApiController extends BaseController {
 
+	@Autowired
+	private ViewTemplateService viewTemplateService;
 	@Autowired
 	private BoardService boardService;
 	@Autowired
@@ -332,4 +346,89 @@ public class RestApiController extends BaseController {
 		result.put("processedMap", actionMap);
 		return result;
 	}
+	
+	/**
+	 * 接收文件上传并保存到FastDFS
+	 */
+	@ResponseBody
+	@RequestMapping(value = "upload", method = RequestMethod.POST)
+	public Map<String, Object> saveFile(@RequestParam( value="files",required=false)MultipartFile file, 
+			@RequestParam( value="fileId",required=false)String fileId, 
+			HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> result = Maps.newHashMap();
+		long size= file.getSize();//这里可以控制大小，当前不做处理
+		try {
+			FastDFSUtils util = FastDFSUtils.getInstance();
+			//先保存
+			String[] dfsFile = util.upload(file.getBytes(), file.getOriginalFilename(), file.getSize());
+			result.put("group",dfsFile[0]);
+			result.put("path",dfsFile[1]);
+			result.put("fullpath",dfsFile[0]+"/"+dfsFile[1]);
+			result.put("status",true);
+			result.put("description","upload and saved successfully");
+			//如果有fileId则删除历史文件
+			if(fileId!=null && fileId.trim().length()>0) {
+				logger.debug("try to delete old file.[fileId]"+fileId);
+				//传递进入的类似于：1/M00/00/00/o4YBAGHNFk6AZyMuAC9Tzr0lVvE880.png
+				//其中：第一个/前的部分为groupId。需要分解
+				int index = fileId.indexOf("/");//使用第一个/分解
+				String group = "group"+fileId.substring(0,index);
+				String path = fileId.substring(index+1);
+				logger.debug("try to remove old file.[group]"+group+"\t[path]"+path+"[first slash index]"+index);
+				util.delete(group, path);
+				result.put("description","upload/save/delete successfully");
+			}
+			util.close();
+		}catch(Exception ex) {
+			result.put("status",false);
+			result.put("description","upload/save/delete error.[err]"+ex.getMessage());
+			logger.error("save/delete file error.",ex);
+		}
+		return result;
+	}
+	
+
+	/**
+	 * 生成HTML物料
+	 * 传入参数：
+	 * board:{
+	 * templateId：模板ID
+	 * board：board信息
+	 * items：boardItem列表。是array
+	 * }
+	 * 
+	 * item:{
+	 * templateId：模板ID
+	 * item: item信息
+	 * }
+	 */
+	@ResponseBody
+	@RequestMapping(value = "material-html", method = RequestMethod.POST)
+	public Map<String, Object> genHtmlArticle(@RequestBody JSONObject json, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> result = Maps.newHashMap();
+		logger.debug("start generate html.[json]"+json.toJSONString());
+
+		//获取对应的viewTemplate，并从字符串加载模板
+		ViewTemplate viewTemplate = viewTemplateService.get(json.getString("templateId"));
+		try {
+			Configuration cfg = new Configuration();
+			cfg.setDefaultEncoding(Charset.forName("UTF-8").name());
+			String expr = org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(viewTemplate.getExpression());
+	        Template t = new Template(viewTemplate.getId(), new StringReader(expr),cfg);
+	        //生成html并直接返回
+	        StringWriter writer = new StringWriter();
+	        t.process(json, writer);
+	        result.put("html", writer.getBuffer().toString());
+			result.put("status",true);
+			result.put("description","html generated successfully");
+	        writer.close();
+		}catch(Exception ex) {
+			result.put("status",false);
+			result.put("description","failed generate html.[err]"+ex.getMessage());
+			logger.error("generate html error.",ex);
+		}
+		return result;
+	}
+	
+	
 }

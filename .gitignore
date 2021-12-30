@@ -20,4 +20,5 @@ src/main/resources/iLife.properties
 src/main/resources/wx.properties
 iLife.properties
 wx.properties
+fastdfs-client.properties
 /target/
