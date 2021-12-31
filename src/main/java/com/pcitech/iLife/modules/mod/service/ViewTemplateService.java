@@ -22,16 +22,17 @@ import com.pcitech.iLife.modules.mod.dao.ViewTemplateDao;
 @Service
 @Transactional(readOnly = true)
 public class ViewTemplateService extends CrudService<ViewTemplateDao, ViewTemplate> {
-
-	@Autowired
-	ViewTemplateDao viewTemplateDao;
 	
 	public ViewTemplate get(String id) {
 		return super.get(id);
 	}
 	
 	public ViewTemplate getByType(String type) {
-		return viewTemplateDao.getByType(type);
+		return dao.getByType(type);
+	}
+	
+	public List<ViewTemplate> getAllByType(String type) {
+		return dao.getAllByType(type);
 	}
 	
 	public List<ViewTemplate> findList(ViewTemplate viewTemplate) {

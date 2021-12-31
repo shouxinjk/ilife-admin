@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.ViewTemplate;
@@ -15,4 +17,5 @@ import com.pcitech.iLife.modules.mod.entity.ViewTemplate;
 @MyBatisDao
 public interface ViewTemplateDao extends CrudDao<ViewTemplate> {
 	public ViewTemplate getByType(String type);
+	public List<ViewTemplate> getAllByType(String type);
 }

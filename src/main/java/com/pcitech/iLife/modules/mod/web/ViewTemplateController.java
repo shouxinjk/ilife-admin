@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,16 @@ public class ViewTemplateController extends BaseController {
 
 	@Autowired
 	private ViewTemplateService viewTemplateService;
+	
+	/**
+	 * 根据类型获取相应的展示模板
+	 * @return 模板定义字符串
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/listByType/{type}", method = RequestMethod.GET)
+	public List<ViewTemplate> getAllViewTemplateByType(@PathVariable String type,HttpServletRequest request, HttpServletResponse response, Model model) {
+		return viewTemplateService.getAllByType(type);
+	}
 	
 	/**
 	 * 根据类型获取相应的展示模板
