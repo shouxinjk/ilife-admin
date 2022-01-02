@@ -25,12 +25,27 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>名称：</label>
-				<form:input path="name" htmlEscape="false" maxlength="100" class="input-medium"/>
+			<li><label>名称</label>
+				<form:input path="name" htmlEscape="false" maxlength="255" class="input-medium"/>
+			</li>
+			<li><label>类型：</label>
+				<form:select path="type" class="input-medium">
+					<form:option value="" label=""/>
+					<form:options items="${fns:getDictList('advice_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+			</li>			
+			<li><label>类目</label>
+				<form:input path="category.id" htmlEscape="false" maxlength="64" class="input-medium"/>
+			</li>
+			<li><label>状态</label>
+				<form:select path="status" class="input-medium">
+					<form:option value="" label=""/>
+					<form:options items="${fns:getDictList('active_inactive')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
-		</ul>
+		</ul>		
 	</form:form>
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
