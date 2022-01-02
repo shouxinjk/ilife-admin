@@ -17,4 +17,6 @@ import com.pcitech.iLife.modules.mod.entity.ItemTemplate;
 @MyBatisDao
 public interface ItemTemplateDao extends CrudDao<ItemTemplate> {
 	public List<ItemTemplate> findByCategoryId(String category);
+	public List<ItemTemplate> findItemList(String categoryId);
+	public List<ItemTemplate> findBoardList();
 }

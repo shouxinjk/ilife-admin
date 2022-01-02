@@ -48,8 +48,10 @@
 				<td>
 				名称：<a href="${ctx}/mod/template/form?id=${itemTemplate.id}">${itemTemplate.name}</a><br/>
 				类目：${itemTemplate.category.name}<br/>
-				描述：${itemTemplate.name}<br/>
-				优先级：${itemTemplate.priority}
+				类型：${fns:getDictLabel(itemTemplate.type, 'advice_type', '-')}<br/>
+				状态：${fns:getDictLabel(itemTemplate.status, 'active_inactive', '-')}<br/>
+				优先级：${itemTemplate.priority}<br/>
+				描述：${itemTemplate.name}
 				</td>
 				<td>
 				适用条件：<br/>${itemTemplate.condition}<br/>

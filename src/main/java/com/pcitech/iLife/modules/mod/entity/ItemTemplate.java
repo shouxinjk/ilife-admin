@@ -16,9 +16,11 @@ public class ItemTemplate extends DataEntity<ItemTemplate> {
 	private static final long serialVersionUID = 1L;
 	private ItemCategory category;		// 所属类目
 	private String name;		// 名称
+	private String type="item";	//类型：item单品，board清单
 	private String condition;		// 适用条件表达式
 	private String expression;		// 规则脚本表达式
-	private String priority;		// 优先级
+	private int priority=10;		// 优先级
+	private String status="inactive"; //状态：active启用，inactive禁用
 	private String description;		// 描述
 	
 	public ItemTemplate() {
@@ -46,6 +48,14 @@ public class ItemTemplate extends DataEntity<ItemTemplate> {
 		this.name = name;
 	}
 	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	@Length(min=0, max=1024, message="适用条件表达式长度必须介于 0 和 1024 之间")
 	public String getCondition() {
 		return condition;
@@ -64,15 +74,22 @@ public class ItemTemplate extends DataEntity<ItemTemplate> {
 		this.expression = expression;
 	}
 	
-	@Length(min=0, max=8, message="优先级长度必须介于 0 和 8 之间")
-	public String getPriority() {
+	public int getPriority() {
 		return priority;
 	}
 
-	public void setPriority(String priority) {
+	public void setPriority(int priority) {
 		this.priority = priority;
 	}
 	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	@Length(min=0, max=1024, message="描述长度必须介于 0 和 1024 之间")
 	public String getDescription() {
 		return description;

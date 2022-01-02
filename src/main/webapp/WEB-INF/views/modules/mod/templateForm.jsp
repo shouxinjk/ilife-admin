@@ -50,6 +50,14 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">类型：</label>
+			<div class="controls">
+				<form:select path="type" class="input-medium">
+					<form:options items="${fns:getDictList('advice_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>				
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">适用条件表达式：</label>
 			<div class="controls">
 				<form:textarea path="condition" htmlEscape="false" rows="5" maxlength="1024" class="input-xlarge "/>
@@ -62,6 +70,14 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">状态：</label>
+			<div class="controls">
+				<form:select path="status" class="input-medium">
+					<form:options items="${fns:getDictList('active_inactive')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">优先级：</label>
 			<div class="controls">
 				<form:input path="priority" htmlEscape="false" maxlength="8" class="input-xlarge "/>
@@ -70,7 +86,7 @@
 		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">
-				<form:input path="description" htmlEscape="false" maxlength="1024" class="input-xlarge "/>
+				<form:textarea path="description" htmlEscape="false" rows="5"  maxlength="1024" class="input-xxlarge "/>
 			</div>
 		</div>
 		<div class="form-actions">

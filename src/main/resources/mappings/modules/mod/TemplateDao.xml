@@ -7,9 +7,11 @@
 		a.category_id AS "category.id",
 		c.name AS "category.name",
 		a.name AS "name",
+		a.type AS "type",
 		a.`condition` AS "condition",
 		a.expression AS "expression",
 		a.priority AS "priority",
+		a.status AS "status",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -22,6 +24,50 @@
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_item_category c ON c.id = a.category_id
 	</sql>
+    
+	<!-- 查询单品推荐语规则。根据类目过滤，支持上级目录继承。根据优先级倒序排列：参数为String：categoryId -->
+	<select id="findItemList" resultType="ItemTemplate">
+		SELECT 
+		a.id AS "id",
+		a.category_id AS "category.id",
+		c.name AS "category.name",
+		a.name AS "name",
+		a.type AS "type",
+		a.`condition` AS "condition",
+		a.expression AS "expression",
+		100*a.priority+(length(c.parent_ids)-length(replace(c.parent_ids,",","")) ) AS "priority",
+		a.status AS "status",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag",
+		a.description AS "description"
+		FROM mod_template a, mod_item_category c 
+		<where>
+			a.del_flag = 0
+			AND a.type = 'item'
+			AND a.status = 'active'			
+			and (a.category_id=c.id or find_in_set(a.category_id,c.parent_ids)>0 ) 
+			AND c.id = #{categoryId}
+		</where>
+		ORDER BY priority DESC
+	</select>
+	
+	<!-- 查询列表海报。根据优先级倒序排列 -->
+	<select id="findBoardList" resultType="ItemTemplate">
+		SELECT 
+			<include refid="templateColumns"/>
+		FROM mod_template a
+		<include refid="templateJoins"/>
+		<where>
+			a.del_flag = 0
+			AND a.type = 'board'
+			AND a.status = 'active'			
+		</where>
+		ORDER BY a.priority DESC
+	</select>
+	    
     
 	<select id="get" resultType="ItemTemplate">
 		SELECT 
@@ -89,9 +135,11 @@
 			id,
 			category_id,
 			name,
+			type,
 			`condition`,
 			expression,
 			priority,
+			status,
 			create_by,
 			create_date,
 			update_by,
@@ -102,9 +150,11 @@
 			#{id},
 			#{category.id},
 			#{name},
+			#{type},
 			#{condition},
 			#{expression},
 			#{priority},
+			#{status},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -118,9 +168,11 @@
 		UPDATE mod_template SET 	
 			category_id = #{category.id},
 			name = #{name},
+			type = #{type},
 			`condition` = #{condition},
 			expression = #{expression},
 			priority = #{priority},
+			status = #{status},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate},
 			description = #{description}

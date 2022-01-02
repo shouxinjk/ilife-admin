@@ -26,6 +26,14 @@ public class ItemTemplateService extends CrudService<ItemTemplateDao, ItemTempla
 		return super.get(id);
 	}
 	
+	public List<ItemTemplate> findItemList(String categoryId) {
+		return dao.findItemList(categoryId);
+	}
+	
+	public List<ItemTemplate> findBoardList() {
+		return dao.findBoardList();
+	}
+	
 	public List<ItemTemplate> findList(ItemTemplate template) {
 		return super.findList(template);
 	}
