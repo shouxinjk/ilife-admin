@@ -21,6 +21,8 @@ public class Board extends DataEntity<Board> {
 	private String type;		// 类型：静态、动态
 	private String tags;		// 标签
 	private String keywords;		// 用于查询的关键词
+	private String poster;		// 海报 json
+	private String article;		// 文章 json
 	private String status;		// 状态
 	private Broker broker; //创建该Board的达人
 	
@@ -99,6 +101,22 @@ public class Board extends DataEntity<Board> {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getPoster() {
+		return poster;
+	}
+
+	public void setPoster(String poster) {
+		this.poster = poster;
+	}
+
+	public String getArticle() {
+		return article;
+	}
+
+	public void setArticle(String article) {
+		this.article = article;
 	}
 	
 }
