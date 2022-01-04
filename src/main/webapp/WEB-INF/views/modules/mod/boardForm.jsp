@@ -223,13 +223,11 @@
 		    //判断海报模板是否匹配当前条目
 		    var isOk = true;
 		    if(scheme.condition && scheme.condition.length>0){//如果设置了适用条件则进行判断
-		        console.log("\n===try eval poster condition===\n",scheme.condition);
 		        try{
 		            isOk = eval(scheme.condition);
 		        }catch(err){
 		            console.log("\n=== eval poster condition error===\n",err);
 		        }
-		        console.log("\n===result eval poster condition===\n",isOk);
 		    }
 		    if(!isOk){//如果不满足则直接跳过
 		        console.log("condition not satisifed. ignore.");
@@ -237,7 +235,6 @@
 		    }
 
 		    //准备海报参数
-		    console.log("\n===try eval poster options===\n",scheme.options);
 		    try{
 		        eval(scheme.options);//注意：脚本中必须使用 var xParam = {}形式赋值
 		    }catch(err){
@@ -308,14 +305,18 @@
 		}
 		//修改board：注意同时修改board信息以及board列表描述内容
 		function updateBoard(){   
-		    var data = board;
+			var data_str = JSON.stringify(board);//重要：避免影响board数据，通过转换后建立新的对象
+		    var data = JSON.parse(data_str);
 		    data.poster = JSON.stringify(board.poster);
 		    data.article = JSON.stringify(board.article);
 		    
 		    $.ajax({
 		        url:"${ctx}/mod/board/rest/board/"+board.id,
 		        type:"put",
-		        data:data,
+		        data:JSON.stringify(data),
+		        headers:{
+	                "Content-Type":"application/json"
+	            }, 
 		        success:function(res){
 		        	if(res.status){
 			            console.log("board updated.", res);

@@ -166,15 +166,16 @@ public class BoardController extends BaseController {
 			result.put("status",false);
 			result.put("description","Board does not exist. id:"+id);
 		}else {
-			old.setTitle(board.getTitle());
-			old.setDescription(board.getDescription());
-			old.setKeywords(board.getKeywords());
-			old.setTags(board.getTags());
-			old.setLogo(board.getLogo());
-			boardService.save(old);
+//			old.setTitle(board.getTitle());
+//			old.setDescription(board.getDescription());
+//			old.setKeywords(board.getKeywords());
+//			old.setTags(board.getTags());
+//			old.setLogo(board.getLogo());
+
+			boardService.save(board);
 			result.put("status",true);
 			result.put("description","Board modified successfully");
-			Board newBoard = boardService.get(old);
+			Board newBoard = boardService.get(board);
 			result.put("data", newBoard);
 		}
 		return result;

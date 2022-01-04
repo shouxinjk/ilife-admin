@@ -104,7 +104,7 @@ public class Board extends DataEntity<Board> {
 	}
 
 	public String getPoster() {
-		return poster;
+		return org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(poster);
 	}
 
 	public void setPoster(String poster) {
@@ -112,7 +112,7 @@ public class Board extends DataEntity<Board> {
 	}
 
 	public String getArticle() {
-		return article;
+		return org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(article);
 	}
 
 	public void setArticle(String article) {
