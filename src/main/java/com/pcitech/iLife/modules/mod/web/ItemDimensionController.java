@@ -36,6 +36,7 @@ import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.ItemDimensionMeasureService;
 import com.pcitech.iLife.modules.mod.service.ItemDimensionService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 商品维度Controller
@@ -475,7 +476,10 @@ public class ItemDimensionController extends BaseController {
 		if (itemDimension.getSort() == null){
 			itemDimension.setSort(30);
 		}
-		itemDimension.setFeatured(false);
+		//itemDimension.setFeatured(false);
+		//检查默认key值，如果没有则随机设置
+		if(itemDimension.getPropKey()==null || itemDimension.getPropKey().trim().length()==0)
+			itemDimension.setPropKey("m"+Util.get6bitCode(itemDimension.getName()));//以p打头的7位字符串，大小写区分。保存时如果重复将报错
 		model.addAttribute("itemDimension", itemDimension);
 		return "modules/mod/itemDimensionForm";
 	}

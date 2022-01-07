@@ -6,10 +6,82 @@
 	<meta name="decorator" content="default"/>
 	<%@include file="/WEB-INF/views/include/treetable.jsp" %>
 	<script type="text/javascript">
+		var sxdebug=false;
+		var sections=[];//记录所有待汇总的section，即父节点列表
+	
         $(document).ready(function() {
             $("#treeTableEvaluation").treeTable({expandLevel : 5});
+            
+            //注册监听事件
+            registerEventListener();
+            //经所有上层节点放入section列表，等待汇总
+            $("input[data-section^='sec-']").each((index, item) => {
+            	var sectionId = $(item).data("section");
+                if(sxdebug)console.log("got section.[index]"+index,sectionId);
+                if(sections.indexOf(sectionId)<0){
+                	sections.push(sectionId);
+                }
+              });
+            if(sxdebug)console.log("all sections.",sections);
+            //检查sum是否为100
+            checkWeightSum();            
         });
 
+		
+		//注册监听事件：修改weight后立即生效
+		function registerEventListener(){
+			//监听所有weight input
+            $("input[data-section^='sec-']").each((index, item) => {
+            	var inputId = $(item).attr("id");
+            	if(sxdebug)console.log("got input.[index]"+index,inputId);
+                $("#"+inputId).blur(function(e){
+                	var weight2 = $("#"+e.currentTarget.id).val();
+                	if(sxdebug)console.log("start change weight.",e.currentTarget.id,weight2);
+                    var data = {
+                    		id:e.currentTarget.id,
+                    		weight:Number(weight2)
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: "${ctx}/mod/itemEvalution/rest/weight",
+                        data: data,        
+			            success:function(result){
+			            	if(sxdebug)console.log("update weight done.",result);   
+			                //重新计算
+			                checkWeightSum();
+			            }
+                    });
+                }); 
+              });
+		}
+        
+		//根据section，汇总其下所有节点的weight，如果不等于100则高亮显示
+        function checkWeightSum(){
+        	sections.forEach((section, index) => {
+        		if(sxdebug)console.log("sum section.[section]"+index,section);
+				//获取该section下的所有节点，并汇总其weight值
+				var sum = 0;
+                $("input[data-entry^='"+section+"']").each((index, item) => {
+                	var weight = Number($(item).val());
+                	if(sxdebug)console.log("got entry.[index]"+index,weight,sum);
+                	if(weight>0&&weight<=100){
+                		$(item).css("border-color","#silver");
+                	}else{
+                		$(item).css("border-color","#FFA7C5");
+                	}
+                    sum+=weight;
+                });
+                if(sum!=100){
+                	if(sxdebug)console.log("section sum is not 100. [section]"+section);
+                	$("input[data-section='"+section+"']").css("color","red");
+                	$("input[data-section='"+section+"']").css("background-color","#FFB7C5");
+                }else{
+                	$("input[data-section='"+section+"']").css("color","black");
+                	$("input[data-section='"+section+"']").css("background-color","#fff");
+                }
+              });
+        }        
+        
         function updateSort() {
             loading('正在提交，请稍等...');
             $("#listForm").attr("action", "${ctx}/mod/itemEvaluation/updateSort");
@@ -31,10 +103,10 @@
 				<th>Key</th>
 				<th>特征</th>
 				<th>类型</th>
-				<th>算法</th>
-				<th>占比</th>
+				<th>脚本</th>
+				<th>占比%</th>
 				<th>描述</th>			
-                <th style="text-align:center;">排序</th>
+                <!--th style="text-align:center;">排序</th-->
 				<shiro:hasPermission name="mod:itemEvaluation:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 
@@ -48,28 +120,28 @@
 					${row.propKey}
 				</td>				
 				<td>
-					${row.featured}
+					${fns:getDictLabel(row.featured, 'yes_no', '-')}
 				</td>
 				<td>
-					${row.type}
+					${fns:getDictLabel(row.type, 'evaluation_type', '-')}
 				</td>
 				<td>
 					${row.script}
 				</td>				
 				<td>
-					${row.weight}
+					<input type="text" value="${row.weight}" id="${row.type ne 'dimension'?'prop-':'dim-'}${row.id}" data-section="sec-${row.parent.id}" data-entry="sec-${row.parent.id}-${row.id}" style="width:60px;margin:0 auto;padding:0;height:20px;font-size:12px;"/>
 				</td>
 				<td>
 					${row.description}
-				</td>
-				<td style="text-align:center;">
+				</td>			
+				<!--td style="text-align:center;">
 					<shiro:hasPermission name="mod:itemCategory:edit">
 						<input type="hidden" name="ids" value="${row.id}"/>
 						<input name="sorts" type="text" value="${row.sort}" style="width:50px;margin:0;padding:0;text-align:center;">
 					</shiro:hasPermission><shiro:lacksPermission name="mod:itemCategory:edit">
 					${row.sort}
 				</shiro:lacksPermission>
-				</td>
+				</td-->
 				<td>
 					<shiro:hasPermission name="mod:itemEvaluation:edit">
 						<a href="${ctx}/mod/itemEvaluation/form?id=${row.id}">修改</a>

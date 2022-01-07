@@ -38,4 +38,62 @@ public class Util {
         }  
         return s;  
     } 
+    
+    //生成8位大小写随机码
+    public static String get8bitCode() {
+    	String get32uuid = get32UUID();
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < 4; i++) {
+			sb.append(get32uuid.charAt((int) Math.round(Math.random() * 31)));
+		}
+		String KeyString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		sb.insert((int)Math.round(Math.random()*3), KeyString.charAt((int) Math.round(Math.random() * 25)));
+		sb.insert((int)Math.round(Math.random()*4), KeyString.charAt((int) Math.round(Math.random() * 25)));
+		String get32uuid2 = get32UUID();
+		sb.insert((int)Math.round(Math.random()*5),get32uuid2.charAt((int) Math.round(Math.random() * 31)));
+		sb.insert((int)Math.round(Math.random()*6),get32uuid2.charAt((int) Math.round(Math.random() * 31)));
+		return sb.toString();
+    }
+    
+    //生成6位大小写随机码
+    public static String get6bitCode() {
+    	String get32uuid = get32UUID();
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < 4; i++) {
+			sb.append(get32uuid.charAt((int) Math.round(Math.random() * 31)));
+		}
+		String KeyString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		sb.insert((int)Math.round(Math.random()*3), KeyString.charAt((int) Math.round(Math.random() * 25)));
+//		sb.insert((int)Math.round(Math.random()*4), KeyString.charAt((int) Math.round(Math.random() * 25)));
+		String get32uuid2 = get32UUID();
+		sb.insert((int)Math.round(Math.random()*5),get32uuid2.charAt((int) Math.round(Math.random() * 31)));
+//		sb.insert((int)Math.round(Math.random()*6),get32uuid2.charAt((int) Math.round(Math.random() * 31)));
+		return sb.toString();
+    }
+    
+    //根据输入字符串生成8位大小写随机码：输入字符串相同则返回相同
+    public static String get8bitCode(String seed) {
+    	if(seed==null)
+    		return get8bitCode();
+    	String get32uuid = md5(seed);
+		StringBuffer sb = new StringBuffer();
+		int[] indexes = {0,1,8,9,16,17,24,25};//取固定位置字符
+		for (int i = 0; i < indexes.length; i++) {
+			sb.append(get32uuid.charAt(indexes[i]));
+		}
+		return sb.toString();
+    }
+    
+    //根据输入字符串生成6位大小写随机码：输入字符串相同则返回相同
+    public static String get6bitCode(String seed) {
+    	if(seed==null)
+    		return get6bitCode();
+    	String get32uuid = md5(seed);
+		StringBuffer sb = new StringBuffer();
+		int[] indexes = {0,1,8,9,16,17};//取固定位置字符
+		for (int i = 0; i < indexes.length; i++) {
+			sb.append(get32uuid.charAt(indexes[i]));
+		}
+		return sb.toString();
+    }
 }

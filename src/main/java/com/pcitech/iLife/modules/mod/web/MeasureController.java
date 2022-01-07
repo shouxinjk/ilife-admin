@@ -43,6 +43,7 @@ import com.pcitech.iLife.modules.mod.service.MeasureService;
 import com.pcitech.iLife.modules.mod.service.TagCategoryService;
 import com.pcitech.iLife.modules.mod.service.TagsService;
 import com.pcitech.iLife.modules.ope.entity.Performance;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 关键属性Controller
@@ -148,6 +149,9 @@ public class MeasureController extends BaseController {
 		if(measure.getCategory()!=null&&StringUtils.isNoneBlank(measure.getCategory().getId())){
 			measure.setCategory(itemCategoryService.get(measure.getCategory().getId()));
 		}
+		//检查默认key值，如果没有则随机设置
+		if(measure.getProperty()==null || measure.getProperty().trim().length()==0)
+			measure.setProperty("p"+Util.get6bitCode(measure.getName()));//以p打头的7位字符串，大小写区分。保存时如果重复将报错
 		model.addAttribute("measure", measure);
 		model.addAttribute("treeId", measure.getCategory().getId());
 		return "modules/mod/measureForm";

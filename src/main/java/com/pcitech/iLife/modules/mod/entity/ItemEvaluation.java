@@ -22,7 +22,7 @@ public class ItemEvaluation extends TreeEntity<ItemEvaluation> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// name
 	private String description;		// description
-	private String weight;		// weight
+	private double weight;		// weight
 	private String type;		// type
 	private String script;		// script：评价脚本
 	private boolean featured;		// featured
@@ -80,11 +80,11 @@ public class ItemEvaluation extends TreeEntity<ItemEvaluation> {
 		this.description = description;
 	}
 	
-	public String getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(String weight) {
+	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 	

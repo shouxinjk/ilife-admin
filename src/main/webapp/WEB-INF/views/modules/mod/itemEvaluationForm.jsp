@@ -65,13 +65,9 @@
 		<div class="control-group">
 			<label class="control-label">类型：</label>
 			<div class="controls">
-				<form:input path="type" htmlEscape="false" class="input-xlarge "/>
-			</div>
-		</div>		
-		<div class="control-group">
-			<label class="control-label">算法：</label>
-			<div class="controls">
-				<form:input path="script" htmlEscape="false" class="input-xlarge "/>
+				<form:select path="type">
+					<form:options items="${fns:getDictList('evaluation_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>				
 			</div>
 		</div>		
 		<div class="control-group">
@@ -79,17 +75,23 @@
 			<div class="controls">
 				<form:input path="weight" htmlEscape="false" class="input-xlarge "/>
 			</div>
-		</div>
+		</div>		
 		<div class="control-group">
+			<label class="control-label">算法：</label>
+			<div class="controls">
+				<form:textarea path="script" htmlEscape="false" rows="4" class="input-xxlarge "/>
+			</div>
+		</div>		
+		<!--div class="control-group">
 			<label class="control-label">排序：</label>
 			<div class="controls">
 				<form:input path="sort" htmlEscape="false" maxlength="11" class="input-xlarge "/>
 			</div>
-		</div>
+		</div-->
 		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">
-				<form:input path="description" htmlEscape="false" class="input-xlarge "/>
+				<form:textarea path="description" htmlEscape="false" rows="4" class="input-xxlarge "/>
 			</div>
 		</div>		
 		<div class="form-actions">

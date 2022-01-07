@@ -103,7 +103,7 @@
 				<th>Key</th>
 				<th>特征</th>
 				<th>描述</th>
-				<th>script</th>
+				<th>脚本</th>
 				<th>占比%</th>
 				<shiro:hasPermission name="mod:itemDimension:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -120,7 +120,7 @@
 					${row.propKey}
 				</td>	
 				<td>
-					${row.featured}
+					${fns:getDictLabel(row.featured, 'yes_no', '-')}
 				</td>									
 				<td>
 					${row.description}
