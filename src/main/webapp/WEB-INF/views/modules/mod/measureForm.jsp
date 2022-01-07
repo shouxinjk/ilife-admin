@@ -92,7 +92,7 @@
 				<form:input path="expression" htmlEscape="false" maxlength="1024" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">效益：生理：</label>
 			<div class="controls">
 				<form:input path="alpha" htmlEscape="false" class="input-xlarge "/>
@@ -145,9 +145,9 @@
 			<div class="controls">
 				<form:input path="lambda" htmlEscape="false" maxlength="1024" class="input-xlarge "/>
 			</div>
-		</div>		
+		</div-->		
 		<div class="control-group">
-			<label class="control-label">类型：</label>
+			<label class="control-label">属性小类（预留）：</label>
 			<div class="controls">
 				<form:input path="type" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 			</div>

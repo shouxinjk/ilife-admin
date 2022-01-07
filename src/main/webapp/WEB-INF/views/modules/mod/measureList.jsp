@@ -47,7 +47,7 @@
 				<!--th>占比</th>
 				<th>参照值</th-->
 				<th>默认分值</th>
-				<th>a</th>
+				<!--th>a</th>
 				<th>b</th>
 				<th>c</th>
 				<th>d</th>
@@ -55,12 +55,12 @@
 				<th>x</th>
 				<th>y</th>
 				<th>z</th>	
-				<th>style</th>					
-				<th>标签</th>
+				<th>style</th-->					
+				<th>关联标签</th>
 				<th>归一化类型</th>
 				<th>多值策略</th>
 				<th>标注类型</th>
-				<th>Dict</th>
+				<th>Dict字典</th>
 				<th>Refer类目</th>
 				<th>标签类目</th>
 				<shiro:hasPermission name="mod:measure:edit"><th>操作</th></shiro:hasPermission>
@@ -90,7 +90,7 @@
 				<td>
 					${measure.defaultScore}
 				</td>				
-				<td>
+				<!--td>
 					${measure.alpha}
 				</td>
 				<td>
@@ -116,7 +116,7 @@
 				</td>												
 				<td>
 					${measure.lambda}
-				</td>				
+				</td-->				
 				<td>
 					${measure.tags}
 				</td>	
