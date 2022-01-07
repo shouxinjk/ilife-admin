@@ -13,9 +13,13 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -27,6 +31,7 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
 import com.pcitech.iLife.modules.mod.entity.PlatformProperty;
@@ -35,6 +40,7 @@ import com.pcitech.iLife.modules.mod.service.PlatformCategoryService;
 import com.pcitech.iLife.modules.mod.service.PlatformPropertyService;
 import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.service.DictService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 电商平台属性映射Controller
@@ -153,6 +159,87 @@ public class PlatformPropertyController extends BaseController {
 		return mapList;
 	}
 	
+	/**
+	 * 新建待映射标注的属性。使用场景：在分析过程中，checkProperty将无标准属性的数据提交新建记录，等待标注
+	 * insert ignore：采用platform-categoryId-name唯一进行识别
+	 * @deprecated 实际中，分析器将直接提交数据到kafka，写入mysql，不需要经过管理端中转
+	 * @param json 
+	 * {
+	 * 		name: name,
+	 * 		mappingCategoryId: mappingCateogryId,已经映射的标准目录ID。
+	 * 		platform: platform
+	 * 
+	 * 
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	@ResponseBody
+	@RequestMapping(value = "rest/mapping", method = RequestMethod.POST)
+	public JSONObject checkMapping(@RequestBody JSONObject json,HttpServletRequest request, HttpServletResponse response, Model model) {
+		JSONObject result = new JSONObject();
+		String id = Util.md5(json.getString("platform")+json.getString("categoryId")+json.getString("name"));//构建唯一字符串
+		PlatformProperty query = platformPropertyService.get(id);
+		if(query ==null) {//新建记录
+			query = new PlatformProperty();
+			query.setIsNewRecord(true);
+			query.setId(id);//采用手动唯一值
+			query.setName(json.getString("name"));
+			query.setPlatform(json.getString("platform"));
+		}
+		ItemCategory category = itemCategoryService.get(json.getString("categoryId"));
+		query.setCategory(category);
+		try {
+			platformPropertyService.save(query);
+			result.put("status",true);
+		}catch(Exception ex) {
+			result.put("status",false);
+			result.put("msg", ex.getMessage());
+		}
+		return result;
+	}
+	
+	/**
+	 * 根据原始类目及属性名称获取属性列表。
+	 * 
+	 * @param json
+	 * {
+	 * 		platform: platform,
+	 * 		category: category //原始目录名称：可能存在尚未映射的情况
+	 * }
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/mapping", method = RequestMethod.GET)
+	public JSONObject listProps(@RequestParam(required=true) String platform,@RequestParam(required=true) String category,HttpServletRequest request, HttpServletResponse response, Model model) {
+		JSONObject result = new JSONObject();
+		result.put("status",false);
+		PlatformProperty query = new PlatformProperty();
+		query.setPlatform(platform);
+		PlatformCategory platformCategory = new PlatformCategory();
+		platformCategory.setName(category);
+		platformCategory.setId(null);//禁止根据ID查询
+		query.setPlatformCategory(platformCategory);
+		List<PlatformProperty> list = platformPropertyService.findList(query);
+		if(list.size()>0) {
+			result.put("status",true);
+			List<JSONObject> jsonObjects = Lists.newArrayList();
+			for(PlatformProperty prop:list) {
+				JSONObject json = new JSONObject();
+				json.put("id", prop.getId());
+				json.put("name", prop.getName());
+				json.put("cid", prop.getPlatformCategory().getId());
+				json.put("cname", prop.getPlatformCategory().getName());
+				json.put("categoryId", prop.getCategory().getId());
+				json.put("categoryName", prop.getCategory().getName());
+				json.put("measureId", prop.getMeasure().getId());
+				json.put("measureName", prop.getMeasure().getName());
+				jsonObjects.add(json);
+			}
+			result.put("data",jsonObjects);
+		}
+		return result;
+	}
+	
+	//准备左侧平台列表
 	@RequiresPermissions("mod:platformProperty:view")
 	@RequestMapping(value = "index")
 	public String index(Model model) {

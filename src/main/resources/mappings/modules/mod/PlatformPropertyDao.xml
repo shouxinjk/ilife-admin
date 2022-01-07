@@ -45,9 +45,12 @@
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
 			</if>
-			<if test="platformCategory != null and platformCategory.id != ''">
+			<if test="platformCategory != null and platformCategory.id != null and platformCategory.id != ''">
 				AND a.cid = #{platformCategory.id}
 			</if>
+			<if test="platformCategory != null and platformCategory.name != ''">
+				AND pc.name = #{platformCategory.name}
+			</if>			
 			<if test="name != null and name != ''">
 				AND a.name LIKE 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>

@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,9 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -27,9 +31,12 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
+import com.pcitech.iLife.modules.mod.entity.PlatformProperty;
+import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.PlatformCategoryService;
 import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.service.DictService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 电商平台类目映射Controller
@@ -42,6 +49,9 @@ public class PlatformCategoryController extends BaseController {
 
 	@Autowired
 	private PlatformCategoryService platformCategoryService;
+	
+	@Autowired
+	private ItemCategoryService itemCategoryService;
 	
 	@Autowired
 	private DictService dictService;
@@ -133,6 +143,54 @@ public class PlatformCategoryController extends BaseController {
 			}
 		}
 		return mapList;
+	}
+	
+	//rest接口
+	//根据platform 及 原始类目名称查询 类目映射：如果不存在则新建
+	@ResponseBody
+	@RequestMapping(value = "rest/mapping", method = RequestMethod.GET)
+	public JSONObject checkMapping(@RequestParam(required=true) String platform,@RequestParam(required=true) String name,HttpServletRequest request, HttpServletResponse response, Model model) {
+		JSONObject result = new JSONObject();
+		result.put("status",false);
+		PlatformCategory query = new PlatformCategory();
+		query.setName(name);
+		query.setPlatform(platform);
+		List<PlatformCategory> list = platformCategoryService.findList(query);
+		if(list.size()>0) {
+			result.put("status",true);
+			result.put("data",list.get(0));//仅返回一个
+		}else {//如果没有，则新建类目，等待标注
+			query.setIsNewRecord(true);
+			query.setId(Util.md5(platform+name));//采用手动生成ID，避免多次查询生成多条记录
+			query.setUpdateDate(new Date());
+			platformCategoryService.save(query);
+			result.put("status",false);
+			result.put("msg","Platform category mapping does not exist. Created as new mapping record.");
+		}
+		return result;
+	}
+	
+	//提交映射：platform、原始类目名称及mappingId
+	 @Transactional(readOnly = false)
+	@ResponseBody
+	@RequestMapping(value = "rest/mapping", method = RequestMethod.POST)
+	public JSONObject mapping(@RequestBody JSONObject json,HttpServletRequest request, HttpServletResponse response, Model model) {
+		JSONObject result = new JSONObject();
+		PlatformCategory query = new PlatformCategory();
+		query.setName(json.getString("name"));
+		query.setPlatform(json.getString("platform"));
+		ItemCategory category = new ItemCategory();
+		category.setId(json.getString("categoryId"));
+		query.setCategory(category);
+		try {
+			logger.debug("try to update mappingCategoryId",query);
+			platformCategoryService.updateMapping(query);
+			result.put("status",true);
+		}catch(Exception ex) {
+			result.put("status",false);
+			result.put("msg", ex.getMessage());
+		}
+		return result;
 	}
 	
 	//组织显示左侧电商平台列表

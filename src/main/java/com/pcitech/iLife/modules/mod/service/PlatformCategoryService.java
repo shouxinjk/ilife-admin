@@ -27,6 +27,10 @@ import com.pcitech.iLife.modules.mod.dao.PlatformCategoryDao;
 @Transactional(readOnly = true)
 public class PlatformCategoryService extends TreeService<PlatformCategoryDao, PlatformCategory> {
 
+	public void updateMapping(PlatformCategory platformCategory) {
+		dao.updateMapping(platformCategory);
+	}
+	
 	public PlatformCategory get(String id) {
 		return super.get(id);
 	}

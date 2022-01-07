@@ -128,6 +128,15 @@
 		WHERE id = #{id}
 	</update>
 	
+	<update id="updateMapping">
+		UPDATE mod_3rd_category SET 	
+			category_id = #{category.id},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE platform = #{platform}
+		AND name = #{name}
+	</update>
+	
 	<update id="updateParentIds">
 		UPDATE mod_3rd_category SET 
 			parent_id = #{parent.id}, 
