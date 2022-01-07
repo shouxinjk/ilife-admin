@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.PlatformCategoryDao">
+    
+	<sql id="platformCategoryColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.platform AS "platform",
+		a.parent_id AS "parent.id",
+		a.parent_ids AS "parentIds",
+		a.category_id AS "category.id",
+		c.name AS "category.name",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="platformCategoryJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_item_category c ON c.id = a.category_id
+	</sql>
+    
+	<select id="get" resultType="PlatformCategory">
+		SELECT 
+			<include refid="platformCategoryColumns"/>
+		FROM mod_3rd_category a
+		<include refid="platformCategoryJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PlatformCategory">
+		SELECT 
+			<include refid="platformCategoryColumns"/>
+		FROM mod_3rd_category a
+		<include refid="platformCategoryJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="platform != null and platform != ''">
+				AND a.platform = #{platform}
+			</if>
+			<if test="parent != null and parent.id != null and parent.id != ''">
+				AND a.parent_id = #{parent.id}
+			</if>
+			<if test="parentIds != null and parentIds != ''">
+				AND a.parent_ids LIKE 
+					<if test="dbName == 'oracle'">'%'||#{parentIds}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{parentIds}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{parentIds},'%')</if>
+			</if>
+			<if test="category != null and category.id != null and category.id != ''">
+				AND a.category_id = #{category.id}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findAllList" resultType="PlatformCategory">
+		SELECT 
+			<include refid="platformCategoryColumns"/>
+		FROM mod_3rd_category a
+		<include refid="platformCategoryJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+	</select>
+	
+	<select id="findByParentIdsLike" resultType="PlatformCategory">
+		SELECT
+			a.id,
+			a.parent_id AS "parent.id",
+			a.parent_ids
+		FROM mod_3rd_category a
+		<include refid="platformCategoryJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.parent_ids LIKE #{parentIds}
+		</where>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_3rd_category(
+			id,
+			name,
+			platform,
+			parent_id,
+			parent_ids,
+			category_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{platform},
+			#{parent.id},
+			#{parentIds},
+			#{category.id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_3rd_category SET 	
+			name = #{name},
+			platform = #{platform},
+			parent_id = #{parent.id},
+			parent_ids = #{parentIds},
+			category_id = #{category.id},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateParentIds">
+		UPDATE mod_3rd_category SET 
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_3rd_category SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id} OR parent_ids LIKE concat('%,',#{id},',%')
+	</update>
+	
+</mapper>

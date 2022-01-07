@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.PlatformPropertyDao">
+    
+	<sql id="platformPropertyColumns">
+		a.id AS "id",
+		a.cid AS "platformCategory.id",
+		pc.name AS "platformCategory.name",
+		a.name AS "name",
+		a.platform AS "platform",
+		a.category_id AS "category.id",
+		c.name AS "category.name",
+		a.measure_id AS "measure.id",
+		m.name AS "measure.name",	
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="platformPropertyJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_3rd_category pc ON pc.id = a.cid	
+		LEFT JOIN mod_item_category c ON c.id = a.category_id	
+		LEFT JOIN mod_measure m ON m.id = a.measure_id
+	</sql>
+    
+	<select id="get" resultType="PlatformProperty">
+		SELECT 
+			<include refid="platformPropertyColumns"/>
+		FROM mod_3rd_property a
+		<include refid="platformPropertyJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PlatformProperty">
+		SELECT 
+			<include refid="platformPropertyColumns"/>
+		FROM mod_3rd_property a
+		<include refid="platformPropertyJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="platformCategory != null and platformCategory.id != ''">
+				AND a.cid = #{platformCategory.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="platform != null and platform != ''">
+				AND a.platform = #{platform}
+			</if>
+			<if test="category != null and category.id != null and category.id != ''">
+				AND a.category_id = #{category.id}
+			</if>
+			<if test="measure != null and measure.id != null and measure.id != ''">
+				AND a.measure_id = #{measure.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PlatformProperty">
+		SELECT 
+			<include refid="platformPropertyColumns"/>
+		FROM mod_3rd_property a
+		<include refid="platformPropertyJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_3rd_property(
+			id,
+			cid,
+			name,
+			platform,
+			category_id,
+			measure_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{platformCategory.id},
+			#{name},
+			#{platform},
+			#{category.id},
+			#{measure.id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_3rd_property SET 	
+			cid = #{platformCategory.id},
+			name = #{name},
+			platform = #{platform},
+			category_id = #{category.id},
+			measure_id = #{measure.id},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_3rd_property SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
