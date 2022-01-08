@@ -190,9 +190,9 @@ public class PlatformPropertyController extends BaseController {
 		query.setCategory(category);
 		try {
 			platformPropertyService.save(query);
-			result.put("status",true);
+			result.put("success",true);
 		}catch(Exception ex) {
-			result.put("status",false);
+			result.put("success",false);
 			result.put("msg", ex.getMessage());
 		}
 		return result;
@@ -211,7 +211,7 @@ public class PlatformPropertyController extends BaseController {
 	@RequestMapping(value = "rest/mapping", method = RequestMethod.GET)
 	public JSONObject listProps(@RequestParam(required=true) String platform,@RequestParam(required=true) String category,HttpServletRequest request, HttpServletResponse response, Model model) {
 		JSONObject result = new JSONObject();
-		result.put("status",false);
+		result.put("success",false);
 		PlatformProperty query = new PlatformProperty();
 		query.setPlatform(platform);
 		PlatformCategory platformCategory = new PlatformCategory();
@@ -220,7 +220,7 @@ public class PlatformPropertyController extends BaseController {
 		query.setPlatformCategory(platformCategory);
 		List<PlatformProperty> list = platformPropertyService.findList(query);
 		if(list.size()>0) {
-			result.put("status",true);
+			result.put("success",true);
 			List<JSONObject> jsonObjects = Lists.newArrayList();
 			for(PlatformProperty prop:list) {
 				if(prop.getMeasure()!=null) {//可能尚未建立映射，仅返回已经建立映射的属性列表

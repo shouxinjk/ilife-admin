@@ -151,20 +151,20 @@ public class PlatformCategoryController extends BaseController {
 	@RequestMapping(value = "rest/mapping", method = RequestMethod.GET)
 	public JSONObject checkMapping(@RequestParam(required=true) String platform,@RequestParam(required=true) String name,HttpServletRequest request, HttpServletResponse response, Model model) {
 		JSONObject result = new JSONObject();
-		result.put("status",false);
+		result.put("success",false);
 		PlatformCategory query = new PlatformCategory();
 		query.setName(name);
 		query.setPlatform(platform);
 		List<PlatformCategory> list = platformCategoryService.findList(query);
 		if(list.size()>0) {
-			result.put("status",true);
-			result.put("data",list.get(0));//仅返回一个
+			result.put("success",true);
+			result.put("data",list);//返回整个列表
 		}else {//如果没有，则新建类目，等待标注
 			query.setIsNewRecord(true);
 			query.setId(Util.md5(platform+name));//采用手动生成ID，避免多次查询生成多条记录
 			query.setUpdateDate(new Date());
 			platformCategoryService.save(query);
-			result.put("status",false);
+			result.put("success",false);
 			result.put("msg","Platform category mapping does not exist. Created as new mapping record.");
 		}
 		return result;
@@ -184,7 +184,7 @@ public class PlatformCategoryController extends BaseController {
 		category.setId(json.getString("categoryId"));
 		query.setCategory(category);
 		boolean success = platformCategoryService.upsertMapping(query);
-		result.put("status",success);
+		result.put("success",success);
 		return result;
 	}
 	
