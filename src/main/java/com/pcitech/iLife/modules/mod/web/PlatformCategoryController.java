@@ -162,6 +162,7 @@ public class PlatformCategoryController extends BaseController {
 		}else {//如果没有，则新建类目，等待标注
 			query.setIsNewRecord(true);
 			query.setId(Util.md5(platform+name));//采用手动生成ID，避免多次查询生成多条记录
+			query.setCreateDate(new Date());
 			query.setUpdateDate(new Date());
 			platformCategoryService.save(query);
 			result.put("success",false);
@@ -183,6 +184,8 @@ public class PlatformCategoryController extends BaseController {
 		ItemCategory category = new ItemCategory();
 		category.setId(json.getString("categoryId"));
 		query.setCategory(category);
+		query.setCreateDate(new Date());
+		query.setUpdateDate(new Date());
 		boolean success = platformCategoryService.upsertMapping(query);
 		result.put("success",success);
 		return result;
