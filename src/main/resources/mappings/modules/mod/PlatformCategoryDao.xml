@@ -128,13 +128,36 @@
 		WHERE id = #{id}
 	</update>
 	
-	<update id="updateMapping">
-		UPDATE mod_3rd_category SET 	
+	<update id="upsertMapping">
+		INSERT INTO mod_3rd_category(
+			id,
+			name,
+			platform,
+			parent_id,
+			parent_ids,
+			category_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{platform},
+			#{parent.id},
+			#{parentIds},
+			#{category.id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)	
+		ON DUPLICATE KEY UPDATE 
 			category_id = #{category.id},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
-		WHERE platform = #{platform}
-		AND name = #{name}
 	</update>
 	
 	<update id="updateParentIds">

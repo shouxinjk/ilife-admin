@@ -14,5 +14,5 @@ import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
  */
 @MyBatisDao
 public interface PlatformCategoryDao extends TreeDao<PlatformCategory> {
-	public void updateMapping(PlatformCategory platformCategory);
+	public void upsertMapping(PlatformCategory platformCategory);
 }

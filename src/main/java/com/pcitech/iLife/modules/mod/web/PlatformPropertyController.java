@@ -223,16 +223,22 @@ public class PlatformPropertyController extends BaseController {
 			result.put("status",true);
 			List<JSONObject> jsonObjects = Lists.newArrayList();
 			for(PlatformProperty prop:list) {
-				JSONObject json = new JSONObject();
-				json.put("id", prop.getId());
-				json.put("name", prop.getName());
-				json.put("cid", prop.getPlatformCategory().getId());
-				json.put("cname", prop.getPlatformCategory().getName());
-				json.put("categoryId", prop.getCategory().getId());
-				json.put("categoryName", prop.getCategory().getName());
-				json.put("measureId", prop.getMeasure().getId());
-				json.put("measureName", prop.getMeasure().getName());
-				jsonObjects.add(json);
+				if(prop.getMeasure()!=null) {//可能尚未建立映射，仅返回已经建立映射的属性列表
+					JSONObject json = new JSONObject();
+					json.put("id", prop.getId());
+					json.put("name", prop.getName());
+					if(prop.getPlatformCategory()!=null) {
+						json.put("cid", prop.getPlatformCategory().getId());
+						json.put("cname", prop.getPlatformCategory().getName());
+					}
+					if(prop.getCategory()!=null) {
+						json.put("categoryId", prop.getCategory().getId());
+						json.put("categoryName", prop.getCategory().getName());
+					}
+					json.put("mappingId", prop.getMeasure().getId());
+					json.put("mappingName", prop.getMeasure().getName());
+					jsonObjects.add(json);
+				}
 			}
 			result.put("data",jsonObjects);
 		}

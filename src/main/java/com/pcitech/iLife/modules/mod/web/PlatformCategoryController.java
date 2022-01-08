@@ -177,19 +177,14 @@ public class PlatformCategoryController extends BaseController {
 	public JSONObject mapping(@RequestBody JSONObject json,HttpServletRequest request, HttpServletResponse response, Model model) {
 		JSONObject result = new JSONObject();
 		PlatformCategory query = new PlatformCategory();
+		query.setId(Util.md5(json.getString("platform")+json.getString("name")));//采用platform+name唯一识别
 		query.setName(json.getString("name"));
 		query.setPlatform(json.getString("platform"));
 		ItemCategory category = new ItemCategory();
 		category.setId(json.getString("categoryId"));
 		query.setCategory(category);
-		try {
-			logger.debug("try to update mappingCategoryId",query);
-			platformCategoryService.updateMapping(query);
-			result.put("status",true);
-		}catch(Exception ex) {
-			result.put("status",false);
-			result.put("msg", ex.getMessage());
-		}
+		boolean success = platformCategoryService.upsertMapping(query);
+		result.put("status",success);
 		return result;
 	}
 	
