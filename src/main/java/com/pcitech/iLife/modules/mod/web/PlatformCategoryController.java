@@ -155,7 +155,7 @@ public class PlatformCategoryController extends BaseController {
 		PlatformCategory query = new PlatformCategory();
 		query.setName(name);
 		query.setPlatform(platform);
-		List<PlatformCategory> list = platformCategoryService.findList(query);
+		List<PlatformCategory> list = platformCategoryService.findMapping(query);
 		if(list.size()>0) {
 			result.put("success",true);
 			result.put("data",list);//返回整个列表
@@ -166,6 +166,8 @@ public class PlatformCategoryController extends BaseController {
 			query.setUpdateDate(new Date());
 			platformCategoryService.save(query);
 			result.put("success",false);
+			List<PlatformCategory> blankList = Lists.newArrayList();
+			result.put("data",blankList);//返回空白列表
 			result.put("msg","Platform category mapping does not exist. Created as new mapping record.");
 		}
 		return result;

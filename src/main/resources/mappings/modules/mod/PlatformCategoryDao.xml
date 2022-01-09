@@ -128,6 +128,24 @@
 		WHERE id = #{id}
 	</update>
 	
+	<!-- 根据平台及原始类目名称查找映射记录 -->
+	<select id="findMapping" resultType="PlatformCategory">
+		SELECT 
+			<include refid="platformCategoryColumns"/>
+		FROM mod_3rd_category a
+		<include refid="platformCategoryJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="name != null and name != ''">
+				AND a.name =#{name}
+			</if>
+			<if test="platform != null and platform != ''">
+				AND a.platform = #{platform}
+			</if>
+		</where>
+	</select>	
+	
+	<!-- 新建或更新映射条目。如果不存在则新建，存在则更新标准目录 -->
 	<update id="upsertMapping">
 		INSERT INTO mod_3rd_category(
 			id,

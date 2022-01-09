@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+
 import com.pcitech.iLife.common.persistence.TreeDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
@@ -15,4 +17,5 @@ import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
 @MyBatisDao
 public interface PlatformCategoryDao extends TreeDao<PlatformCategory> {
 	public void upsertMapping(PlatformCategory platformCategory);
+	public List<PlatformCategory> findMapping(PlatformCategory platformCategory);
 }

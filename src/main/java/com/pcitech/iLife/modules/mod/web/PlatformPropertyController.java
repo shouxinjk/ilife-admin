@@ -219,9 +219,9 @@ public class PlatformPropertyController extends BaseController {
 		platformCategory.setId(null);//禁止根据ID查询
 		query.setPlatformCategory(platformCategory);
 		List<PlatformProperty> list = platformPropertyService.findList(query);
+		List<JSONObject> jsonObjects = Lists.newArrayList();
 		if(list.size()>0) {
 			result.put("success",true);
-			List<JSONObject> jsonObjects = Lists.newArrayList();
 			for(PlatformProperty prop:list) {
 				if(prop.getMeasure()!=null) {//可能尚未建立映射，仅返回已经建立映射的属性列表
 					JSONObject json = new JSONObject();
@@ -240,8 +240,8 @@ public class PlatformPropertyController extends BaseController {
 					jsonObjects.add(json);
 				}
 			}
-			result.put("data",jsonObjects);
 		}
+		result.put("data",jsonObjects);//注意：无映射属性时反馈空列表
 		return result;
 	}
 	
