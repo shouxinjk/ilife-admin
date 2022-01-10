@@ -3,6 +3,7 @@ package com.pcitech.iLife.cps;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -16,7 +17,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.arangodb.entity.BaseDocument;
+import com.google.common.collect.Lists;
 import com.pcitech.iLife.common.config.Global;
+import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
+import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
+import com.pcitech.iLife.modules.mod.service.PlatformCategoryService;
 import com.pcitech.iLife.task.PddItemSync;
 import com.pcitech.iLife.task.PddItemsSearcher;
 import com.pcitech.iLife.task.PddOrderSync;
@@ -59,6 +64,11 @@ public class PddClientTest {
 	PddOrderSync pddOrderSync;
 	@Autowired
 	PddItemsSearcher pddItemsSearcher;
+	@Autowired
+	private PlatformCategoryService platformCategoryService;
+	
+	@Autowired
+	private ItemCategoryService itemCategoryService;
 	
 	private List<String> getGoodsSignList(){
 		List<String> goodsSignList = new ArrayList<String>();
@@ -71,11 +81,7 @@ public class PddClientTest {
 	@Test
 	public void getCategory() {
 		System.out.println("now start query categories ... ");
-		  //准备连接
-		arangoClient = new ArangoDbClient(host,port,username,password,database);
 		getCategories(0);
-		//完成后关闭arangoDbClient
-		arangoClient.close();
 		assert true;
 	}
 	
@@ -89,19 +95,27 @@ public class PddClientTest {
 
 			for(GoodsCatsGetResponseGoodsCatsListItem item:resp.getGoodsCatsList()) {
 				logger.debug("目录::[parentId]"+item.getParentCatId()+"\t[id]"+item.getCatId()+"\t[name]"+item.getCatName());
-				String itemKey = Util.md5(source + item.getCatId());//所有原始category保持 source+CategoryId的形式唯一识别
-				BaseDocument doc = new BaseDocument();
-				doc.setKey(itemKey);
-				doc.getProperties().put("source", source);
-				doc.getProperties().put("pid", ""+item.getParentCatId());//原始父id
-				doc.getProperties().put("name", ""+item.getCatName());//名称
-				doc.getProperties().put("id", ""+item.getCatId());//原始id
-				doc.getProperties().put("level", item.getLevel());//层级 
-				logger.debug("try to upsert jd category.[itemKey]"+itemKey+"[doc]"+JsonUtil.transferToJson(item));
-				arangoClient.upsert("platform_categories", itemKey, doc);  
+				String id = source + item.getCatId();//所有原始category保持 source+CategoryId的形式唯一识别
+				PlatformCategory platformCategory = new PlatformCategory();
+				platformCategory.setId(id);
+				platformCategory.setPlatform(source);
+				PlatformCategory parent = new PlatformCategory();
+				parent.setId(source+item.getParentCatId());
+				platformCategory.setParent(parent);
+				platformCategory.setName(item.getCatName());
+				logger.debug("try to upsert jd category.[id]"+id+"[doc]"+JsonUtil.transferToJson(item));
+				List<PlatformCategory> list = platformCategoryService.findMapping(platformCategory);
+				if(list.size()>0) {
+					logger.debug("category exists. skipped.[id]"+id);
+				}else {//如果没有，则新建类目，等待标注
+					platformCategory.setIsNewRecord(true);
+					platformCategory.setCreateDate(new Date());
+					platformCategory.setUpdateDate(new Date());
+					platformCategoryService.save(platformCategory);
+					logger.debug("category saved.[id]"+id);
+				}
 //				if(item.getGrade()<2)
 				getCategories(item.getCatId());//递归获取下层分类
-				//getProperties(item.getCatId());//TODO:无接口权限。获取分类属性列表及属性值列表
 			}
 
 		} catch (Exception e) {
