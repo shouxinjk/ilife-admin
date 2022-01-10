@@ -8,6 +8,7 @@
 		d.name AS "dimension.name",
 		a.measure_id AS "measure.id",
 		m.name AS "measure.name",
+		m.property AS "measure.property",
 		a.name AS "name",
 		a.description AS "description",
 		a.weight AS "weight",

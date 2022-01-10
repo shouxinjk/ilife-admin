@@ -303,7 +303,7 @@ public class ItemDimensionController extends BaseController {
 			map.put("weight", itemDimension.getWeight());
 		}else if(id.startsWith("prop-")) {//对维度-属性占比进行更新
 			ItemDimensionMeasure itemDimensionMeasure = itemDimensionMeasureService.get(id.replace("prop-", ""));
-			itemDimensionMeasure.setWeight(""+weight);
+			itemDimensionMeasure.setWeight(weight);
 			itemDimensionMeasureService.save(itemDimensionMeasure);
 			itemDimensionMeasure = itemDimensionMeasureService.get(id.replace("prop-", ""));
 			map.put("type", "属性");
@@ -491,6 +491,46 @@ public class ItemDimensionController extends BaseController {
 			return form(itemDimension, model);
 		}
 		//itemDimension.setCategory(itemDimension.getParent().getCategory());//使用父目录的分类
+		//预生成脚本：对于weighted-sum脚本，自动查询下级节点，并生成
+		if(itemDimension.getScript()!=null||itemDimension.getScript().trim().length()>0||itemDimension.getScript().indexOf("weighted-sum")>=0) {
+			//先获取属性列表
+			ItemDimensionMeasure itemDimensionMeasure = new ItemDimensionMeasure();
+			itemDimensionMeasure.setDimension(itemDimension);
+			itemDimensionMeasure.setDelFlag("0");
+			List<ItemDimensionMeasure> measures = itemDimensionMeasureService.findList(itemDimensionMeasure);
+			String script = "";
+			String scriptMemo = "//weighted-sum ";
+			int index = 0;
+			for(ItemDimensionMeasure measure:measures) {
+				if(index>0) {
+					script += "+";
+					scriptMemo += "+";
+				}
+				double weight = measure.getWeight()*0.01;
+				weight = (double) Math.round(weight * 100) / 100;//仅保留2位小数
+				script += measure.getMeasure().getProperty()+ "*" + weight;
+				scriptMemo += measure.getMeasure().getName()+ "*" + weight;
+				index++;
+			}
+			//然后获取下级维度列表
+			ItemDimension query = new ItemDimension();
+			query.setParent(itemDimension);
+			query.setDelFlag("0");
+			List<ItemDimension> subDimensions = itemDimensionService.findList(query);
+			index = 0;
+			for(ItemDimension dimension:subDimensions) {
+				if(script.trim().length()>0 || (script.trim().length()==0 && index>0)) {
+					script += "+";
+					scriptMemo += "+";
+				}
+				double weight = dimension.getWeight()*0.01;
+				weight = (double) Math.round(weight * 100) / 100;//仅保留2位小数
+				script += dimension.getPropKey()+ "*" + weight;
+				scriptMemo += dimension.getName()+ "*" + weight;
+				index++;
+			}
+			itemDimension.setScript(script+"\n"+scriptMemo);
+		}
 		itemDimensionService.save(itemDimension);
 		addMessage(redirectAttributes, "保存维度成功");
 //		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?repage";
