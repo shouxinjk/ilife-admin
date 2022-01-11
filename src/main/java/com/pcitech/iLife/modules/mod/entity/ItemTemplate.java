@@ -20,7 +20,7 @@ public class ItemTemplate extends DataEntity<ItemTemplate> {
 	private String condition;		// 适用条件表达式
 	private String expression;		// 规则脚本表达式
 	private int priority=10;		// 优先级
-	private String status="inactive"; //状态：active启用，inactive禁用
+	private String status="active"; //状态：active启用，inactive禁用
 	private String description;		// 描述
 	
 	public ItemTemplate() {

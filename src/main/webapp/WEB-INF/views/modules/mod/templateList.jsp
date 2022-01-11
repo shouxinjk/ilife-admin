@@ -6,7 +6,7 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -29,14 +29,11 @@
 				<form:input path="name" htmlEscape="false" maxlength="255" class="input-medium"/>
 			</li>
 			<li><label>类型：</label>
-				<form:select path="type" class="input-medium">
+				<form:select path="name" class="input-medium">
 					<form:option value="" label=""/>
 					<form:options items="${fns:getDictList('advice_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>			
-			<li><label>类目</label>
-				<form:input path="category.id" htmlEscape="false" maxlength="64" class="input-medium"/>
-			</li>
 			<li><label>状态</label>
 				<form:select path="status" class="input-medium">
 					<form:option value="" label=""/>
