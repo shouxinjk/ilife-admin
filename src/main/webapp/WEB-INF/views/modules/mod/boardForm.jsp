@@ -361,15 +361,14 @@
 		    console.log("start generate qrcode......");
 		    var longUrl = "https://www.biglistoflittlethings.com/ilife-web-wx/board2-waterfall.html?fromBroker=system&posterId="
 		    			+currentPosterScheme.id+"&id="+board.id;//获取分享目标链接：包含boardId及posterId
-		    var header={
-		        "Content-Type":"application/json"
-		    };
 		    
 		    $.ajax({
 		         type:'POST',
 		         url:"https://data.shouxinjk.net/ilife-wechat/wechat/ilife/short-url",
-		         data:JSON.stringify({ "longUrl": longUrl }),
-				 header:header,
+		         data:JSON.stringify({ longUrl: longUrl }),
+				 headers:{
+				        "Content-Type":"application/json"
+				    },
 		         success:function (res) {
 				        console.log("generate short url.",longUrl,res);
 				        var shortUrl = longUrl;
@@ -393,7 +392,7 @@
 		//上传二维码到poster服务器，便于生成使用
 		function uploadPngFile(dataurl, filename){
 		    dataurl = $("#app-qrcode-box img").attr("src");
-		    filename = "broker-qrcode-"+broker.id+".png";
+		    filename = "broker-qrcode-system.png";
 		    console.log("try to upload qrcode.",dataurl,filename);
 		    var formData = new FormData();
 		    formData.append("file", dataURLtoFile(dataurl, filename));//注意，使用files作为字段名
@@ -526,7 +525,8 @@
 	            </div>
 	            <div id="posterTitle" class="prop-key" style="width:90%;display:none;margin:10px 0px;">请确定后下载海报图片发送到运营群:</div> 
 	            <div id="poster" style="width:100%;">
-	            </div>                         
+	            </div>   
+	            <div id="app-qrcode-box" style="display:none"></div>                      
 	        </div>
 			<!-- 图文列表 -->              
 	        <div id="articleInfo"> 
