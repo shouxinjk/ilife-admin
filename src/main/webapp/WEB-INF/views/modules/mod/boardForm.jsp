@@ -47,9 +47,11 @@
 		        var posterSchemeId = $("#posterScheme").val();
 		        console.log("got poster scheme.",posterSchemeId);
 		        //var scheme = JSON.parse($("#posterScheme").val());
-		        var scheme = posterSchemes[posterSchemeId];
+		        currentPosterScheme = posterSchemes[posterSchemeId];
 		        //requestPoster(scheme,broker,stuff,app.globalData.userInfo);//根据当前选择重新生成海报
-		        requestPoster(scheme);//根据当前选择重新生成海报
+		        //requestPoster(scheme);//根据当前选择重新生成海报
+		        //生成分享二维码后生成海报
+		        generateQRcode();
 		    });
 		    //注册图文内容生成事件
 		    $("#btnArticle").click(function(){
@@ -220,6 +222,8 @@
 		//生成海报，返回海报图片URL
 		//注意：海报模板中适用条件及参数仅能引用这三个参数
 		function requestPoster(scheme,xBroker,xItem,xUser){
+			if(!scheme)
+				scheme = currentPosterScheme;
 		    //判断海报模板是否匹配当前条目
 		    var isOk = true;
 		    if(scheme.condition && scheme.condition.length>0){//如果设置了适用条件则进行判断
@@ -350,9 +354,89 @@
 		        }
 		    })            
 		}
+
+
+		//生成短连接及二维码：海报生成带有系统达人分享信息
+		function generateQRcode(){
+		    console.log("start generate qrcode......");
+		    var longUrl = "https://www.biglistoflittlethings.com/ilife-web-wx/board2-waterfall.html?fromBroker=system&posterId="
+		    			+currentPosterScheme.id+"&id="+board.id;//获取分享目标链接：包含boardId及posterId
+		    var header={
+		        "Content-Type":"application/json"
+		    };
+		    
+		    $.ajax({
+		         type:'POST',
+		         url:"https://data.shouxinjk.net/ilife-wechat/wechat/ilife/short-url",
+		         data:JSON.stringify({ "longUrl": longUrl }),
+				 header:header,
+		         success:function (res) {
+				        console.log("generate short url.",longUrl,res);
+				        var shortUrl = longUrl;
+				        if (res.status) {//获取短连接
+				            shortUrl = res.data.url;
+				        }
+				        //bug修复：qrcode在生成二维码时，如果链接长度是192-217之间会导致无法生成，需要手动补齐
+				        if(shortUrl.length>=192 && shortUrl.length <=217){
+				            shortUrl += "&placehold=fix-qrcode-bug-url-between-192-217";
+				        }
+				        console.log("generate qrcode by short url.[length]"+shortUrl.length,shortUrl);
+				        var qrcode = new QRCode("app-qrcode-box");
+				        qrcode.makeCode(shortUrl);
+				        setTimeout(uploadPngFile,300);//需要图片装载完成后才能获取 
+				    }
+		     }); 		    			
+   
+		}
+
+
+		//上传二维码到poster服务器，便于生成使用
+		function uploadPngFile(dataurl, filename){
+		    dataurl = $("#app-qrcode-box img").attr("src");
+		    filename = "broker-qrcode-"+broker.id+".png";
+		    console.log("try to upload qrcode.",dataurl,filename);
+		    var formData = new FormData();
+		    formData.append("file", dataURLtoFile(dataurl, filename));//注意，使用files作为字段名
+		    $.ajax({
+		         type:'POST',
+		         url:"https://poster.biglistoflittlethings.com/api/upload",
+		         data:formData,
+		         contentType:false,
+		         processData:false,//必须设置为false，不然不行
+		         dataType:"json",
+		         mimeType:"multipart/form-data",
+		         success:function(data){//把返回的数据更新到item
+		            console.log("qrcode file uploaded. try to update item info.",data);
+		            if(data.code ==0 && data.url.length>0 ){//仅在成功返回后才操作
+		                brokerQrcode = data.url;
+		                console.log("qrcode image.[url] https://poster.biglistoflittlethings.com/"+data.url);
+		                //生成海报
+		                requestPoster();//全部加载完成后显示海报
+		            }
+		         }
+		     }); 
+		}
+
+		//转换base64为png文件
+		function dataURLtoFile(dataurl, filename) {
+		  // 获取到base64编码
+		  const arr = dataurl.split(',')
+		  // 将base64编码转为字符串
+		  const bstr = window.atob(arr[1])
+		  let n = bstr.length
+		  const u8arr = new Uint8Array(n) // 创建初始化为0的，包含length个元素的无符号整型数组
+		  while (n--) {
+		    u8arr[n] = bstr.charCodeAt(n)
+		  }
+		  return new File([u8arr], filename, {
+		    type: 'image/png',//固定为png格式
+		  })
+		}
 		
 		var items = [];//清单条目列表
 		var board = {};//当前清单
+		var brokerQrcode = null;//存放系统达人分享二维码url
+		var currentPosterScheme = null;//存放当前选中的海报模板
 	</script>
 </head>
 <body>
