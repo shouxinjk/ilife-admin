@@ -29,6 +29,14 @@
 		LEFT JOIN mod_phase pha ON pha.id = a.phase_id
 	</sql>
     
+	<!-- 根据ID更新weight -->
+	<update id="updateWeight">
+		UPDATE int_persona_need SET 	
+			weight = #{weight},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+    
 	<select id="get" resultType="PersonaNeed">
 		SELECT 
 			<include refid="personaNeedColumns"/>

@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,11 @@ import com.pcitech.iLife.modules.mod.dao.PersonaNeedDao;
 @Transactional(readOnly = true)
 public class PersonaNeedService extends CrudService<PersonaNeedDao, PersonaNeed> {
 
+	@Transactional(readOnly = false)
+	public void updateWeight(Map<String,Object> params) {
+		dao.updateWeight(params);
+	}
+	
 	public PersonaNeed get(String id) {
 		return super.get(id);
 	}

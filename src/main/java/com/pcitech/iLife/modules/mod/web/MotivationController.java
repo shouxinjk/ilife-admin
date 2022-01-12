@@ -208,7 +208,7 @@ public class MotivationController extends BaseController {
 					Map<String, Object> leafNode = Maps.newHashMap();
 					leafNode.put("id", item.getId());
 					leafNode.put("pId", e.getId());
-					leafNode.put("name", item.getName());
+					leafNode.put("name", "๏"+item.getName());//表示是可选的动机节点
 					mapList.add(leafNode);
 				}
 			}

@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -117,6 +118,24 @@ public class CategoryNeedController extends BaseController {
 		categoryNeedService.delete(categoryNeed);
 		addMessage(redirectAttributes, "删除商品类目下的需要成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/categoryNeed/?treeId="+pid+"&treeModule="+pType+"&repage";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/weight")
+	//更新需要满足度
+	public Map<String,String> updateWeight( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) double weight, 
+			HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("id", id);
+		params.put("weight", weight);
+		params.put("updateDate", new Date());
+		categoryNeedService.updateWeight(params);
+		
+		Map<String,String> result = Maps.newHashMap();
+		result.put("result", "weight updated.");
+		return result;
 	}
 
 	@RequiresPermissions("mod:categoryNeed:view")

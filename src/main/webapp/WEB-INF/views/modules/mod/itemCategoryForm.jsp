@@ -53,7 +53,7 @@
 				<form:textarea path="tags" htmlEscape="false" rows="5" maxlength="1024" class="input-xlarge"/>
 			</div>
 		</div>		
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">满足动机：</label>
 			<div class="controls">
 				<sys:treeselect id="motivationIds" name="motivationIds" value="${itemCategory.motivationIds}" labelName="motivationNames" labelValue="${itemCategory.motivationNames}"
@@ -92,7 +92,7 @@
 			<div class="controls">
 				<form:input path="scenarioId" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 			</div>
-		</div>
+		</div-->
 		<div class="form-actions">
 			<shiro:hasPermission name="mod:itemCategory:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

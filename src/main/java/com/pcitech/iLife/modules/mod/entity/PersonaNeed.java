@@ -22,7 +22,7 @@ public class PersonaNeed extends DataEntity<PersonaNeed> {
 	private Motivation need;		// 关联的动机
 	private Phase phase;	//所属阶段
 	private String expression;		// 满足度表达式
-	private String sort;		// sort
+	private String sort="10";		// sort
 	
 	public PersonaNeed() {
 		super();

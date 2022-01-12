@@ -21,7 +21,7 @@ public class CategoryNeed extends DataEntity<CategoryNeed> {
 	private ItemCategory category;		// 关联的品类
 	private Motivation need;		// 关联的动机
 	private String expression;		// 满足度表达式
-	private String sort;		// sort
+	private String sort="10";		// sort
 	
 	public CategoryNeed() {
 		super();

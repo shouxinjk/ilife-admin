@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +85,7 @@ public class PersonaNeedController extends BaseController {
 		if(pType.equals("persona")){
 			parent = personaService.get(pid);
 			personaNeed.setPersona(parent);
+			personaNeed.setPhase(parent.getPhase());//默认设置阶段与persona一致
 		}else {//否则提示选择用户画像
 			model.addAttribute("message","选择画像查看其需要构成。");
 			return "treeData/none";
@@ -114,6 +116,24 @@ public class PersonaNeedController extends BaseController {
 		personaNeedService.delete(personaNeed);
 		addMessage(redirectAttributes, "删除用户分群下的需要成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/personaNeed/?treeId="+pid+"&treeModule="+pType+"&repage";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/weight")
+	//更新需要满足度
+	public Map<String,String> updateWeight( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) double weight, 
+			HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("id", id);
+		params.put("weight", weight);
+		params.put("updateDate", new Date());
+		personaNeedService.updateWeight(params);
+		
+		Map<String,String> result = Maps.newHashMap();
+		result.put("result", "weight updated.");
+		return result;
 	}
 
 	@RequiresPermissions("mod:personaNeed:view")

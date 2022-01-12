@@ -29,14 +29,14 @@
 			<tr>
 				<th>名称</th>
 				<th>标签</th>
-				<th>满足动机</th>
+				<!--th>满足动机</th>
 				<th>满足诱因</th>
 				<th>适用条件</th>
 				<th>适用条件量化</th>
 				<th>摘要模版</th>
 				<th>场景标签</th>
 				<th style="text-align:center;">排序</th>
-				<th>商品数量</th>
+				<th>商品数量</th-->
 				<th>操作</th>
 			</tr>
 			<c:forEach items="${list}" var="tpl">
@@ -47,7 +47,7 @@
 					<td>
 						${tpl.tags}
 					</td>					
-					<td>
+					<!--td>
 						${tpl.motivationNames}
 					</td>
 					<td>
@@ -73,7 +73,7 @@
 								${tpl.sort}
 							</shiro:lacksPermission>
 					</td>
-					<td>0</td>
+					<td>0</td-->
 					<td>
 						<shiro:hasPermission name="mod:itemCategory:edit">
 							<a href="${ctx}/mod/itemCategory/form?id=${tpl.id}">修改</a>

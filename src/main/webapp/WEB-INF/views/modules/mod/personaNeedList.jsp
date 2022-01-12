@@ -7,6 +7,40 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			
+			//遍历所有rate组件，初始化，并注册打分事件
+			$(".rating").each(function(index){
+				var itemId = $(this).data("id");
+				var itemValue = Number($(this).data("weight"))*0.1;//默认采用1-100存储
+				console.log("now walk through all pending items.",itemId,itemValue);
+				//初始化
+				$("#rate-"+itemId).starRating({
+					totalStars: 10,
+					starSize:20,
+				    useFullStars:true,
+				    initialRating: itemValue,
+				    ratedColors:['#8b0000', '#dc143c', '#ff4500', '#ff6347', '#1e90ff','#00ffff','#40e0d0','#9acd32','#32cd32','#228b22'],
+				    callback: function(currentRating, $el){
+				        // make a server call here
+				        console.log("dude, now try update rating.[old]"+itemValue,itemId,currentRating);
+				        $.ajax({
+				            type: "GET",
+				            url: "${ctx}/mod/personaNeed/rest/weight?id="+itemId+"&weight="+(currentRating*10),
+				            headers:{
+				                "Content-Type":"application/json",
+				                "Accept":"application/json"
+				            },        
+				            success:function(result){
+				                if(result.result=="error"){
+				                   console.log("update weight failed.",result);   
+				                }else{
+				                	console.log("update weight succeed.",result);                   
+				                }
+				            }                
+				        }); 
+				    }
+				});
+			});
+			
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -34,7 +68,7 @@
 				<th>权重</th>
 				<th>表达式</th>
 				<th>描述</th>
-				<th>创建时间</th>
+				<!--th>创建时间</th-->
 				<th>最后更新</th>
 				<shiro:hasPermission name="mod:personaNeed:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -49,7 +83,7 @@
 					${personaNeed.need.name}
 				</td>
 				<td>
-					${personaNeed.weight}
+					<div class="rating" id="rate-${personaNeed.id}" data-id="${personaNeed.id}" data-weight="${personaNeed.weight}"></div>
 				</td>
 				<td>
 					${personaNeed.expression}
@@ -57,7 +91,7 @@
 				<td>
 					${personaNeed.description}
 				</td>
-				<td><fmt:formatDate value="${personaNeed.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+				<!--td><fmt:formatDate value="${personaNeed.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td-->
 				<td><fmt:formatDate value="${personaNeed.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<shiro:hasPermission name="mod:personaNeed:edit"><td>
     				<a href="${ctx}/mod/personaNeed/form?id=${personaNeed.id}&pid=${pid}&pType=${pType}">修改</a>
