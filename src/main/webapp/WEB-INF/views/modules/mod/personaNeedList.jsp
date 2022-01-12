@@ -16,7 +16,7 @@
 				$("#rate-"+itemId).starRating({
 					totalStars: 10,
 					starSize:20,
-				    useFullStars:true,
+				    useFullStars:false,
 				    initialRating: itemValue,
 				    ratedColors:['#8b0000', '#dc143c', '#ff4500', '#ff6347', '#1e90ff','#00ffff','#40e0d0','#9acd32','#32cd32','#228b22'],
 				    callback: function(currentRating, $el){
