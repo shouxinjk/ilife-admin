@@ -309,6 +309,13 @@ public class ItemCategoryController extends BaseController {
 		return  listPlatformCategoriesAndPropsByParentId(source,id,true);
 	}	
 	
+	/**
+	 * @deprecated 已废弃，当前通过业务系统直接管理
+	 * @param source
+	 * @param id
+	 * @param withProps
+	 * @return
+	 */
 	private List<Map<String, Object>> listPlatformCategoriesAndPropsByParentId( String source,String id,boolean withProps) {
 		Map<String,String> icon = Maps.newHashMap();
 		icon.put("folder","fas fa-book");
@@ -516,6 +523,19 @@ public class ItemCategoryController extends BaseController {
 			mapList.add(map);
 		}	
 		return mapList;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/category/{id}")
+	public ItemCategory getCategoryById(@PathVariable String id) {
+		ItemCategory entity = null;
+		if (StringUtils.isNotBlank(id)){
+			entity = itemCategoryService.get(id);
+		}
+		if (entity == null){
+			entity = new ItemCategory();
+		}
+		return entity;
 	}
 	
 }
