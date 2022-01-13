@@ -62,11 +62,12 @@ public class UserTagController extends BaseController {
 	}
 	
 	//获取用户标签供标注
+	//@param types: 逗号分隔的标签类型。不传递则查询所有标签
 	@ResponseBody
 	@RequestMapping(value = "rest/tags", method = RequestMethod.GET)
-	public List<UserTag> listUserTagsBySubject( HttpServletRequest request, HttpServletResponse response) {
+	public List<UserTag> listUserTagsBySubject( HttpServletRequest request,@RequestParam(required=false) String types, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
-		List<UserTag> tagList = userTagService.findListBySubject();
+		List<UserTag> tagList = userTagService.findListBySubject(types);
 		return tagList;
 	}
 	

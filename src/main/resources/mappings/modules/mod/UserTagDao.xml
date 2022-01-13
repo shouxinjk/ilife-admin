@@ -35,13 +35,13 @@
 		SELECT 
 			<include refid="userTagColumns"/>
 		FROM mod_user_tag a
-		<include refid="userTagJoins"/>
-		<!--where>
-			a.del_flag = #{DEL_FLAG_NORMAL}
-		</where-->		
+		<include refid="userTagJoins"/>	
 		<where>
 			a.del_flag = 0
-		</where>			
+			<if test="types != null and types != ''">
+				AND FIND_IN_SET(a.type,#{types})
+			</if>			
+		</where>					
 		ORDER BY a.type,a.update_date DESC
 	</select>    
     
