@@ -120,10 +120,10 @@
 					${row.propKey}
 				</td>				
 				<td>
-					${fns:getDictLabel(row.featured, 'yes_no', '-')}
+					${fns:getDictLabel(row.featured, 'yes_no', row.featured)}
 				</td>
 				<td>
-					${fns:getDictLabel(row.type, 'evaluation_type', '-')}
+					${fns:getDictLabel(row.type, 'evaluation_type', row.type)}
 				</td>
 				<td>
 					${row.script}

@@ -120,7 +120,7 @@
 					${row.propKey}
 				</td>	
 				<td>
-					${fns:getDictLabel(row.featured, 'yes_no', '-')}
+					${fns:getDictLabel(row.featured, 'yes_no', row.featured)}
 				</td>									
 				<td>
 					${row.description}
