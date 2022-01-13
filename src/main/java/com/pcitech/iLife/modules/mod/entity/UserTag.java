@@ -40,7 +40,6 @@ public class UserTag extends DataEntity<UserTag> {
 		this.name = name;
 	}
 	
-	@Length(min=0, max=500, message="表达式长度必须介于 0 和 500 之间")
 	public String getExpression() {
 		return expression;
 	}
@@ -49,7 +48,6 @@ public class UserTag extends DataEntity<UserTag> {
 		this.expression = expression;
 	}
 	
-	@Length(min=0, max=10, message="类型长度必须介于 0 和 10 之间")
 	public String getType() {
 		return type;
 	}
