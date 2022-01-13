@@ -511,7 +511,8 @@ public class ItemDimensionController extends BaseController {
 	//动态计算脚本并保存
 	private void saveWithScript(ItemDimension itemDimension) {
 		//预生成脚本：对于weighted-sum脚本，自动查询下级节点，并生成
-		if(itemDimension.getScript()!=null||itemDimension.getScript().trim().length()>0||itemDimension.getScript().indexOf("weighted-sum")>=0) {
+		if(!itemDimension.getIsNewRecord() && itemDimension.getId()!=null && itemDimension.getId().trim().length()>0 //对于已经存在的节点进行。新节点无需处理
+				&& itemDimension.getScript()!=null||itemDimension.getScript().trim().length()>0||itemDimension.getScript().indexOf("weighted-sum")>=0) {
 			//先获取属性列表
 			ItemDimensionMeasure itemDimensionMeasure = new ItemDimensionMeasure();
 			itemDimensionMeasure.setDimension(itemDimension);
