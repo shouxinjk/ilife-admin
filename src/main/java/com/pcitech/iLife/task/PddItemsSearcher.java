@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.jd.open.api.sdk.internal.JSON.JSON;
 import com.pcitech.iLife.common.config.Global;
@@ -159,12 +160,21 @@ public class PddItemsSearcher {
 		logger.debug("try to upsert pdd item.[itemKey]"+itemKey,JSON.toString(doc));
 //		需要区分是否已经存在，如果已经存在则直接更新，但要避免更新profit信息，以免出发3-party分润任务
 //		arangoClient.upsert("my_stuff", itemKey, doc);   
-		BaseDocument old = arangoClient.find("my_stuff", itemKey);
-		if(old!=null && itemKey.equals(old.getKey())) {//已经存在，则直接跳过
+		//存在同名但URL不同的情况，需要先排除同名商品：根据source及title排重
+		Map<String,Object> bindVars = Maps.newHashMap();
+		bindVars.put("source", "pdd");
+		bindVars.put("title", item.getGoodsName());
+		List<BaseDocument> sameItems = arangoClient.query("for doc in my_stuff filter doc.source==@source and doc.title==@title limit 1 return doc", bindVars, BaseDocument.class);
+		if(sameItems!=null && sameItems.size()>0) {//存在同名商品则跳过
 			//do nothing
-		}else {//否则写入
-			arangoClient.insert("my_stuff", doc);   
-			processedAmount++;
+		}else {//否则根据ID排重入库
+			BaseDocument old = arangoClient.find("my_stuff", itemKey);
+			if(old!=null && itemKey.equals(old.getKey())) {//已经存在，则直接跳过
+				//do nothing
+			}else {//否则写入
+				arangoClient.insert("my_stuff", doc);   
+				processedAmount++;
+			}	
 		}
     }
     
