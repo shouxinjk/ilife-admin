@@ -287,7 +287,7 @@ public class ItemDimensionController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "rest/weight", method = RequestMethod.POST)
 	//更新维度占比 或者 维度下属性 占比。注意：需要根据id类型进行区分
-	public Map<String, Object> updateValuesByMeasureId( @RequestParam(required=true) String id, 
+	public Map<String, Object> updateWeightsByMeasureId( @RequestParam(required=true) String id, 
 			@RequestParam(required=true) double weight,  
 			HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
@@ -296,7 +296,7 @@ public class ItemDimensionController extends BaseController {
 		map.put("id", id);//保持原始id
 		if(id.startsWith("dim-")) {//对维度占比进行更新
 			ItemDimension itemDimension = itemDimensionService.get(id.replace("dim-", ""));
-			parentDimension = itemDimension.getParent();
+			parentDimension = itemDimensionService.get(itemDimension.getParent().getId());//重要：需要重新获取，通过getParent获取的仅包含ID及name
 			itemDimension.setWeight(weight);
 			itemDimensionService.save(itemDimension);
 			itemDimension = itemDimensionService.get(id.replace("dim-", ""));
@@ -305,7 +305,7 @@ public class ItemDimensionController extends BaseController {
 			map.put("weight", itemDimension.getWeight());
 		}else if(id.startsWith("prop-")) {//对维度-属性占比进行更新
 			ItemDimensionMeasure itemDimensionMeasure = itemDimensionMeasureService.get(id.replace("prop-", ""));
-			parentDimension = itemDimensionMeasure.getDimension();
+			parentDimension = itemDimensionService.get(itemDimensionMeasure.getDimension().getId());//重要：需要重新获取，通过getParent获取的仅包含ID及name
 			itemDimensionMeasure.setWeight(weight);
 			itemDimensionMeasureService.save(itemDimensionMeasure);
 			itemDimensionMeasure = itemDimensionMeasureService.get(id.replace("prop-", ""));
