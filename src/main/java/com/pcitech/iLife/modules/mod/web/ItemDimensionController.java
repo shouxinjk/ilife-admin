@@ -449,6 +449,7 @@ public class ItemDimensionController extends BaseController {
 			}
 			node.put("weight", item.getWeight());
 			node.put("description", item.getDescription());
+			node.put("propKey", measure.getProperty());
 			nodes.add(node);
 		}
 	}
@@ -523,6 +524,8 @@ public class ItemDimensionController extends BaseController {
 			String scriptMemo = "//weighted-sum ";
 			int index = 0;
 			for(ItemDimensionMeasure measure:measures) {
+				if(measure.getMeasure().getProperty()==null||measure.getMeasure().getProperty().trim().length()==0)
+					continue;//未设置属性propKey则不作处理
 				if(index>0) {
 					script += "+";
 					scriptMemo += "+";
@@ -540,6 +543,8 @@ public class ItemDimensionController extends BaseController {
 			List<ItemDimension> subDimensions = itemDimensionService.findList(query);
 			index = 0;
 			for(ItemDimension dimension:subDimensions) {
+				if(dimension.getPropKey()==null || dimension.getPropKey().trim().length()==0)
+					continue;//未设置属性propKey则不作处理
 				if(script.trim().length()>0 || (script.trim().length()==0 && index>0)) {
 					script += "+";
 					scriptMemo += "+";
