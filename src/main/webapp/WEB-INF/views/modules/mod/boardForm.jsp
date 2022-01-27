@@ -156,7 +156,7 @@
 		            }),
 		            headers:{
 		                "Content-Type":"application/json",
-		                "Authorization":"Basic aWxpZmUtYXBwOm9FNHkgZ0ZJNCBQWlVyIG5QeHQgN29WciA1ZHBZ"
+		                "Authorization":sxConfig.options.mp_auth
 		            },        
 		            success:function(res){
 		                console.log("\n=== published ===\n",res);
@@ -176,7 +176,7 @@
 		            }),
 		            headers:{
 		                "Content-Type":"application/json",
-		                "Authorization":"Basic aWxpZmUtYXBwOm9FNHkgZ0ZJNCBQWlVyIG5QeHQgN29WciA1ZHBZ"
+		                "Authorization":sxConfig.options.mp_auth
 		            },        
 		            success:function(res){
 		                console.log("\n=== published ===\n",res);    

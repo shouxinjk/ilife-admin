@@ -24,4 +24,5 @@
 <script src="${ctxStatic}/html2canvas/qrcode.js" type="text/javascript"></script>
 <link href="${ctxStatic}/common/iLife.css" type="text/css" rel="stylesheet" />
 <script src="${ctxStatic}/common/iLife.js" type="text/javascript"></script>
+<script src="${ctxStatic}/common/options.js" type="text/javascript"></script>
 <script type="text/javascript">var ctx = '${ctx}', ctxStatic='${ctxStatic}';</script>
