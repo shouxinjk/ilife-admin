@@ -30,10 +30,16 @@ import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.Persona;
+import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
 import com.pcitech.iLife.modules.mod.entity.Phase;
+import com.pcitech.iLife.modules.mod.entity.PhaseNeed;
 import com.pcitech.iLife.modules.mod.service.HierarchyService;
+import com.pcitech.iLife.modules.mod.service.MotivationService;
+import com.pcitech.iLife.modules.mod.service.PersonaNeedService;
 import com.pcitech.iLife.modules.mod.service.PersonaService;
+import com.pcitech.iLife.modules.mod.service.PhaseNeedService;
 import com.pcitech.iLife.modules.mod.service.PhaseService;
+import com.pcitech.iLife.util.Util;
 
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -51,6 +57,12 @@ public class PersonaController extends BaseController {
 	private PersonaService personaService;
 	@Autowired
 	private PhaseService phaseService;
+	@Autowired
+	private MotivationService motivationService;
+	@Autowired
+	private PhaseNeedService phaseNeedService;
+	@Autowired
+	private PersonaNeedService personaNeedService;
 	
 	//获取阶段及画像。传入的ID有两种：阶段或画像，使用前缀区分。phase-或persona-
 	@ResponseBody
@@ -193,7 +205,60 @@ public class PersonaController extends BaseController {
 		if (!beanValidator(model, persona)){
 			return form(persona,pid,pType,model);
 		}
-		personaService.save(persona);
+		//对于新建的persona需要复制对应阶段的需要构成：注意采用手动设置id的方式完成
+		if(persona.getId()==null || persona.getId().trim().length()==0) {//对于新建需要同时克隆阶段的需要构成
+			String personaId = Util.get32UUID();
+			persona.setId(personaId);
+			persona.setIsNewRecord(true);
+			//补充phase：对于从persona克隆的情况需要手动补齐phase,否则无法显示
+			if(persona.getParent()!=null && personaService.get(persona.getParent()) !=null ) {
+				Persona parent = personaService.get(persona.getParent());
+				persona.setPhase(parent.getPhase());
+			}
+			
+			personaService.save(persona);
+			
+			//根据父级persona或phase克隆需要构成
+			if(persona.getParent()!=null && personaService.get(persona.getParent()) !=null ) {
+				//根据父级persona克隆需要构成
+				PersonaNeed personaNeedQuery = new PersonaNeed();
+				personaNeedQuery.setPersona(persona.getParent());
+				List<PersonaNeed> parentPersonaNeeds = personaNeedService.findList(personaNeedQuery);
+				for(PersonaNeed parentPersonaNeed:parentPersonaNeeds) {
+					//仅对于父persona上存在的need进行克隆
+					if(parentPersonaNeed.getNeed()!=null && motivationService.get(parentPersonaNeed.getNeed())!=null ) {
+						PersonaNeed personaNeed = new PersonaNeed();
+						personaNeed.setPhase(parentPersonaNeed.getPhase());
+						personaNeed.setNeed(parentPersonaNeed.getNeed());		
+						personaNeed.setPersona(persona);
+						personaNeed.setDescription(parentPersonaNeed.getDescription());
+						personaNeed.setExpression(parentPersonaNeed.getExpression());
+						personaNeed.setWeight(parentPersonaNeed.getWeight());
+						personaNeedService.save(personaNeed);
+					}
+				}
+			}else {
+				//复制对应阶段的需要构成
+				PhaseNeed phaseNeedQuery = new PhaseNeed();
+				phaseNeedQuery.setPhase(persona.getPhase());
+				List<PhaseNeed> phaseNeeds = phaseNeedService.findList(phaseNeedQuery);
+				for(PhaseNeed phaseNeed:phaseNeeds) {
+					//仅对于phase上存在的need进行克隆
+					if(phaseNeed.getNeed()!=null && motivationService.get(phaseNeed.getNeed())!=null ) {
+						PersonaNeed personaNeed = new PersonaNeed();
+						personaNeed.setPhase(phaseNeed.getPhase());
+						personaNeed.setNeed(phaseNeed.getNeed());		
+						personaNeed.setPersona(persona);
+						personaNeed.setDescription(phaseNeed.getDescription());
+						personaNeed.setExpression(phaseNeed.getExpression());
+						personaNeed.setWeight(phaseNeed.getWeight());
+						personaNeedService.save(personaNeed);
+					}
+				}
+			}
+		}else {
+			personaService.save(persona);
+		}
 		addMessage(redirectAttributes, "保存用户分群成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/persona/?treeId="+pid+"&treeModule="+pType+"&repage";
 	}

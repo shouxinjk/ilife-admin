@@ -67,7 +67,7 @@ public class PersonaService extends TreeService<PersonaDao, Persona> {
 		User user = UserUtils.getUser();
 		Persona persona = new Persona();
 		persona.getSqlMap().put("dsf", dataScopeFilter(user, "o", "u"));
-		persona.setParent(new Persona());
+//		persona.setParent(new Persona());
 		list = dao.findList(persona);
 		// 将没有父节点的节点，找到父节点
 		Set<String> parentIdSet = Sets.newHashSet();
@@ -95,13 +95,17 @@ public class PersonaService extends TreeService<PersonaDao, Persona> {
 	public List<TreeNode> getTree(List<Phase> phaseTree) {
 		List<TreeNode> list=new ArrayList<TreeNode>();
 		Persona queryPersona=new Persona();
-		queryPersona.setParent(new Persona("0"));
+//		queryPersona.setParent(new Persona("0"));
 		List<Persona> personas = findList(queryPersona);
 		for(Persona persona:personas){
 			TreeNode treeNode=new TreeNode();
 			treeNode.setId(persona.getId());
 			treeNode.setBusinessId(persona.getId());
-			treeNode.setName(persona.getName());
+			if(persona.getParent()!=null && persona.getParent().getId()!=null && persona.getParent().getName()!=null) {
+				treeNode.setName(persona.getName()+" ("+persona.getParent().getName()+")");
+			}else {
+				treeNode.setName(persona.getName());
+			}
 			treeNode.setParent(new TreeNode(persona.getPhase().getId()));
 //			treeNode.setParentIds(persona.getParentIds());
 			treeNode.setSort(persona.getSort());

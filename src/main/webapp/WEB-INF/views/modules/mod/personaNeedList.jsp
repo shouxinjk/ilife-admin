@@ -63,7 +63,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>阶段</th>
+				<!--th>阶段</th-->
 				<th>需要</th>
 				<th>权重</th>
 				<th>表达式</th>
@@ -76,9 +76,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="personaNeed">
 			<tr>
-				<td>
+				<!--td>
 					${personaNeed.phase.name}
-				</td>
+				</td-->
 				<td>
 					${personaNeed.need.name}
 				</td>

@@ -17,7 +17,7 @@ public class PhaseNeed extends DataEntity<PhaseNeed> {
 	
 	private static final long serialVersionUID = 1L;
 	private String description;		// 概要描述
-	private String weight;		// 满足度
+	private double weight;		// 满足度
 	private Phase phase;		// 所属阶段
 	private Motivation need;		// 关联的动机
 	private String expression;		// 满足度表达式
@@ -41,11 +41,11 @@ public class PhaseNeed extends DataEntity<PhaseNeed> {
 		this.description = description;
 	}
 	
-	public String getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(String weight) {
+	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 	
