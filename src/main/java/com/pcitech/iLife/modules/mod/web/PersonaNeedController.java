@@ -27,9 +27,14 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.Motivation;
+import com.pcitech.iLife.modules.mod.entity.MotivationCategory;
 import com.pcitech.iLife.modules.mod.entity.Persona;
 import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
 import com.pcitech.iLife.modules.mod.entity.Phase;
+import com.pcitech.iLife.modules.mod.entity.PhaseNeed;
+import com.pcitech.iLife.modules.mod.service.MotivationCategoryService;
+import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.PersonaNeedService;
 import com.pcitech.iLife.modules.mod.service.PersonaService;
 import com.pcitech.iLife.modules.mod.service.PhaseService;
@@ -48,6 +53,10 @@ public class PersonaNeedController extends BaseController {
 	private PhaseService phaseService;
 	@Autowired
 	private PersonaNeedService personaNeedService;
+	@Autowired
+	private MotivationCategoryService motivationCategoryService;
+	@Autowired
+	private MotivationService motivationService;
 	
 	@ModelAttribute
 	public PersonaNeed get(@RequestParam(required=false) String id) {
@@ -72,6 +81,35 @@ public class PersonaNeedController extends BaseController {
 		}
 			
 		Page<PersonaNeed> page = personaNeedService.findPage(new Page<PersonaNeed>(request, response), personaNeed); 
+		
+		//增加需要所在的类目。注意：需要逐个填补。效率低下
+		List<PersonaNeed> needsWithCategory = Lists.newArrayList();
+		
+		List<PersonaNeed> needs = page.getList();
+		for(PersonaNeed need:needs) {
+			Motivation m = motivationService.get(need.getNeed());
+			MotivationCategory cat = motivationCategoryService.get(m.getMotivationCategory());
+			List<String> catNames = Lists.newArrayList();
+			catNames.add(cat.getName());//当前类目名称
+			
+			while(cat!=null && cat.getParent()!=null) {
+				cat = motivationCategoryService.get(cat.getParent());
+				if(cat!=null)
+					catNames.add(cat.getName());
+			}
+			
+			String fullCategory = "";
+			for(int i=catNames.size()-2;i>=0;i--) {
+				if(i!=catNames.size()-2)
+					fullCategory += " > ";
+				fullCategory += catNames.get(i);
+			}
+			
+			need.setNeedCategory(fullCategory);
+			needsWithCategory.add(need);
+		}
+		page.setList(needsWithCategory);//替换为带有需要全路径的列表
+		
 		model.addAttribute("page", page);
 		model.addAttribute("pid", treeId);
 		model.addAttribute("pType", treeModule);

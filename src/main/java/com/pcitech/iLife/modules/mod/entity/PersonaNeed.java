@@ -23,6 +23,7 @@ public class PersonaNeed extends DataEntity<PersonaNeed> {
 	private Phase phase;	//所属阶段
 	private String expression;		// 满足度表达式
 	private String sort="10";		// sort
+	private String needCategory=""; //需要的分类目录。注意：不能直接查询得到，需要前端组织
 	
 	public PersonaNeed() {
 		super();
@@ -90,6 +91,14 @@ public class PersonaNeed extends DataEntity<PersonaNeed> {
 
 	public void setSort(String sort) {
 		this.sort = sort;
+	}
+
+	public String getNeedCategory() {
+		return needCategory;
+	}
+
+	public void setNeedCategory(String needCategory) {
+		this.needCategory = needCategory;
 	}
 	
 }
