@@ -58,6 +58,8 @@ public class PersonaController extends BaseController {
 	@Autowired
 	private PhaseService phaseService;
 	@Autowired
+	private HierarchyService hierarchyService;
+	@Autowired
 	private MotivationService motivationService;
 	@Autowired
 	private PhaseNeedService phaseNeedService;
@@ -214,6 +216,23 @@ public class PersonaController extends BaseController {
 			if(persona.getParent()!=null && personaService.get(persona.getParent()) !=null ) {
 				Persona parent = personaService.get(persona.getParent());
 				persona.setPhase(parent.getPhase());
+			}
+			//补充默认vals及能力模型：根据所属阶段及所在阶层完成
+			//根据phase补充VALS模型
+			if(persona.getPhase()!=null && phaseService.get(persona.getPhase()) !=null ) {
+				Phase phase = phaseService.get(persona.getPhase());
+				persona.setAlpha(phase.getAlpha());
+				persona.setBeta(phase.getBeta());
+				persona.setGamma(phase.getGamma());
+				persona.setDelte(phase.getDelte());
+				persona.setEpsilon(phase.getEpsilon());
+			}
+			//根据hierarchy补充能力模型
+			if(persona.getHierarchy()!=null && hierarchyService.get(persona.getHierarchy()) !=null ) {
+				Map<String,Double> capability = hierarchyService.getCapabilityMap(hierarchyService.get(persona.getHierarchy()).getId());
+				persona.setZeta(capability.get("economy")==null?0.3:capability.get("economy"));
+				persona.setEta(capability.get("society")==null?0.3:capability.get("society"));
+				persona.setTheta(capability.get("culture")==null?0.3:capability.get("culture"));
 			}
 			
 			personaService.save(persona);

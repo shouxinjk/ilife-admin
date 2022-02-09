@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.Map;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.Hierarchy;
@@ -14,5 +16,5 @@ import com.pcitech.iLife.modules.mod.entity.Hierarchy;
  */
 @MyBatisDao
 public interface HierarchyDao extends CrudDao<Hierarchy> {
-	
+	public Map<String,Double> getCapabilityMap(String hierarchyId);
 }

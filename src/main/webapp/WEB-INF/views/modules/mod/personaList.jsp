@@ -63,9 +63,9 @@
 				${persona.description}
 				</td>
 				<td>
-					所属阶段：${persona.phase.name}<br/>
-					所属阶层：${persona.hierarchy.name}<br/>
-					所属分群：${persona.parent.name}
+					阶段：${persona.phase.name}<br/>
+					阶层：${persona.hierarchy.name}<br/>
+					分群：${persona.parent.name}
 				</td>
 				<td>
 					生理：${persona.alpha}<br/>

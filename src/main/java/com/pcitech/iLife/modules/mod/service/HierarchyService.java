@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,10 @@ import com.pcitech.iLife.modules.mod.dao.HierarchyDao;
 @Transactional(readOnly = true)
 public class HierarchyService extends CrudService<HierarchyDao, Hierarchy> {
 
+	public Map<String,Double> getCapabilityMap(String hierarchyId){
+		return dao.getCapabilityMap(hierarchyId);
+	}
+	
 	public Hierarchy get(String id) {
 		return super.get(id);
 	}

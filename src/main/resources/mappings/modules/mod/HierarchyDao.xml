@@ -28,6 +28,16 @@
 	<sql id="hierarchyJoins">
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
 	</sql>
+
+	<!--  根据ID获取能力模型：计算得到归一化值：取中间值，并归一化 -->
+	<select id="getCapabilityMap" resultType="java.util.Map">
+		SELECT 
+		((economy_score_min+economy_score_max)/2.0)*0.01 as economy,
+		((society_score_min+society_score_max)/2.0)*0.01 as society,
+		((culture_score_min+culture_score_max)/2.0)*0.01 as culture
+		FROM mod_hierarchy a
+		WHERE a.id = #{hierarchyId}
+	</select>
     
 	<select id="get" resultType="Hierarchy">
 		SELECT 
