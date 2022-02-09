@@ -86,11 +86,11 @@ public class MotivationController extends BaseController {
 	@RequiresPermissions("mod:motivation:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(Motivation motivation,String treeId ,String treeModule,String topType,String topId, HttpServletRequest request, HttpServletResponse response, Model model) {
-		if(treeModule.equals("motivationCategory")){
-			motivation.setMotivationCategory(new MotivationCategory(treeId));
-			motivation.setPhase(new Phase(topId));
-		}else if(treeModule.equals("phase")){
+		if(treeModule.equals("phase")){
 			return "redirect:"+Global.getAdminPath()+"/mod/motivation/none";
+		}else /*if(treeModule.equals("motivationCategory"))*/{//否则认为是针对需要分类查询
+			motivation.setMotivationCategory(new MotivationCategory(treeId));
+			//motivation.setPhase(new Phase(topId));//此处不考虑phase因素
 		}
 		Page<Motivation> page = motivationService.findPage(new Page<Motivation>(request, response), motivation); 
 		
@@ -104,7 +104,8 @@ public class MotivationController extends BaseController {
 	@RequiresPermissions("mod:motivation:view")
 	@RequestMapping(value = "form")
 	public String form(Motivation motivation,String pid,String pType,String topId, Model model) {
-		motivation.setMotivationCategory(motivationCategoryService.get(pid));
+		if(motivation.getMotivationCategory()==null)//仅对于新建需要自动填写，修改时不作调整
+			motivation.setMotivationCategory(motivationCategoryService.get(pid));
 		motivation.setPhase(phaseService.get(topId));
 		model.addAttribute("motivation", motivation);
 		model.addAttribute("pid", pid);
@@ -121,7 +122,7 @@ public class MotivationController extends BaseController {
 		}
 		motivationService.save(motivation);
 		addMessage(redirectAttributes, "保存内部动机成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/motivation/?treeId="+pid+"&treeModule="+pType+"&topId="+topId+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/motivation/?treeId="+motivation.getMotivationCategory().getId()+"&treeModule="+pType+"&topId="+topId+"&repage";
 	}
 	
 	@RequiresPermissions("mod:motivation:edit")
@@ -129,7 +130,7 @@ public class MotivationController extends BaseController {
 	public String delete(Motivation motivation,String pid,String pType,String topId, RedirectAttributes redirectAttributes) {
 		motivationService.delete(motivation);
 		addMessage(redirectAttributes, "删除内部动机成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/motivation/?treeId="+pid+"&treeModule="+pType+"&topId="+topId+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/motivation/?treeId="+motivation.getMotivationCategory().getId()+"&treeModule="+pType+"&topId="+topId+"&repage";
 	}
 
 	@RequiresPermissions("mod:persona:view")
@@ -144,17 +145,18 @@ public class MotivationController extends BaseController {
 	@RequestMapping(value = "tree")
 	public String tree(Model model) {
 		model.addAttribute("url","mod/motivation");
-		model.addAttribute("title","成长阶段");
+		model.addAttribute("title","内部动机类别");
 		List<MotivationCategory> motivationCategoryTree = motivationCategoryService.findTree();
-		List<Phase> phaseTree = phaseService.findTree();
-		model.addAttribute("list", motivationService.getTree(phaseTree,motivationCategoryTree));
+		model.addAttribute("list", motivationCategoryTree);
+//		List<Phase> phaseTree = phaseService.findTree();
+//		model.addAttribute("list", motivationService.getTree(phaseTree,motivationCategoryTree));
 		return "treeData/tree";
 	}
 	
 	@RequiresPermissions("mod:persona:view")
 	@RequestMapping(value = "none")
 	public String none(Model model) {
-		model.addAttribute("message","请在左侧选择内部动机分类。");
+		model.addAttribute("message","请在左侧选择内部动机类别。");
 		return "treeData/none";
 	}
 	

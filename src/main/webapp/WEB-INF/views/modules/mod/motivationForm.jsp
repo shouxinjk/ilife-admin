@@ -47,14 +47,14 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">阶段：</label>
 			<div class="controls">
 				 <sys:treeselect id="phase" name="phase.id" value="${motivation.phase.id}" labelName="phase.name" labelValue="${motivation.phase.name}"
 					title="内部动机分类" url="/mod/phase/treeData" notAllowSelectRoot="true" notAllowSelectParent="true" cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-		</div>
+		</div-->
 		<div class="control-group">
 			<label class="control-label">比重：</label>
 			<div class="controls">
@@ -64,7 +64,7 @@
 		<div class="control-group">
 			<label class="control-label">触发条件：</label>
 			<div class="controls">
-				<form:input path="exprTrigger" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:textarea path="exprTrigger" htmlEscape="false" rows="5" maxlength="500" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">

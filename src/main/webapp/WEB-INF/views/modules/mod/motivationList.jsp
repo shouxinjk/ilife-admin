@@ -43,7 +43,7 @@
 				<th>触发条件</th>
 				<th>触发条件量化</th>
 				<th>持续时间</th>
-				<th>对应商品类别</th>
+				<th>商品类目</th>
 				<shiro:hasPermission name="mod:motivation:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
