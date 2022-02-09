@@ -57,9 +57,9 @@
 				</a></td>
 				<td>${board.broker.name}</td>
 				<td>${board.tags}</td>
-				<td>${fns:getDictLabel(board.type, 'boardType', '-')}</td>
+				<td>${fns:getDictLabel(board.type, 'boardType', board.type)}</td>
 				<td>${board.keywords}</td>
-				<td>${board.status}</td>
+				<td>${fns:getDictLabel(board.status, 'active_inactive', board.status)}</td>
 				<td>${board.description}</td>
 				<td>
 					<fmt:formatDate value="${board.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

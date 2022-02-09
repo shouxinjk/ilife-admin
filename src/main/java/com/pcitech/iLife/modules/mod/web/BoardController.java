@@ -78,6 +78,8 @@ public class BoardController extends BaseController {
 	@RequiresPermissions("mod:board:view")
 	@RequestMapping(value = "form")
 	public String form(Board board, Model model) {
+		if(board.getStatus()==null)
+			board.setStatus("active");
 		model.addAttribute("board", board);
 		return "modules/mod/boardForm";
 	}

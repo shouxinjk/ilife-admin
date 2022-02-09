@@ -501,7 +501,7 @@
 				<div class="control-group">
 					<label class="control-label">状态：</label>
 					<div class="controls">
-						<form:input path="status" htmlEscape="false" maxlength="20" class="input-xlarge"/>
+						<form:select path="status" items="${fns:getDictList('active_inactive')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</div>
 				</div>
 				<div class="form-actions">

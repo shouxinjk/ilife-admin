@@ -94,7 +94,6 @@ public class Board extends DataEntity<Board> {
 		this.keywords = keywords;
 	}
 	
-	@Length(min=1, max=20, message="状态长度必须介于 1 和 20 之间")
 	public String getStatus() {
 		return status;
 	}
