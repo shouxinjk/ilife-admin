@@ -70,25 +70,26 @@
 				<sys:ckfinder input="nameImage" type="images" uploadPath="/photo" selectMultiple="false" maxWidth="100" maxHeight="100"/>
 			</div>
 		</div>
-
-		<div class="control-group">
-			<label class="control-label">VALS模型：</label>
-			<div class="controls">
-				<form:input path="alpha" htmlEscape="false" class="input-small  number"/>
-				<form:input path="beta" htmlEscape="false" class="input-small  number"/>
-				<form:input path="gamma" htmlEscape="false" class="input-small  number"/>
-				<form:input path="delte" htmlEscape="false" class="input-small  number"/>
-				<form:input path="epsilon" htmlEscape="false" class="input-small  number"/>
+		<c:if test="${not empty persona.id}">
+			<div class="control-group">
+				<label class="control-label">VALS模型：</label>
+				<div class="controls">
+					<form:input path="alpha" htmlEscape="false" class="input-small  number"/>
+					<form:input path="beta" htmlEscape="false" class="input-small  number"/>
+					<form:input path="gamma" htmlEscape="false" class="input-small  number"/>
+					<form:input path="delte" htmlEscape="false" class="input-small  number"/>
+					<form:input path="epsilon" htmlEscape="false" class="input-small  number"/>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">能力模型：</label>
-			<div class="controls">
-				<form:input path="zeta" htmlEscape="false" class="input-small  number"/>
-				<form:input path="eta" htmlEscape="false" class="input-small  number"/>
-				<form:input path="theta" htmlEscape="false" class="input-small  number"/>
+			<div class="control-group">
+				<label class="control-label">能力模型：</label>
+				<div class="controls">
+					<form:input path="zeta" htmlEscape="false" class="input-small  number"/>
+					<form:input path="eta" htmlEscape="false" class="input-small  number"/>
+					<form:input path="theta" htmlEscape="false" class="input-small  number"/>
+				</div>
 			</div>
-		</div>
+		</c:if>
 		<div class="control-group">
 			<label class="control-label">画像描述：</label>
 			<div class="controls">
