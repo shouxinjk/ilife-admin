@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.ope.web;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +52,48 @@ public class UserPerformanceController extends BaseController {
 	private UserCategoryService userCategoryService;
 	@Autowired
 	private UserPerformanceService userPerformanceService;
+	
+
+	@ResponseBody
+	@RequestMapping(value = "rest/updateMarkedValue")
+	//更新属性值标注，包括level、markedvalue。自动添加更新日期
+	public Map<String,String> updateMarkedValue( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) double markedValue, 
+			@RequestParam(required=true) int level, 
+			HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("id", id);
+		params.put("level", level);
+		params.put("isReady", 0);//注意：实际将同时设置isReady=0，分析系统将自动读取
+		params.put("markedValue", markedValue);
+		params.put("updateDate", new Date());
+		userPerformanceService.updateMarkedValue(params);
+		
+		Map<String,String> result = Maps.newHashMap();
+		result.put("result", "marked value updated.");
+		return result;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "rest/updateControlValue")
+	//更新属性值标注，包括level、controlvalue。自动添加更新日期
+	public Map<String,String> updateControlValue( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) double controlValue, 
+			@RequestParam(required=true) int level, 
+			HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("id", id);
+		params.put("level", level);
+		params.put("controlValue", controlValue);
+		params.put("updateDate", new Date());
+		userPerformanceService.updateControlValue(params);
+		
+		Map<String,String> result = Maps.newHashMap();
+		result.put("result", "control value updated.");
+		return result;
+	}
 	
 	@ModelAttribute
 	public UserPerformance get(@RequestParam(required=false) String id) {
@@ -106,6 +149,7 @@ public class UserPerformanceController extends BaseController {
 		if(userPerformance.getMeasure() == null){//不知道为啥，前端传进来的measure信息丢失了，手动补一次
 			userPerformance.setMeasure(userMeasureService.get(pid));
 		}
+		userPerformance.setIsReady(0);//强制同步
 		userPerformanceService.save(userPerformance);
 		addMessage(redirectAttributes, "保存标注成功");
 		return "redirect:"+Global.getAdminPath()+"/ope/userPerformance/?treeId="+pid+"&treeModule="+pType+"&repage";

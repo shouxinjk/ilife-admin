@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.ope.dao;
 
+import java.util.Map;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.ope.entity.UserPerformance;
@@ -14,5 +16,8 @@ import com.pcitech.iLife.modules.ope.entity.UserPerformance;
  */
 @MyBatisDao
 public interface UserPerformanceDao extends CrudDao<UserPerformance> {
-	
+	//更新属性值的markedValue及level
+	public void updateMarkedValue(Map<String,Object> params); 
+	//更新属性值的controlValue及level
+	public void updateControlValue(Map<String,Object> params); 
 }

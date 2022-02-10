@@ -5,6 +5,7 @@ package com.pcitech.iLife.modules.ope.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,15 @@ public class UserPerformanceService extends CrudService<UserPerformanceDao, User
 
 	@Autowired
 	UserMeasureService userMeasureService;
+	
+	@Transactional(readOnly = false)
+	public void updateMarkedValue(Map<String,Object> params) {
+		dao.updateMarkedValue(params);
+	}
+	@Transactional(readOnly = false)
+	public void updateControlValue(Map<String,Object> params) {
+		dao.updateControlValue(params);
+	}
 	
 	public UserPerformance get(String id) {
 		return super.get(id);

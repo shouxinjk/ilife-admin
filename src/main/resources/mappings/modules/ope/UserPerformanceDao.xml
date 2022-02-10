@@ -17,6 +17,7 @@
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
+		a.isReady AS "isReady",
 		a.del_flag AS "delFlag"
 	</sql>
 	
@@ -33,6 +34,36 @@
 		<include refid="userPerformanceJoins"/>
 		WHERE a.id = #{id}
 	</select>
+
+	<!-- 根据属性ID查询所有属性值，并根据level、controlvalue倒序排列 -->
+	<select id="findListByMeasureId" resultType="UserPerformance">
+		SELECT 
+			<include refid="userPerformanceColumns"/>
+		FROM ope_user_performance a
+		<include refid="userPerformanceJoins"/>
+		<where>
+			a.del_flag = 0 
+			AND a.measure_id = #{measureId}							
+		</where>
+		ORDER BY a.level desc,a.control_value desc
+	</select>
+	<!-- 根据属性值ID，更新其level及markedValue值 -->
+	<update id="updateMarkedValue">
+		UPDATE ope_user_performance SET 	
+			marked_value = #{markedValue},
+			isReady = #{isReady},
+			level = #{level},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	<!-- 根据属性值ID，更新其level及controlValue值 -->
+	<update id="updateControlValue">
+		UPDATE ope_user_performance SET 	
+			control_value = #{controlValue},
+			level = #{level},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>	
 	
 	<select id="findList" resultType="UserPerformance">
 		SELECT 
@@ -40,10 +71,13 @@
 		FROM ope_user_performance a
 		<include refid="userPerformanceJoins"/>
 		<where>
-			a.del_flag = #{DEL_FLAG_NORMAL}
+			a.del_flag = #{DEL_FLAG_NORMAL}	
 			<if test="measure != null and measure.id != ''">
 				AND a.measure_id = #{measure.id}
-			</if>			
+			</if>	
+			<if test="dimension != null and dimension.id != ''">
+				AND a.dimension_id = #{dimension.id}
+			</if>					
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -62,6 +96,12 @@
 		<include refid="userPerformanceJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="measure != null and measure.id != ''">
+				AND a.measure_id = #{measure.id}
+			</if>	
+			<if test="dimension != null and dimension.id != ''">
+				AND a.dimension_id = #{dimension.id}
+			</if>			
 		</where>		
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -87,6 +127,7 @@
 			create_date,
 			update_by,
 			update_date,
+			isReady,
 			del_flag
 		) VALUES (
 			#{id},
@@ -101,6 +142,7 @@
 			#{createDate},
 			#{updateBy.id},
 			#{updateDate},
+			#{isReady},
 			#{delFlag}
 		)
 	</insert>
@@ -109,6 +151,7 @@
 		UPDATE ope_user_performance SET 	
 			measure_id = #{measure.id},
 			marked_value = #{markedValue},
+			isReady = #{isReady},
 			original_value = #{originalValue},
 			normalized_value = #{normalizedValue},
 			control_value = #{controlValue},

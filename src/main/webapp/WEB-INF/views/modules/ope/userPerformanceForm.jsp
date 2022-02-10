@@ -44,18 +44,18 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">标注值：</label>
-			<div class="controls">
-				<form:input path="markedValue" htmlEscape="false" class="input-xlarge  number"/>
-			</div>
-		</div>
-		<div class="control-group">
 			<label class="control-label">原始值：</label>
 			<div class="controls">
 				<form:input path="originalValue" htmlEscape="false" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">标注值(1-10)：</label>
+			<div class="controls">
+				<form:input path="markedValue" htmlEscape="false" class="input-xlarge  number"/>
+			</div>
+		</div>		
+		<!--div class="control-group">
 			<label class="control-label">归一值：</label>
 			<div class="controls">
 				<form:input path="normalizedValue" htmlEscape="false" class="input-xlarge  number"/>
@@ -78,7 +78,7 @@
 			<div class="controls">
 				<form:input path="dimension" htmlEscape="false" maxlength="500" class="input-xlarge "/>
 			</div>
-		</div>
+		</div-->
 		<div class="form-actions">
 			<shiro:hasPermission name="ope:userPerformance:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
