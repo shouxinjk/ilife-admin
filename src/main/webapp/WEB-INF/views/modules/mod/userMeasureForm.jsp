@@ -60,19 +60,19 @@
 				<!--form:input path="type" htmlEscape="false" maxlength="100" class="input-xlarge "/-->
 			</div>
 		</div>				
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">所属维度：</label>
 			<div class="controls">
 				<form:input path="dimension" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 			</div>
-		</div>
+		</div-->
 		<div class="control-group">
 			<label class="control-label">关联标签：</label>
 			<div class="controls">
 				<form:textarea path="tags" htmlEscape="false" rows="5" maxlength="1024" class="input-xlarge"/>
 			</div>
 		</div>		
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">权重：</label>
 			<div class="controls">
 				<form:input path="weight" htmlEscape="false" class="input-xlarge "/>
@@ -83,26 +83,56 @@
 			<div class="controls">
 				<form:input path="controlValue" htmlEscape="false" class="input-xlarge "/>
 			</div>
-		</div>
+		</div-->
 		<div class="control-group">
-			<label class="control-label">默认得分：</label>
+			<label class="control-label">默认分值：</label>
 			<div class="controls">
 				<form:input path="defaultScore" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">默认等级：</label>
 			<div class="controls">
 				<form:input path="defaultRank" htmlEscape="false" maxlength="8" class="input-xlarge "/>
 			</div>
+		</div-->
+		<div class="control-group">
+			<label class="control-label">效益：生理：</label>
+			<div class="controls">
+				<form:input path="alpha" htmlEscape="false" class="input-small "/>
+				<form:input path="beta" htmlEscape="false" class="input-small "/>
+				<form:input path="gamma" htmlEscape="false" class="input-small "/>
+				<form:input path="delte" htmlEscape="false" class="input-small "/>
+				<form:input path="epsilon" htmlEscape="false" class="input-small "/>
+			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">自动标注：</label>
+			<label class="control-label">成本：经济：</label>
+			<div class="controls">
+				<form:input path="zeta" htmlEscape="false" class="input-small "/>
+				<form:input path="eta" htmlEscape="false" class="input-small "/>
+				<form:input path="theta" htmlEscape="false" class="input-small "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">脚本表达式：</label>
+			<div class="controls">
+				<form:textarea path="expression" htmlEscape="false" rows="5" maxlength="1024" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">偏好表达式：</label>
+			<div class="controls">
+				<form:textarea path="lambda" htmlEscape="false" rows="5" maxlength="1024" class="input-xlarge "/>
+			</div>
+		</div>			
+		<div class="control-group">
+			<label class="control-label">标注类型：</label>
 			<div class="controls">
 				<form:select path="autoLabelType" items="${fns:getDictList('autoLabelType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-		</div>		
+		</div>				
 		<div class="control-group">
 			<label class="control-label">从字典标注：</label>
 			<div class="controls">
@@ -115,7 +145,26 @@
 				 <sys:treeselect id="autoLabelCategory" name="autoLabelCategory.id" value="${userMeasure.autoLabelCategory.id}" labelName="autoLabelCategory.name" labelValue="${userMeasure.autoLabelCategory.name}"
 					title="用户分类" url="/mod/userCategory/treeData" notAllowSelectRoot="true"/>
 			</div>
-		</div>					
+		</div>	
+		<div class="control-group">
+			<label class="control-label">标签类目：</label>
+			<div class="controls">
+				 <sys:treeselect id="autoLabelTagCategory" name="autoLabelTagCategory.id" value="${measure.autoLabelTagCategory.id}" labelName="autoLabelTagCategory.name" labelValue="${measure.autoLabelTagCategory.name}"
+					title="标签分类" url="/mod/tagCategory/treeData" notAllowSelectRoot="true"/>
+			</div>
+		</div>			
+		<div class="control-group">
+			<label class="control-label">归一化方法：</label>
+			<div class="controls">
+				<form:select path="normalizeType" items="${fns:getDictList('normalizeType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</div>
+		</div>	
+		<div class="control-group">
+			<label class="control-label">多值策略：</label>
+			<div class="controls">
+				<form:select path="multiValueFunc" items="${fns:getDictList('multiValueFunc')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</div>
+		</div>									
 		<div class="form-actions">
 			<shiro:hasPermission name="mod:userMeasure:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

@@ -46,7 +46,7 @@
 				<th>名称</th>
 				<!--th>占比</th>
 				<th>参照值</th-->
-				<th>默认分值</th>
+				<th>默认数值</th>
 				<!--th>a</th>
 				<th>b</th>
 				<th>c</th>
@@ -120,10 +120,10 @@
 				<td>
 					${measure.tags}
 				</td>	
-				<td>${fns:getDictLabel(measure.normalizeType, 'normalizeType', '-')}</td>
-				<td>${fns:getDictLabel(measure.multiValueFunc, 'multiValueFunc', '-')}</td>
-				<td>${fns:getDictLabel(measure.autoLabelType, 'autoLabelType', '-')}</td>
-				<td>${fns:getDictLabel(measure.autoLabelDict, 'autoLabelDictItem', '-')}</td>	
+				<td>${fns:getDictLabel(measure.normalizeType, 'normalizeType', measure.normalizeType)}</td>
+				<td>${fns:getDictLabel(measure.multiValueFunc, 'multiValueFunc', measure.multiValueFunc)}</td>
+				<td>${fns:getDictLabel(measure.autoLabelType, 'autoLabelType', measure.autoLabelType)}</td>
+				<td>${fns:getDictLabel(measure.autoLabelDict, 'autoLabelDictItem', measure.autoLabelDict)}</td>	
 				<td>${measure.autoLabelCategory.name}</td>		
 				<td>${measure.autoLabelTagCategory.name}</td>	
 				<shiro:hasPermission name="mod:measure:edit"><td>
