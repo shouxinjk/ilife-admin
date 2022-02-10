@@ -38,6 +38,7 @@ import com.pcitech.iLife.modules.mod.service.UserCategoryService;
 import com.pcitech.iLife.modules.mod.service.UserMeasureService;
 import com.pcitech.iLife.modules.mod.service.UserTagCategoryService;
 import com.pcitech.iLife.modules.mod.service.UserTagService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 用户属性定义Controller
@@ -85,6 +86,10 @@ public class UserMeasureController extends BaseController {
 		if(userMeasure.getCategory()!=null&&StringUtils.isNoneBlank(userMeasure.getCategory().getId())){
 			userMeasure.setCategory(userCategoryService.get(userMeasure.getCategory().getId()));
 		}
+		//检查默认key值，如果没有则随机设置
+		if(userMeasure.getProperty()==null || userMeasure.getProperty().trim().length()==0)
+			userMeasure.setProperty("p"+Util.get6bitCode("up"+userMeasure.getName()));//以p打头的7位字符串，大小写区分。保存时如果重复将报错
+		
 		model.addAttribute("userMeasure", userMeasure);
 		return "modules/mod/userMeasureForm";
 	}
