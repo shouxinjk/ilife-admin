@@ -30,6 +30,7 @@ public class UserDimension extends TreeEntity<UserDimension> {
 	private String featured;		// featured
 	private String sort;		// sort
 	private String category;		// category
+	private String propKey;		// 键名，用于计算引用
 	
 	public UserDimension() {
 		super();
@@ -118,6 +119,14 @@ public class UserDimension extends TreeEntity<UserDimension> {
 		this.category = category;
 	}
 	
+	public String getPropKey() {
+		return propKey;
+	}
+
+	public void setPropKey(String propKey) {
+		this.propKey = propKey;
+	}
+
 	public String getParentId() {
 		return parent != null && parent.getId() != null ? parent.getId() : "0";
 	}

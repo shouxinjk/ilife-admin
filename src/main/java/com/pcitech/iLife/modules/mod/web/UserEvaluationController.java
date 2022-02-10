@@ -26,6 +26,7 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.UserEvaluation;
 import com.pcitech.iLife.modules.mod.service.UserEvaluationService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 用户主观评价Controller
@@ -80,6 +81,9 @@ public class UserEvaluationController extends BaseController {
 		if (userEvaluation.getSort() == null){
 			userEvaluation.setSort(30);
 		}
+		if(userEvaluation.getPropKey()==null || userEvaluation.getPropKey().trim().length()==0)
+			userEvaluation.setPropKey("e"+Util.get6bitCode("ue"+userEvaluation.getName()));//以e打头的7位字符串，大小写区分。保存时如果重复将报错
+		
 		model.addAttribute("userEvaluation", userEvaluation);
 		return "modules/mod/userEvaluationForm";
 	}

@@ -58,12 +58,13 @@
 		<thead>
 			<tr>
 				<th>名称</th>
+				<th>Key</th>
 				<th>类型</th>
 				<th>特征</th>
 				<th>占比</th>
 				<th>脚本</th>
 				<th>分类</th>
-				<th>排序</th>
+				<!--th>排序</th-->
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:userEvaluation:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -75,6 +76,9 @@
 			<td><a href="${ctx}/mod/userEvaluationDimension/list?evaluationId={{row.id}}&evaluation.id={{row.id}}">
 				{{row.name}}
 			</a></td>
+			<td>
+				{{row.propKey}}
+			</td>
 			<td>
 				{{row.type}}
 			</td>
@@ -90,16 +94,16 @@
 			<td>
 				{{row.category}}
 			</td>
-			<td>
+			<!--td>
 				{{row.sort}}
-			</td>
+			</td-->
 			<td>
 				{{row.updateDate}}
 			</td>
 			<shiro:hasPermission name="mod:userEvaluation:edit"><td>
    				<a href="${ctx}/mod/userEvaluation/form?id={{row.id}}">修改</a>
 				<a href="${ctx}/mod/userEvaluation/delete?id={{row.id}}" onclick="return confirmx('确认要删除该用户主观评价及所有子用户主观评价吗？', this.href)">删除</a>
-				<a href="${ctx}/mod/userEvaluation/form?parent.id={{row.id}}">添加下级用户主观评价</a> 
+				<a href="${ctx}/mod/userEvaluation/form?parent.id={{row.id}}">添加下级</a> 
 			</td></shiro:hasPermission>
 		</tr>
 	</script>

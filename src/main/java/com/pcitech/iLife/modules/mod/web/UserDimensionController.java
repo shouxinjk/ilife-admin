@@ -26,6 +26,7 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.UserDimension;
 import com.pcitech.iLife.modules.mod.service.UserDimensionService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 用户客观评价Controller
@@ -80,6 +81,9 @@ public class UserDimensionController extends BaseController {
 		if (userDimension.getSort() == null){
 			userDimension.setSort(30);
 		}
+		if(userDimension.getPropKey()==null || userDimension.getPropKey().trim().length()==0)
+			userDimension.setPropKey("m"+Util.get6bitCode("um"+userDimension.getName()));//以e打头的7位字符串，大小写区分。保存时如果重复将报错
+		
 		model.addAttribute("userDimension", userDimension);
 		return "modules/mod/userDimensionForm";
 	}

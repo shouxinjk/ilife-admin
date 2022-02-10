@@ -30,6 +30,7 @@ public class UserEvaluation extends TreeEntity<UserEvaluation> {
 	private String featured;		// featured
 	private String sort;		// sort
 	private String category;		// category
+	private String propKey;		// 键名，用于计算引用
 	
 	public UserEvaluation() {
 		super();
@@ -118,6 +119,14 @@ public class UserEvaluation extends TreeEntity<UserEvaluation> {
 		this.category = category;
 	}
 	
+	public String getPropKey() {
+		return propKey;
+	}
+
+	public void setPropKey(String propKey) {
+		this.propKey = propKey;
+	}
+
 	public static void sortList(List<UserEvaluation> list, List<UserEvaluation> sourcelist, String parentId,boolean cascade){
 		for (int i=0; i<sourcelist.size(); i++){
 			UserEvaluation e = sourcelist.get(i);
