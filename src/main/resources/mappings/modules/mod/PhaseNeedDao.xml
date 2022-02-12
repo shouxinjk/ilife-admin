@@ -10,6 +10,7 @@
 		pha.name AS "phase.name",
 		a.need_id AS "need.id",
 		m.name AS "need.name",		
+		m.displayName AS "need.displayName",	
 		a.expression AS "expression",
 		a.sort AS "sort",
 		a.create_by AS "createBy.id",

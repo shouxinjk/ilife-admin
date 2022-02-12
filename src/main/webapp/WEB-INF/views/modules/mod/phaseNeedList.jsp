@@ -76,6 +76,7 @@
 				<th>阶段</th>
 				<th>类别</th>
 				<th>需要</th>
+				<th>别名</th>
 				<th>权重</th>
 				<th>表达式</th>
 				<th>描述</th>			
@@ -95,6 +96,9 @@
 				<td>
 					${phaseNeed.need.name}
 				</td>
+				<td>
+					${phaseNeed.need.displayName}
+				</td>				
 				<td>
 					<div class="rating" id="rate-${phaseNeed.id}" data-id="${phaseNeed.id}" data-weight="${phaseNeed.weight}"></div>
 				</td>
