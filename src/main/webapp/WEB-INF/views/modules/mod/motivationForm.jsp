@@ -54,13 +54,13 @@
 					title="内部动机分类" url="/mod/phase/treeData" notAllowSelectRoot="true" notAllowSelectParent="true" cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-		</div-->
+		</div>
 		<div class="control-group">
 			<label class="control-label">比重：</label>
 			<div class="controls">
 				<form:input path="percentage" htmlEscape="false" class="input-xlarge  number"/>
 			</div>
-		</div>
+		</div-->
 		<div class="control-group">
 			<label class="control-label">触发条件：</label>
 			<div class="controls">
@@ -73,12 +73,12 @@
 				<form:textarea path="expression" htmlEscape="false" rows="5" maxlength="200" class="input-xlarge"/>
 			</div>
 		</div>
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">持续时间：</label>
 			<div class="controls">
 				<form:input path="exprDuration" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 			</div>
-		</div>
+		</div-->
 <!-- 		<div class="control-group"> -->
 <!-- 			<label class="control-label">对应商品类别：</label> -->
 <!-- 			<div class="controls"> -->

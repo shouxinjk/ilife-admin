@@ -38,11 +38,11 @@
 			<tr>
 				<th>名称</th>
 				<th>分类</th>
-				<th>阶段</th>
-				<th>比重</th>
+				<!--th>阶段</th>
+				<th>比重</th-->
 				<th>触发条件</th>
 				<th>触发条件量化</th>
-				<th>持续时间</th>
+				<!--th>持续时间</th-->
 				<th>商品类目</th>
 				<shiro:hasPermission name="mod:motivation:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -56,21 +56,21 @@
 				<td>
 					${motivation.motivationCategory.name}
 				</td>
-				<td>
+				<!--td>
 					${motivation.phase.name}
 				</td>
 				<td>
 					${motivation.percentage}
-				</td>
+				</td-->
 				<td>
 					${motivation.exprTrigger}
 				</td>
 				<td>
 					${motivation.expression}
 				</td>
-				<td>
+				<!--td>
 					${motivation.exprDuration}
-				</td>
+				</td-->
 				<td>
 					${motivation.exprItem}
 				</td>
