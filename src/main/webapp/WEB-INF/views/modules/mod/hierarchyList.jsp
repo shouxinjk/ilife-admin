@@ -28,6 +28,9 @@
 			<li><label>名称：</label>
 				<form:input path="name" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
+			<li><label>昵称：</label>
+				<form:input path="displayName" htmlEscape="false" maxlength="100" class="input-medium"/>
+			</li>			
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -37,6 +40,7 @@
 		<thead>
 			<tr>
 				<th>名称</th>
+				<th>昵称</th>
 				<th>经济资本</th>
 				<th>文化资本</th>
 				<th>社会资本</th>
@@ -51,6 +55,9 @@
 				<td><a href="${ctx}/mod/hierarchy/form?id=${hierarchy.id}" title="${hierarchy.description}">
 					${hierarchy.name}
 				</a></td>
+				<td>
+					${hierarchy.displayName}
+				</td>				
 				<td>
 					${hierarchy.economyLevel}(${hierarchy.economyScoreMin } - ${hierarchy.economyScoreMax })
 				</td>

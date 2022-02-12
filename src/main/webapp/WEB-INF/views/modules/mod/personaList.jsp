@@ -64,7 +64,7 @@
 				</td>
 				<td>
 					阶段：${persona.phase.name}<br/>
-					阶层：${persona.hierarchy.name}<br/>
+					阶层：${persona.hierarchy.name}(${persona.hierarchy.displayName})<br/>
 					分群：${persona.parent.name}
 				</td>
 				<td>

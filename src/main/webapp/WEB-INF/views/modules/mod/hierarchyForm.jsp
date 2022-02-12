@@ -40,6 +40,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">别名：</label>
+			<div class="controls">
+				<form:input path="displayName" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">经济资本等级：</label>
 			<div class="controls">
 				<form:input path="economyLevel" htmlEscape="false" maxlength="8" class="input-xlarge  digits"/>

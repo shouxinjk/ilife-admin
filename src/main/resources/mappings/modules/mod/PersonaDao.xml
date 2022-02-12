@@ -11,6 +11,7 @@
 		ph.name AS "phase.name",
 		a.hierarchy_id AS "hierarchy.id",
 		h.name AS "hierarchy.name",
+		h.displayName AS "hierarchy.displayName",
 		h.society_level AS "hierarchy.societyLevel",
 		h.society_score_min AS "hierarchy.societyScoreMin",
 		h.society_score_max AS "hierarchy.societyScoreMax",

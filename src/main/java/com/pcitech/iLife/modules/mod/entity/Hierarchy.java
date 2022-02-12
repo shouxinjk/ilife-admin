@@ -16,6 +16,7 @@ public class Hierarchy extends DataEntity<Hierarchy> {
 	
 	private static final long serialVersionUID = 1L;
 	private String name;		// name
+	private String displayName;		// 显示名称
 	private Integer societyLevel;		// society_level
 	private Double societyScoreMax;		// society_score
 	private Double societyScoreMin;		// society_score
@@ -46,6 +47,14 @@ public class Hierarchy extends DataEntity<Hierarchy> {
 		this.name = name;
 	}
 	
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
 	public Integer getSocietyLevel() {
 		return societyLevel;
 	}

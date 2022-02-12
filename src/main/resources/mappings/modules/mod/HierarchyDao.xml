@@ -5,6 +5,7 @@
 	<sql id="hierarchyColumns">
 		a.id AS "id",
 		a.name AS "name",
+		a.displayName AS "displayName",
 		a.society_level AS "societyLevel",
 		a.society_score_min AS "societyScoreMin",
 		a.society_score_max AS "societyScoreMax",
@@ -93,6 +94,7 @@
 		INSERT INTO mod_hierarchy(
 			id,
 			name,
+			displayName,
 			society_level,
 			society_score_min,
 			society_score_max,
@@ -113,6 +115,7 @@
 		) VALUES (
 			#{id},
 			#{name},
+			#{displayName},
 			#{societyLevel},
 			#{societyScoreMin},
 			#{societyScoreMax},
@@ -136,6 +139,7 @@
 	<update id="update">
 		UPDATE mod_hierarchy SET 	
 			name = #{name},
+			displayName = #{displayName},
 			society_level = #{societyLevel},
 			society_score_min = #{societyScoreMin},
 			society_score_max = #{societyScoreMax},

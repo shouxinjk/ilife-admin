@@ -78,6 +78,9 @@ public class HierarchyController extends BaseController {
 		if (!beanValidator(model, hierarchy)){
 			return form(hierarchy, model);
 		}
+		//默认昵称与名称保持一致
+		if(hierarchy.getDisplayName()==null || hierarchy.getDisplayName().trim().length()==0)
+			hierarchy.setDisplayName(hierarchy.getName());
 		hierarchyService.save(hierarchy);
 		addMessage(redirectAttributes, "保存社会分层成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/hierarchy/?repage";
