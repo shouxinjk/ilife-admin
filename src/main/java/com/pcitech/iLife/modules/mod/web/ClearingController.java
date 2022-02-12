@@ -123,6 +123,7 @@ public class ClearingController extends BaseController {
 	}
 
 	/**
+	 * 备注：当前未启用该服务。通过ClearOrder定时任务自动完成。其逻辑与当前api一致
 	 * 完成订单清分：根据订单ID完成清分，并且发送通知。清分逻辑：
 	 * 1，根据orderId获取指定订单
 	 * 2，根据订单platform获取清分规则
@@ -214,6 +215,9 @@ public class ClearingController extends BaseController {
 				clearing.setBeneficiary(person);
 				clearing.setBeneficiaryType(shareItem.getBeneficiaryType());
 				clearing.setStatusClear(status);
+				clearing.setStatusCash("pending");
+				clearing.setStatusNotify("pending");
+				clearing.setStatusSettle("pending");
 				clearing.setCreateDate(new Date());
 				clearing.setUpdateDate(new Date());
 				clearingService.save(clearing);
