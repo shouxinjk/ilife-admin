@@ -16,6 +16,7 @@ public class Motivation extends DataEntity<Motivation> {
 	
 	private static final long serialVersionUID = 1L;
 	private String name;		// name
+	private String displayName;		// 对外显示名称。用于展示给用户
 	private MotivationCategory motivationCategory;		// category_id
 	private Phase phase;		// phase_id
 	private Double percentage;		// percentage
@@ -41,6 +42,14 @@ public class Motivation extends DataEntity<Motivation> {
 		this.name = name;
 	}
 	
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
 	public MotivationCategory getMotivationCategory() {
 		return motivationCategory;
 	}

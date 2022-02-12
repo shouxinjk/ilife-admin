@@ -28,6 +28,9 @@
 			<li><label>名称：</label>
 				<form:input path="name" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
+			<li><label>别名：</label>
+				<form:input path="displayName" htmlEscape="false" maxlength="100" class="input-medium"/>
+			</li>			
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -37,6 +40,7 @@
 		<thead>
 			<tr>
 				<th>名称</th>
+				<th>别名</th>
 				<th>分类</th>
 				<!--th>阶段</th>
 				<th>比重</th-->
@@ -53,6 +57,9 @@
 				<td><a href="${ctx}/mod/motivation/form?id=${motivation.id}&pid=${pid}&pType=${pType}&topId=${topId }">
 					${motivation.name}
 				</a></td>
+				<td>
+					${motivation.displayName}
+				</td>				
 				<td>
 					${motivation.motivationCategory.name}
 				</td>

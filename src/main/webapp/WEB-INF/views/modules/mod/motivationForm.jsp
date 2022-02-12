@@ -40,6 +40,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">别名：</label>
+			<div class="controls">
+				<form:input path="displayName" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">分类：</label>
 			<div class="controls">
 				 <sys:treeselect id="motivationCategory" name="motivationCategory.id" value="${motivation.motivationCategory.id}" labelName="motivationCategory.name" labelValue="${motivation.motivationCategory.name}"

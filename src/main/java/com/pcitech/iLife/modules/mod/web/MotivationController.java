@@ -120,6 +120,9 @@ public class MotivationController extends BaseController {
 		if (!beanValidator(model, motivation)){
 			return form(motivation,pid,pType ,topId,model);
 		}
+		//默认昵称与名称保持一致
+		if(motivation.getDisplayName()==null || motivation.getDisplayName().trim().length()==0)
+			motivation.setDisplayName(motivation.getName());
 		motivationService.save(motivation);
 		addMessage(redirectAttributes, "保存内部动机成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/motivation/?treeId="+motivation.getMotivationCategory().getId()+"&treeModule="+pType+"&topId="+topId+"&repage";

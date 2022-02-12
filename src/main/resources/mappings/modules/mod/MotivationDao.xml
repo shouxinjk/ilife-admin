@@ -5,6 +5,7 @@
 	<sql id="motivationColumns">
 		a.id AS "id",
 		a.name AS "name",
+		a.displayName AS "displayName",
 		a.category_id AS "motivationCategory.id",
 		c.name AS "motivationCategory.name",
 		a.phase_id AS "phase.id",
@@ -103,6 +104,7 @@
 		INSERT INTO mod_motivation(
 			id,
 			name,
+			displayName,
 			category_id,
 			phase_id,
 			percentage,
@@ -118,6 +120,7 @@
 		) VALUES (
 			#{id},
 			#{name},
+			#{displayName},
 			#{motivationCategory.id},
 			#{phase.id},
 			#{percentage},
@@ -136,6 +139,7 @@
 	<update id="update">
 		UPDATE mod_motivation SET 	
 			name = #{name},
+			displayName = #{displayName},
 			category_id = #{motivationCategory.id},
 			phase_id = #{phase.id},
 			percentage = #{percentage},
