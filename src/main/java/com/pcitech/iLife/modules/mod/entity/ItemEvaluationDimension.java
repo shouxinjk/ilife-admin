@@ -21,7 +21,7 @@ public class ItemEvaluationDimension extends DataEntity<ItemEvaluationDimension>
 	private ItemDimension dimension;		// 客观评价编号
 	private String name;		// name
 	private String description;		// description
-	private String weight;		// weight
+	private double weight;		// weight
 	private String sort;		// sort
 	private ItemCategory category;		// category
 	
@@ -70,11 +70,11 @@ public class ItemEvaluationDimension extends DataEntity<ItemEvaluationDimension>
 		this.description = description;
 	}
 	
-	public String getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(String weight) {
+	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 	

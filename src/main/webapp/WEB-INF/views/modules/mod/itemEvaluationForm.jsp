@@ -29,6 +29,9 @@
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/mod/itemEvaluation/list?treeId=${itemEvaluation.category.id}">主观评价列表</a></li>
 		<li class="active"><a href="${ctx}/mod/itemEvaluation/form?id=${itemEvaluation.id}&parent.id=${itemEvaluationparent.id}">主观评价<shiro:hasPermission name="mod:itemEvaluation:edit">${not empty itemEvaluation.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:itemEvaluation:edit">查看</shiro:lacksPermission></a></li>
+		<!--
+		<shiro:hasPermission name="mod:itemEvaluationDimension:edit"><li><a href="${ctx}/mod/itemEvaluationDimension/form?category.id=${itemEvaluation.category.id}">添加客观评价</a></li></shiro:hasPermission>
+		-->
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="itemEvaluation" action="${ctx}/mod/itemEvaluation/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>

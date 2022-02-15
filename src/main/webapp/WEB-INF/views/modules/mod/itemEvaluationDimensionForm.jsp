@@ -27,10 +27,10 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/itemEvaluation/list?treeId=${itemDimensionMeasure.category.id}">主观评价列表</a></li>
+		<li><a href="${ctx}/mod/itemEvaluation/list?treeId=${itemEvaluationDimension.category.id}">主观评价列表</a></li>
 		<shiro:hasPermission name="mod:itemEvaluation:edit"><li><a href="${ctx}/mod/itemEvaluation/form?category.id=${itemEvaluationDimension.category.id}">主观评价添加</a></li></shiro:hasPermission>	
-		<li><a href="${ctx}/mod/itemEvaluationDimension/list?evaluationId=${itemEvaluationDimension.evaluation.id}&categoryId=${itemEvaluationDimension.category.id}">评价明细列表</a></li>
-		<li class="active"><a href="${ctx}/mod/itemEvaluationDimension/form?id=${itemEvaluationDimension.id}&category.id=${itemEvaluationDimension.category.id}&evaluation.id=${itemEvaluationDimension.evaluation.id}">评价明细<shiro:hasPermission name="mod:itemEvaluationDimension:edit">${not empty itemEvaluationDimension.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:itemEvaluationDimension:edit">查看</shiro:lacksPermission></a></li>
+		<!--li><a href="${ctx}/mod/itemEvaluationDimension/list?evaluationId=${itemEvaluationDimension.evaluation.id}&categoryId=${itemEvaluationDimension.category.id}">评价明细列表</a></li-->
+		<li class="active"><a href="${ctx}/mod/itemEvaluationDimension/form?id=${itemEvaluationDimension.id}&category.id=${itemEvaluationDimension.category.id}&evaluation.id=${itemEvaluationDimension.evaluation.id}">客观评价<shiro:hasPermission name="mod:itemEvaluationDimension:edit">${not empty itemEvaluationDimension.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:itemEvaluationDimension:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="itemEvaluationDimension" action="${ctx}/mod/itemEvaluationDimension/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
@@ -71,16 +71,16 @@
 				<form:input path="weight"  value="0" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">排序：</label>
 			<div class="controls">
 				<form:input path="sort"  value="10" htmlEscape="false" maxlength="11" class="input-xlarge "/>
 			</div>
-		</div>
+		</div-->
 		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">
-				<form:input path="description" htmlEscape="false" class="input-xlarge "/>
+				<form:textarea path="description" rows="5" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>		
 		<div class="form-actions">

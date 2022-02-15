@@ -72,16 +72,16 @@
 				<form:input path="weight" value="0" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
+		<!--div class="control-group">
 			<label class="control-label">排序：</label>
 			<div class="controls">
 				<form:input path="sort" value="10" htmlEscape="false" maxlength="11" class="input-xlarge "/>
 			</div>
-		</div>
+		</div-->
 		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">
-				<form:input path="description" htmlEscape="false" class="input-xlarge "/>
+				<form:textarea path="description" rows="5" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>		
 		<div class="form-actions">

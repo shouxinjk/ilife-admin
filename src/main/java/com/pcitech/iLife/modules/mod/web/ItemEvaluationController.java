@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -30,7 +31,11 @@ import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.ItemDimension;
 import com.pcitech.iLife.modules.mod.entity.ItemDimensionMeasure;
 import com.pcitech.iLife.modules.mod.entity.ItemEvaluation;
+import com.pcitech.iLife.modules.mod.entity.ItemEvaluationDimension;
+import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
+import com.pcitech.iLife.modules.mod.service.ItemDimensionService;
+import com.pcitech.iLife.modules.mod.service.ItemEvaluationDimensionService;
 import com.pcitech.iLife.modules.mod.service.ItemEvaluationService;
 import com.pcitech.iLife.util.Util;
 
@@ -46,6 +51,10 @@ public class ItemEvaluationController extends BaseController {
 	@Autowired
 	private ItemEvaluationService itemEvaluationService;
 	@Autowired
+	private ItemDimensionService itemDimensionService;
+	@Autowired
+	private ItemEvaluationDimensionService itemEvaluationDimensionService;
+	@Autowired
 	private ItemCategoryService itemCategoryService;
 	
 	@ModelAttribute
@@ -60,6 +69,107 @@ public class ItemEvaluationController extends BaseController {
 		return entity;
 	}
 	
+
+	@ResponseBody
+	@RequestMapping(value = "rest/weight", method = RequestMethod.POST)
+	//更新维度占比 或者 维度下属性 占比。注意：需要根据id类型进行区分
+	public Map<String, Object> updateWeightsByMeasureId( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) double weight,  
+			HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		ItemEvaluation parentEvaluation = null;
+		Map<String, Object> map = Maps.newHashMap();
+		map.put("id", id);//保持原始id
+		if(id.startsWith("eval-")) {//对主观评价维度占比进行更新
+			ItemEvaluation itemEvaluation = itemEvaluationService.get(id.replace("eval-", ""));
+			parentEvaluation = itemEvaluationService.get(itemEvaluation.getParent().getId());//重要：需要重新获取，通过getParent获取的仅包含ID及name
+			itemEvaluation.setWeight(weight);
+			itemEvaluationService.save(itemEvaluation);
+			itemEvaluation = itemEvaluationService.get(id.replace("eval-", ""));
+			map.put("type", "主观评价");
+			map.put("name", itemEvaluation.getName());
+			map.put("weight", itemEvaluation.getWeight());
+		}else if(id.startsWith("dim-")) {//对客观评价占比进行更新
+			ItemEvaluationDimension itemEvaluationDimension = itemEvaluationDimensionService.get(id.replace("dim-", ""));
+			parentEvaluation = itemEvaluationService.get(itemEvaluationDimension.getEvaluation().getId());//重要：需要重新获取，通过getParent获取的仅包含ID及name
+			itemEvaluationDimension.setWeight(weight);
+			itemEvaluationDimensionService.save(itemEvaluationDimension);
+			itemEvaluationDimension = itemEvaluationDimensionService.get(id.replace("dim-", ""));
+			map.put("type", "客观评价");
+			map.put("name", itemEvaluationDimension.getName());
+			map.put("weight", itemEvaluationDimension.getWeight());
+		}else if(id.startsWith("prop-")) {//对维度-属性占比进行更新
+			//TODO：需要对主观评价关联的客观评价及属性权重进行处理
+//			ItemEvaluationMeasure itemEvaluationMeasure = itemEvaluationMeasureService.get(id.replace("prop-", ""));
+//			parentEvaluation = itemEvaluationService.get(itemEvaluationMeasure.getEvaluation().getId());//重要：需要重新获取，通过getParent获取的仅包含ID及name
+//			itemEvaluationMeasure.setWeight(weight);
+//			itemEvaluationMeasureService.save(itemEvaluationMeasure);
+//			itemEvaluationMeasure = itemEvaluationMeasureService.get(id.replace("prop-", ""));
+//			map.put("type", "属性");
+//			map.put("name", itemEvaluationMeasure.getName());
+//			map.put("weight", itemEvaluationMeasure.getWeight());
+		}else {//出错了
+			//do nothing
+		}
+		//更新所在维度节点的自动脚本
+		if(parentEvaluation!=null)
+			saveWithScript(parentEvaluation);
+		else
+			logger.warn("cannot find parent dimension.");
+		return map;
+	}
+
+	//动态计算脚本并保存
+	private void saveWithScript(ItemEvaluation itemEvaluation) {
+		logger.error("try to save with script.[itemEvaluation.id]"+itemEvaluation.getId(),itemEvaluation);
+		//预生成脚本：对于weighted-sum脚本，自动查询下级节点，并生成
+		if(!itemEvaluation.getIsNewRecord() && itemEvaluation.getId()!=null && itemEvaluation.getId().trim().length()>0 //对于已经存在的节点进行。新节点无需处理
+				&& itemEvaluation.getScript()!=null && itemEvaluation.getScript().trim().length()>0 && itemEvaluation.getScript().indexOf("weighted-sum")>=0) {
+			//先获取关联的客观维度列表
+			ItemEvaluationDimension itemEvaluationDimension = new ItemEvaluationDimension();
+			itemEvaluationDimension.setEvaluation(itemEvaluation);
+			itemEvaluationDimension.setDelFlag("0");
+			List<ItemEvaluationDimension> measures = itemEvaluationDimensionService.findList(itemEvaluationDimension);
+			String script = "";
+			String scriptMemo = "//weighted-sum ";
+			int index = 0;
+			for(ItemEvaluationDimension measure:measures) {
+				if(measure.getDimension().getPropKey()==null||measure.getDimension().getPropKey().trim().length()==0)
+					continue;//未设置属性propKey则不作处理
+				if(index>0) {
+					script += "+";
+					scriptMemo += "+";
+				}
+				double weight = measure.getWeight()*0.01;
+				weight = (double) Math.round(weight * 100) / 100;//仅保留2位小数
+				script += measure.getDimension().getPropKey()+ "*" + weight;
+				scriptMemo += measure.getDimension().getName()+ "*" + weight;
+				index++;
+			}
+			//然后获取下级主观维度列表
+			ItemEvaluation query = new ItemEvaluation();
+			query.setParent(itemEvaluation);
+			query.setDelFlag("0");
+			List<ItemEvaluation> subDimensions = itemEvaluationService.findList(query);
+			index = 0;
+			for(ItemEvaluation dimension:subDimensions) {
+				if(dimension.getPropKey()==null || dimension.getPropKey().trim().length()==0)
+					continue;//未设置属性propKey则不作处理
+				if(script.trim().length()>0 || (script.trim().length()==0 && index>0)) {
+					script += "+";
+					scriptMemo += "+";
+				}
+				double weight = dimension.getWeight()*0.01;
+				weight = (double) Math.round(weight * 100) / 100;//仅保留2位小数
+				script += dimension.getPropKey()+ "*" + weight;
+				scriptMemo += dimension.getName()+ "*" + weight;
+				index++;
+			}
+			itemEvaluation.setScript(script+"\n"+scriptMemo);
+		}
+		itemEvaluationService.save(itemEvaluation);
+	}
+	
 	/*
 	@RequiresPermissions("mod:itemEvaluation:view")
 	@RequestMapping(value = {"list", ""})
@@ -72,7 +182,7 @@ public class ItemEvaluationController extends BaseController {
 	@RequiresPermissions("mod:itemEvaluation:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(ItemEvaluation itemEvaluation,String treeId, HttpServletRequest request, HttpServletResponse response, Model model) {
-		List<ItemEvaluation> list = Lists.newArrayList();
+//		List<ItemEvaluation> list = Lists.newArrayList();
 		//检查顶级dimension节点是否存在，如果不存在则创建
 		ItemCategory category = itemCategoryService.get(treeId);
 		ItemEvaluation root = itemEvaluationService.get("1");
@@ -120,12 +230,138 @@ public class ItemEvaluationController extends BaseController {
 			String[] types4 = {"demands","occasions","style"};
 			createDefaultNodes(root,10,"偏好","风格偏好及满足度",400,nodes4,descs4,scripts4,types4,category);
 		}
-		List<ItemEvaluation> sourcelist = itemEvaluationService.findTree(category);
-		ItemEvaluation.sortList(list, sourcelist, "1",true);
+//		List<ItemEvaluation> sourcelist = itemEvaluationService.findTree(category);
+//		ItemEvaluation.sortList(list, sourcelist, "1",true);
+		
+		List<JSONObject> list = findEvaluationAndDimension(category);
+		
 		model.addAttribute("list", list);
 		model.addAttribute("treeId", treeId);
 		return "modules/mod/itemEvaluationList";
 	}
+	
+
+	/**
+	 * 装载主观评价维度及关联的客观评价维度
+	 * @param category
+	 * @return
+	 */
+	private List<JSONObject> findEvaluationAndDimension(ItemCategory category){
+		List<JSONObject> nodes = Lists.newArrayList();
+		//先查出root evaluation
+		ItemEvaluation rootEvaluation = itemEvaluationService.get(category.getId());
+		if(rootEvaluation == null) {//如果根据cagtegory ID查询不存在，则查询该类目下ID为1的记录
+			logger.debug("no root dimension found by category id.[category id]"+category.getId());
+			ItemEvaluation parent = new ItemEvaluation();
+			parent.setId("1");
+			ItemEvaluation q = new ItemEvaluation();
+			q.setCategory(category);
+			q.setParent(parent);
+			List<ItemEvaluation> roots = itemEvaluationService.findList(q);
+			if(roots== null || roots.size()==0) {
+				logger.debug("no root evaluation found by category and root=1.[category]"+category.getId());
+				return nodes;
+			}else {
+				logger.debug("got root evaluation by category and id=1.[category]"+category.getId());
+				rootEvaluation = roots.get(0);
+			}
+		}
+		//添加本级节点
+		JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(rootDimension);
+		node.put("type", "dimension");
+		node.put("id", rootEvaluation.getId());
+		node.put("parent", rootEvaluation.getParent());
+		node.put("category", category);
+		node.put("name", rootEvaluation.getName());
+		node.put("weight", rootEvaluation.getWeight());
+		node.put("description", rootEvaluation.getDescription());
+		node.put("propKey", rootEvaluation.getPropKey());
+		node.put("featured", rootEvaluation.isFeatured());
+		node.put("script", rootEvaluation.getScript());
+		nodes.add(node);
+		//递归遍历子节点
+		loadEvaluationAndDimensionCascade(category,rootEvaluation,nodes);
+		return nodes;
+	}
+	
+	//递归获取所有下级节点与关联属性
+	private void loadEvaluationAndDimensionCascade(ItemCategory category,ItemEvaluation evaluation, List<JSONObject> nodes) {
+		//查询所有下级节点
+		ItemEvaluation q = new ItemEvaluation();
+		q.setParent(evaluation);
+		List<ItemEvaluation> evaluations = itemEvaluationService.findList(q);
+		for(ItemEvaluation item:evaluations) {
+			//添加本级节点
+			JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(item);
+			node.put("type", "evaluation");
+			node.put("id", item.getId());
+			node.put("parent", item.getParent());
+			node.put("category", category);
+			node.put("name", item.getName());
+			node.put("weight", item.getWeight());
+			node.put("description", item.getDescription());
+			node.put("propKey", item.getPropKey());
+			node.put("featured", item.isFeatured());
+			node.put("script", item.getScript());
+			nodes.add(node);
+			loadEvaluationAndDimensionCascade(category,item,nodes);//递归遍历
+		}
+		
+		//查询所有关联的客观评价
+		ItemEvaluationDimension evaluationDimension = new ItemEvaluationDimension();
+		evaluationDimension.setEvaluation(evaluation);
+		List<ItemEvaluationDimension> evaluationDimensions = itemEvaluationDimensionService.findList(evaluationDimension);
+		for(ItemEvaluationDimension item:evaluationDimensions) {
+			ItemDimension dimension = itemDimensionService.get(item.getDimension().getId());
+			//添加客观评价
+			JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(item);
+			node.put("type", "dimension");
+			node.put("id", item.getId());
+			node.put("parent", evaluation);//将当前evaluation节点作为parent设置
+			node.put("category", category);
+			if(dimension==null) {
+				node.put("name", "-"+item.getName());//表示dimension在建立后被删除
+			}else {
+				node.put("name", "△"+dimension.getName());
+			}
+			node.put("weight", item.getWeight());
+			node.put("featured", false);
+			node.put("description", item.getDescription());
+			node.put("propKey", dimension==null?"":dimension.getPropKey());
+			nodes.add(node);
+		}
+		
+		//查询所有关联属性
+		/**
+		//TODO：当前主观评价未考虑对属性直接进行。待定。
+		ItemDimensionMeasure dimensionMeasure = new ItemDimensionMeasure();
+		dimensionMeasure.setDimension(dimension);
+		List<ItemDimensionMeasure> dimensionMeasures = itemDimensionMeasureService.findList(dimensionMeasure);
+		for(ItemDimensionMeasure item:dimensionMeasures) {
+			//需要判定measure是否是继承得到
+			Measure measure = measureService.get(item.getMeasure());
+			//添加属性
+			JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(item);
+			node.put("type", "measure");
+			node.put("id", item.getId());
+			node.put("parent", dimension);//将dimension作为parent设置
+			node.put("category", category);
+			logger.debug("[measure.category.id]"+measure.getCategory().getId()+"[dimension.category.id]"+category.getId());
+			if(measure==null) {
+				node.put("name", "-"+item.getName());//表示measure在建立后被删除
+			}else if(measure.getCategory().getId().equalsIgnoreCase(category.getId())) {//是继承属性
+				node.put("name", "๏"+measure.getName());
+			}else {
+				node.put("name", "○"+measure.getName());
+			}
+			node.put("weight", item.getWeight());
+			node.put("description", item.getDescription());
+			node.put("propKey", measure.getProperty());
+			nodes.add(node);
+		}
+		//**/
+	}
+
 	
 	private void createDefaultNodes(ItemEvaluation root,double weight,String parent,String parentDesc,int parentSort,String[] nodes,String[] nodeDesc,String[] nodeScript,String[] types, ItemCategory category) {
 		//创建父节点
@@ -166,6 +402,10 @@ public class ItemEvaluationController extends BaseController {
 			evalNode.setDescription(nodeDesc[k]);
 			evalNode.setCategory(category);
 			evalNode.setWeight(100/nodes.length);
+			//避免100/3的情况，对最后一个节点进行修正
+			if(k==nodes.length-1) {
+				evalNode.setWeight(100-100/nodes.length*(nodes.length-1));
+			}
 			evalNode.setFeatured(true);
 			evalNode.setType(types[k]);
 			evalNode.setScript(nodeScript[k]);

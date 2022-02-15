@@ -43,7 +43,7 @@
                     };
                     $.ajax({
                         type: "POST",
-                        url: "${ctx}/mod/itemEvalution/rest/weight",
+                        url: "${ctx}/mod/itemEvaluation/rest/weight",
                         data: data,        
 			            success:function(result){
 			            	if(sxdebug)console.log("update weight done.",result);   
@@ -92,7 +92,11 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/mod/itemEvaluation/list?treeId=${treeId}">主观评价列表</a></li>
-		<shiro:hasPermission name="mod:itemEvaluation:edit"><li><a href="${ctx}/mod/itemEvaluation/form?category.id=${treeId}">主观评价添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="mod:itemEvaluation:edit"><li><a href="${ctx}/mod/itemEvaluation/form?category.id=${treeId}">添加主观评价</a></li></shiro:hasPermission>
+		<!-- 不提供添加客观评价按钮，只能从指定节点后开始操作 -->
+		<!--
+		<shiro:hasPermission name="mod:itemEvaluationDimension:edit"><li><a href="${ctx}/mod/itemEvaluationDimension/form?category.id=${treeId}&evaluation.id=${row.id}">添加客观评价</a></li></shiro:hasPermission>
+		-->
 	</ul>
 	<sys:message content="${message}"/>
 	<form id="listForm" method="post">
@@ -129,7 +133,7 @@
 					${row.script}
 				</td>				
 				<td>
-					<input type="text" value="${row.weight}" id="${row.type ne 'dimension'?'prop-':'dim-'}${row.id}" data-section="sec-${row.parent.id}" data-entry="sec-${row.parent.id}-${row.id}" style="width:60px;margin:0 auto;padding:0;height:20px;font-size:12px;"/>
+					<input type="text" value="${row.weight}" id="${row.type ne 'evaluation'?'dim-':'eval-'}${row.id}" data-section="sec-${row.parent.id}" data-entry="sec-${row.parent.id}-${row.id}" style="width:60px;margin:0 auto;padding:0;height:20px;font-size:12px;"/>
 				</td>
 				<td>
 					${row.description}
@@ -144,9 +148,12 @@
 				</td-->
 				<td>
 					<shiro:hasPermission name="mod:itemEvaluation:edit">
-						<a href="${ctx}/mod/itemEvaluation/form?id=${row.id}">修改</a>
-						<a href="${ctx}/mod/itemEvaluation/delete?id=${row.id}" onclick="return confirmx('确认要删除该主观评价及所有子主观评价吗？', this.href)">删除</a>
-						<a href="${ctx}/mod/itemEvaluation/form?parent.id=${row.id}&category.id=${row.category.id}">添加下级主观评价</a>
+						<a href="${ctx}/mod/${row.type ne 'evaluation'?'itemEvaluationDimension':'itemEvaluation'}/form?id=${row.id}">修改</a>
+						<a href="${ctx}/mod/${row.type ne 'evaluation'?'itemEvaluationDimension':'itemEvaluation'}/delete?id=${row.id}" onclick="return confirmx('确认要删除吗？', this.href)">删除</a>
+						<c:if test="${row.type eq 'evaluation'}">
+							<a href="${ctx}/mod/itemEvaluation/form?parent.id=${row.id}&category.id=${row.category.id}">添加下级</a>
+							<a href="${ctx}/mod/itemEvaluationDimension/form?evaluation.id=${row.id}&category.id=${row.category.id}">添加客观节点</a>
+						</c:if>
 					</shiro:hasPermission>							
 				</td>			
 			</tr>

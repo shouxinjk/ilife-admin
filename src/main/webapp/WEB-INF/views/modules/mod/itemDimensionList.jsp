@@ -135,8 +135,10 @@
 					<shiro:hasPermission name="mod:itemDimension:edit">
 						<a href="${ctx}/mod/${row.type ne 'dimension'?'itemDimensionMeasure':'itemDimension'}/form?id=${row.id}">修改</a>
 						<a href="${ctx}/mod/${row.type ne 'dimension'?'itemDimensionMeasure':'itemDimension'}/delete?id=${row.id}" onclick="return confirmx('确认要删除吗？', this.href)">删除</a>
-						<a href="${ctx}/mod/itemDimension/form?parent.id=${row.id}&category.id=${row.category.id}">添加节点</a>
-						<a href="${ctx}/mod/itemDimensionMeasure/form?dimension.id=${row.id}&category.id=${row.category.id}">添加属性</a>
+						<c:if test="${row.type eq 'dimension'}">
+							<a href="${ctx}/mod/itemDimension/form?parent.id=${row.id}&category.id=${row.category.id}">添加节点</a>
+							<a href="${ctx}/mod/itemDimensionMeasure/form?dimension.id=${row.id}&category.id=${row.category.id}">添加属性</a>
+						</c:if>
 					</shiro:hasPermission>							
 				</td>			
 			</tr>

@@ -90,7 +90,9 @@ public class ItemEvaluationDimensionController extends BaseController {
 		}
 		itemEvaluationDimensionService.save(itemEvaluationDimension);
 		addMessage(redirectAttributes, "保存主观评价-维度成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/itemEvaluationDimension/?evaluation.id="+itemEvaluationDimension.getEvaluation().getId()+"&category.id="+itemEvaluationDimension.getCategory().getId()+"&repage";
+		//return "redirect:"+Global.getAdminPath()+"/mod/itemEvaluationDimension/?evaluation.id="+itemEvaluationDimension.getEvaluation().getId()+"&category.id="+itemEvaluationDimension.getCategory().getId()+"&repage";
+		//返回维度列表界面
+		return "redirect:"+Global.getAdminPath()+"/mod/itemEvaluation/?treeId="+itemEvaluationDimension.getCategory().getId()+"&repage";
 	}
 	
 	@RequiresPermissions("mod:itemEvaluationDimension:edit")
@@ -98,7 +100,9 @@ public class ItemEvaluationDimensionController extends BaseController {
 	public String delete(ItemEvaluationDimension itemEvaluationDimension, RedirectAttributes redirectAttributes) {
 		itemEvaluationDimensionService.delete(itemEvaluationDimension);
 		addMessage(redirectAttributes, "删除主观评价-维度成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/itemEvaluationDimension/?evaluation.id="+itemEvaluationDimension.getEvaluation().getId()+"&category.id="+itemEvaluationDimension.getCategory().getId()+"&repage";	
+		//return "redirect:"+Global.getAdminPath()+"/mod/itemEvaluationDimension/?evaluation.id="+itemEvaluationDimension.getEvaluation().getId()+"&category.id="+itemEvaluationDimension.getCategory().getId()+"&repage";
+		//返回维度列表界面
+		return "redirect:"+Global.getAdminPath()+"/mod/itemEvaluation/?treeId="+itemEvaluationDimension.getCategory().getId()+"&repage";
 	}
 
 }
