@@ -69,6 +69,43 @@ public class ItemEvaluationController extends BaseController {
 		return entity;
 	}
 	
+	/**
+	 * 根据categoryId获取可标记的特征维度定义。返回abcdexyz8个节点供标注
+	 * 参数：
+	 * categoryId：类目ID
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/markable-featured-evaluation", method = RequestMethod.GET)
+	public List<ItemEvaluation> listFeaturedDimensionByCategoryId(String categoryId) {
+		ItemCategory category = itemCategoryService.get(categoryId);
+		ItemEvaluation q = new ItemEvaluation(); 
+		q.setCategory(category);
+		q.setFeatured(true);//仅返回featured节点
+		List<ItemEvaluation> result = itemEvaluationService.findList(q);
+		List<ItemEvaluation> list = Lists.newArrayList();
+		for(ItemEvaluation item:result) {
+			if(",a,b,c,d,e,x,y,z".indexOf(item.getType())>0) {
+				list.add(item);
+			}
+		}
+		return list;
+	}
+	
+	/**
+	 * 根据categoryId获取所有特征维度定义。返回维度列表
+	 * 参数：
+	 * categoryId：类目ID
+	 *
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/featured-evaluation", method = RequestMethod.GET)
+	public List<ItemEvaluation> listFeaturedEvaluationByCategoryId(String categoryId) {
+		ItemCategory category = itemCategoryService.get(categoryId);
+		ItemEvaluation q = new ItemEvaluation(); 
+		q.setCategory(category);
+		q.setFeatured(true);//仅返回featured节点
+		return itemEvaluationService.findList(q);
+	}
 
 	@ResponseBody
 	@RequestMapping(value = "rest/weight", method = RequestMethod.POST)
@@ -415,20 +452,85 @@ public class ItemEvaluationController extends BaseController {
 		}
 	}
 	
-	/**
-	 * 根据categoryId获取所有特征维度定义。返回维度列表
-	 * 参数：
-	 * categoryId：类目ID
-	 *
-	 */
+	//根据category获取相应的主观评价树。
+	//自动根据category及parentId=1查询得到根节点
 	@ResponseBody
-	@RequestMapping(value = "rest/featured-evaluation", method = RequestMethod.GET)
-	public List<ItemEvaluation> listFeaturedEvaluationByCategoryId(String categoryId) {
+	@RequestMapping(value = "rest/dim-tree-by-category", method = RequestMethod.GET)
+	public List<Map<String, Object>> listDimensionTreeForSunburstChartByCategory(String categoryId) {
 		ItemCategory category = itemCategoryService.get(categoryId);
+		ItemEvaluation root = new ItemEvaluation(); 
+		root.setId("1");//指定该目录下ID为1的记录为根节点
 		ItemEvaluation q = new ItemEvaluation(); 
 		q.setCategory(category);
-		q.setFeatured(true);//仅返回featured节点
-		return itemEvaluationService.findList(q);
+		q.setParent(root);
+		
+		List<ItemEvaluation> nodes = itemEvaluationService.findList(q);
+		if(nodes !=null && nodes.size()>0)
+			return listDimensionTreeForSunburstChart(categoryId,nodes.get(0).getId());
+		else {//否则尝试查询root.id=categoryId的记录
+			return listDimensionTreeForSunburstChart(categoryId,categoryId);
+		}
+	}
+
+	/**
+	 * 获取指定节点下的维度树。用于主观评价图形化显示。sunburst。
+	 * 输入为父维度ID（顶级维度与所属类目ID相同），输出为所有子维度name及weight。嵌套输出。
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/dim-tree", method = RequestMethod.GET)
+	public List<Map<String, Object>> listDimensionTreeForSunburstChart(String categoryId,String parentId) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		ItemEvaluation parentDimension = itemEvaluationService.get(parentId);//以当前维度为父节点查询
+		ItemCategory category = itemCategoryService.get(categoryId);
+		ItemEvaluation q = new ItemEvaluation(); 
+		q.setParent(parentDimension);
+		q.setCategory(category);
+		for(ItemEvaluation node:itemEvaluationService.findList(q)) {//组装dimension节点列表
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("name", node.getName());
+			map.put("weight", node.getWeight());
+			map.put("children",listDimensionTreeForSunburstChart(node.getCategory().getId(),node.getId()));//迭代获取所有下级维度
+			mapList.add(map);
+		}
+		//获取关联的客观评价节点
+		ItemEvaluationDimension evaluationDimension = new ItemEvaluationDimension();
+		evaluationDimension.setEvaluation(parentDimension);
+		List<ItemEvaluationDimension> evaluationDimensions = itemEvaluationDimensionService.findList(evaluationDimension);
+		for(ItemEvaluationDimension item:evaluationDimensions) {
+			//需要判定dimension是否存在
+			ItemDimension dimension = itemDimensionService.get(item.getDimension());
+			//添加属性
+			Map<String, Object> node = Maps.newHashMap();
+			if(dimension==null) {
+				node.put("name", "-"+item.getName());//表示measure在建立后被删除
+			}else {
+				node.put("name", "△"+dimension.getName());
+			}
+			node.put("weight", item.getWeight());
+			mapList.add(node);
+		}
+		/**
+		//获取关联的属性节点
+		ItemDimensionMeasure dimensionMeasure = new ItemDimensionMeasure();
+		dimensionMeasure.setDimension(parentDimension);
+		List<ItemDimensionMeasure> dimensionMeasures = itemDimensionMeasureService.findList(dimensionMeasure);
+		for(ItemDimensionMeasure item:dimensionMeasures) {
+			//需要判定measure是否是继承得到
+			Measure measure = measureService.get(item.getMeasure());
+			//添加属性
+			Map<String, Object> node = Maps.newHashMap();
+			if(measure==null) {
+				node.put("name", "-"+item.getName());//表示measure在建立后被删除
+			}else if(measure.getCategory().getId().equalsIgnoreCase(category.getId())) {//是继承属性
+				node.put("name", "๏"+measure.getName());
+			}else {
+				node.put("name", "○"+measure.getName());
+			}
+			node.put("weight", item.getWeight());
+			mapList.add(node);
+		}
+		//**/
+		return mapList;
 	}
 	
 	@RequiresPermissions("mod:itemEvaluation:view")
