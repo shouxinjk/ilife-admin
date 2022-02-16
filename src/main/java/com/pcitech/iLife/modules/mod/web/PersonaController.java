@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -27,6 +28,7 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.Persona;
@@ -66,6 +68,15 @@ public class PersonaController extends BaseController {
 	@Autowired
 	private PersonaNeedService personaNeedService;
 	
+	@ResponseBody
+	@RequestMapping(value = "rest/persona/{personaId}", method = RequestMethod.GET)
+	public Persona getPersonaById(@PathVariable String personaId) {
+		Persona persona = personaService.get(personaId);
+		if(persona == null) {//如果不存在则返回默认persona：当前直接返回空白
+			persona = new Persona();
+		}
+		return persona;
+	}
 	//获取阶段及画像。传入的ID有两种：阶段或画像，使用前缀区分。phase-或persona-
 	@ResponseBody
 	@RequestMapping(value = "rest/tree")
