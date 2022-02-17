@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.PersonNeedDao">
+    
+	<sql id="personNeedColumns">
+		a.id AS "id",
+		a.description AS "description",
+		a.weight AS "weight",
+		a.person_id AS "person.id",
+		p.nickname AS "person.nickname",
+		a.need_id AS "need.id",
+		m.name AS "need.name",
+		a.expression AS "expression",
+		a.sort AS "sort",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="personNeedJoins">
+		LEFT JOIN sys_user cc ON cc.id = a.create_by
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN ope_person p ON p.id = a.person_id
+		LEFT JOIN mod_motivation m ON m.id = a.need_id	
+	</sql>
+    
+	<select id="get" resultType="PersonNeed">
+		SELECT 
+			<include refid="personNeedColumns"/>
+		FROM int_person_need a
+		<include refid="personNeedJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PersonNeed">
+		SELECT 
+			<include refid="personNeedColumns"/>
+		FROM int_person_need a
+		<include refid="personNeedJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="person.id != null and person.id != ''">
+				AND a.person_id = #{person.id}
+			</if>
+			<if test="need.id != null and need.id != ''">
+				AND a.need_id = #{need.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PersonNeed">
+		SELECT 
+			<include refid="personNeedColumns"/>
+		FROM int_person_need a
+		<include refid="personNeedJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO int_person_need(
+			id,
+			description,
+			weight,
+			person_id,
+			need_id,
+			expression,
+			sort,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{description},
+			#{weight},
+			#{person.id},
+			#{need.id},
+			#{expression},
+			#{sort},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE int_person_need SET 	
+			description = #{description},
+			weight = #{weight},
+			person_id = #{person.id},
+			need_id = #{need.id},
+			expression = #{expression},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE int_person_need SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

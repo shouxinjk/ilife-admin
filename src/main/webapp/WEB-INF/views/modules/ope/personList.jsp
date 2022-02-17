@@ -71,10 +71,18 @@
 				<td>
 					<fmt:formatDate value="${person.lastAccess}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<shiro:hasPermission name="ope:person:edit"><td>
+				<td>
+				<shiro:hasPermission name="ope:person:edit">
     				<a href="${ctx}/ope/person/form?id=${person.id}">修改</a>
 					<a href="${ctx}/ope/person/delete?id=${person.id}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
+				</shiro:hasPermission>
+				<shiro:hasPermission name="mod:personNeed:view">
+					<a href="${ctx}/mod/personNeed/?person.id=${person.id}">需要构成</a>
+				</shiro:hasPermission>	
+				<shiro:hasPermission name="mod:personNeed:edit">
+					<a href="${ctx}/mod/personNeed/form?person.id=${person.id}">需要添加</a>
+				</shiro:hasPermission>												
+				</td>
 			</tr>
 		</c:forEach>
 		</tbody>
