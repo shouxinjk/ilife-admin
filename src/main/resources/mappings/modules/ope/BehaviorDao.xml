@@ -48,11 +48,14 @@
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
 			<if test="type != null and type != ''">
-				AND a.type LIKE 
-					<if test="dbName == 'oracle'">'%'||#{type}||'%'</if>
-					<if test="dbName == 'mssql'">'%'+#{type}+'%'</if>
-					<if test="dbName == 'mysql'">concat('%',#{type},'%')</if>
+				AND a.type = #{type}
 			</if>
+			<if test="category != null and category != ''">
+				AND a.category = #{category}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>						
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
