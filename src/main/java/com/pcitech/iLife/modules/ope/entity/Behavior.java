@@ -16,11 +16,15 @@ public class Behavior extends DataEntity<Behavior> {
 	
 	private static final long serialVersionUID = 1L;
 	private String name;		// 显示名称
+	private String code;		// code
 	private String exprPerson;		// 用户更新Expr
 	private String exprItem;		// 商品更新Expr
 	private String description;		// 说明
-	private String exprCredit;		// 用户可信度Expr
-	private String type;		// 名称
+	private String exprUserNeed;		// 用户需要更新Expr
+	private String exprItemNeed;		// 商品需要更新Expr
+	private String status;		// 启用禁用
+	private String type;		// 类型：具体操作枚举：click、view、buy、label等。来源于behavior_type
+	private String category;		// 分类：行为对象类型：item、tag、channel等。来源于behavior_category
 	
 	public Behavior() {
 		super();
@@ -39,7 +43,14 @@ public class Behavior extends DataEntity<Behavior> {
 		this.name = name;
 	}
 	
-	@Length(min=0, max=500, message="用户更新Expr长度必须介于 0 和 500 之间")
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	public String getExprPerson() {
 		return exprPerson;
 	}
@@ -48,7 +59,6 @@ public class Behavior extends DataEntity<Behavior> {
 		this.exprPerson = exprPerson;
 	}
 	
-	@Length(min=0, max=500, message="商品更新Expr长度必须介于 0 和 500 之间")
 	public String getExprItem() {
 		return exprItem;
 	}
@@ -66,14 +76,7 @@ public class Behavior extends DataEntity<Behavior> {
 		this.description = description;
 	}
 	
-	@Length(min=0, max=500, message="用户可信度Expr长度必须介于 0 和 500 之间")
-	public String getExprCredit() {
-		return exprCredit;
-	}
 
-	public void setExprCredit(String exprCredit) {
-		this.exprCredit = exprCredit;
-	}
 	
 	@Length(min=0, max=100, message="名称长度必须介于 0 和 100 之间")
 	public String getType() {
@@ -82,6 +85,38 @@ public class Behavior extends DataEntity<Behavior> {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getExprUserNeed() {
+		return exprUserNeed;
+	}
+
+	public void setExprUserNeed(String exprUserNeed) {
+		this.exprUserNeed = exprUserNeed;
+	}
+
+	public String getExprItemNeed() {
+		return exprItemNeed;
+	}
+
+	public void setExprItemNeed(String exprItemNeed) {
+		this.exprItemNeed = exprItemNeed;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 }

@@ -36,12 +36,16 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>用户更新Expr</th>
-				<th>商品更新Expr</th>
+				<th>目标</th>
+				<th>类型</th>			
+				<th>备注名</th>
+				<!--th>CODE</th-->
+				<th>状态</th>
+				<th>用户属性Expr</th>
+				<th>商品属性Expr</th>
+				<th>用户需要Expr</th>
+				<th>商品需要Expr</th>
 				<th>说明</th>
-				<th>用户可信度Expr</th>
-				<th>名称</th>
-				<th>更新者</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="ope:behavior:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -49,23 +53,29 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="behavior">
 			<tr>
-				<td><a href="${ctx}/ope/behavior/form?id=${behavior.id}">
+				<td>${fns:getDictLabel(behavior.category, 'behavior_category', behavior.category)}</td>
+				<td>${fns:getDictLabel(behavior.type, 'behavior_type', behavior.type)}</td>			
+				<td>
+					${behavior.name}
+				</td>	
+				<!--td>
+					${behavior.code}
+				</td-->	
+				<td>${fns:getDictLabel(behavior.status, 'active_inactive', behavior.status)}</td>													
+				<td>
 					${behavior.exprPerson}
-				</a></td>
+				</td>
 				<td>
 					${behavior.exprItem}
 				</td>
 				<td>
+					${behavior.exprUserNeed}
+				</td>	
+				<td>
+					${behavior.exprItemNeed}
+				</td>							
+				<td>
 					${behavior.description}
-				</td>
-				<td>
-					${behavior.exprCredit}
-				</td>
-				<td>
-					${behavior.type}
-				</td>
-				<td>
-					${behavior.updateBy.name}
 				</td>
 				<td>
 					<fmt:formatDate value="${behavior.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

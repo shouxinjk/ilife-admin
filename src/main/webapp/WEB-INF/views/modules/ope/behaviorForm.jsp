@@ -32,41 +32,66 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="behavior" action="${ctx}/ope/behavior/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>	
 		<div class="control-group">
-			<label class="control-label">显示名称：</label>
+			<label class="control-label">目标：</label>
+			<div class="controls">
+				<form:select path="category" items="${fns:getDictList('behavior_category')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</div>
+		</div>			
+		<div class="control-group">
+			<label class="control-label">类型：</label>
+			<div class="controls">
+				<form:select path="type" items="${fns:getDictList('behavior_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</div>
+		</div>	
+		<div class="control-group">
+			<label class="control-label">状态：</label>
+			<div class="controls">
+				<form:select path="status" items="${fns:getDictList('active_inactive')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</div>
+		</div>				
+		<div class="control-group">
+			<label class="control-label">备注名：</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 			</div>
-		</div>
+		</div>	
+		<!--div class="control-group">
+			<label class="control-label">CODE：</label>
+			<div class="controls">
+				<form:input path="code" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+			</div>
+		</div-->			
+					
 		<div class="control-group">
 			<label class="control-label">用户更新Expr：</label>
 			<div class="controls">
-				<form:input path="exprPerson" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:textarea path="exprPerson" htmlEscape="false" rows="5" maxlength="500" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">商品更新Expr：</label>
 			<div class="controls">
-				<form:input path="exprItem" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:textarea path="exprItem" htmlEscape="false" rows="5" maxlength="500" class="input-xlarge "/>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">用户需要更新Expr：</label>
+			<div class="controls">
+				<form:textarea path="exprUserNeed" htmlEscape="false" rows="5" maxlength="500" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">商品需要更新Expr：</label>
+			<div class="controls">
+				<form:textarea path="exprItemNeed" htmlEscape="false" rows="5" maxlength="500" class="input-xlarge "/>
+			</div>
+		</div>		
 		<div class="control-group">
 			<label class="control-label">说明：</label>
 			<div class="controls">
-				<form:input path="description" htmlEscape="false" maxlength="1000" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">用户可信度Expr：</label>
-			<div class="controls">
-				<form:input path="exprCredit" htmlEscape="false" maxlength="500" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">名称：</label>
-			<div class="controls">
-				<form:input path="type" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+				<form:textarea path="description" htmlEscape="false" rows="5" maxlength="1000" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="form-actions">
