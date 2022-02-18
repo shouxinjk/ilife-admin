@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -30,9 +31,14 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.CategoryNeed;
+import com.pcitech.iLife.modules.mod.entity.Channel;
+import com.pcitech.iLife.modules.mod.entity.ChannelNeed;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
+import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.Phase;
+import com.pcitech.iLife.modules.mod.service.CategoryNeedService;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
@@ -52,6 +58,8 @@ public class ItemCategoryController extends BaseController {
 
 	@Autowired
 	private ItemCategoryService itemCategoryService;
+	@Autowired
+	private CategoryNeedService categoryNeedService;
 	@Autowired
 	private MotivationService motivationService;
 	@Autowired
@@ -538,5 +546,15 @@ public class ItemCategoryController extends BaseController {
 		return entity;
 	}
 	
+	//查询类目下的需要构成列表
+	@ResponseBody
+	@RequestMapping(value = "rest/needs/{categoryId}", method = RequestMethod.GET)
+	public List<CategoryNeed> getNeedsByCategoryId(@PathVariable String categoryId) {
+		ItemCategory itemCategory = new ItemCategory();
+		itemCategory.setId(categoryId);
+		CategoryNeed categoryNeed = new CategoryNeed();
+		categoryNeed.setCategory(itemCategory);
+		return categoryNeedService.findList(categoryNeed);
+	}
 }
 
