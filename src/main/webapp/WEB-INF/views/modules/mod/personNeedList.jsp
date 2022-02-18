@@ -56,7 +56,7 @@
 					${personNeed.person.nickname}
 				</td>
 				<td>
-					${personNeed.need.name}
+					${fns:getDictLabel(personNeed.need.type, 'need_type', personNeed.need.type)} ${personNeed.need.name} (${personNeed.need.displayName})
 				</td>
 				<td>
 					${personNeed.weight}

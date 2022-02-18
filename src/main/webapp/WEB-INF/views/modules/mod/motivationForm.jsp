@@ -44,7 +44,13 @@
 			<div class="controls">
 				<form:input path="displayName" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 			</div>
-		</div>		
+		</div>	
+		<div class="control-group">
+			<label class="control-label">类型：</label>
+			<div class="controls">
+				<form:select path="type" items="${fns:getDictList('need_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</div>
+		</div>			
 		<div class="control-group">
 			<label class="control-label">分类：</label>
 			<div class="controls">

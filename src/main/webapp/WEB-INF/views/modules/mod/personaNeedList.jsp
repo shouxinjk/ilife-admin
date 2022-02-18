@@ -84,7 +84,7 @@
 					${personaNeed.needCategory}
 				</td>				
 				<td>
-					${personaNeed.need.name}
+					${fns:getDictLabel(personaNeed.need.type, 'need_type', personaNeed.need.type)} ${personaNeed.need.name} (${personaNeed.need.displayName})
 				</td>
 				<td>
 					<div class="rating" id="rate-${personaNeed.id}" data-id="${personaNeed.id}" data-weight="${personaNeed.weight}"></div>

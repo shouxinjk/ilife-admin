@@ -10,6 +10,8 @@
 		p.name AS "persona.name",
 		a.need_id AS "need.id",
 		m.name AS "need.name",
+		m.displayName AS "need.displayName",
+		m.type AS "need.type",
 		a.phase_id AS "phase.id",
 		pha.name AS "phase.name",		
 		a.expression AS "expression",

@@ -11,6 +11,8 @@
 		c.code AS "channel.code",
 		a.need_id AS "need.id",
 		m.name AS "need.name",
+		m.displayName AS "need.displayName",
+		m.type AS "need.type",
 		a.expression AS "expression",
 		a.sort AS "sort",
 		a.create_by AS "createBy.id",

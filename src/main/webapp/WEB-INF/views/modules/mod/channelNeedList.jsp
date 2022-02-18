@@ -57,7 +57,7 @@
 					${channelNeed.channel.name}
 				</td>
 				<td>
-					${channelNeed.need.name}
+					${fns:getDictLabel(channelNeed.need.type, 'need_type', channelNeed.need.type)} ${channelNeed.need.name} (${channelNeed.need.displayName})
 				</td>
 				<td>
 					${channelNeed.weight}

@@ -17,6 +17,7 @@ public class Motivation extends DataEntity<Motivation> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// name
 	private String displayName;		// 对外显示名称。用于展示给用户
+	private String type;		// 需要类型：abcde之一。从need_type字典加载
 	private MotivationCategory motivationCategory;		// category_id
 	private Phase phase;		// phase_id
 	private Double percentage;		// percentage
@@ -48,6 +49,14 @@ public class Motivation extends DataEntity<Motivation> {
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public MotivationCategory getMotivationCategory() {

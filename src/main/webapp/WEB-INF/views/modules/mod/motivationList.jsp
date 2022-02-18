@@ -41,6 +41,7 @@
 			<tr>
 				<th>名称</th>
 				<th>别名</th>
+				<th>类型</th>
 				<th>分类</th>
 				<!--th>阶段</th>
 				<th>比重</th-->
@@ -59,7 +60,10 @@
 				</a></td>
 				<td>
 					${motivation.displayName}
-				</td>				
+				</td>		
+				<td>
+					${fns:getDictLabel(motivation.type, 'need_type', motivation.type)}
+				</td>		
 				<td>
 					${motivation.motivationCategory.name}
 				</td>

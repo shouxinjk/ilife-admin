@@ -94,7 +94,7 @@
 					${phaseNeed.needCategory}
 				</td>				
 				<td>
-					${phaseNeed.need.name}
+					${fns:getDictLabel(phaseNeed.need.type, 'need_type', phaseNeed.need.type)} ${phaseNeed.need.name} (${phaseNeed.need.displayName})
 				</td>
 				<td>
 					${phaseNeed.need.displayName}
