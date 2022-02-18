@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,11 @@ import com.pcitech.iLife.modules.mod.dao.OccasionNeedDao;
 @Transactional(readOnly = true)
 public class OccasionNeedService extends CrudService<OccasionNeedDao, OccasionNeed> {
 
+	@Transactional(readOnly = false)
+	public void updateWeight(Map<String,Object> params) {
+		dao.updateWeight(params);
+	}
+	
 	public OccasionNeed get(String id) {
 		return super.get(id);
 	}

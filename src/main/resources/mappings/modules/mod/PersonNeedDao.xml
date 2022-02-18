@@ -27,6 +27,14 @@
 		LEFT JOIN ope_person p ON p.id = a.person_id
 		LEFT JOIN mod_motivation m ON m.id = a.need_id	
 	</sql>
+	
+	<!-- 根据ID更新weight -->
+	<update id="updateWeight">
+		UPDATE int_person_need SET 	
+			weight = #{weight},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
     
 	<select id="get" resultType="PersonNeed">
 		SELECT 

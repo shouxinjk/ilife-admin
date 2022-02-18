@@ -10,6 +10,8 @@
 		o.name AS "occasion.name",
 		a.need_id AS "need.id",
 		m.name AS "need.name",
+		m.displayName AS "need.displayName",
+		m.type AS "need.type",		
 		a.expression AS "expression",
 		a.sort AS "sort",
 		a.create_by AS "createBy.id",
@@ -25,6 +27,14 @@
 		LEFT JOIN mod_occasion o ON o.id = a.occasion_id
 		LEFT JOIN mod_motivation m ON m.id = a.need_id	
 	</sql>
+	
+	<!-- 根据ID更新weight -->
+	<update id="updateWeight">
+		UPDATE int_occasion_need SET 	
+			weight = #{weight},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>	
     
 	<select id="get" resultType="OccasionNeed">
 		SELECT 

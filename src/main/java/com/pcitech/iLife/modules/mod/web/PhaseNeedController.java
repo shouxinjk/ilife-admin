@@ -114,7 +114,7 @@ public class PhaseNeedController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(PhaseNeed phaseNeed,String pid,String pType,  Model model) {
 		//设置当前选中的阶段
-		Phase phase = phaseService.get(pid);
+		Phase phase = phaseService.get(phaseNeed.getPhase());
 		phaseNeed.setPhase(phase);
 		
 		model.addAttribute("phaseNeed", phaseNeed);

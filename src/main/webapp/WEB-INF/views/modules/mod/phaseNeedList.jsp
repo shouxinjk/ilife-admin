@@ -10,7 +10,7 @@
 			//遍历所有rate组件，初始化，并注册打分事件
 			$(".rating").each(function(index){
 				var itemId = $(this).data("id");
-				var itemValue = Number($(this).data("weight"))*0.1;//默认采用1-100存储
+				var itemValue = Number($(this).data("weight"));//默认采用1-10存储
 				console.log("now walk through all pending items.",itemId,itemValue);
 				//初始化
 				$("#rate-"+itemId).starRating({
@@ -24,7 +24,7 @@
 				        console.log("dude, now try update rating.[old]"+itemValue,itemId,currentRating);
 				        $.ajax({
 				            type: "GET",
-				            url: "${ctx}/mod/phaseNeed/rest/weight?id="+itemId+"&weight="+(currentRating*10),
+				            url: "${ctx}/mod/phaseNeed/rest/weight?id="+itemId+"&weight="+(currentRating),
 				            headers:{
 				                "Content-Type":"application/json",
 				                "Accept":"application/json"
@@ -76,7 +76,7 @@
 				<th>阶段</th>
 				<th>类别</th>
 				<th>需要</th>
-				<th>别名</th>
+				<!--th>别名</th-->
 				<th>权重</th>
 				<th>表达式</th>
 				<th>描述</th>			
@@ -96,9 +96,9 @@
 				<td>
 					${fns:getDictLabel(phaseNeed.need.type, 'need_type', phaseNeed.need.type)} ${phaseNeed.need.name} (${phaseNeed.need.displayName})
 				</td>
-				<td>
+				<!--td>
 					${phaseNeed.need.displayName}
-				</td>				
+				</td-->				
 				<td>
 					<div class="rating" id="rate-${phaseNeed.id}" data-id="${phaseNeed.id}" data-weight="${phaseNeed.weight}"></div>
 				</td>

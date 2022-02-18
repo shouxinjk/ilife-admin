@@ -7,6 +7,41 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			
+
+			//遍历所有rate组件，初始化，并注册打分事件
+			$(".rating").each(function(index){
+				var itemId = $(this).data("id");
+				var itemValue = Number($(this).data("weight"));//*10;//默认采用1-10存储
+				console.log("now walk through all pending items.",itemId,itemValue);
+				//初始化
+				$("#rate-"+itemId).starRating({
+					totalStars: 10,
+					starSize:20,
+				    useFullStars:false,
+				    initialRating: itemValue,
+				    ratedColors:['#8b0000', '#dc143c', '#ff4500', '#ff6347', '#1e90ff','#00ffff','#40e0d0','#9acd32','#32cd32','#228b22'],
+				    callback: function(currentRating, $el){
+				        // make a server call here
+				        console.log("dude, now try update rating.[old]"+itemValue,itemId,currentRating);
+				        $.ajax({
+				            type: "GET",
+				            url: "${ctx}/mod/occasionNeed/rest/weight?id="+itemId+"&weight="+(currentRating),
+				            headers:{
+				                "Content-Type":"application/json",
+				                "Accept":"application/json"
+				            },        
+				            success:function(result){
+				                if(result.result=="error"){
+				                   console.log("update weight failed.",result);   
+				                }else{
+				                	console.log("update weight succeed.",result);                   
+				                }
+				            }                
+				        }); 
+				    }
+				});
+			});
+			
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -33,7 +68,6 @@
 				<th>权重</th>
 				<th>表达式</th>
 				<th>描述</th>
-				<th>创建时间</th>
 				<th>最后更新</th>
 				<shiro:hasPermission name="mod:occasionNeed:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -42,18 +76,17 @@
 		<c:forEach items="${page.list}" var="occasionNeed">
 			<tr>
 				<td>
-					${occasionNeed.need.name}
-				</td>
+					${fns:getDictLabel(occasionNeed.need.type, 'need_type', occasionNeed.need.type)} ${occasionNeed.need.name} (${occasionNeed.need.displayName})
+				</td>				
 				<td>
-					${occasionNeed.weight}
-				</td>
+					<div class="rating" id="rate-${occasionNeed.id}" data-id="${occasionNeed.id}" data-weight="${occasionNeed.weight}"></div>
+				</td>				
 				<td>
 					${occasionNeed.expression}
 				</td>
 				<td>
 					${occasionNeed.description}
 				</td>
-				<td><fmt:formatDate value="${occasionNeed.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<td><fmt:formatDate value="${occasionNeed.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<shiro:hasPermission name="mod:occasionNeed:edit"><td>
     				<a href="${ctx}/mod/occasionNeed/form?id=${occasionNeed.id}&pid=${pid}&pType=${pType}">修改</a>

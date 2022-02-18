@@ -3,6 +3,9 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.Date;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,9 +18,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
@@ -127,6 +132,24 @@ public class PersonNeedController extends BaseController {
 		personNeedService.delete(personNeed);
 		addMessage(redirectAttributes, "删除用户需要构成成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/personNeed/?person.id="+personNeed.getPerson().getId()+"&repage";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/weight")
+	//更新需要满足度
+	public Map<String,String> updateWeight( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) double weight, 
+			HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("id", id);
+		params.put("weight", weight);
+		params.put("updateDate", new Date());
+		personNeedService.updateWeight(params);
+		
+		Map<String,String> result = Maps.newHashMap();
+		result.put("result", "weight updated.");
+		return result;
 	}
 
 }

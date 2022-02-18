@@ -10,7 +10,7 @@
 			//遍历所有rate组件，初始化，并注册打分事件
 			$(".rating").each(function(index){
 				var itemId = $(this).data("id");
-				var itemValue = Number($(this).data("weight"))*0.1;//默认采用1-100存储
+				var itemValue = Number($(this).data("weight"));//*10;//默认采用1-10存储
 				console.log("now walk through all pending items.",itemId,itemValue);
 				//初始化
 				$("#rate-"+itemId).starRating({
@@ -24,7 +24,7 @@
 				        console.log("dude, now try update rating.[old]"+itemValue,itemId,currentRating);
 				        $.ajax({
 				            type: "GET",
-				            url: "${ctx}/mod/personaNeed/rest/weight?id="+itemId+"&weight="+(currentRating*10),
+				            url: "${ctx}/mod/personaNeed/rest/weight?id="+itemId+"&weight="+(currentRating),
 				            headers:{
 				                "Content-Type":"application/json",
 				                "Accept":"application/json"

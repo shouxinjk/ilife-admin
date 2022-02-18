@@ -45,13 +45,13 @@
 		<div class="control-group">
 			<label class="control-label">需要：</label>
 			<div class="controls">
-				 <sys:treeselect id="need" name="need.id" value="${channelNeed.need.id}" labelName="need.name" labelValue="${channelNeed.need.name}"
+				 <sys:treeselect id="need" name="need.id" value="${channelNeed.need.id}" labelName="need.name" labelValue="${personNeed.need.name}"
 					title="需要列表" url="/mod/motivation/treeData"  notAllowSelectRoot="true" cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>			
 		</div>			
 		<div class="control-group">
-			<label class="control-label">强度：</label>
+			<label class="control-label">强度(1-10)：</label>
 			<div class="controls">
 				<form:input path="weight" htmlEscape="false" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>

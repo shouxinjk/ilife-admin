@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.Map;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.PersonNeed;
@@ -14,5 +16,6 @@ import com.pcitech.iLife.modules.mod.entity.PersonNeed;
  */
 @MyBatisDao
 public interface PersonNeedDao extends CrudDao<PersonNeed> {
-	
+	//更新weight
+	public void updateWeight(Map<String,Object> params);
 }
