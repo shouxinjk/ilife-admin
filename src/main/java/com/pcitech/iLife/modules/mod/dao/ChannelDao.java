@@ -3,8 +3,12 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
+import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.Channel;
 
 /**
@@ -14,5 +18,6 @@ import com.pcitech.iLife.modules.mod.entity.Channel;
  */
 @MyBatisDao
 public interface ChannelDao extends CrudDao<Channel> {
-	
+	//根据status查询，按照sort降序排列
+	public List<Channel> findListByStatus(Channel channel);
 }

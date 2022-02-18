@@ -48,6 +48,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">状态：</label>
+			<div class="controls">
+				<form:select path="status" items="${fns:getDictList('active_inactive')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">
 				<form:textarea path="description" htmlEscape="false" rows="4" maxlength="255" class="input-xxlarge "/>

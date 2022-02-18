@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -27,6 +29,9 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.Channel;
+import com.pcitech.iLife.modules.mod.entity.ChannelNeed;
+import com.pcitech.iLife.modules.mod.entity.Motivation;
+import com.pcitech.iLife.modules.mod.service.ChannelNeedService;
 import com.pcitech.iLife.modules.mod.service.ChannelService;
 
 /**
@@ -40,6 +45,8 @@ public class ChannelController extends BaseController {
 
 	@Autowired
 	private ChannelService channelService;
+	@Autowired
+	private ChannelNeedService channelNeedService;
 	
 	@ModelAttribute
 	public Channel get(@RequestParam(required=false) String id) {
@@ -104,6 +111,27 @@ public class ChannelController extends BaseController {
 			
 		}
 		return mapList;
+	}
+	
+	//查询所有启用的频道：用于展示到前端
+	@ResponseBody
+	@RequestMapping(value = "rest/channels/{status}", method = RequestMethod.GET)
+	public List<Channel> getChannelsByStatus(@PathVariable String status) {
+		Channel channel = new Channel();
+		channel.setStatus(status);
+		return channelService.findListByStatus(channel);
+	}
+	
+	//查询频道下的需要构成列表
+	@ResponseBody
+	@RequestMapping(value = "rest/needs/{channelId}", method = RequestMethod.GET)
+	public List<ChannelNeed> getNeedsByChannelId(@PathVariable String channelId) {
+		Channel channel = new Channel();
+		channel.setId(channelId);
+		ChannelNeed channelNeed = new ChannelNeed();
+		channelNeed.setChannel(channel);
+		channelNeed.setNeed(new Motivation());//必须设置
+		return channelNeedService.findList(channelNeed);
 	}
 
 }

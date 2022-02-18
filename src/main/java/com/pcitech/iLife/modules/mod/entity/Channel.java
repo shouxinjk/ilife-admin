@@ -17,6 +17,7 @@ public class Channel extends DataEntity<Channel> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// 关联的频道
 	private String code;		// 识别CODE
+	private String status;		// 状态：启用、禁用
 	private String description;		// 概要描述
 	private String tagging;		// 关键字列表
 	private Integer sort;		// sort
@@ -47,6 +48,14 @@ public class Channel extends DataEntity<Channel> {
 		this.code = code;
 	}
 	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	@Length(min=0, max=255, message="概要描述长度必须介于 0 和 255 之间")
 	public String getDescription() {
 		return description;

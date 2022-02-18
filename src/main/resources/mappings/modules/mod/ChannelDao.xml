@@ -6,6 +6,7 @@
 		a.id AS "id",
 		a.name AS "name",
 		a.code AS "code",
+		a.status AS "status",
 		a.description AS "description",
 		a.tagging AS "tagging",
 		a.sort AS "sort",
@@ -25,6 +26,21 @@
 		FROM mod_channel a
 		<include refid="channelJoins"/>
 		WHERE a.id = #{id}
+	</select>
+	
+	<!-- 根据状态查询，并且按照sort降序排列 -->
+	<select id="findListByStatus" resultType="Channel">
+		SELECT 
+			<include refid="channelColumns"/>
+		FROM mod_channel a
+		<include refid="channelJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+		</where>
+		ORDER BY a.sort DESC
 	</select>
 	
 	<select id="findList" resultType="Channel">
@@ -83,6 +99,7 @@
 			id,
 			name,
 			code,
+			status,
 			description,
 			tagging,
 			sort,
@@ -95,6 +112,7 @@
 			#{id},
 			#{name},
 			#{code},
+			#{status},
 			#{description},
 			#{tagging},
 			#{sort},
@@ -110,6 +128,7 @@
 		UPDATE mod_channel SET 	
 			name = #{name},
 			code = #{code},
+			status = #{status},
 			description = #{description},
 			tagging = #{tagging},
 			sort = #{sort},

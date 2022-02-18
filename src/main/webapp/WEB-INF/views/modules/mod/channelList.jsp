@@ -44,6 +44,7 @@
 			<tr>
 				<th>名称</th>
 				<th>CODE</th>
+				<th>状态</th>
 				<th>概要描述</th>
 				<th>关键字</th>
 				<th>排序</th>
@@ -59,6 +60,9 @@
 				</a></td>
 				<td>
 					${channel.code}
+				</td>
+				<td>
+					${fns:getDictLabel(channel.status, 'active_inactive', channel.status)}
 				</td>
 				<td>
 					${channel.description}

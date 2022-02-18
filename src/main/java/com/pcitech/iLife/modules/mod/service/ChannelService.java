@@ -26,6 +26,15 @@ public class ChannelService extends CrudService<ChannelDao, Channel> {
 		return super.get(id);
 	}
 	
+	public List<Channel> findListByStatus(String status) {
+		Channel channel = new Channel();
+		channel.setStatus(status);
+		return dao.findListByStatus(channel);
+	}
+	public List<Channel> findListByStatus(Channel channel) {
+		return dao.findListByStatus(channel);
+	}
+	
 	public List<Channel> findList(Channel channel) {
 		return super.findList(channel);
 	}
