@@ -29,6 +29,7 @@ import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Board;
+import com.pcitech.iLife.modules.mod.entity.CategoryNeed;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.Persona;
@@ -345,4 +346,16 @@ public class PersonaController extends BaseController {
 		}
 		return mapList;
 	}
+	
+	//查询画像下的需要构成列表
+	@ResponseBody
+	@RequestMapping(value = "rest/needs/{personaId}", method = RequestMethod.GET)
+	public List<PersonaNeed> getNeedsByCategoryId(@PathVariable String personaId) {
+		Persona persona = new Persona(personaId);
+		PersonaNeed personaNeed = new PersonaNeed();
+		personaNeed.setPersona(persona);
+		return personaNeedService.findList(personaNeed);
+	}
+	
+	
 }
