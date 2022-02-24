@@ -87,7 +87,8 @@ public class PddItemsSearcher {
     
     private void upsertItem(GoodsSearchResponseGoodsListItem item) {
 		String  url = urlPrefix + item.getGoodsSign();//组装URL
-		String itemKey = Util.md5(url);//根据URL生成唯一key
+//		String itemKey = Util.md5(url);//根据URL生成唯一key
+		String itemKey = Util.md5(urlPrefix+item.getGoodsName());//生成唯一key：注意根据商品名称做唯一性校验，避免重复
 		//准备更新doc
 		BaseDocument doc = new BaseDocument();
 		doc.setKey(itemKey);
@@ -158,8 +159,9 @@ public class PddItemsSearcher {
 
 		//更新doc
 		logger.debug("try to upsert pdd item.[itemKey]"+itemKey,JSON.toString(doc));
-//		需要区分是否已经存在，如果已经存在则直接更新，但要避免更新profit信息，以免出发3-party分润任务
-//		arangoClient.upsert("my_stuff", itemKey, doc);   
+		arangoClient.upsert("my_stuff", itemKey, doc);   
+		/**
+		//需要区分是否已经存在，如果已经存在则直接更新，但要避免更新profit信息，以免出发3-party分润任务
 		//存在同名但URL不同的情况，需要先排除同名商品：根据source及title排重
 		Map<String,Object> bindVars = Maps.newHashMap();
 		bindVars.put("source", "pdd");
@@ -176,6 +178,7 @@ public class PddItemsSearcher {
 				processedAmount++;
 			}	
 		}
+		//**/
     }
     
     private double parseNumber(double d) {
