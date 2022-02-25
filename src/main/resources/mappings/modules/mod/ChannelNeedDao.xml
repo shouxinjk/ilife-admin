@@ -28,6 +28,14 @@
 		LEFT JOIN mod_channel c ON c.id = a.channel_id
 		LEFT JOIN mod_motivation m ON m.id = a.need_id	
 	</sql>
+	
+	<!-- 根据ID更新weight -->
+	<update id="updateWeight">
+		UPDATE int_channel_need SET 	
+			weight = #{weight},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>  	
     
 	<select id="get" resultType="ChannelNeed">
 		SELECT 

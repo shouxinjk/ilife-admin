@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.Map;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.ChannelNeed;
@@ -14,5 +16,6 @@ import com.pcitech.iLife.modules.mod.entity.ChannelNeed;
  */
 @MyBatisDao
 public interface ChannelNeedDao extends CrudDao<ChannelNeed> {
-	
+	//更新weight
+	public void updateWeight(Map<String,Object> params);
 }

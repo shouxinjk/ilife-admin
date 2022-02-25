@@ -7,6 +7,41 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			
+			//遍历所有rate组件，初始化，并注册打分事件
+			$(".rating").each(function(index){
+				var itemId = $(this).data("id");
+				var itemValue = Number($(this).data("weight"));//默认采用1-10存储
+				console.log("now walk through all pending items.",itemId,itemValue);
+				//初始化
+				$("#rate-"+itemId).starRating({
+					totalStars: 10,
+					starSize:20,
+				    useFullStars:false,
+				    initialRating: itemValue,
+				    ratedColors:['#8b0000', '#dc143c', '#ff4500', '#ff6347', '#1e90ff','#00ffff','#40e0d0','#9acd32','#32cd32','#228b22'],
+				    callback: function(currentRating, $el){
+				        // make a server call here
+				        console.log("dude, now try update rating.[old]"+itemValue,itemId,currentRating);
+				        $.ajax({
+				            type: "GET",
+				            url: "${ctx}/mod/channelNeed/rest/weight?id="+itemId+"&weight="+(currentRating),
+				            headers:{
+				                "Content-Type":"application/json",
+				                "Accept":"application/json"
+				            },        
+				            success:function(result){
+				                if(result.result=="error"){
+				                   console.log("update weight failed.",result);   
+				                }else{
+				                	console.log("update weight succeed.",result);                   
+				                }
+				            }                
+				        }); 
+				    }
+				});
+			});
+			
+			
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -60,7 +95,7 @@
 					${fns:getDictLabel(channelNeed.need.type, 'need_type', channelNeed.need.type)} ${channelNeed.need.name} (${channelNeed.need.displayName})
 				</td>
 				<td>
-					${channelNeed.weight}
+					<div class="rating" id="rate-${channelNeed.id}" data-id="${channelNeed.id}" data-weight="${channelNeed.weight}"></div>
 				</td>				
 				<td>
 					${channelNeed.description}
