@@ -160,6 +160,7 @@
 		            },        
 		            success:function(res){
 		                console.log("\n=== published ===\n",res);
+		                sendItemArticleToWebhook(board.article[templateId]);//发送到企业微信群便于分享
 		                //显示提示
 		                $("#messageBox").text("成功更新图文。");
 		            }
@@ -182,12 +183,45 @@
 		                console.log("\n=== published ===\n",res);    
 		                $("#messageBox").text("图文已发布。");
 		                board.article[templateId]=res.id;
+		                sendItemArticleToWebhook(res.id);//发送到企业微信群便于分享
 		                updateBoard();
 		            }
 		        }); 
 		    }
 		}
 
+		//发送信息到运营群：运营团队收到新内容提示
+		function sendItemArticleToWebhook(articleId){
+		    //推动图文内容到企业微信群，便于转发
+		    var msg = {
+		            "msgtype": "news",
+		            "news": {
+		               "articles" : [
+		                   {
+		                       "title" : "Board列表图文上新",
+		                       "description" : board.title,
+		                       "url" : "https://www.biglistoflittlethings.com/ilife-web-wx/content.html?id="+articleId,//将跳转到content.html附加浏览用户的formUser、fromBroker信息
+		                       "picurl" : board.logo
+		                   }
+		                ]
+		            }
+		        };
+
+		    //推送到企业微信
+		    console.log("\n===try to sent webhook msg. ===\n");
+		    $.ajax({
+		        url:app.config.wechat_cp_api+"/wework/ilife/notify-cp-company-broker",
+		        type:"post",
+		        data:JSON.stringify(msg),
+		        headers:{
+		            "Content-Type":"application/json"
+		        },        
+		        success:function(res){
+		            console.log("\n=== webhook message sent. ===\n",res);
+		        }
+		    });     
+		}
+		
 		//生成商品海报：先获得海报列表
 		function requestPosterScheme(){
 		    $.ajax({
@@ -270,11 +304,45 @@
 	                    $("#posterTitle").css("display","block"); 
 		                //更新到board
 		                board.poster[scheme.id] = res.url;
+		                sendItemPosterToWebhook(res.url);//推送到企业微信群
 		                updateBoard();
 		            }
 		        }
 		    });     
 		}		
+		
+		//发送信息到运营群：运营团队收到新内容提示
+		//发送卡片：其链接为图片地址
+		function sendItemPosterToWebhook(posterImgUrl){
+		    //推动图文内容到企业微信群，便于转发
+		    var msg = {
+		            "msgtype": "news",
+		            "news": {
+		               "articles" : [
+		                   {
+		                       "title" : "新增Board海报",
+		                       "description" : board.title,
+		                       "url" : posterImgUrl,
+		                       "picurl" : board.logo
+		                   }
+		                ]
+		            }
+		        };
+
+		    //推送到企业微信
+		    console.log("\n===try to sent webhook msg. ===\n");
+		    $.ajax({
+		        url:app.config.wechat_cp_api+"/wework/ilife/notify-cp-company-broker",
+		        type:"post",
+		        data:JSON.stringify(msg),
+		        headers:{
+		            "Content-Type":"application/json"
+		        },        
+		        success:function(res){
+		            console.log("\n=== webhook message sent. ===\n",res);
+		        }
+		    });     
+		}
 		
 		//根据boardId查询清单：这里有重复调用，直接读取board内容，未通过服务器端返回
 		function loadBoard(boardId){
