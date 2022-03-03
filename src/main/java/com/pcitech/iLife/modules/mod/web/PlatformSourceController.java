@@ -63,6 +63,12 @@ public class PlatformSourceController extends BaseController {
 	@RequiresPermissions("mod:platformSource:view")
 	@RequestMapping(value = "form")
 	public String form(PlatformSource platformSource, Model model) {
+		if(platformSource.getSort()==null || platformSource.getSort().trim().length()==0)
+			platformSource.setSort("100");
+		if(platformSource.getStatus()==null || platformSource.getStatus().trim().length()==0)
+			platformSource.setStatus("active");
+		if(platformSource.getType()==null || platformSource.getType().trim().length()==0)
+			platformSource.setType("money");
 		model.addAttribute("platformSource", platformSource);
 		return "modules/mod/platformSourceForm";
 	}
