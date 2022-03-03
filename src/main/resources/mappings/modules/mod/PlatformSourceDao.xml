@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.PlatformSourceDao">
+    
+	<sql id="platformSourceColumns">
+		a.id AS "id",
+		a.platform AS "platform",
+		dict.label AS "platformName",
+		a.category AS "category",
+		a.type AS "type",
+		a.description AS "description",
+		a.url AS "url",
+		a.userscript AS "userscript",
+		a.sort AS "sort",
+		a.status AS "status",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="platformSourceJoins">
+		LEFT JOIN sys_dict dict ON dict.`value` = a.platform and dict.type='platform'
+	</sql>
+    
+	<select id="get" resultType="PlatformSource">
+		SELECT 
+			<include refid="platformSourceColumns"/>
+		FROM mod_platform_source a
+		<include refid="platformSourceJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<!-- 获取所有可用数据源列表。按照sort倒序排列 -->
+	<select id="findActiveSources" resultType="PlatformSource">
+		SELECT 
+			<include refid="platformSourceColumns"/>
+		FROM mod_platform_source a
+		<include refid="platformSourceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="platform != null and platform != ''">
+				AND a.platform = #{platform}
+			</if>	
+			<if test="type != null and type != ''">
+				AND a.type = #{type}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>								
+		</where>
+		ORDER BY a.sort DESC
+	</select>	
+	
+	<select id="findList" resultType="PlatformSource">
+		SELECT 
+			<include refid="platformSourceColumns"/>
+		FROM mod_platform_source a
+		<include refid="platformSourceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="platform != null and platform != ''">
+				AND a.platform = #{platform}
+			</if>	
+			<if test="type != null and type != ''">
+				AND a.type = #{type}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>								
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PlatformSource">
+		SELECT 
+			<include refid="platformSourceColumns"/>
+		FROM mod_platform_source a
+		<include refid="platformSourceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_platform_source(
+			id,
+			platform,
+			category,
+			type,
+			description,
+			url,
+			userscript,
+			sort,
+			status,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{platform},
+			#{category},
+			#{type},
+			#{description},
+			#{url},
+			#{userscript},
+			#{sort},
+			#{status},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_platform_source SET 	
+			platform = #{platform},
+			category = #{category},
+			type = #{type},
+			description = #{description},
+			url = #{url},
+			userscript = #{userscript},
+			sort = #{sort},
+			status = #{status},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_platform_source SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
