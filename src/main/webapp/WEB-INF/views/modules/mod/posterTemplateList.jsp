@@ -59,7 +59,7 @@
 				<th>海报编号</th>
 				<th>状态</th>
 				<th>适用条件</th>
-				<th>参数配置</th>
+				<!--th>参数配置</th-->
 				<th>优先级</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:posterTemplate:edit"><th>操作</th></shiro:hasPermission>
@@ -92,9 +92,9 @@
 				<td>
 					${posterTemplate.condition}
 				</td>
-				<td>
+				<!--td>
 					${posterTemplate.options}
-				</td>
+				</td-->
 				<td>
 					${posterTemplate.priority}
 				</td>
