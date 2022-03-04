@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.ope.web;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +67,10 @@ public class ItemController extends BaseController {
 		ItemCategory itemCategory = itemCategoryService.get(treeId);
 		String categoryName = "";
 		if(itemCategory != null) {
-			categoryName = "&classifyName="+itemCategory.getName();
+			try {
+				categoryName = "&classifyName="+java.net.URLEncoder.encode(itemCategory.getName(),"utf-8");
+			} catch (UnsupportedEncodingException e) {
+			}
 		}
 		return "redirect:http://www.shouxinjk.net/list-admin/index.html?classify="+treeId+categoryName;//直接跳转到商品标注界面，需要保留header显示，提供搜索及排序功能
 	}
