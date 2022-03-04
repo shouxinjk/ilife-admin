@@ -45,8 +45,8 @@
 			<label class="control-label">关联属性：</label>
 			<div class="controls">
 				 <sys:treeselect id="userMeasure" name="userMeasure.id" value="${userTag.userMeasure.id}" labelName="userMeasure.name" labelValue="${userTag.userMeasure.name}"
-					title="用户属性" url="/mod/userMeasure/treeData" cssClass="required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+					title="用户属性" url="/mod/userMeasure/treeData"/>
+				<!--span class="help-inline"><font color="red">*</font> </span-->
 			</div>
 		</div>			
 		<div class="control-group">
@@ -56,16 +56,16 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">类型：</label>
+			<div class="controls">
+				<form:select path="type" items="${fns:getDictList('tagType')}" itemLabel="label" itemValue="value" htmlEscape="false" class="input-xlarge "/>
+				<!--form:input path="type" htmlEscape="false" maxlength="10" class="input-xlarge "/-->
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">表达式：</label>
 			<div class="controls">
 				<form:textarea path="expression" htmlEscape="false" rows="5" maxlength="200" class="input-xlarge"/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">类型：</label>
-			<div class="controls">
-				<form:select path="type" items="${fns:getDictList('tagType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-				<!--form:input path="type" htmlEscape="false" maxlength="10" class="input-xlarge "/-->
 			</div>
 		</div>
 		<div class="control-group">
@@ -80,6 +80,12 @@
 				<form:textarea path="tagKey" htmlEscape="false" rows="5" maxlength="200" class="input-xlarge"/>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">排序：</label>
+			<div class="controls">
+				<form:input path="sort" htmlEscape="false" rows="5" maxlength="200" class="input-xlarge"/>
+			</div>
+		</div>		
 		<div class="form-actions">
 			<shiro:hasPermission name="mod:userTag:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

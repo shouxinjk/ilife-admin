@@ -37,7 +37,7 @@
 			<label class="control-label">上级分类:</label>
 			<div class="controls">
 				<sys:treeselect id="parent" name="parent.id" value="${userTagCategory.parent.id}" labelName="parent.name" labelValue="${userTagCategory.parent.name}"
-					title="父级编号" url="/mod/userTagCategory/treeData" extId="${userTagCategory.id}" disabled="disabled" cssClass="" allowClear="true"/>
+					title="父级编号" url="/mod/userTagCategory/treeData" extId="${userTagCategory.id}" cssClass="" allowClear="true"/>
 			</div>
 		</div>
 		<div class="control-group">

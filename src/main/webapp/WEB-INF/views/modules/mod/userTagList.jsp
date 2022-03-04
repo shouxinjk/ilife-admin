@@ -42,6 +42,7 @@
 				<th>表达式</th>
 				<th>标签类型</th>
 				<th>判定规则</th>
+				<th>排序</th>
 				<shiro:hasPermission name="mod:userTag:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -66,6 +67,9 @@
 				<td>
 					${userTag.ruleOfJudgment}
 				</td>
+				<td>
+					${userTag.sort}
+				</td>				
 				<shiro:hasPermission name="mod:userTag:edit"><td>
     				<a href="${ctx}/mod/userTag/form?id=${userTag.id}">修改</a>
 					<a href="${ctx}/mod/userTag/delete?id=${userTag.id}&treeId=${treeId}" onclick="return confirmx('确认要删除该标签吗？', this.href)">删除</a>

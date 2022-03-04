@@ -21,7 +21,8 @@
 		a.update_date AS "updateDate",
 		a.del_flag AS "delFlag",
 		a.rule_of_judgment AS "ruleOfJudgment",
-		a.tag_key AS "tagKey"
+		a.tag_key AS "tagKey",
+		a.sort AS "sort"
 	</sql>
 	
 	<sql id="userTagJoins">
@@ -42,7 +43,7 @@
 				AND FIND_IN_SET(a.type,#{types})
 			</if>			
 		</where>					
-		ORDER BY a.type,a.update_date DESC
+		ORDER BY a.type,a.sort DESC
 	</select>    
     
 	<select id="get" resultType="UserTag">
@@ -108,6 +109,7 @@
 			measure_id,
 			rule_of_judgment,
 			tag_key,
+			sort,
 			create_by,
 			create_date,
 			update_by,
@@ -122,6 +124,7 @@
 			#{userMeasure.id},
 			#{ruleOfJudgment},
 			#{tagKey},
+			#{sort},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -139,6 +142,7 @@
 			measure_id=#{userMeasure.id},
 			rule_of_judgment=#{ruleOfJudgment},
 			tag_key=#{tagKey},
+			sort=#{sort},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}
