@@ -27,6 +27,7 @@ import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsResponse;
 import com.pcitech.iLife.cps.kaola.ShareLinkResponse;
 import com.pcitech.iLife.task.KaolaItemSync;
 import com.pcitech.iLife.task.KaolaItemsSearcher;
+import com.pcitech.iLife.task.KaolaItemsSearcherByCategory;
 import com.pcitech.iLife.task.KaolaOrderSync;
 import com.pcitech.iLife.task.KaolaRecommendItemsSearcher;
 
@@ -46,6 +47,8 @@ public class KaolaClientTest {
 	KaolaOrderSync kaolaOrderSync;
 	@Autowired
 	KaolaRecommendItemsSearcher kaolaRecommendItemsSearcher;
+	@Autowired
+	KaolaItemsSearcherByCategory kaolaItemsSearcherByCategory;
 	@Autowired
 	KaolaItemsSearcher kaolaItemSearcher;
 	//网易开发人员比较挫，返回的汉字竟然是GB2312，还要转一次
@@ -215,11 +218,24 @@ public class KaolaClientTest {
 	
 	@Test
 	/**
-	 * 获取考拉推荐商品，按照目录逐个获取，执行一次即可。
+	 * 获取考拉推荐商品，按照选品库获取，执行一次即可。
 	 */
 	public void searchItemTask() {
 		try {
 			kaolaRecommendItemsSearcher.execute();
+		} catch (JobExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	/**
+	 * 获取考拉推荐商品，按照目录逐个获取，执行一次即可。
+	 */
+	public void searchItemByCategoryTask() {
+		try {
+			kaolaItemsSearcherByCategory.execute();
 		} catch (JobExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
