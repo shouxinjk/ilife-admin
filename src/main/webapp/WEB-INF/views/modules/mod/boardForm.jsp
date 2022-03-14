@@ -185,6 +185,9 @@
 		                $("#messageBox").text("图文已发布。");
 		                board.article[templateId]=res.id;
 		                sendItemArticleToWebhook(res.id);//发送到企业微信群便于分享
+		                //显示预览链接
+		                $("#btnPreview").attr("href",app.config.mp_api+"/archives/"+res.id);
+		                $("#btnPreview").css("display","block");
 		                updateBoard();
 		            }
 		        }); 
@@ -605,6 +608,7 @@
 	              <select id="articleScheme" class="sxSelect" style="width:200px"></select>
 	              <button id="btnArticle" class="taggingBtn" style="display:none;">生成图文</button>
 	              <button id="btnPublish" class="taggingBtn" style="display:none;">发布内容</button>
+	              <a id="btnPreview" style="display:none;fond-size:14px;color:blue;padding-top:5px;margin-left:10px;" href="#" target="_new">预览内容</a>
 	            </div>
 	            <div id="articleTitle" class="prop-key" style="width:90%;display:none;margin-bottom:5px;">以下图文将发送到流量主:</div> 
 	            <div class="tagging">
