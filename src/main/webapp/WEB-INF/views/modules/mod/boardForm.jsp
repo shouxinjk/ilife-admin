@@ -108,6 +108,7 @@
 		//根据选中的模板生成当前商品的图文，并等待发布
 		function requestArticle(){
 		    var templateId = $("#articleScheme").val();
+		    var templateName = $("#articleScheme").find("option:selected").text();
 		    console.log("\n===try to generate article by template. ===\n",templateId);
 		    //生成html并显示到界面
 		    $.ajax({
@@ -130,7 +131,7 @@
 		            //显示标题框及发布按钮
 		            $("#btnPublish").css("display","block");
 		            $("#postTitle").css("display","block");
-		            $("#postTitle").val(board.title);//默认采用商品标题
+		            $("#postTitle").val(board.title+" - "+templateName);//默认采用商品标题 - 模板标题
 		        }
 		    });      
 		}
