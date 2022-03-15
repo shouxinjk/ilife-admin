@@ -154,7 +154,7 @@ public class PddHelper {
 	public List<OrderListGetResponseOrderListItem> getOrders() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		Date end = cal.getTime();
-		cal.add(Calendar.HOUR, -20);//每半小时查询一次：如有重复则更新。需要设置同步任务间隔小于半小时，避免订单丢失
+		cal.add(Calendar.MINUTE, -30);//每半小时查询一次：如有重复则更新。需要设置同步任务间隔小于半小时，避免订单丢失
 		Date from = cal.getTime();
 		
 		PddDdkOrderListRangeGetRequest request = new PddDdkOrderListRangeGetRequest();
