@@ -76,17 +76,21 @@ public class PddOrderSync {
 		doc.getProperties().put("source", "pdd");//标记来源
 		
 		//写入 arangodb
-		arangoClient.insert("order", doc);    
+		arangoClient.upsert("order",itemKey, doc);    
 		
 		//接下来写入Order
-		Order order = new Order();
+		Order order = orderService.get(itemKey);
+		if(order == null) {
+			order = new Order();
+			order.setId(itemKey);//与NoSQL保持一致
+			order.setIsNewRecord(true);//新建记录
+		}
 		order.setStatus("pending");//等待清分
-		order.setId(itemKey);//与NoSQL保持一致
 		order.setPlatform("pdd");
 		order.setOrderNo(""+item.getOrderSn());
 		order.setTraceCode(item.getCustomParameters());
-		order.setAmount(item.getOrderAmount()/100);//返回为分的long型
-		order.setCommissionEstimate(item.getPromotionAmount()/100);
+		order.setAmount(item.getOrderAmount()*0.01);//返回为分的long型
+		order.setCommissionEstimate(item.getPromotionAmount()*0.01);
 //		order.setCommissionSettlement();//留空，等着后面结算更新
 		order.setItem(item.getGoodsName());
 		order.setOrderTime(new Date(item.getOrderPayTime()));//以订单支付时间为准
@@ -98,7 +102,7 @@ public class PddOrderSync {
 		Broker broker = brokerService.get(brokerId);//跟踪码就是达人ID：注意需要解析自定义参数：构建链接时传递参数为{uid:xx,brokerId:xxxx}
 		if(broker==null)broker=brokerService.get("system");//如果找不到，则直接使用平台默认账户
 		order.setBroker(broker);
-		order.setNotification("pending");//不用管通知状态，后续通知任务会自动更新
+		order.setNotification("0");//不用管通知状态，后续通知任务会自动更新
 		order.setStatus("pending");
 		
 		orderService.save(order);

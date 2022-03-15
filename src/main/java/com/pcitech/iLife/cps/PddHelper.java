@@ -154,7 +154,7 @@ public class PddHelper {
 	public List<OrderListGetResponseOrderListItem> getOrders() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		Date end = cal.getTime();
-		cal.add(Calendar.MINUTE, -30);//每半小时查询一次
+		cal.add(Calendar.HOUR, -20);//每半小时查询一次
 		Date from = cal.getTime();
 		
 		PddDdkOrderListRangeGetRequest request = new PddDdkOrderListRangeGetRequest();
