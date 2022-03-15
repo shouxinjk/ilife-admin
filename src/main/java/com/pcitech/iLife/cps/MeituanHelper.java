@@ -74,7 +74,7 @@ public class MeituanHelper {
 		cal.add(Calendar.MINUTE, -30);//每半小时查询一次
 		Date from = cal.getTime();
 		
-		String url = Global.getConfig("meituan.api.search");
+		String url = Global.getConfig("meituan.api.order");
 		TreeMap<String,String> map = Maps.newTreeMap();
 		map.put("key", Global.getConfig("meituan.appKey"));//appkey
 		map.put("ts", ""+System.currentTimeMillis()/1000);//请求时刻10位时间戳(秒级)，有效期60s

@@ -108,13 +108,13 @@ public class VipItemSync {
 					goodsId = m.group(); 
 				} 
 			}
+			
 			//查询商品详情，得到图片列表。假设商品长度超过品牌长度
+			//URL最后一段为goodsId，如果不符合要求则直接忽略
 			if(goodsId.trim().length()>"1710615488".length()) {
 				List<GoodsInfo> itemDetail = vipHelper.getItemDetail(brokerId, goodsId);
 				if(itemDetail != null && itemDetail.size()>0) {
-					
 					GoodsInfo goodInfo = itemDetail.get(0);
-					
 					//更新图片列表：注意脚本中已经有采集，此处使用自带的内容
 					List<String> images = new ArrayList<String>();
 					images.add(goodInfo.getGoodsMainPicture());//logo
