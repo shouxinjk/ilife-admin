@@ -89,8 +89,8 @@ public class PddOrderSync {
 		order.setPlatform("pdd");
 		order.setOrderNo(""+item.getOrderSn());
 		order.setTraceCode(item.getCustomParameters());
-		order.setAmount(item.getOrderAmount()*0.01);//返回为分的long型
-		order.setCommissionEstimate(item.getPromotionAmount()*0.01);
+		order.setAmount(Double.parseDouble(String.format("%.2f",item.getOrderAmount()*0.01)));//返回为分的long型，仅保留2位小数
+		order.setCommissionEstimate(Double.parseDouble(String.format("%.2f",item.getPromotionAmount()*0.01)));//返回为分的long型，仅保留2位小数
 //		order.setCommissionSettlement();//留空，等着后面结算更新
 		order.setItem(item.getGoodsName());
 		order.setOrderTime(new Date(item.getOrderPayTime()));//以订单支付时间为准
