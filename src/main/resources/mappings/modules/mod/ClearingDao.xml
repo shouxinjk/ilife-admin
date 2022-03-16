@@ -15,7 +15,10 @@
 		q.name As "scheme.name",
 		a.scheme_item_id AS "schemeItem.id",
 		r.beneficiary As "schemeItem.beneficiary",
-		broker.name AS "beneficiary",
+		broker.id AS "beneficiary.id",
+		broker.name AS "beneficiary.name",
+		bb.id AS "seller.id",
+		bb.name AS "seller.name",		
 		a.beneficiary_type AS "beneficiaryType",
 		a.share AS "share",
 		a.item AS "item",
@@ -39,6 +42,7 @@
 		LEFT JOIN mod_profit_share_scheme q ON q.id = a.scheme_id	
 		LEFT JOIN mod_profit_share_item r ON r.id = a.scheme_item_id		
 		LEFT JOIN mod_broker broker ON broker.id = a.beneficiary	
+		LEFT JOIN mod_broker bb ON bb.id = a.seller
 	</sql>
     
 	<select id="get" resultType="Clearing">
@@ -62,9 +66,11 @@
 		b.openid as broker_openid,
 		b.name as broker_name,
 		d.beneficiary,
-		(select tmp.name from mod_broker tmp,mod_trace_code tmp2 where tmp2.code=c.trace_code and tmp.id=tmp2.broker_id) as seller 
+		bb.name as seller,
+		<!-- (select tmp.name from mod_broker tmp,mod_trace_code tmp2 where tmp2.code=c.trace_code and tmp.id=tmp2.broker_id) as seller -->
 		from mod_clearing a 
 		left join mod_broker b on b.id = a.beneficiary 
+		left join mod_broker bb on bb.id = a.seller 
 		left join mod_order c on c.id=a.order_id 
 		left join mod_profit_share_item d on d.id=a.scheme_item_id 
 		where a.beneficiary_type='person' and a.status_notify = 'pending' limit 200
@@ -131,6 +137,7 @@
 			amount_profit,
 			scheme_id,
 			scheme_item_id,
+			seller,
 			beneficiary,
 			beneficiary_type,
 			share,
@@ -157,7 +164,8 @@
 			#{amountProfit},
 			#{scheme.id},
 			#{schemeItem.id},
-			#{beneficiary},
+			#{seller.id},
+			#{beneficiary.id},
 			#{beneficiaryType},
 			#{share},
 			#{item},
@@ -186,7 +194,8 @@
 			amount_profit = #{amountProfit},
 			scheme_id = #{scheme.id},
 			scheme_item_id = #{schemeItem.id},
-			beneficiary = #{beneficiary},
+			seller = #{seller.id},
+			beneficiary = #{beneficiary.id},
 			beneficiary_type = #{beneficiaryType},
 			share = #{share},
 			item = #{item},

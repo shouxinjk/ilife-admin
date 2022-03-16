@@ -123,6 +123,7 @@ public class ClearingController extends BaseController {
 	}
 
 	/**
+	 * 	@deprecated
 	 * 备注：当前未启用该服务。通过ClearOrder定时任务自动完成。其逻辑与当前api一致
 	 * 完成订单清分：根据订单ID完成清分，并且发送通知。清分逻辑：
 	 * 1，根据orderId获取指定订单
@@ -135,6 +136,7 @@ public class ClearingController extends BaseController {
 	 * @param json 订单数据。预留。当前未使用该参数
 	 * @return
 	 */
+
 	@Transactional(readOnly = false)
 	@ResponseBody
 	@RequestMapping(value = "rest/clear/{orderId}", method = RequestMethod.POST)
@@ -174,24 +176,24 @@ public class ClearingController extends BaseController {
 			List<ProfitShareItem> shareItems = profitShareItemService.findListByQuery(profitShareItem);//查询对应shareScheme下的所有有效分润明细
 			for(ProfitShareItem shareItem:shareItems) {//逐条处理，每一条对应生成一条清分记录、
 				String status = "pending";//清分记录的状态：默认为pending，需要根据分润类型及团队条件设置
-				String person = system.getId();//判定对应的分润受益人：是一个具体人员，默认为平台用户
+				Broker person = system;//判定对应的分润受益人：是一个具体人员，默认为平台用户
 				//判断分润类型是团队还是个人
 				if("team".equalsIgnoreCase(shareItem.getBeneficiaryType())) {//团队分润
 					status = "pending";//需要二次清分
-        	   		person = shareItem.getBeneficiary();//对于团队绩效，直接使用团队标记
+        	   		person = brokerService.get(shareItem.getBeneficiary());//对于团队绩效，直接使用团队标记。对应一个达人账号
 				}else {//个人分润：包括达人、上级、上上级
 					status = "cleared";//默认个人收益直接为已清算，表示可申请提现
 					if("broker".equalsIgnoreCase(shareItem.getBeneficiary())) {
-						person = broker.getId();
+						person = broker;
 					}else if("parent".equalsIgnoreCase(shareItem.getBeneficiary())) {
-						person = parent.getId();
+						person = parent;
 						//如果未达到团队约束，则设置为锁定。仅考虑直接团队人数
-						if(brokerService.countChilds(person)<15)
+						if(brokerService.countChilds(person.getId())<15)
 							status = "locked";
 					}else if("grandpa".equalsIgnoreCase(shareItem.getBeneficiary())) {
-						person = grandpa.getId();
+						person = grandpa;
 						//如果未达到团队约束，则设置为锁定。仅考虑直接团队人数
-						if(brokerService.countChilds(person)<15)
+						if(brokerService.countChilds(person.getId())<15)
 							status = "locked";
 					}else {
 						//不知道出什么错误。不应该出现此类受益人。直接忽略
@@ -212,6 +214,7 @@ public class ClearingController extends BaseController {
 				clearing.setScheme(profitShareScheme);
 				clearing.setSchemeItem(shareItem);
 				clearing.setShare(""+shareItem.getShare());
+				clearing.setSeller(order.getBroker());//直接成交达人直接采用订单达人信息
 				clearing.setBeneficiary(person);
 				clearing.setBeneficiaryType(shareItem.getBeneficiaryType());
 				clearing.setStatusClear(status);

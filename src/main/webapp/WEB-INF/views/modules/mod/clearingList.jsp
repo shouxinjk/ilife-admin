@@ -42,6 +42,7 @@
 				<th>清算状态</th>
 				<th>结算状态</th>
 				<th>收款状态</th>
+				<th>销售</th>
 				<th>受益方</th>
 				<th>受益方类型</th>
 				<th>分润规则</th>
@@ -66,7 +67,8 @@
 				<td>${clearing.statusClear}</td>
 				<td>${clearing.statusSettle}</td>
 				<td>${clearing.statusCash}</td>
-				<td>${clearing.beneficiary}</td>
+				<td>${clearing.seller.name}</td>
+				<td>${clearing.beneficiary.name}</td>
 				<td>${fns:getDictLabel(clearing.beneficiaryType, 'beneficiaryCategory', '-')}</td>
 				<td>${clearing.scheme.name}-${fns:getDictLabel(clearing.schemeItem.beneficiary, 'beneficiaryType', '-')}</td>	
 				<td>

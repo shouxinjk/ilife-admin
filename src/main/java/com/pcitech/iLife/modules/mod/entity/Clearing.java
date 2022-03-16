@@ -25,7 +25,8 @@ public class Clearing extends DataEntity<Clearing> {
 	private String amountProfit;		// 分润金额
 	private ProfitShareScheme scheme;		// 所属分润规则
 	private ProfitShareItem schemeItem;		// 所属分润规则明细
-	private String beneficiary;		// 受益方
+	private Broker seller;		// 直接成交达人
+	private Broker beneficiary;		// 受益方
 	private String beneficiaryType;		// 受益方类型：个人、整体
 	private String share;		// 所占份额
 	private String item;		// 商品名称
@@ -111,12 +112,19 @@ public class Clearing extends DataEntity<Clearing> {
 		this.schemeItem = schemeItem;
 	}
 
-	@Length(min=0, max=50, message="受益方长度必须介于 0 和 50 之间")
-	public String getBeneficiary() {
+	public Broker getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Broker seller) {
+		this.seller = seller;
+	}
+
+	public Broker getBeneficiary() {
 		return beneficiary;
 	}
 
-	public void setBeneficiary(String beneficiary) {
+	public void setBeneficiary(Broker beneficiary) {
 		this.beneficiary = beneficiary;
 	}
 	

@@ -93,7 +93,7 @@ public class PddOrderSync {
 		order.setCommissionEstimate(Double.parseDouble(String.format("%.2f",item.getPromotionAmount()*0.01)));//返回为分的long型，仅保留2位小数
 //		order.setCommissionSettlement();//留空，等着后面结算更新
 		order.setItem(item.getGoodsName());
-		order.setOrderTime(new Date(item.getOrderPayTime()));//以订单支付时间为准
+		order.setOrderTime(new Date(item.getOrderPayTime()*1000));//以订单支付时间为准
 		//customParameter格式为：{"uid":"20434335","brokerId":"o8HmJ1EdIUR8iZRwaq1T7D_nPIYc"}
 		String brokerId = "system";
 		Map<String,String> customParam = JSONObject.parseObject(item.getCustomParameters(),new TypeReference<Map<String,String>>(){});

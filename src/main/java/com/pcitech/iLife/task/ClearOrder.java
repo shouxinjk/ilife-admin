@@ -219,22 +219,22 @@ public class ClearOrder {
             
             //开始计算
             String status = "cleared";
-            String person = brokers.get("broker");//默认为当前broker
+            Broker person = brokerService.get(brokers.get("broker"));//默认为当前broker
             double amount = item.getShare() * order.getCommissionEstimate()/100;//注意：这是是预估佣金
             DecimalFormat df = new DecimalFormat("#.00");//保留两位小数
             String amountStr = df.format(amount);
 
             if("team".equalsIgnoreCase(beneficiaryType)) { //beneficiaryType==team
          	   	status = "pending";//需要二次清分
-         	   	person = beneficiary;//对于团队绩效，直接使用团队标记
+         	   	person = brokerService.get(beneficiary);//对于团队绩效，直接使用团队标记：是一个达人账号
             }else{//beneficiaryType==person
 				if("platform".equalsIgnoreCase(beneficiary)) { //如果是平台收入，则作为特殊情况处理
-					person = "system";//直接使用平台标记：是一个特殊的达人账户
+					person = brokerService.get("system");//直接使用平台标记：是一个特殊的达人账户
 				}else{//具体个人分润：推广达人、上级、上上级
-					person = brokers.get(beneficiary)==null?"null-"+beneficiary:brokers.get(beneficiary);//使用真实的ID填充
+					person = brokerService.get(brokers.get(beneficiary));//使用真实的ID填充
 					//对上级、上上级检查是否已经达标，否则设置为锁定状态
 					if("parent".equalsIgnoreCase(beneficiary) ||"grandpa".equalsIgnoreCase(beneficiary)) {
-						if(brokerService.countChilds(person)<15)//硬编码：检查是否达到15个下级达人
+						if(brokerService.countChilds(person.getId())<15)//硬编码：检查是否达到15个下级达人
 							status = "locked";
 					}
 				}
@@ -249,12 +249,13 @@ public class ClearOrder {
             clearing.setOrder(order);
             clearing.setOrderTime(order.getOrderTime());
             clearing.setItem(order.getItem());
-            clearing.setAmountOrder(""+order.getAmount());
+            clearing.setAmountOrder(df.format(order.getAmount()));//仅保留2位小数
             clearing.setAmountCommission(""+order.getCommissionEstimate());
             clearing.setAmountProfit(amountStr);
             clearing.setScheme(profitShareScheme);
             clearing.setSchemeItem(item);
             clearing.setShare(""+item.getShare());//直接写入百分比
+            clearing.setSeller(order.getBroker());//添加成交达人信息
             clearing.setBeneficiary(person);
             clearing.setBeneficiaryType(beneficiaryType);
             clearing.setStatusClear(status);
@@ -262,7 +263,7 @@ public class ClearOrder {
             clearing.setStatusCash("pending");
             clearing.setStatusNotify("pending");
             
-            try {//由于ID为手动生成，避免充分清分
+            try {//由于ID为手动生成，避免重复清分
             	clearingService.save(clearing);
             }catch(Exception ex) {
             	//logger.error("save clearing record error.",ex.getMessage());

@@ -11,12 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.modules.mod.entity.Clearing;
 import com.pcitech.iLife.modules.mod.entity.Order;
 import com.pcitech.iLife.modules.mod.service.ClearingService;
 import com.pcitech.iLife.modules.mod.service.OrderService;
+import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.service.DictService;
 import com.pcitech.iLife.util.HttpClientHelper;
 
@@ -32,6 +34,8 @@ public class BrokerClearingNotifyTask {
 
     @Autowired
     ClearingService clearingService;
+    @Autowired
+    DictService dictService;
 
     public BrokerClearingNotifyTask() {
     }
@@ -45,6 +49,8 @@ public class BrokerClearingNotifyTask {
     public void execute() throws JobExecutionException {
     		logger.info("Clearing Notification job start. " + new Date());
     		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+    		//0，加载所有平台信息
+    		Map<String,String> platforms = loadPlatforms();
     		//1，查询所有待通知清分记录
     		List<Map<String,Object>> items = clearingService.findPendingNotifyList();
     		//2，逐条发送通知：不处理结果，仅发送即可
@@ -74,7 +80,7 @@ public class BrokerClearingNotifyTask {
     			msg.put("brokerName", item.get("broker_name"));
     			msg.put("brokerOpenid", item.get("broker_openid"));
     			msg.put("beneficiary", item.get("beneficiary"));
-    			msg.put("platform", item.get("platform"));
+    			msg.put("platform", platforms.get(item.get("platform")));//TODO 从字典加载平台名称
     			msg.put("seller", item.get("seller"));
     			result = HttpClientHelper.getInstance().post(
     					Global.getConfig("wechat.templateMessenge")+"/clearing-notify", 
@@ -90,6 +96,18 @@ public class BrokerClearingNotifyTask {
     			}
     	        logger.info("Clearing Notification job executed.[msg]" + msg);
     		}
+    }
+    
+    private Map<String,String> loadPlatforms() {
+		//从字典加载电商平台信息
+    	Map<String,String> platformMap = Maps.newHashMap();
+		Dict dict = new Dict();
+		dict.setType("platform");
+		List<Dict> platforms = dictService.findList(dict);
+		for(Dict platform:platforms) {
+			platformMap.put(platform.getValue(), platform.getLabel());
+		}
+		return platformMap;
     }
 
 }
