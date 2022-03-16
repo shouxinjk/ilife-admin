@@ -73,7 +73,7 @@ public class TaobaoItemSync {
         		+ "(doc.source == \"tmall\" or doc.source==\"taobao\" or doc.source==\"fliggy\") and "
 //        		+ "(doc.status==null or doc.status.sync==null) "
         		+ "doc.status.sync==\"pending\" "
-        		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态
+//        		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态
         		+ "limit 30 "//限定为30条
         		+ "return {itemKey:doc._key,id:split(doc.link.web,\"id=\")[1],link:doc.link.web}";
 

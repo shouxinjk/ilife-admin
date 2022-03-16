@@ -219,7 +219,7 @@ public class CpsLinkSync {
 	        		+ "doc.source == \""+s+"\" and "  
 //	        		+ "(doc.link.web2==null or doc.link.web2 == doc.link.web) "
 	        		+ "doc.status.sync==\"pending\"  "//根据状态查询待处理条目。注意：禁止使用null值查询，
-	        		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态
+//	        		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态
 	        		+ "limit "+numberPerTask+" "//一个批次处理200条
 	        		+ "return {itemKey:doc._key,source:doc.source,web:doc.link.web,wap:doc.link.wap}";
 	        logger.error("try to query pending cpsLinkSync items.[query]"+query);

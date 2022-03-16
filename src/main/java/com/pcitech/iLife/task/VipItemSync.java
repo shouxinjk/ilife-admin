@@ -177,7 +177,7 @@ public class VipItemSync {
         String query = "for doc in my_stuff filter "
         		+ "(doc.source == \"vip\") and "
         		+ "doc.status.sync==\"pending\" "
-        		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态：仅更新记录状态，index状态需要根据计算结果设置
+//        		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态：仅更新记录状态，index状态需要根据计算结果设置
         		+ "limit 100 "//一个批次处理100条
         		+ "return {itemKey:doc._key,goodsId:doc.goodsId,url:doc.link.web}";
         

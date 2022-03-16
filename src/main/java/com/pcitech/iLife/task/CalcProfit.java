@@ -144,7 +144,7 @@ public class CalcProfit {
 	        		+ "doc.source == \""+s+"\" and "        		
 //					+ "doc.price.sale!=null and " //仅对于有price.sale才处理 
 	        		+ "doc.status.monetize == \"pending\" "//根据状态查询，优先使用枚举值使用索引查询，需要同时完成对初始profit.type的设置
-	        		+ "update doc with {status:{monetize:\"ready\"}} in my_stuff "
+//	        		+ "update doc with {status:{monetize:\"ready\"}} in my_stuff "
 	        		+ "limit 100 "//一个批次处理100条
 	        		+ "return {itemKey:doc._key,source:doc.source,category:doc.categoryId==null?\"\":doc.categoryId,price:doc.price.sale}";
 	        logger.error("try to query pending 1-party items.[query]"+query);

@@ -193,7 +193,7 @@ public class SuningItemSync {
         		+ "(doc.source == \"suning\") and "
 //        		+ "(doc.status==null or doc.status.sync==null) "
         		+ "doc.status.sync==\"pending\" "
-        		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态
+//        		+ "update doc with {status:{sync:\"ready\"}} in my_stuff "//查询时即更新状态
         		+ "limit 100 "//一个批次处理30条
         		+ "return {itemKey:doc._key,web:doc.link.web,wap:doc.link.wap}";
         
