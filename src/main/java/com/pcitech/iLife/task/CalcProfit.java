@@ -142,7 +142,7 @@ public class CalcProfit {
 	    		//1，查询待处理商品记录 :使用hash索引：source-pricebid-profittype
 	        String query = "for doc in my_stuff filter "
 	        		+ "doc.source == \""+s+"\" and "        		
-					+ "doc.price.sale!=null and " //仅对于有price.sale才处理 
+//					+ "doc.price.sale!=null and " //仅对于有price.sale才处理 
 	        		+ "doc.status.monetize == \"pending\" "//根据状态查询，优先使用枚举值使用索引查询，需要同时完成对初始profit.type的设置
 	        		+ "update doc with {status:{monetize:\"ready\"}} in my_stuff "
 	        		+ "limit 100 "//一个批次处理100条
