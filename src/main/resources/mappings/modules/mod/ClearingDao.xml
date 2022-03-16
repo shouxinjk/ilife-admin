@@ -66,7 +66,7 @@
 		b.openid as broker_openid,
 		b.name as broker_name,
 		d.beneficiary,
-		bb.name as seller,
+		bb.name as seller
 		<!-- (select tmp.name from mod_broker tmp,mod_trace_code tmp2 where tmp2.code=c.trace_code and tmp.id=tmp2.broker_id) as seller -->
 		from mod_clearing a 
 		left join mod_broker b on b.id = a.beneficiary 
