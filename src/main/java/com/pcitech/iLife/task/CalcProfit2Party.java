@@ -104,7 +104,12 @@ public class CalcProfit2Party {
 		doc.getProperties().put("timestamp", timestamp);
 		//计算二方分润
 		double price = Double.parseDouble(item.getProperties().get("price").toString());
-		double amount = Double.parseDouble(item.getProperties().get("amount").toString());
+		double amount = 0;
+		try{//amount可能为空，如果为空则直接设置为0
+			amount = Double.parseDouble(item.getProperties().get("amount").toString());
+		}catch(Exception ex) {
+			//do nothing
+		}
 		String platform = item.getProperties().get("source").toString();
 		String category = item.getProperties().get("category").toString();
 		Map<String, Object>  profit = getProfit2Party(platform,category,price,amount);
