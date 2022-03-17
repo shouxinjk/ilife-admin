@@ -229,7 +229,7 @@ public class ClearOrder {
          	   	person = brokerService.get(beneficiary);//对于团队绩效，直接使用团队标记：是一个达人账号
             }else{//beneficiaryType==person
 				if("platform".equalsIgnoreCase(beneficiary)) { //如果是平台收入，则作为特殊情况处理
-					person = brokerService.get("system");//直接使用平台标记：是一个特殊的达人账户
+					person = brokerService.get("platform");//直接使用平台标记：是一个特殊的达人账户
 				}else{//具体个人分润：推广达人、上级、上上级
 					person = brokerService.get(brokers.get(beneficiary));//使用真实的ID填充
 					//对上级、上上级检查是否已经达标，否则设置为锁定状态
