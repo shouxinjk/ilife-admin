@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.jd.open.api.sdk.domain.kplunion.GoodsService.response.query.PromotionGoodsResp;
 import com.jd.open.api.sdk.domain.kplunion.promotioncommon.PromotionService.response.get.PromotionCodeResp;
@@ -104,21 +105,24 @@ public class JdItemSync {
 			    String skuId = m.group(); 
 				PromotionGoodsResp[] goods = jdHelper.getDetail(skuId);
 				if(goods != null && goods.length>0) {
-					PromotionGoodsResp category = goods[0];
+					PromotionGoodsResp good = goods[0];
 					List<String> categories = new ArrayList<String>();
-					categories.add(category.getCidName());
-					categories.add(category.getCid2Name());
-					categories.add(category.getCid3Name());
+					categories.add(good.getCidName());
+					categories.add(good.getCid2Name());
+					categories.add(good.getCid3Name());
 					doc.getProperties().put("category", categories);//更新类目，包含3级别分类
-    					doc.getProperties().put("logo", category.getImgUrl());//更新首图 img
+    				doc.getProperties().put("logo", good.getImgUrl());//更新首图 img
+    				//获取佣金信息
+    				Map<String,Object> profit = Maps.newHashMap();
+    				profit.put("type", "2-party");
+    				profit.put("amount", good.getWlUnitPrice()*good.getCommisionRatioWl()*0.01);
+    				profit.put("rate", good.getCommisionRatioWl());//是百分比
+    				doc.getProperties().put("profit", profit);//直接覆盖更新profit
 				}else {
 					logger.warn("查询详情失败。【SKU】"+skuId+"【URL】"+url);
 				}
 				break;
 			} 
-			
-			//TODO：获取佣金信息
-			
 			
 			//更新doc
 			arangoClient.update("my_stuff", itemKey, doc);    	
