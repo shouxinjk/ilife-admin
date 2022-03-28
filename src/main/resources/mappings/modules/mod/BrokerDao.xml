@@ -20,6 +20,7 @@
 		a.status AS "status",
 		a.upgrade AS "upgrade",
 		a.qrcodeUrl AS "qrcodeUrl",
+		a.points AS "points",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -145,6 +146,7 @@
 			status,
 			upgrade,
 			qrcodeUrl,
+			points,
 			create_by,
 			create_date,
 			update_by,
@@ -166,6 +168,7 @@
 			#{status},
 			#{upgrade},
 			#{qrcodeUrl},
+			#{points},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -190,6 +193,7 @@
 			status = #{status},
 			upgrade = #{upgrade},
 			qrcodeUrl = #{qrcodeUrl},
+			points = #{points},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}

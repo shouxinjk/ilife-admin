@@ -83,6 +83,10 @@ public class BrokerController extends BaseController {
 		if (!beanValidator(model, broker)){
 			return form(broker, model);
 		}
+		//检查虚拟豆
+		if(broker.getPoints()==0) {
+			broker.setPoints(20);//默认虚拟豆：固化写死
+		}
 		//检查达人等级：强制达人等级=parent等级+1
 		Broker parent = brokerService.get(broker.getParent().getId());//注意需要另外获取，broker.parent内不包含hierarchy信息
 		broker.setHierarchy(parent.getHierarchy()+1);

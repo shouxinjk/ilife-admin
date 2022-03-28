@@ -31,6 +31,7 @@ public class Broker extends DataEntity<Broker> {
 	private String status;		// 账户状态
 	private String upgrade;		// 升级状态
 	private String qrcodeUrl;		// 二维码地址
+	private int points=20;		// 虚拟豆数量:默认设为20
 	
 	public Broker() {
 		super();
@@ -152,6 +153,14 @@ public class Broker extends DataEntity<Broker> {
 
 	public void setQrcodeUrl(String qrcodeUrl) {
 		this.qrcodeUrl = qrcodeUrl;
+	}
+
+	public int getPoints() {
+		return points;
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
 	}
 
 	public Office getOrgnization() {

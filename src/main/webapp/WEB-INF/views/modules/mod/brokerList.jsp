@@ -45,6 +45,7 @@
 				<!--th>邮件</th-->
 				<th>层级</th>
 				<th>等级</th>
+				<th>虚拟豆</th>
 				<th>账户状态</th>
 				<!--th>升级状态</th-->
 				<th>注册时间</th>
@@ -66,6 +67,7 @@
 				<!--td>${broker.email}</td-->	
 				<td>${broker.hierarchy}</td>	
 				<td>${broker.level}</td>	
+				<td>${broker.points}</td>
 				<td>${broker.status}</td>	
 				<!--td>${broker.upgrade}</td-->	
 				<td>
