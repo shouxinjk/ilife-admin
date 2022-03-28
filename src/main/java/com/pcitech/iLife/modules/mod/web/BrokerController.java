@@ -231,6 +231,10 @@ public class BrokerController extends BaseController {
 			Broker newbroker = brokerService.get(broker);
 			result.put("data", newbroker);
 		}
+		//检查虚拟豆
+		if(broker.getPoints()==0) {
+			broker.setPoints(20);//默认虚拟豆：固化写死
+		}
 		return result;
 	}
 	

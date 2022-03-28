@@ -54,6 +54,12 @@
 			</div>
 		</div>	
 		<div class="control-group">
+			<label class="control-label">微信昵称：</label>
+			<div class="controls">
+				<form:input path="nickname" htmlEscape="false" maxlength="64" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">虚拟豆：</label>
 			<div class="controls">
 				<form:input path="points" htmlEscape="false" maxlength="20" class="input-xlarge "/>

@@ -37,6 +37,7 @@
 		<thead>
 			<tr>
 				<th>OpenId</th>
+				<th>昵称</th>
 				<th>姓名</th>
 				<th>机构</th>
 				<th>上级达人</th>
@@ -59,6 +60,7 @@
 				<td><a href="${ctx}/mod/broker/form?id=${broker.id}">
 					${broker.openid}
 				</a></td>
+				<td>${broker.nickname}</td>
 				<td>${broker.name}</td>
 				<td>${broker.orgnization.name}</td>
 				<td>${broker.parent.name}</td>				
