@@ -18,6 +18,7 @@ public class WxArticle extends DataEntity<WxArticle> {
 	private static final long serialVersionUID = 1L;
 	private String title;		// 标题
 	private String url;		// 链接
+	private String coverImg;		// 封面图片
 	private String status;		// 状态
 	private Broker broker;		// 达人ID
 	private String channel;		// 创建渠道
@@ -48,6 +49,14 @@ public class WxArticle extends DataEntity<WxArticle> {
 		this.url = url;
 	}
 	
+	public String getCoverImg() {
+		return coverImg;
+	}
+
+	public void setCoverImg(String coverImg) {
+		this.coverImg = coverImg;
+	}
+
 	@Length(min=0, max=20, message="状态长度必须介于 0 和 20 之间")
 	public String getStatus() {
 		return status;

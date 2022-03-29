@@ -52,7 +52,7 @@
 		<thead>
 			<tr>
 				<th>标题</th>
-				<th>链接</th>
+				<th>封面</th>
 				<th>状态</th>
 				<th>达人</th>
 				<th>创建渠道</th>
@@ -63,11 +63,11 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="wxArticle">
 			<tr>
-				<td><a href="${ctx}/wx/wxArticle/form?id=${wxArticle.id}">
+				<td><a href="${wxArticle.url}">
 					${wxArticle.title}
 				</a></td>
 				<td>
-					${wxArticle.url}
+					<img src="${wxArticle.coverImg}" width="60" height="60"/>
 				</td>
 				<td>
 					${fns:getDictLabel(wxArticle.status, 'active_inactive', '')}

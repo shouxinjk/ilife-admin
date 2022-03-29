@@ -48,6 +48,13 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">封面图：</label>
+			<div class="controls">
+				<form:input path="coverImg" htmlEscape="false" maxlength="512" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">状态：</label>
 			<div class="controls">
 				<form:select path="status" class="input-xlarge ">

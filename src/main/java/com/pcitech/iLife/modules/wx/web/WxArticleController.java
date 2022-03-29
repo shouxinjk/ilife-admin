@@ -205,7 +205,7 @@ public class WxArticleController extends BaseController {
 			Dict dict = new Dict();
 			dict.setType("publisher_point_cost");//查找流量主虚拟豆字典设置
 			List<Dict> points = dictService.findList(dict);
-			int pointsCost = 2;//默认为2个
+			int pointsCost = 5;//默认为5个
 			for(Dict point:points) {
 				if("publish-article".equalsIgnoreCase(point.getValue())) {
 					try {
@@ -221,11 +221,15 @@ public class WxArticleController extends BaseController {
 			result.put("description","Article created successfully and points charged");
 			
 			//推送文章到企业微信群，便于群发：由于通过微信，无前端接入，只能从后端完成推送
+			String img = Global.getConfig("wechat.image.default.prefix")+"logo"+(System.currentTimeMillis()%25)+".jpeg";
+			if(article.getCoverImg()!=null && article.getCoverImg().trim().length()>5) {//至少开头是https
+				img = article.getCoverImg();
+			}
 			JSONObject webhookItem = new JSONObject();
-			webhookItem.put("title" , "有新文章发布，一起助力吧~~");
-			webhookItem.put("description" , "点击查看");
+			webhookItem.put("title" , article.getTitle());
+			webhookItem.put("description" , "有新文章发布，恭请批阅~~");
 			webhookItem.put("url" , article.getUrl());//TODO：需要进入文章列表界面，当前直接跳转到文章本身
-			webhookItem.put("picurl" , Global.getConfig("wechat.image.default.prefix")+"logo"+(System.currentTimeMillis()%25)+".jpeg");//采用默认图片
+			webhookItem.put("picurl" , img);//采用默认图片
 			JSONArray webhookItems = new JSONArray();
 			webhookItems.add(webhookItem);
 			JSONObject webhookArticles = new JSONObject();
