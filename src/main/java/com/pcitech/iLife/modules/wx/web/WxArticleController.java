@@ -180,22 +180,6 @@ public class WxArticleController extends BaseController {
 				HttpClientHelper.getInstance().post(
 						Global.getConfig("wechat.templateMessenge")+"/notify-parent-broker", 
 						json,null);//推送上级达人通知
-				//推送文章到企业微信群，便于群发：由于通过微信，无前端接入，只能从后端完成推送
-				JSONObject webhookItem = new JSONObject();
-				webhookItem.put("title" , "有新文章发布，去看看吧");
-				webhookItem.put("description" , "通过微信聊天直接发布链接");
-				webhookItem.put("url" , article.getUrl());//TODO：需要进入文章列表界面，当前直接跳转到文章本身
-				webhookItem.put("picurl" , Global.getConfig("wechat.image.default.prefix")+(System.currentTimeMillis()%25)+".jpeg");//采用默认图片
-				JSONArray webhookItems = new JSONArray();
-				webhookItems.add(webhookItem);
-				JSONObject webhookArticles = new JSONObject();
-				webhookArticles.put("articles", webhookItems);
-				JSONObject webhookNews = new JSONObject();
-				webhookNews.put("articles", webhookArticles);
-				JSONObject webhookMsg = new JSONObject();
-				webhookMsg.put("msgtype", "news");
-				webhookMsg.put("news", webhookNews);
-				HttpClientHelper.getInstance().post(Global.getConfig("webHookUrlPrefix")+Global.getConfig("webHookCompanyBroker"), webhookMsg,null);//推送到微信达人运营群webhook
 			}
 		}else {//直接提示出错了
 			result.put("status",false);
@@ -221,6 +205,24 @@ public class WxArticleController extends BaseController {
 			broker.setPoints(broker.getPoints()-0);//TODO：查询扣除虚拟豆数量
 			brokerService.save(broker);
 			result.put("description","Article created successfully and points charged");
+			
+			//推送文章到企业微信群，便于群发：由于通过微信，无前端接入，只能从后端完成推送
+			JSONObject webhookItem = new JSONObject();
+			webhookItem.put("title" , "有新文章发布，去看看吧");
+			webhookItem.put("description" , "通过微信聊天直接发布链接");
+			webhookItem.put("url" , article.getUrl());//TODO：需要进入文章列表界面，当前直接跳转到文章本身
+			webhookItem.put("picurl" , Global.getConfig("wechat.image.default.prefix")+"logo"+(System.currentTimeMillis()%25)+".jpeg");//采用默认图片
+			JSONArray webhookItems = new JSONArray();
+			webhookItems.add(webhookItem);
+			JSONObject webhookArticles = new JSONObject();
+			webhookArticles.put("articles", webhookItems);
+			JSONObject webhookNews = new JSONObject();
+			webhookNews.put("articles", webhookArticles);
+			JSONObject webhookMsg = new JSONObject();
+			webhookMsg.put("msgtype", "news");
+			webhookMsg.put("news", webhookNews);
+			logger.debug("try to post webhook msg.",webhookMsg);
+			HttpClientHelper.getInstance().post(Global.getConfig("webHookUrlPrefix")+Global.getConfig("webHookCompanyBroker"), webhookMsg,null);//推送到微信达人运营群webhook
 		}else {
 			result.put("status",false);
 			result.put("description","Canceld. Points not enough.");
