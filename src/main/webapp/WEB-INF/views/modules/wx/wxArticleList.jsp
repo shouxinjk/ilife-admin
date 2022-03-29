@@ -34,7 +34,7 @@
 					<form:options items="${fns:getDictList('active_inactive')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
-			<li><label>达人ID：</label>
+			<li><label>达人：</label>
 				<form:input path="broker.id" htmlEscape="false" maxlength="64" class="input-medium"/>
 			</li>
 			<li><label>创建渠道：</label>
@@ -54,7 +54,7 @@
 				<th>标题</th>
 				<th>链接</th>
 				<th>状态</th>
-				<th>达人ID</th>
+				<th>达人</th>
 				<th>创建渠道</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="wx:wxArticle:edit"><th>操作</th></shiro:hasPermission>
@@ -73,7 +73,7 @@
 					${fns:getDictLabel(wxArticle.status, 'active_inactive', '')}
 				</td>
 				<td>
-					${wxArticle.broker.id}
+					${wxArticle.broker.name} ${wxArticle.broker.nickname}
 				</td>
 				<td>
 					${fns:getDictLabel(wxArticle.channel, 'wx_article_channel', '')}

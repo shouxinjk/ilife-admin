@@ -195,7 +195,7 @@ public class WxArticleController extends BaseController {
 				JSONObject webhookMsg = new JSONObject();
 				webhookMsg.put("msgtype", "news");
 				webhookMsg.put("news", webhookNews);
-				HttpClientHelper.getInstance().post(Global.getConfig("webHookUrlPrefix")+Global.getConfig("webHookCompanyBroker"), json,null);//推送到微信达人运营群webhook
+				HttpClientHelper.getInstance().post(Global.getConfig("webHookUrlPrefix")+Global.getConfig("webHookCompanyBroker"), webhookMsg,null);//推送到微信达人运营群webhook
 			}
 		}else {//直接提示出错了
 			result.put("status",false);
@@ -212,6 +212,7 @@ public class WxArticleController extends BaseController {
 			article.setCreateDate(new Date());
 			article.setUpdateDate(new Date());
 			article.setStatus("active");
+			article.setBroker(broker);
 			wxArticleService.save(article);
 			result.put("status",true);
 			result.put("description","Article created successfully");
