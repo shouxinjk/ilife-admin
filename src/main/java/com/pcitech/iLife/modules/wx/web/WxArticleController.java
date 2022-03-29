@@ -283,7 +283,7 @@ public class WxArticleController extends BaseController {
 			result.put("description","Cannot find article by id:"+id);
 		}else{
 			//获取文章发布达人
-			Broker broker = article.getBroker();
+			Broker broker = brokerService.get(article.getBroker().getId());//重要：必须重新获取，否则会导致其他信息丢失
 			//扣除虚拟豆
 			Dict dict = new Dict();
 			dict.setType("publisher_point_cost");//查找流量主虚拟豆字典设置

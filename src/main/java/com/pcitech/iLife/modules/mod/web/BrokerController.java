@@ -89,7 +89,7 @@ public class BrokerController extends BaseController {
 		}
 		//检查达人等级：强制达人等级=parent等级+1
 		Broker parent = brokerService.get(broker.getParent().getId());//注意需要另外获取，broker.parent内不包含hierarchy信息
-		broker.setHierarchy(parent.getHierarchy()+1);
+		broker.setHierarchy(parent==null?1:parent.getHierarchy()+1);
 		
 		brokerService.save(broker);
 		addMessage(redirectAttributes, "保存推广达人成功");
