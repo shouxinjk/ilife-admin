@@ -25,6 +25,7 @@
 				${adminPath}/rest/api/** = anon
 				${adminPath}/third-party/** = anon
 				${adminPath}/mod/**/rest/** = anon
+				${adminPath}/wx/**/rest/** = anon
 				${adminPath}/dict/**/rest/** = anon
 				${adminPath}/** = user
 				/act/editor/** = user

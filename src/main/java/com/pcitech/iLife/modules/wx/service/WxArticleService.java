@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.wx.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,16 @@ import com.pcitech.iLife.modules.wx.dao.WxArticleDao;
 @Service
 @Transactional(readOnly = true)
 public class WxArticleService extends CrudService<WxArticleDao, WxArticle> {
-
+	//根据openid获取待阅读文章列表
+	public List<WxArticle> findPendingList(Map<String,Object> param){
+		return dao.findPendingList(param);
+	}
+	
+	//根据openid获取已发布文章列表
+	public List<WxArticle> findMyArticles(Map<String,Object> param){
+		return dao.findMyArticles(param);
+	}
+	
 	public WxArticle get(String id) {
 		return super.get(id);
 	}

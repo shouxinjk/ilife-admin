@@ -20,6 +20,7 @@ public class Broker extends DataEntity<Broker> {
 	private Office orgnization;	// 归属公司
 	private Broker parent;		// 上级达人
 	private String openid;		// openid
+	private String nickname;		// 昵称：从微信获取
 	private String name;		// 真实姓名
 	private String phone;		// 电话号码
 	private String email;		// 邮件
@@ -57,7 +58,13 @@ public class Broker extends DataEntity<Broker> {
 	public void setOpenid(String openid) {
 		this.openid = openid;
 	}
+	public String getNickname() {
+		return nickname;
+	}
 
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
 	@Length(min=0, max=20, message="真实姓名长度必须介于 0 和 20 之间")
 	public String getName() {
 		return name;
