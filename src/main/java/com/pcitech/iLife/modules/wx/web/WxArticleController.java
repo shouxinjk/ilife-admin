@@ -112,10 +112,9 @@ public class WxArticleController extends BaseController {
 	 * 根据openid获取待阅读文章列表
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/pending-articles/{openid}", method = RequestMethod.GET)
-	public List<WxArticle> listPagedPendingArticles(@PathVariable String openid, @RequestParam(required=true) int from,@RequestParam(required=true) int to) {
+	@RequestMapping(value = "rest/pending-articles", method = RequestMethod.GET)
+	public List<WxArticle> listPagedPendingArticles( @RequestParam(required=true) int from,@RequestParam(required=true) int to) {
 		Map<String,Object> params = Maps.newHashMap();
-		params.put("openid", openid);
 		params.put("from", from);
 		params.put("to", to);
 		return wxArticleService.findPendingList(params);
@@ -264,6 +263,62 @@ public class WxArticleController extends BaseController {
 			wxArticleService.save(article);
 			result.put("status",true);
 			result.put("description","Article status changed.[new]"+status);
+		}
+		return result;
+	}
+	
+	/**
+	 * 有效阅读，扣除阅豆
+	 * 扣除阅豆，并返回本次消耗
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/exposure/{id}/{openid}", method = RequestMethod.POST)
+	public Map<String, Object> onArticleViewed(@PathVariable String id,@PathVariable String openid){
+		Map<String, Object> result = Maps.newHashMap();
+		WxArticle article = wxArticleService.get(id);
+		
+		//检查文章
+		if(article == null) {
+			result.put("status",false);
+			result.put("description","Cannot find article by id:"+id);
+		}else{
+			//获取文章发布达人
+			Broker broker = article.getBroker();
+			//扣除虚拟豆
+			Dict dict = new Dict();
+			dict.setType("publisher_point_cost");//查找流量主虚拟豆字典设置
+			List<Dict> points = dictService.findList(dict);
+			int pointsCost = 2;//默认为2个
+			for(Dict point:points) {
+				if("publish-article".equalsIgnoreCase(point.getValue())) {
+					try {
+						pointsCost = Integer.parseInt(point.getLabel());
+					}catch(Exception ex) {
+						//do nothing
+					}
+					break;
+				}
+			}
+			//扣除文章发布者阅豆
+			broker.setPoints(broker.getPoints()-pointsCost);//查询扣除虚拟豆数量
+			brokerService.save(broker);
+			//增加阅读者阅豆
+			Broker reader = brokerService.getByOpenid(openid);
+			if(reader==null || reader.getId()==null) {
+				//直接忽略
+				result.put("description","Cannot find broker info for current reader");
+			}else {
+				reader.setPoints(reader.getPoints()+pointsCost);//增加奖励
+				brokerService.save(reader);
+			}
+			//需要设置返回信息：发布者达人ID、openId、logo、消耗阅豆、
+			result.put("openid",broker.getOpenid());
+			result.put("brokerId",broker.getId());
+			result.put("nickname",broker.getName());
+			//result.put("avatarUrl",broker.getOpenid()); //TODO 需要补充
+			result.put("points",pointsCost);
+			result.put("status",true);
+			result.put("description","Article exposure pionts cosumed.[cost]"+pointsCost+"[remain]"+broker.getPoints());
 		}
 		return result;
 	}

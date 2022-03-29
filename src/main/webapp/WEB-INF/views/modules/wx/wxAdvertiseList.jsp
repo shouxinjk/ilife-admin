@@ -29,10 +29,16 @@
 				<form:input path="name" htmlEscape="false" maxlength="255" class="input-medium"/>
 			</li>
 			<li><label>广告类型：</label>
-				<form:input path="type" htmlEscape="false" maxlength="255" class="input-medium"/>
+				<form:select path="status" class="input-medium">
+					<form:option value="" label=""/>
+					<form:options items="${fns:getDictList('wx_advertise_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
 			</li>
 			<li><label>状态：</label>
-				<form:input path="status" htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:select path="status" class="input-medium">
+					<form:option value="" label=""/>
+					<form:options items="${fns:getDictList('active_inactive')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -61,7 +67,7 @@
 					${wxAdvertise.name}
 				</a></td>
 				<td>
-					${wxAdvertise.type}
+					${fns:getDictLabel(wxAdvertise.type, 'wx_advertise_type', '')}
 				</td>
 				<td>
 					${wxAdvertise.timeSlot}
@@ -79,7 +85,7 @@
 					${wxAdvertise.discount}
 				</td>
 				<td>
-					${wxAdvertise.status}
+					${fns:getDictLabel(wxAdvertise.status, 'active_inactive', '')}
 				</td>
 				<td>
 					<fmt:formatDate value="${wxAdvertise.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

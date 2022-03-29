@@ -43,8 +43,10 @@
 		<div class="control-group">
 			<label class="control-label">广告类型：</label>
 			<div class="controls">
-				<form:input path="type" htmlEscape="false" maxlength="255" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:select path="type" class="input-xlarge ">
+					<form:option value="" label=""/>
+					<form:options items="${fns:getDictList('wx_advertise_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
 			</div>
 		</div>
 		<div class="control-group">
@@ -88,7 +90,10 @@
 		<div class="control-group">
 			<label class="control-label">状态：</label>
 			<div class="controls">
-				<form:input path="status" htmlEscape="false" maxlength="20" class="input-xlarge "/>
+				<form:select path="status" class="input-xlarge ">
+					<form:option value="" label=""/>
+					<form:options items="${fns:getDictList('active_inactive')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
 			</div>
 		</div>
 		<div class="form-actions">

@@ -28,7 +28,7 @@
 			<li><label>公众号名称：</label>
 				<form:input path="name" htmlEscape="false" maxlength="255" class="input-medium"/>
 			</li>
-			<li><label>公众号原始ID：</label>
+			<li><label>原始ID：</label>
 				<form:input path="originalId" htmlEscape="false" maxlength="255" class="input-medium"/>
 			</li>
 			<li><label>状态：</label>
@@ -46,7 +46,7 @@
 		<thead>
 			<tr>
 				<th>公众号名称</th>
-				<th>公众号原始ID</th>
+				<th>原始ID</th>
 				<th>公众号描述</th>
 				<th>二维码图片</th>
 				<th>状态</th>
@@ -68,7 +68,7 @@
 					${wxAccount.description}
 				</td>
 				<td>
-					${wxAccount.qrcodeImg}
+					<img src="${wxAccount.qrcodeImg}" width="60" height="60"/>
 				</td>
 				<td>
 					${fns:getDictLabel(wxAccount.status, 'active_inactive', '')}

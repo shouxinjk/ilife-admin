@@ -54,7 +54,6 @@
 		<where>
 			a.del_flag = 0
 			AND a.status = 'active'
-			AND b.openid = #{openid}
 			AND b.points > -2
 			AND a.broker_id = b.id
 		</where>
