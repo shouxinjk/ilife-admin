@@ -35,6 +35,7 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
+import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.service.DictService;
 import com.pcitech.iLife.modules.wx.entity.WxArticle;
 import com.pcitech.iLife.modules.wx.service.WxArticleService;
@@ -202,7 +203,21 @@ public class WxArticleController extends BaseController {
 			result.put("description","Article created successfully");
 			
 			//扣除虚拟豆
-			broker.setPoints(broker.getPoints()-0);//TODO：查询扣除虚拟豆数量
+			Dict dict = new Dict();
+			dict.setType("publisher_point_cost");//查找流量主虚拟豆字典设置
+			List<Dict> points = dictService.findList(dict);
+			int pointsCost = 2;//默认为2个
+			for(Dict point:points) {
+				if("publish-article".equalsIgnoreCase(point.getValue())) {
+					try {
+						pointsCost = Integer.parseInt(point.getLabel());
+					}catch(Exception ex) {
+						//do nothing
+					}
+					break;
+				}
+			}
+			broker.setPoints(broker.getPoints()-pointsCost);//TODO：查询扣除虚拟豆数量
 			brokerService.save(broker);
 			result.put("description","Article created successfully and points charged");
 			
@@ -221,8 +236,10 @@ public class WxArticleController extends BaseController {
 			JSONObject webhookMsg = new JSONObject();
 			webhookMsg.put("msgtype", "news");
 			webhookMsg.put("news", webhookNews);
-			logger.debug("try to post webhook msg.",webhookMsg);
-			HttpClientHelper.getInstance().post(Global.getConfig("webHookUrlPrefix")+Global.getConfig("webHookCompanyBroker"), webhookMsg,null);//推送到微信达人运营群webhook
+			logger.debug("try to post webhook msg."+webhookMsg);
+			Map<String,String> headers = Maps.newHashMap();
+			headers.put("Content-Type", "application/json");
+			HttpClientHelper.getInstance().post(Global.getConfig("webHookUrlPrefix")+Global.getConfig("webHookCompanyBroker"), webhookMsg,headers);//推送到微信达人运营群webhook
 		}else {
 			result.put("status",false);
 			result.put("description","Canceld. Points not enough.");
