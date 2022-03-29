@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,7 +51,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
 @Controller
 @RequestMapping(value = "${adminPath}/wx/wxArticle")
 public class WxArticleController extends BaseController {
-
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	private WxArticleService wxArticleService;
 	
@@ -137,6 +139,7 @@ public class WxArticleController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "rest/article", method = RequestMethod.POST)
 	public Map<String, Object> publishArticle(@RequestBody WxArticle article){
+		logger.debug("try to publish article.[data]"+article);
 		Map<String, Object> result = Maps.newHashMap();
 		Broker broker = null;
 		
