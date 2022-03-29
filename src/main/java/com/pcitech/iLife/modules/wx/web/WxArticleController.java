@@ -223,19 +223,17 @@ public class WxArticleController extends BaseController {
 			
 			//推送文章到企业微信群，便于群发：由于通过微信，无前端接入，只能从后端完成推送
 			JSONObject webhookItem = new JSONObject();
-			webhookItem.put("title" , "有新文章发布，去看看吧");
-			webhookItem.put("description" , "通过微信聊天直接发布链接");
+			webhookItem.put("title" , "有新文章发布，一起助力吧~~");
+			webhookItem.put("description" , "点击查看");
 			webhookItem.put("url" , article.getUrl());//TODO：需要进入文章列表界面，当前直接跳转到文章本身
 			webhookItem.put("picurl" , Global.getConfig("wechat.image.default.prefix")+"logo"+(System.currentTimeMillis()%25)+".jpeg");//采用默认图片
 			JSONArray webhookItems = new JSONArray();
 			webhookItems.add(webhookItem);
 			JSONObject webhookArticles = new JSONObject();
 			webhookArticles.put("articles", webhookItems);
-			JSONObject webhookNews = new JSONObject();
-			webhookNews.put("articles", webhookArticles);
 			JSONObject webhookMsg = new JSONObject();
 			webhookMsg.put("msgtype", "news");
-			webhookMsg.put("news", webhookNews);
+			webhookMsg.put("news", webhookArticles);
 			logger.debug("try to post webhook msg."+webhookMsg);
 			Map<String,String> headers = Maps.newHashMap();
 			headers.put("Content-Type", "application/json");
