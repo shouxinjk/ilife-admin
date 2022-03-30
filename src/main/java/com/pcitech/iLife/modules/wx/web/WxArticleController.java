@@ -41,6 +41,7 @@ import com.pcitech.iLife.modules.wx.entity.WxArticle;
 import com.pcitech.iLife.modules.wx.service.WxArticleService;
 import com.pcitech.iLife.util.HttpClientHelper;
 import com.pcitech.iLife.util.Util;
+import com.pcitech.iLife.util.WxHelper;
 
 import me.chanjar.weixin.common.error.WxErrorException;
 
@@ -134,7 +135,9 @@ public class WxArticleController extends BaseController {
 	}
 	
 	/**
-	 * 发布文章
+	 * 发布文章。数据：
+	 * 	url：文章地址
+	 * 	broker：id或openid至少传递一个，在传递openid时需要同时传递nickname
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/article", method = RequestMethod.POST)
@@ -149,6 +152,8 @@ public class WxArticleController extends BaseController {
 		if(article2!=null) {//表示存在，直接返回，不扣除阅豆
 			result.put("status",true);
 			result.put("description","Article exists.");
+			result.put("code", "duplicate");//特殊标记，对于已经存在的文章不会扣减阅豆，需要提示发布者
+			result.put("data", article2);//将文章作为数据返回
 			return result;
 		}
 		
@@ -191,15 +196,29 @@ public class WxArticleController extends BaseController {
 			result.put("status",false);
 			result.put("description","Cannot find broker. "+article.getBroker());
 		}else if(broker.getPoints()>0) {
-			//先发布文章
+			//获取文章信息
+			try {
+				JSONObject wechatArticle = WxHelper.getInstance().getWxArticleInfo(article.getUrl());
+				if(wechatArticle.getString("title")!=null)
+					  article.setTitle(wechatArticle.getString("title"));
+				  if(wechatArticle.getString("coverImg")!=null) {
+					  article.setCoverImg(wechatArticle.getString("coverImg"));
+				  }
+			}catch(Exception ex) {
+				logger.error("failed check wechat article.",ex);
+			}
+			//发布文章
+			article.setId(id);
 			article.setIsNewRecord(true);//直接作为新文章发布
 			article.setCreateDate(new Date());
 			article.setUpdateDate(new Date());
 			article.setStatus("active");
+			article.setChannel("manual");
 			article.setBroker(broker);
 			wxArticleService.save(article);
 			result.put("status",true);
 			result.put("description","Article created successfully");
+			result.put("data", wxArticleService.get(id));//将文章作为数据返回
 			
 			//扣除虚拟豆
 			Dict dict = new Dict();
