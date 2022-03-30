@@ -135,7 +135,7 @@ public class WxArticleController extends BaseController {
 		params.put("openid", openid);
 		params.put("from", from);
 		params.put("to", to);
-		return wxArticleService.findPendingList(params);
+		return wxArticleService.findMyArticles(params);
 	}
 	
 	/**
