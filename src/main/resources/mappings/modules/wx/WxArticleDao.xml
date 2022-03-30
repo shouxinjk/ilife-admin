@@ -34,7 +34,7 @@
 		WHERE a.id = #{id}
 	</select>
 	
-	<!-- 查询待阅度文章列表：根据点数及时间倒序排列，点数大于-2才展示 -->
+	<!-- 查询待阅度文章列表：根据点数及时间倒序排列，点数大于-2才展示。能够根据指定openid过滤 -->
 	<select id="findPendingList" resultType="WxArticle">
 		SELECT 
 		a.id AS "id",
@@ -58,6 +58,9 @@
 			AND a.status = 'active'
 			AND b.points > -2
 			AND a.broker_id = b.id
+			<if test="openid != null and openid != ''">
+				AND b.openid = #{openid}
+			</if>			
 		</where>
 		ORDER BY b.points,a.update_date DESC
 		limit #{from},#{to}

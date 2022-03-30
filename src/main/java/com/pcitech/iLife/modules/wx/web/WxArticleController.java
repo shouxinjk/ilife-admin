@@ -110,14 +110,18 @@ public class WxArticleController extends BaseController {
 	}
 	
 	/**
-	 * 根据openid获取待阅读文章列表
+	 * 获取待阅读文章列表
+	 * 支持根据发布者 openid 过滤
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/pending-articles", method = RequestMethod.GET)
-	public List<WxArticle> listPagedPendingArticles( @RequestParam(required=true) int from,@RequestParam(required=true) int to) {
+	public List<WxArticle> listPagedPendingArticles( @RequestParam(required=true) int from,@RequestParam(required=true) int to,@RequestParam String openid) {
 		Map<String,Object> params = Maps.newHashMap();
 		params.put("from", from);
 		params.put("to", to);
+		if(openid!=null && openid.trim().length()>0) {
+			params.put("openid", openid);
+		}
 		return wxArticleService.findPendingList(params);
 	}
 	
@@ -313,7 +317,7 @@ public class WxArticleController extends BaseController {
 			List<Dict> points = dictService.findList(dict);
 			int pointsCost = 2;//默认为2个
 			for(Dict point:points) {
-				if("publish-article".equalsIgnoreCase(point.getValue())) {
+				if("view-article".equalsIgnoreCase(point.getValue())) {
 					try {
 						pointsCost = Integer.parseInt(point.getLabel());
 					}catch(Exception ex) {
