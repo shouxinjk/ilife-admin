@@ -289,6 +289,7 @@ public class WxArticleController extends BaseController {
 			article.setStatus(status);
 			wxArticleService.save(article);
 			result.put("status",true);
+			result.put("data",article);
 			result.put("description","Article status changed.[new]"+status);
 		}
 		return result;
