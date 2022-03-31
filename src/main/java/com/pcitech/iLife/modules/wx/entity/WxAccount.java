@@ -20,7 +20,7 @@ public class WxAccount extends DataEntity<WxAccount> {
 	private String originalId;		// 公众号原始ID
 	private String description;		// 公众号描述
 	private String qrcodeImg;		// 二维码图片
-	private String status;		// 状态
+	private String status="active";		// 状态
 	private Broker broker;		// 达人ID
 	
 	public WxAccount() {

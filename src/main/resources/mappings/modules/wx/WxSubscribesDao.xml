@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.wx.dao.WxSubscribesDao">
+    
+	<sql id="wxSubscribesColumns">
+		a.id AS "id",
+		a.account_id AS "account.id",
+		aa.name AS "account.name",
+		aa.original_id AS "account.originalId",
+		a.broker_id AS "broker.id",
+		bb.nickname AS "broker.nickname",
+		a.openid AS "openid",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="wxSubscribesJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by 
+		LEFT JOIN mod_broker bb ON bb.id = a.broker_id	
+		LEFT JOIN wx_account aa ON aa.id = a.account_id	
+	</sql>
+    
+	<select id="get" resultType="WxSubscribes">
+		SELECT 
+			<include refid="wxSubscribesColumns"/>
+		FROM wx_subscribes a
+		<include refid="wxSubscribesJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="WxSubscribes">
+		SELECT 
+			<include refid="wxSubscribesColumns"/>
+		FROM wx_subscribes a
+		<include refid="wxSubscribesJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="accountId != null and accountId != ''">
+				AND a.account_id = #{account.id}
+			</if>
+			<if test="brokerId != null and brokerId != ''">
+				AND a.broker_id = #{broker.id}
+			</if>
+			<if test="openid != null and openid != ''">
+				AND a.openid = #{openid}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="WxSubscribes">
+		SELECT 
+			<include refid="wxSubscribesColumns"/>
+		FROM wx_subscribes a
+		<include refid="wxSubscribesJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO wx_subscribes(
+			id,
+			account_id,
+			broker_id,
+			openid,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{account.id},
+			#{broker.id},
+			#{openid},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE wx_subscribes SET 	
+			account_id = #{account.id},
+			broker_id = #{broker.id},
+			openid = #{openid},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE wx_subscribes SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

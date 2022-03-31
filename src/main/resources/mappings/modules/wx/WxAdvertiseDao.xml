@@ -6,6 +6,8 @@
 		a.id AS "id",
 		a.name AS "name",
 		a.type AS "type",
+		a.weight AS "weight",
+		a.quantity AS "quantity",
 		a.time_slot AS "timeSlot",
 		a.time_slot_from AS "timeSlotFrom",
 		a.time_slot_to AS "timeSlotTo",
@@ -21,6 +23,19 @@
 	
 	<sql id="wxAdvertiseJoins">
 	</sql>
+	
+	<select id="listAdsByType" resultType="WxAdvertise">
+		SELECT 
+			<include refid="wxAdvertiseColumns"/>
+		FROM wx_advertise a
+		<include refid="wxAdvertiseJoins"/>
+		<where>
+			a.del_flag = 0
+			AND a.status = 'active'
+			AND a.type = #{type}
+		</where>
+		ORDER BY a.time_slot_from,a.weight desc
+	</select>	
     
 	<select id="get" resultType="WxAdvertise">
 		SELECT 
@@ -55,7 +70,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.update_date DESC
+				ORDER BY a.time_slot_from,a.weight desc
 			</otherwise>
 		</choose>
 	</select>
@@ -73,7 +88,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.update_date DESC
+				ORDER BY a.time_slot_from,a.weight desc
 			</otherwise>
 		</choose>
 	</select>
@@ -83,6 +98,8 @@
 			id,
 			name,
 			type,
+			weight,
+			quantity,
 			time_slot,
 			time_slot_from,
 			time_slot_to,
@@ -98,6 +115,8 @@
 			#{id},
 			#{name},
 			#{type},
+			#{weight},
+			#{quantity},
 			#{timeSlot},
 			#{timeSlotFrom},
 			#{timeSlotTo},
@@ -116,6 +135,8 @@
 		UPDATE wx_advertise SET 	
 			name = #{name},
 			type = #{type},
+			weight = #{weight},
+			quantity = #{quantity},
 			time_slot = #{timeSlot},
 			time_slot_from = #{timeSlotFrom},
 			time_slot_to = #{timeSlotTo},

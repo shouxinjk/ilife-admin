@@ -21,7 +21,12 @@ import com.pcitech.iLife.modules.wx.dao.WxAdvertiseDao;
 @Service
 @Transactional(readOnly = true)
 public class WxAdvertiseService extends CrudService<WxAdvertiseDao, WxAdvertise> {
-
+	
+	//根据类型获取广告位
+	public List<WxAdvertise> listAdsByType(String type) {
+		return dao.listAdsByType(type);
+	}
+	
 	public WxAdvertise get(String id) {
 		return super.get(id);
 	}

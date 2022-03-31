@@ -48,13 +48,16 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>广告位名称</th>
+				
 				<th>广告类型</th>
 				<th>时间段名称</th>
-				<th>时间段开始时间</th>
-				<th>时间段结束时间</th>
+				<th>广告位名称</th>
+				<th>时间段开始</th>
+				<th>时间段结束</th>
 				<th>价格</th>
-				<th>优惠策略</th>
+				<th>权重</th>
+				<th>数量</th>
+				<th>优惠</th>
 				<th>状态</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="wx:wxAdvertise:edit"><th>操作</th></shiro:hasPermission>
@@ -63,9 +66,6 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="wxAdvertise">
 			<tr>
-				<td><a href="${ctx}/wx/wxAdvertise/form?id=${wxAdvertise.id}">
-					${wxAdvertise.name}
-				</a></td>
 				<td>
 					${fns:getDictLabel(wxAdvertise.type, 'wx_advertise_type', '')}
 				</td>
@@ -73,14 +73,23 @@
 					${wxAdvertise.timeSlot}
 				</td>
 				<td>
-					<fmt:formatDate value="${wxAdvertise.timeSlotFrom}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					${wxAdvertise.name}
+				</td>				
+				<td>
+					<fmt:formatDate value="${wxAdvertise.timeSlotFrom}" pattern="HH:mm"/>
 				</td>
 				<td>
-					<fmt:formatDate value="${wxAdvertise.timeSlotTo}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${wxAdvertise.timeSlotTo}" pattern="HH:mm"/>
 				</td>
 				<td>
 					${wxAdvertise.price}
 				</td>
+				<td>
+					${wxAdvertise.weight}
+				</td>
+				<td>
+					${wxAdvertise.quantity}
+				</td>				
 				<td>
 					${wxAdvertise.discount}
 				</td>

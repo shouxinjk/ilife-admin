@@ -3,19 +3,16 @@
  */
 package com.pcitech.iLife.modules.wx.dao;
 
-import java.util.List;
-
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
-import com.pcitech.iLife.modules.wx.entity.WxAdvertise;
+import com.pcitech.iLife.modules.wx.entity.WxSubscribes;
 
 /**
- * 微信广告位管理DAO接口
+ * 关注记录DAO接口
  * @author ilife
- * @version 2022-03-28
+ * @version 2022-03-31
  */
 @MyBatisDao
-public interface WxAdvertiseDao extends CrudDao<WxAdvertise> {
-	//根据type获取可用广告位
-	public List<WxAdvertise> listAdsByType(String type);
+public interface WxSubscribesDao extends CrudDao<WxSubscribes> {
+	
 }

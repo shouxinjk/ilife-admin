@@ -19,13 +19,15 @@ public class WxAdvertise extends DataEntity<WxAdvertise> {
 	
 	private static final long serialVersionUID = 1L;
 	private String name;		// 广告位名称
-	private String type;		// 广告类型
+	private String type="article";		// 广告类型
 	private String timeSlot;		// 时间段名称
+	private int weight=100;			//广告位排序
+	private int quantity=1;			//数量：支持同一时段同一个广告位多次出售
 	private Date timeSlotFrom;		// 时间段开始时间
 	private Date timeSlotTo;		// 时间段结束时间
 	private Double price;		// 价格
 	private String discount;		// 优惠策略
-	private String status;		// 状态
+	private String status="active";		// 状态
 	
 	public WxAdvertise() {
 		super();
@@ -62,7 +64,23 @@ public class WxAdvertise extends DataEntity<WxAdvertise> {
 		this.timeSlot = timeSlot;
 	}
 	
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	@JsonFormat(pattern = "HH:mm:ss")
 	@NotNull(message="时间段开始时间不能为空")
 	public Date getTimeSlotFrom() {
 		return timeSlotFrom;
@@ -72,7 +90,7 @@ public class WxAdvertise extends DataEntity<WxAdvertise> {
 		this.timeSlotFrom = timeSlotFrom;
 	}
 	
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "HH:mm:ss")
 	@NotNull(message="时间段结束时间不能为空")
 	public Date getTimeSlotTo() {
 		return timeSlotTo;

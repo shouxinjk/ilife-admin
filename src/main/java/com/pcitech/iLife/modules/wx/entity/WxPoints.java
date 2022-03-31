@@ -20,7 +20,7 @@ public class WxPoints extends DataEntity<WxPoints> {
 	private Integer points;		// 虚拟豆数量
 	private String price;		// 价格
 	private String discount;		// 优惠策略
-	private String status;		// 状态
+	private String status="active";		// 状态
 	
 	public WxPoints() {
 		super();

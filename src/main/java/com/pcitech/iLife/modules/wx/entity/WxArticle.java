@@ -19,9 +19,9 @@ public class WxArticle extends DataEntity<WxArticle> {
 	private String title;		// 标题
 	private String url;		// 链接
 	private String coverImg;		// 封面图片
-	private String status;		// 状态
+	private String status="active";		// 状态
 	private Broker broker;		// 达人ID
-	private String channel;		// 创建渠道
+	private String channel="auto";		// 创建渠道
 	
 	public WxArticle() {
 		super();
