@@ -26,10 +26,13 @@ public class WxArticleService extends CrudService<WxArticleDao, WxArticle> {
 	public List<WxArticle> findPendingList(Map<String,Object> param){
 		return dao.findPendingList(param);
 	}
-	
 	//根据openid获取已发布文章列表
 	public List<WxArticle> findMyArticles(Map<String,Object> param){
 		return dao.findMyArticles(param);
+	}
+	//根据openid获取已发布文章总数
+	public int countMyArticles(String openid){
+		return dao.countMyArticles(openid);
 	}
 	
 	public WxArticle get(String id) {

@@ -19,6 +19,8 @@ import com.pcitech.iLife.modules.wx.entity.WxArticle;
 public interface WxArticleDao extends CrudDao<WxArticle> {
 	//根据openid获取待阅读文章列表
 	public List<WxArticle> findPendingList(Map<String,Object> param);
-	//根据openid获取已发布文章列表
+	//根据openid获取已发布文章列表 
 	public List<WxArticle> findMyArticles(Map<String,Object> param);
+	//根据openid获取已发布文章总数
+	public int countMyArticles(String openid);
 }

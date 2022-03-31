@@ -139,6 +139,19 @@ public class WxArticleController extends BaseController {
 	}
 	
 	/**
+	 * 根据openid获取已发布文章总数
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/total-articles/{openid}", method = RequestMethod.GET)
+	public Map<String,Object> countMyArticles(@PathVariable String openid) {
+		logger.debug("try to count articles by openid.[openid]"+openid);
+		Map<String, Object> result = Maps.newHashMap();
+		result.put("status",true);
+		result.put("count",wxArticleService.countMyArticles(openid));
+		return result;
+	}	
+	
+	/**
 	 * 发布文章。数据：
 	 * 	url：文章地址
 	 * 	broker：id或openid至少传递一个，在传递openid时需要同时传递nickname
