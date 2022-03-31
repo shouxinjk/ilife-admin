@@ -41,13 +41,13 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">关注者broker：</label>
+			<label class="control-label">粉丝broker：</label>
 			<div class="controls">
 				<form:input path="broker.id" htmlEscape="false" maxlength="32" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">关注者openid：</label>
+			<label class="control-label">粉丝openid：</label>
 			<div class="controls">
 				<form:input path="openid" htmlEscape="false" maxlength="128" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>

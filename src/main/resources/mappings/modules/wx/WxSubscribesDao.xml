@@ -38,10 +38,10 @@
 		<include refid="wxSubscribesJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
-			<if test="accountId != null and accountId != ''">
+			<if test="account !=null and account.id != null and account.id != ''">
 				AND a.account_id = #{account.id}
 			</if>
-			<if test="brokerId != null and brokerId != ''">
+			<if test="broker !=null and broker.id != null and broker.id != ''">
 				AND a.broker_id = #{broker.id}
 			</if>
 			<if test="openid != null and openid != ''">

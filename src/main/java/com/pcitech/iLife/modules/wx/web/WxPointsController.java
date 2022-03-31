@@ -3,6 +3,9 @@
  */
 package com.pcitech.iLife.modules.wx.web;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,13 +15,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.wx.entity.WxArticle;
 import com.pcitech.iLife.modules.wx.entity.WxPoints;
 import com.pcitech.iLife.modules.wx.service.WxPointsService;
 
@@ -78,6 +85,15 @@ public class WxPointsController extends BaseController {
 		wxPointsService.delete(wxPoints);
 		addMessage(redirectAttributes, "删除微信虚拟豆成功");
 		return "redirect:"+Global.getAdminPath()+"/wx/wxPoints/?repage";
+	}
+	
+	/**
+	 * 获取所有阅豆产品列表
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/all", method = RequestMethod.GET)
+	public List<WxPoints> getAllWxPointsProduct() {
+		return wxPointsService.getAvailableProducts();
 	}
 
 }

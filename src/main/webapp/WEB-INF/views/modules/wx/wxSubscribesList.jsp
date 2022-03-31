@@ -28,10 +28,10 @@
 			<li><label>公众号：</label>
 				<form:input path="account.id" htmlEscape="false" maxlength="32" class="input-medium"/>
 			</li>
-			<li><label>关注者broker：</label>
+			<li><label>粉丝broker：</label>
 				<form:input path="broker.id" htmlEscape="false" maxlength="32" class="input-medium"/>
 			</li>
-			<li><label>关注者openid：</label>
+			<li><label>粉丝openid：</label>
 				<form:input path="openid" htmlEscape="false" maxlength="128" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -43,8 +43,8 @@
 		<thead>
 			<tr>
 				<th>公众号</th>
-				<th>关注者broker</th>
-				<th>关注者openid</th>
+				<th>粉丝broker</th>
+				<th>粉丝openid</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="wx:wxSubscribes:edit"><th>操作</th></shiro:hasPermission>
 			</tr>

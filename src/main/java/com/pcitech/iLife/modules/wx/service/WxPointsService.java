@@ -21,7 +21,11 @@ import com.pcitech.iLife.modules.wx.dao.WxPointsDao;
 @Service
 @Transactional(readOnly = true)
 public class WxPointsService extends CrudService<WxPointsDao, WxPoints> {
-
+	//获取所有可购买阅豆产品
+	public List<WxPoints> getAvailableProducts(){
+		return dao.getAvailableProducts();
+	}
+		
 	public WxPoints get(String id) {
 		return super.get(id);
 	}

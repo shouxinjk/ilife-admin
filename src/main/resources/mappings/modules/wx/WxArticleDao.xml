@@ -94,7 +94,7 @@
 
 	<!-- 根据openid查询指定达人发布的文章总数 -->
 	<select id="countMyArticles" resultType="java.lang.Integer">
-		SELECT count(a.id) 
+		SELECT count(a.id)
 		from wx_article a,mod_broker b
 		where a.del_flag = 0
 		AND b.openid = #{openid}

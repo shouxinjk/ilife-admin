@@ -19,6 +19,19 @@
 	<sql id="wxPointsJoins">
 	</sql>
     
+    <!-- 获取阅豆产品。根据金额升序排列 -->
+	<select id="getAvailableProducts" resultType="WxPoints">
+		SELECT 
+			<include refid="wxPointsColumns"/>
+		FROM wx_points a
+		<include refid="wxPointsJoins"/>
+		<where>
+			a.del_flag = 0
+			and a.status = 'active'
+		</where>		
+		ORDER BY a.price
+	</select>    
+    
 	<select id="get" resultType="WxPoints">
 		SELECT 
 			<include refid="wxPointsColumns"/>

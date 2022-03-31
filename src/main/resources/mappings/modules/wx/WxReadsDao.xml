@@ -40,10 +40,10 @@
 		<include refid="wxReadsJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
-			<if test="articleId != null and articleId != ''">
+			<if test="article!=null and article.id != null and article.id != ''">
 				AND a.article_id = #{article.id}
 			</if>
-			<if test="brokerId != null and brokerId != ''">
+			<if test="broker!=null and broker.id != null and broker.id != ''">
 				AND a.broker_id = #{broker.id}
 			</if>
 			<if test="openid != null and openid != ''">

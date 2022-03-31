@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.wx.dao.WxPaymentAdDao">
+    
+	<sql id="wxPaymentAdColumns">
+		a.id AS "id",
+		a.broker_id AS "broker.id",
+		bb.nickname AS "broker.nickname",
+		wxar.id AS "article.id",
+		wxar.title AS "article.title",
+		wxar.url AS "article.url",
+		wxac.id AS "account.id",
+		wxac.name AS "account.name",
+		a.advertise_id AS "advertise.id",
+		aa.name AS "advertise.name",
+		aa.type AS "advertise.type",
+		aa.time_slot AS "advertise.timeSlot",
+		aa.time_slot_from AS "advertise.timeSlotFrom",
+		aa.time_slot_to AS "advertise.timeSlotTo",
+		aa.price AS "advertise.price",
+		a.advertise_date AS "advertiseDate",
+		a.amount AS "amount",
+		a.payment_date AS "paymentDate",
+		a.trade_no AS "tradeNo",
+		a.trade_state AS "tradeState",
+		a.transaction_id AS "transactionId",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="wxPaymentAdJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by 
+		LEFT JOIN mod_broker bb ON bb.id = a.broker_id	
+		LEFT JOIN wx_advertise aa ON aa.id = a.advertise_id	
+		LEFT JOIN wx_article wxar ON wxar.id = a.subject_id	
+		LEFT JOIN wx_account wxac ON wxac.id = a.subject_id
+	</sql>
+    
+    <!-- 获取指定时间段内的已售卖记录：输入参数为查询天数，包括今天在内的天数 -->
+	<select id="findSoldAds" resultType="WxPaymentAd">
+		SELECT 
+			<include refid="wxPaymentAdColumns"/>
+		FROM wx_payment_ad a
+		<include refid="wxPaymentAdJoins"/>
+		WHERE a.advertise_date &gt; date_sub(curdate(), interval 1 day)
+		AND a.advertise_date &lt; date_add(curdate(), interval #{days} day)		
+	</select>    
+    
+	<select id="get" resultType="WxPaymentAd">
+		SELECT 
+			<include refid="wxPaymentAdColumns"/>
+		FROM wx_payment_ad a
+		<include refid="wxPaymentAdJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="WxPaymentAd">
+		SELECT 
+			<include refid="wxPaymentAdColumns"/>
+		FROM wx_payment_ad a
+		<include refid="wxPaymentAdJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="broker!=null and broker.id != null and broker.id != ''">
+				AND a.broker_id = #{broker.id}
+			</if>
+			<if test="advertise!=null and advertise.id != null and advertise.id != ''">
+				AND a.advertise_id = #{advertise.id}
+			</if>
+			<if test="subjectId != null and subjectId != ''">
+				AND a.subject_id = #{subjectId}
+			</if>			
+			<if test="advertiseDate != null and advertiseDate != ''">
+				AND a.advertise_date = #{advertiseDate}
+			</if>
+			<if test="paymentDate != null and paymentDate != ''">
+				AND a.payment_date = #{paymentDate}
+			</if>
+			<if test="tradeNo != null and tradeNo != ''">
+				AND a.trade_no = #{tradeNo}
+			</if>
+			<if test="tradeState != null and tradeState != ''">
+				AND a.trade_state = #{tradeState}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="WxPaymentAd">
+		SELECT 
+			<include refid="wxPaymentAdColumns"/>
+		FROM wx_payment_ad a
+		<include refid="wxPaymentAdJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO wx_payment_ad(
+			id,
+			broker_id,
+			subject_id,
+			advertise_id,
+			advertise_date,
+			amount,
+			payment_date,
+			trade_no,
+			trade_state,
+			transaction_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{broker.id},
+			#{subjectId},
+			#{advertise.id},
+			#{advertiseDate},
+			#{amount},
+			#{paymentDate},
+			#{tradeNo},
+			#{tradeState},
+			#{transactionId},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE wx_payment_ad SET 	
+			broker_id = #{broker.id},
+			subject_id = #{subjectId},
+			advertise_id = #{advertise.id},
+			advertise_date = #{advertiseDate},
+			amount = #{amount},
+			payment_date = #{paymentDate},
+			trade_no = #{tradeNo},
+			trade_state = #{tradeState},
+			transaction_id = #{transactionId},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE wx_payment_ad SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

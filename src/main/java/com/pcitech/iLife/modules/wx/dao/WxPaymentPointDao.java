@@ -3,19 +3,16 @@
  */
 package com.pcitech.iLife.modules.wx.dao;
 
-import java.util.List;
-
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
-import com.pcitech.iLife.modules.wx.entity.WxPoints;
+import com.pcitech.iLife.modules.wx.entity.WxPaymentPoint;
 
 /**
- * 微信虚拟豆管理DAO接口
+ * 阅豆付款DAO接口
  * @author ilife
- * @version 2022-03-28
+ * @version 2022-03-31
  */
 @MyBatisDao
-public interface WxPointsDao extends CrudDao<WxPoints> {
-	//获取所有可购买阅豆产品
-	public List<WxPoints> getAvailableProducts();
+public interface WxPaymentPointDao extends CrudDao<WxPaymentPoint> {
+	
 }
