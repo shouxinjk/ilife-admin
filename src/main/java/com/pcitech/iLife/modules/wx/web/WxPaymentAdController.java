@@ -27,6 +27,7 @@ import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.wx.entity.WxPaymentAd;
 import com.pcitech.iLife.modules.wx.entity.WxPoints;
 import com.pcitech.iLife.modules.wx.service.WxPaymentAdService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 置顶广告付款Controller
@@ -84,7 +85,7 @@ public class WxPaymentAdController extends BaseController {
 		wxPaymentAdService.delete(wxPaymentAd);
 		addMessage(redirectAttributes, "删除指定广告付款成功");
 		return "redirect:"+Global.getAdminPath()+"/wx/wxPaymentAd/?repage";
-	}
+	}	
 
 	/**
 	 * 查询指定时间段内已经售出的广告列表

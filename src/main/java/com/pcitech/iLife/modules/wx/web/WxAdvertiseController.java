@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.wx.web;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.wx.entity.WxAdvertise;
 import com.pcitech.iLife.modules.wx.entity.WxArticle;
 import com.pcitech.iLife.modules.wx.service.WxAdvertiseService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 微信广告位管理Controller
@@ -88,6 +90,19 @@ public class WxAdvertiseController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/wx/wxAdvertise/?repage";
 	}
 	
+	@RequiresPermissions("wx:wxAdvertise:edit")
+	@RequestMapping(value = "clone")
+	public String clone(WxAdvertise wxAdvertise, RedirectAttributes redirectAttributes) {
+		WxAdvertise copy = wxAdvertiseService.get(wxAdvertise);
+		copy.setName(copy.getName()+" copy");
+		copy.setId(Util.get32UUID());
+		copy.setIsNewRecord(true);
+		copy.setCreateDate(new Date());
+		copy.setUpdateDate(new Date());
+		wxAdvertiseService.save(copy);
+		addMessage(redirectAttributes, "克隆微信广告位成功");
+		return "redirect:"+Global.getAdminPath()+"/wx/wxAdvertise/?repage";
+	}
 	
 	/**
 	 * 按类型获取所有可用广告位

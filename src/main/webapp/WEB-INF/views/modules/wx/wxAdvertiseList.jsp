@@ -102,6 +102,7 @@
 				<shiro:hasPermission name="wx:wxAdvertise:edit"><td>
     				<a href="${ctx}/wx/wxAdvertise/form?id=${wxAdvertise.id}">修改</a>
 					<a href="${ctx}/wx/wxAdvertise/delete?id=${wxAdvertise.id}" onclick="return confirmx('确认要删除该微信广告位吗？', this.href)">删除</a>
+					<a href="${ctx}/wx/wxAdvertise/clone?id=${wxAdvertise.id}">克隆</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
