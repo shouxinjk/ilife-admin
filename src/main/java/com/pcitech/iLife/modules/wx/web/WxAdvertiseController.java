@@ -95,6 +95,7 @@ public class WxAdvertiseController extends BaseController {
 	public String clone(WxAdvertise wxAdvertise, RedirectAttributes redirectAttributes) {
 		WxAdvertise copy = wxAdvertiseService.get(wxAdvertise);
 		copy.setName(copy.getName()+" copy");
+		copy.setWeight(copy.getWeight()-1);
 		copy.setId(Util.get32UUID());
 		copy.setIsNewRecord(true);
 		copy.setCreateDate(new Date());

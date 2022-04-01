@@ -14,6 +14,7 @@
 		a.advertise_id AS "advertise.id",
 		aa.name AS "advertise.name",
 		aa.type AS "advertise.type",
+		aa.quantity AS "advertise.quantity",
 		aa.time_slot AS "advertise.timeSlot",
 		aa.time_slot_from AS "advertise.timeSlotFrom",
 		aa.time_slot_to AS "advertise.timeSlotTo",
