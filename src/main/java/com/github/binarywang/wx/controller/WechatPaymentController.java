@@ -44,7 +44,7 @@ import com.pcitech.iLife.util.HttpClientHelper;
  */
 @Controller
 @RequestMapping(value = "${adminPath}/wxPay")
-public class PaymentController extends GenericController {
+public class WechatPaymentController extends GenericController {
 
     @Autowired
     private WxPayConfig payConfig; 
