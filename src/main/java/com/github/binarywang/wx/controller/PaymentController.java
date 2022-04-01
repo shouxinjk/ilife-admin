@@ -43,7 +43,7 @@ import com.pcitech.iLife.util.HttpClientHelper;
  * Email:liumingbo2008@gmail.com
  */
 @Controller
-@RequestMapping(value = "wxPay")
+@RequestMapping(value = "${adminPath}/wxPay")
 public class PaymentController extends GenericController {
 
     @Autowired
