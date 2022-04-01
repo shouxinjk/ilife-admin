@@ -21,5 +21,7 @@ src/main/resources/wx.properties
 src/main/webapp/static/common/options.js
 iLife.properties
 wx.properties
+apiclient_cert.p12
+wxPay.properties
 fastdfs-client.properties
 /target/

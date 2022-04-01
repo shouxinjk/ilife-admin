@@ -5,7 +5,7 @@
 	
 	<groupId>com.pcitech.iLife</groupId>
 	<artifactId>iLife</artifactId>
-	<version>1.2.7</version>
+	<version>1.2.8</version>
 	<packaging>war</packaging>
 	
 	<name>iLife</name>
@@ -61,7 +61,7 @@
 		<downloadSources>true</downloadSources>
 		
 		<!-- wxJavaMp -->
-		<weixin-java-mp.version>3.5.6.B</weixin-java-mp.version>
+		<weixin-java-mp.version>4.2.0</weixin-java-mp.version>
 		
 	</properties>
 	
@@ -95,6 +95,11 @@
             <artifactId>weixin-java-mp</artifactId>
             <version>${weixin-java-mp.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-pay</artifactId>
+            <version>${weixin-java-mp.version}</version>
+        </dependency>        
         <!-- taobao SDK -->
         <!-- 需要本地安装 -->
         <!-- mvn install:install-file -DgroupId=com.taobao -DartifactId=sdk-java -Dversion=20191228 -Dpackaging=jar -Dfile=/path/to/taobao-sdk-java-auto_1564048773031-20191228.jar -->
@@ -396,7 +401,7 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
-			<scope>test</scope>
+			<scope>provided</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.tngtech.java/junit-dataprovider -->
 		<dependency>
