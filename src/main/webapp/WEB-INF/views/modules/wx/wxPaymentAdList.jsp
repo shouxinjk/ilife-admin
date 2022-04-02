@@ -65,7 +65,7 @@
 				<th>广告位</th>
 				<th>广告标价</th>
 				<th>付款金额</th>
-				<th>付款达人</th>
+				<th>购买达人</th>
 				<th>付款时间</th>
 				<th>商户订单号</th>
 				<th>交易状态</th>
@@ -92,11 +92,11 @@
 					<fmt:formatDate value="${wxPaymentAd.advertiseDate}" pattern="yyyy-MM-dd"/>
 				</td>
 				<td>
-					${wxPaymentAd.advertise.name}
-				</td>		
-				<td>
 					<fmt:formatDate value="${wxPaymentAd.advertise.timeSlotFrom}" pattern="HH:mm"/>-<fmt:formatDate value="${wxPaymentAd.advertise.timeSlotTo}" pattern="HH:mm"/>
-				</td>	
+				</td>				
+				<td>
+					${wxPaymentAd.advertise.name}
+				</td>			
 				<td>
 					${wxPaymentAd.advertise.price}
 				</td>									
@@ -104,10 +104,10 @@
 					${wxPaymentAd.amount}
 				</td>
 				<td>
-					<fmt:formatDate value="${wxPaymentAd.paymentDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<td>
 					${wxPaymentAd.broker.nickname}
+				</td>				
+				<td>
+					<fmt:formatDate value="${wxPaymentAd.paymentDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>				
 				<td>
 					${wxPaymentAd.tradeNo}

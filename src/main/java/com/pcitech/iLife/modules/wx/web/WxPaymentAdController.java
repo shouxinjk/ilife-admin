@@ -138,6 +138,7 @@ public class WxPaymentAdController extends BaseController {
 		}
 		//循环构建所有广告
 		JSONArray ads = json.getJSONArray("ads");
+		int successCount = 0;
 		for(int i=0;i<ads.size();i++) {
 			JSONObject item = ads.getJSONObject(i);
 			WxPaymentAd ad = new WxPaymentAd();
@@ -161,11 +162,18 @@ public class WxPaymentAdController extends BaseController {
 			ad.setUpdateDate(new Date());
 			ad.setId(id);
 			ad.setIsNewRecord(true);
-			wxPaymentAdService.save(ad);
-			retData.add(wxPaymentAdService.get(id));
+			try {
+				wxPaymentAdService.save(ad);
+				retData.add(wxPaymentAdService.get(id));
+				successCount++;
+			}catch(Exception ex) {
+				result.put("warn-save-"+i, "save error."+ex.getMessage());
+			}
 		}
-		result.put("data", retData);
+		result.put("totalCount", ads.size());
+		result.put("successCount", successCount);
 		result.put("success", true);
+		result.put("data", retData);
 		return result;
 	}
 	
