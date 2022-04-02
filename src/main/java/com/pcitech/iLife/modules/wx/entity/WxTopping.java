@@ -23,8 +23,8 @@ public class WxTopping extends DataEntity<WxTopping> {
 	private Date advertiseDate;		// 展示日期
 	private Date advertiseTimeFrom;		// 展示开始时间
 	private Date advertiseTimeTo;		// 展示结束时间
-	private Integer advertiseWeight;		// 展示权重
-	private Integer advertisePrice;		// 价格(分)
+	private int advertiseWeight;		// 展示权重
+	private int advertisePrice;		// 价格(分)
 	private WxArticle  article; //展示主题：文章
 	private WxAccount account;	//展示主题：公众号
 	private WxAdvertise advertise;		// 广告位
@@ -115,11 +115,11 @@ public class WxTopping extends DataEntity<WxTopping> {
 		this.advertiseWeight = advertiseWeight;
 	}
 	
-	public Integer getAdvertisePrice() {
+	public int getAdvertisePrice() {
 		return advertisePrice;
 	}
 
-	public void setAdvertisePrice(Integer advertisePrice) {
+	public void setAdvertisePrice(int advertisePrice) {
 		this.advertisePrice = advertisePrice;
 	}
 	

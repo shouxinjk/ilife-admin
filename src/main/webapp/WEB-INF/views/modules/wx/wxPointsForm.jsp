@@ -48,7 +48,7 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">价格：</label>
+			<label class="control-label">价格(分)：</label>
 			<div class="controls">
 				<form:input path="price" htmlEscape="false" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>

@@ -63,8 +63,8 @@
 				<th>展示日期</th>
 				<th>展示时段</th>
 				<th>广告位</th>
-				<th>广告标价</th>
-				<th>付款金额</th>
+				<th>广告标价(元)</th>
+				<th>付款金额(元)</th>
 				<th>购买达人</th>
 				<th>付款时间</th>
 				<th>商户订单号</th>
@@ -98,10 +98,10 @@
 					${wxPaymentAd.advertise.name}
 				</td>			
 				<td>
-					${wxPaymentAd.advertise.price}
+					${wxPaymentAd.advertise.price*0.01}
 				</td>									
 				<td>
-					${wxPaymentAd.amount}
+					${wxPaymentAd.amount*0.01}
 				</td>
 				<td>
 					${wxPaymentAd.broker.nickname}

@@ -58,7 +58,7 @@
 			<tr>
 				<th>付款达人</th>
 				<th>阅豆产品</th>
-				<th>付款金额</th>
+				<th>付款金额(元)</th>
 				<th>付款时间</th>
 				<th>商户订单号</th>
 				<th>交易状态</th>
@@ -77,7 +77,7 @@
 					${wxPaymentPoint.points.name}
 				</td>
 				<td>
-					${wxPaymentPoint.amount}
+					${wxPaymentPoint.amount*0.01}
 				</td>
 				<td>
 					<fmt:formatDate value="${wxPaymentPoint.paymentDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

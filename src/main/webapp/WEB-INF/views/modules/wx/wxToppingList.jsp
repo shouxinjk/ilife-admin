@@ -66,7 +66,7 @@
 				<th>展示结束时间</th>
 				<th>广告位</th>
 				<th>展示权重</th>
-				<th>价格(分)</th>
+				<th>价格(元)</th>
 				<th>展示内容类型</th>
 				<th>展示内容</th>
 				<th>更新时间</th>
@@ -98,7 +98,7 @@
 					${wxTopping.advertiseWeight}
 				</td>
 				<td>
-					${wxTopping.advertisePrice}
+					${wxTopping.advertisePrice*0.01}
 				</td>
 				<td>
 					${fns:getDictLabel(wxTopping.subjectType, 'wx_advertise_type', '')}

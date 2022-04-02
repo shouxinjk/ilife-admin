@@ -44,7 +44,7 @@
 			<tr>
 				<th>产品名称</th>
 				<th>虚拟豆数量</th>
-				<th>价格</th>
+				<th>价格(元)</th>
 				<th>优惠策略</th>
 				<th>状态</th>
 				<th>更新时间</th>
@@ -61,7 +61,7 @@
 					${wxPoints.points}
 				</td>
 				<td>
-					${wxPoints.price}
+					${wxPoints.price*0.01}
 				</td>
 				<td>
 					${wxPoints.discount}

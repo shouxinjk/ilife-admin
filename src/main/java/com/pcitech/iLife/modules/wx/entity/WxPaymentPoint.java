@@ -20,7 +20,7 @@ public class WxPaymentPoint extends DataEntity<WxPaymentPoint> {
 	private static final long serialVersionUID = 1L;
 	private Broker broker;		// 付款达人
 	private WxPoints points;		// 阅豆产品
-	private String amount;		// 付款金额
+	private int amount;		// 付款金额
 	private Date paymentDate;		// 付款时间
 	private String tradeNo;		// 商户订单号
 	private String tradeState;		// 交易状态
@@ -52,11 +52,11 @@ public class WxPaymentPoint extends DataEntity<WxPaymentPoint> {
 		this.points = points;
 	}
 
-	public String getAmount() {
+	public int getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(int amount) {
 		this.amount = amount;
 	}
 	
