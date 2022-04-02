@@ -31,6 +31,7 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
+import com.pcitech.iLife.modules.wx.entity.WxAdvertise;
 import com.pcitech.iLife.modules.wx.entity.WxPaymentAd;
 import com.pcitech.iLife.modules.wx.entity.WxPoints;
 import com.pcitech.iLife.modules.wx.service.WxAdvertiseService;
@@ -145,8 +146,9 @@ public class WxPaymentAdController extends BaseController {
 			ad.setTradeNo(json.getString("out_trade_no"));
 			ad.setTradeState(json.getString("result_code"));
 			ad.setTransactionId("");//TODO:根据微信支付返回结果补充
-			ad.setAdvertise(wxAdvertiseService.get(item.getString("id")));
-			ad.setAmount(item.getString("id"));
+			WxAdvertise advertise = wxAdvertiseService.get(item.getString("id"));
+			ad.setAdvertise(advertise);
+			ad.setAmount(advertise.getPrice());
 			try {
 				ad.setAdvertiseDate(dateFormatShort.parse(item.getString("date")));
 			}catch(Exception ex) {

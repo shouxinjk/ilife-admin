@@ -24,7 +24,7 @@ public class WxPaymentAd extends DataEntity<WxPaymentAd> {
 	private WxAccount account;	//展示主题：公众号
 	private WxAdvertise advertise;		// 广告位
 	private Date advertiseDate;		// 展示日期
-	private String amount;		// 付款金额
+	private double amount;		// 付款金额
 	private Date paymentDate;		// 付款时间
 	private String tradeNo;		// 商户订单号
 	private String tradeState;		// 交易状态
@@ -87,11 +87,11 @@ public class WxPaymentAd extends DataEntity<WxPaymentAd> {
 		this.advertiseDate = advertiseDate;
 	}
 	
-	public String getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 	
