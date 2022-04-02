@@ -33,7 +33,40 @@
 		<include refid="wxArticleJoins"/>
 		WHERE a.id = #{id}
 	</select>
-	
+
+	<!-- 查询置顶文章列表：根据权重倒序排列，仅显示在当前时间段的列表。能够根据指定openid过滤。注意，由于是付费，不受阅豆低于-2影响 -->
+	<select id="findToppingList" resultType="WxArticle">
+		SELECT 
+		a.id AS "id",
+		a.title AS "title",
+		a.url AS "url",
+		a.coverImg AS "coverImg",
+		tt.advertise_weight AS "status",
+		a.broker_id AS "broker.id",
+		b.nickname AS "broker.nickname",
+		b.name AS "broker.name",
+		b.points AS "broker.points",
+		a.channel AS "channel",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+		FROM wx_topping tt 
+		left join wx_article a on a.id=tt.subject_id
+        left join mod_broker b on b.id=tt.broker_id
+		<where>
+			tt.subject_type='article' 
+			AND datediff(curdate(),tt.advertise_date)=0 
+			AND curtime()>=tt.advertise_time_from 
+			AND curtime()&lt;tt.advertise_time_to
+			AND a.del_flag = 0
+			AND a.status = 'active'
+			AND NOT EXISTS(select article_id from wx_reads where openid=#{openid} and article_id=tt.subject_id)		
+		</where>
+		ORDER BY tt.advertise_weight DESC,a.update_date
+	</select>	
+		
 	<!-- 查询待阅度文章列表：根据点数及时间倒序排列，点数大于-2才展示。能够根据指定openid过滤 -->
 	<select id="findPendingList" resultType="WxArticle">
 		SELECT 

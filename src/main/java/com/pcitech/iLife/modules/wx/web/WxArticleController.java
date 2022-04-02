@@ -110,19 +110,30 @@ public class WxArticleController extends BaseController {
 	}
 	
 	/**
-	 * 获取待阅读文章列表
-	 * 支持根据发布者 openid 过滤
+	 * 获取待阅读文章列表:支持根据发布者 openid 过滤
+	 * 包括置顶文章及普通文章两部分，在获取第一页时，优先获取指定列表，
+	 * 然后分页获取普通待阅读文章列表
+	 * 注意：文章的status字段保持的是置顶信息或顶一下信息。前端需要转换为数字，如果大于1为置顶，等于1为顶一下，0则为普通文章
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/pending-articles", method = RequestMethod.GET)
 	public List<WxArticle> listPagedPendingArticles( @RequestParam(required=true) int from,@RequestParam(required=true) int to,@RequestParam String openid) {
+		List<WxArticle> list = Lists.newArrayList();
+		//先查询获取指定文章列表，仅在第一页时加载
+		if(from==0) {
+			list.addAll(wxArticleService.findToppingList(openid));
+		}
+		
+		//然后获取普通文章列表
 		Map<String,Object> params = Maps.newHashMap();
 		params.put("from", from);
 		params.put("to", to);
 		if(openid!=null && openid.trim().length()>0) {
 			params.put("openid", openid);
 		}
-		return wxArticleService.findPendingList(params);
+		
+		list.addAll(wxArticleService.findPendingList(params));
+		return list;
 	}
 	
 	/**

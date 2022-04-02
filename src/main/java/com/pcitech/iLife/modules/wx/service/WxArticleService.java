@@ -22,9 +22,13 @@ import com.pcitech.iLife.modules.wx.dao.WxArticleDao;
 @Service
 @Transactional(readOnly = true)
 public class WxArticleService extends CrudService<WxArticleDao, WxArticle> {
-	//根据openid获取待阅读文章列表
+	//根据openid获取待阅读普通文章列表
 	public List<WxArticle> findPendingList(Map<String,Object> param){
 		return dao.findPendingList(param);
+	}
+	//根据openid获取待阅读置顶文章列表
+	public List<WxArticle> findToppingList(String openid){
+		return dao.findToppingList(openid);
 	}
 	//根据openid获取已发布文章列表
 	public List<WxArticle> findMyArticles(Map<String,Object> param){

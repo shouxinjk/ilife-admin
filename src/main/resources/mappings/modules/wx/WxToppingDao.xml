@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.wx.dao.WxToppingDao">
+    
+	<sql id="wxToppingColumns">
+		a.id AS "id",
+		a.broker_id AS "broker.id",
+		bb.nickname AS "broker.nickname",
+		wxar.id AS "article.id",
+		wxar.title AS "article.title",
+		wxar.url AS "article.url",
+		wxac.id AS "account.id",
+		wxac.name AS "account.name",		
+		a.advertise_type AS "advertiseType",
+		a.advertise_date AS "advertiseDate",
+		a.advertise_time_from AS "advertiseTimeFrom",
+		a.advertise_time_to AS "advertiseTimeTo",
+		a.advertise_weight AS "advertiseWeight",
+		a.advertise_price AS "advertisePrice",
+		a.advertise_id AS "advertise.id",
+		aa.name AS "advertise.name",
+		aa.type AS "advertise.type",
+		aa.quantity AS "advertise.quantity",
+		aa.time_slot AS "advertise.timeSlot",
+		aa.time_slot_from AS "advertise.timeSlotFrom",
+		aa.time_slot_to AS "advertise.timeSlotTo",
+		aa.price AS "advertise.price",		
+		a.subject_type AS "subjectType",
+		a.subject_id AS "subjectId",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",		
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="wxToppingJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by 
+		LEFT JOIN mod_broker bb ON bb.id = a.broker_id	
+		LEFT JOIN wx_advertise aa ON aa.id = a.advertise_id	
+		LEFT JOIN wx_article wxar ON wxar.id = a.subject_id	
+		LEFT JOIN wx_account wxac ON wxac.id = a.subject_id	
+	</sql>
+    
+	<select id="get" resultType="WxTopping">
+		SELECT 
+			<include refid="wxToppingColumns"/>
+		FROM wx_topping a
+		<include refid="wxToppingJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="WxTopping">
+		SELECT 
+			<include refid="wxToppingColumns"/>
+		FROM wx_topping a
+		<include refid="wxToppingJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="broker != null and broker.id != null and broker.id != ''">
+				AND a.broker_id = #{broker.id}
+			</if>
+			<if test="advertiseType != null and advertiseType != ''">
+				AND a.advertise_type = #{advertiseType}
+			</if>
+			<if test="advertiseDate != null and advertiseDate != ''">
+				AND a.advertise_date = #{advertiseDate}
+			</if>
+			<if test="advertise != null and advertise.id != null and advertise.id != ''">
+				AND a.advertise_id = #{advertise.id}
+			</if>
+			<if test="subjectType != null and subjectType != ''">
+				AND a.subject_type = #{subjectType}
+			</if>
+			<if test="subjectId != null and subjectId != ''">
+				AND a.subject_id = #{subjectId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="WxTopping">
+		SELECT 
+			<include refid="wxToppingColumns"/>
+		FROM wx_topping a
+		<include refid="wxToppingJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO wx_topping(
+			id,
+			broker_id,
+			advertise_type,
+			advertise_date,
+			advertise_time_from,
+			advertise_time_to,
+			advertise_weight,
+			advertise_price,
+			advertise_id,
+			subject_type,
+			subject_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{broker.id},
+			#{advertiseType},
+			#{advertiseDate},
+			#{advertiseTimeFrom},
+			#{advertiseTimeTo},
+			#{advertiseWeight},
+			#{advertisePrice},
+			#{advertise.id},
+			#{subjectType},
+			#{subjectId},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE wx_topping SET 	
+			broker_id = #{broker.id},
+			advertise_type = #{advertiseType},
+			advertise_date = #{advertiseDate},
+			advertise_time_from = #{advertiseTimeFrom},
+			advertise_time_to = #{advertiseTimeTo},
+			advertise_weight = #{advertiseWeight},
+			advertise_price = #{advertisePrice},
+			advertise_id = #{advertise.id},
+			subject_type = #{subjectType},
+			subject_id = #{subjectId},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE wx_topping SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
