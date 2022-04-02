@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.wx.web;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -34,8 +35,11 @@ import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.wx.entity.WxAdvertise;
 import com.pcitech.iLife.modules.wx.entity.WxPaymentAd;
 import com.pcitech.iLife.modules.wx.entity.WxPoints;
+import com.pcitech.iLife.modules.wx.entity.WxTopping;
 import com.pcitech.iLife.modules.wx.service.WxAdvertiseService;
+import com.pcitech.iLife.modules.wx.service.WxArticleService;
 import com.pcitech.iLife.modules.wx.service.WxPaymentAdService;
+import com.pcitech.iLife.modules.wx.service.WxToppingService;
 import com.pcitech.iLife.util.Util;
 
 /**
@@ -51,6 +55,10 @@ public class WxPaymentAdController extends BaseController {
 	private WxPaymentAdService wxPaymentAdService;
 	@Autowired
 	private WxAdvertiseService wxAdvertiseService;
+	@Autowired
+	private WxArticleService wxArticleService;
+	@Autowired
+	private WxToppingService wxToppingService;
 	@Autowired
 	private BrokerService brokerService;
 	
@@ -168,6 +176,31 @@ public class WxPaymentAdController extends BaseController {
 				successCount++;
 			}catch(Exception ex) {
 				result.put("warn-save-"+i, "save error."+ex.getMessage());
+			}
+			//将记录同时写入置顶记录明细，便于后续查询置顶记录
+			WxTopping topping = new WxTopping();
+			topping.setAdvertise(advertise);
+			topping.setBroker(broker);
+			try {
+				topping.setAdvertiseDate(dateFormatShort.parse(item.getString("date")));
+			} catch (ParseException ex) {
+				logger.error("failed parse advertise date.[advertise date]"+item.getString("date"),ex);
+			}
+			topping.setAdvertiseTimeFrom(advertise.getTimeSlotFrom());
+			topping.setAdvertiseTimeTo(advertise.getTimeSlotTo());
+			topping.setAdvertisePrice(advertise.getPrice());//单位为分
+			topping.setAdvertiseType("money");
+			topping.setAdvertiseWeight(advertise.getWeight());
+			topping.setSubjectType(json.getString("subjectType") );
+			topping.setSubjectId(json.getString("subjectId"));
+			topping.setCreateDate(new Date());
+			topping.setUpdateDate(new Date());
+			topping.setId(id);//采用和置顶广告一致的ID，确保唯一性
+			topping.setIsNewRecord(true);
+			try {
+				wxToppingService.save(topping);
+			}catch(Exception ex) {
+				logger.error("error create topping record.",ex);
 			}
 		}
 		result.put("totalCount", ads.size());

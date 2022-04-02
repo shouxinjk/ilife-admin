@@ -25,7 +25,7 @@ public class WxAdvertise extends DataEntity<WxAdvertise> {
 	private int quantity=1;			//数量：支持同一时段同一个广告位多次出售
 	private Date timeSlotFrom;		// 时间段开始时间
 	private Date timeSlotTo;		// 时间段结束时间
-	private Double price;		// 价格
+	private int price;		// 价格：单位为分
 	private String discount;		// 优惠策略
 	private String status="active";		// 状态
 	
@@ -101,11 +101,11 @@ public class WxAdvertise extends DataEntity<WxAdvertise> {
 	}
 	
 	@NotNull(message="价格不能为空")
-	public Double getPrice() {
+	public int getPrice() {
 		return price;
 	}
 
-	public void setPrice(Double price) {
+	public void setPrice(int price) {
 		this.price = price;
 	}
 	

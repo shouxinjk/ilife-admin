@@ -82,7 +82,7 @@
 					<fmt:formatDate value="${wxAdvertise.timeSlotTo}" pattern="HH:mm"/>
 				</td>
 				<td>
-					${wxAdvertise.price}
+					${wxAdvertise.price*0.01}
 				</td>
 				<td>
 					${wxAdvertise.weight}
