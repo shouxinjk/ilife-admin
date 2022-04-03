@@ -140,6 +140,7 @@ public class WxToppingController extends BaseController {
 		long advertiseDuration = 10*1000;//默认为10秒
 		try {
 			advertiseDuration = Long.parseLong(json.getString("advertiseDuration"));
+			advertiseDuration += 1000;//默认赠送1秒钟，消除网络处理误差
 		}catch(Exception ex) {
 			logger.error("failed parse advertise duration. must be milli-seconds.[input]"+json.getString("advertiseDuration"));
 		}
@@ -157,10 +158,13 @@ public class WxToppingController extends BaseController {
 		int points = 10;//默认消耗10点
 		try {
 			points = Integer.parseInt(json.getString("points"));
-			points += 1000;//默认赠送1秒钟，消除网络处理误差
 		}catch(Exception ex) {
 			logger.error("failed parse points. required integer.[input]"+json.getString("points"));
 		}
+		
+		//扣除阅豆
+		broker.setPoints(broker.getPoints()-points);
+		brokerService.save(broker);
 
 		//将记录同时写入置顶记录明细，便于后续查询置顶记录
 		WxTopping topping = new WxTopping();

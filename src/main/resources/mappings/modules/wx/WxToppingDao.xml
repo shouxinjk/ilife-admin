@@ -58,9 +58,8 @@
 		FROM wx_topping a
 		<include refid="wxToppingJoins"/>
 		<where>
-			a.del_flag = #{DEL_FLAG_NORMAL}
-			AND a.advertise_date >= curdate()
-			AND a.advertise_time_to >= curtime()
+			a.del_flag = 0
+			AND (a.advertise_date > curdate() or (a.advertise_date = curdate() and a.advertise_time_to >= curtime()))
 			<if test="brokerId !=null and brokerId!= ''">
 				AND a.broker_id = #{brokerId}
 			</if>

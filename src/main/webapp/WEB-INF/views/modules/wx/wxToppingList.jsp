@@ -42,13 +42,13 @@
 			<li><label>广告位：</label>
 				<form:input path="advertise.id" htmlEscape="false" maxlength="32" class="input-medium"/>
 			</li>
-			<li><label>展示内容类型：</label>
+			<li><label>Subject类型：</label>
 				<form:select path="subjectType" class="input-medium">
 					<form:option value="" label=""/>
 					<form:options items="${fns:getDictList('wx_advertise_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
-			<li><label>展示内容ID：</label>
+			<li><label>Subject ID：</label>
 				<form:input path="subjectId" htmlEscape="false" maxlength="32" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -66,8 +66,8 @@
 				<th>展示结束时间</th>
 				<th>广告位</th>
 				<th>展示权重</th>
-				<th>价格(元)</th>
-				<th>展示内容类型</th>
+				<th>价格/阅豆</th>
+				<th>Subject类型</th>
 				<th>展示内容</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="wx:wxTopping:edit"><th>操作</th></shiro:hasPermission>
@@ -98,7 +98,13 @@
 					${wxTopping.advertiseWeight}
 				</td>
 				<td>
-					${wxTopping.advertisePrice*0.01}
+					
+					<c:if test="${wxTopping.advertiseType eq 'money'}">
+						￥${wxTopping.advertisePrice*0.01}
+					</c:if>
+					<c:if test="${wxTopping.advertiseType eq 'points'}">
+						${wxTopping.advertisePrice} 阅豆
+					</c:if>						
 				</td>
 				<td>
 					${fns:getDictLabel(wxTopping.subjectType, 'wx_advertise_type', '')}
