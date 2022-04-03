@@ -50,6 +50,32 @@
 		<include refid="wxToppingJoins"/>
 		WHERE a.id = #{id}
 	</select>
+
+	<!-- 获取即将置顶的广告明细，包含付款置顶、阅豆置顶，按照展示日期、展示时间、展示权重排列 -->
+	<select id="findUpcomingList" resultType="WxTopping">
+		SELECT 
+			<include refid="wxToppingColumns"/>
+		FROM wx_topping a
+		<include refid="wxToppingJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.advertise_date >= curdate()
+			AND a.advertise_time_to >= curtime()
+			<if test="brokerId !=null and brokerId!= ''">
+				AND a.broker_id = #{brokerId}
+			</if>
+			<if test="advertiseType != null and advertiseType != ''">
+				AND a.advertise_type = #{advertiseType}
+			</if>
+			<if test="subjectType != null and subjectType != ''">
+				AND a.subject_type = #{subjectType}
+			</if>
+			<if test="subjectId != null and subjectId != ''">
+				AND a.subject_id = #{subjectId}
+			</if>
+		</where>
+		ORDER BY a.advertise_date, advertise_time_from,advertise_weight desc
+	</select>
 	
 	<select id="findList" resultType="WxTopping">
 		SELECT 

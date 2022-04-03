@@ -3,8 +3,12 @@
  */
 package com.pcitech.iLife.modules.wx.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
+import com.pcitech.iLife.modules.wx.entity.WxArticle;
 import com.pcitech.iLife.modules.wx.entity.WxTopping;
 
 /**
@@ -14,5 +18,6 @@ import com.pcitech.iLife.modules.wx.entity.WxTopping;
  */
 @MyBatisDao
 public interface WxToppingDao extends CrudDao<WxTopping> {
-	
+	//查询即将发生的展示列表 
+	public List<WxTopping> findUpcomingList(Map<String,Object> param);
 }

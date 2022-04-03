@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.wx.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,11 @@ import com.pcitech.iLife.modules.wx.dao.WxToppingDao;
 @Service
 @Transactional(readOnly = true)
 public class WxToppingService extends CrudService<WxToppingDao, WxTopping> {
-
+	//查询即将发生的展示列表 
+	public List<WxTopping> findUpcomingList(Map<String,Object> param) {
+		return dao.findUpcomingList(param);
+	}
+	
 	public WxTopping get(String id) {
 		return super.get(id);
 	}
