@@ -119,39 +119,6 @@
 		AND b.openid = #{openid}
 		AND a.broker_id = b.id
 	</select>
-	
-	<select id="findList" resultType="WxAccount">
-		SELECT 
-			<include refid="wxAccountColumns"/>
-		FROM wx_account a
-		<include refid="wxAccountJoins"/>
-		<where>
-			a.del_flag = #{DEL_FLAG_NORMAL}
-			<if test="title != null and title != ''">
-				AND a.title LIKE 
-					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
-					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
-					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
-			</if>
-			<if test="status != null and status != ''">
-				AND a.status = #{status}
-			</if>
-			<if test="broker != null and broker.id != null and broker.id != ''">
-				AND a.broker_id = #{broker.id}
-			</if>
-			<if test="channel != null and channel != ''">
-				AND a.channel = #{channel}
-			</if>
-		</where>
-		<choose>
-			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
-			</when>
-			<otherwise>
-				ORDER BY a.update_date DESC
-			</otherwise>
-		</choose>
-	</select>
     
 	<select id="get" resultType="WxAccount">
 		SELECT 
