@@ -18,7 +18,140 @@
 	</sql>
 	
 	<sql id="wxAccountJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by 
+		LEFT JOIN mod_broker b ON b.id = a.broker_id	
 	</sql>
+    
+
+	<!-- 查询置顶列表：根据权重倒序排列，仅显示在当前时间段的列表。能够根据指定openid过滤。注意，由于是付费，不受阅豆低于-2影响 -->
+	<select id="findToppingList" resultType="WxAccount">
+		SELECT 
+		a.id AS "id",
+		a.name AS "name",
+		a.original_id AS "originalId",
+		a.description AS "description",
+		tt.advertise_weight AS "status",
+		a.broker_id AS "broker.id",
+		b.nickname AS "broker.nickname",
+		b.name AS "broker.name",
+		b.points AS "broker.points",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+		FROM wx_topping tt 
+		left join wx_account a on a.id=tt.subject_id
+        left join mod_broker b on b.id=tt.broker_id
+		<where>
+			tt.subject_type='account' 
+			AND datediff(curdate(),tt.advertise_date)=0 
+			AND curtime()>=tt.advertise_time_from 
+			AND curtime()&lt;tt.advertise_time_to
+			AND a.del_flag = 0
+			AND a.status = 'active'
+			AND NOT EXISTS(select account_id from wx_subscribes where openid=#{openid} and account_id=tt.subject_id)		
+		</where>
+		ORDER BY tt.advertise_weight DESC,a.update_date
+	</select>	
+		
+	<!-- 查询待关注列表：根据点数及时间倒序排列，点数大于-2才展示。能够根据指定openid过滤 -->
+	<select id="findPendingList" resultType="WxAccount">
+		SELECT 
+		a.id AS "id",
+		a.name AS "name",
+		a.original_id AS "originalId",
+		a.description AS "description",
+		a.status AS "status",
+		a.broker_id AS "broker.id",
+		b.nickname AS "broker.nickname",
+		b.name AS "broker.name",
+		b.points AS "broker.points",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+		FROM wx_account a
+        left join mod_broker b on b.id=a.broker_id
+		<where>
+			a.del_flag = 0
+			AND a.status = 'active'
+			AND b.points > -2
+			AND a.broker_id = b.id
+			<if test="openid != null and openid != ''">
+				AND NOT EXISTS(select account_id from wx_reads where openid=#{openid} and account_id=a.id)
+			</if>		
+		</where>
+		ORDER BY b.points DESC,a.update_date DESC
+		limit #{from},#{to}
+	</select>	
+	
+	<!-- 根据openid查询指定达人发布的公众号列表 -->
+	<select id="findMyAccounts" resultType="WxAccount">
+		SELECT 
+		a.id AS "id",
+		a.name AS "name",
+		a.original_id AS "originalId",
+		a.description AS "description",
+		a.status AS "status",
+		a.broker_id AS "broker.id",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+		FROM wx_account a,mod_broker b
+		<where>
+			a.del_flag = 0
+			AND b.openid = #{openid}
+			AND a.broker_id = b.id
+		</where>
+		ORDER BY a.update_date DESC
+		limit #{from},#{to}
+	</select>
+
+	<!-- 根据openid查询指定达人发布的文章总数 -->
+	<select id="countMyAccounts" resultType="java.lang.Integer">
+		SELECT count(a.id)
+		from wx_account a,mod_broker b
+		where a.del_flag = 0
+		AND b.openid = #{openid}
+		AND a.broker_id = b.id
+	</select>
+	
+	<select id="findList" resultType="WxAccount">
+		SELECT 
+			<include refid="wxAccountColumns"/>
+		FROM wx_account a
+		<include refid="wxAccountJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="title != null and title != ''">
+				AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			<if test="broker != null and broker.id != null and broker.id != ''">
+				AND a.broker_id = #{broker.id}
+			</if>
+			<if test="channel != null and channel != ''">
+				AND a.channel = #{channel}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
     
 	<select id="get" resultType="WxAccount">
 		SELECT 

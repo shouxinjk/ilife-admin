@@ -49,7 +49,6 @@ public class WxAccount extends DataEntity<WxAccount> {
 		this.originalId = originalId;
 	}
 	
-	@Length(min=1, max=512, message="公众号描述长度必须介于 1 和 512 之间")
 	public String getDescription() {
 		return description;
 	}
@@ -58,7 +57,6 @@ public class WxAccount extends DataEntity<WxAccount> {
 		this.description = description;
 	}
 	
-	@Length(min=1, max=512, message="二维码图片长度必须介于 1 和 512 之间")
 	public String getQrcodeImg() {
 		return qrcodeImg;
 	}

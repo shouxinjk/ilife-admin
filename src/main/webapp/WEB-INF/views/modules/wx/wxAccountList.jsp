@@ -48,9 +48,8 @@
 				<th>公众号名称</th>
 				<th>原始ID</th>
 				<th>公众号描述</th>
-				<th>二维码图片</th>
 				<th>状态</th>
-				<th>达人ID</th>
+				<th>发布达人</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="wx:wxAccount:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -68,13 +67,10 @@
 					${wxAccount.description}
 				</td>
 				<td>
-					<img src="${wxAccount.qrcodeImg}" width="60" height="60"/>
-				</td>
-				<td>
 					${fns:getDictLabel(wxAccount.status, 'active_inactive', '')}
 				</td>
 				<td>
-					${wxAccount.broker.id}
+					${wxAccount.broker.nickname}
 				</td>
 				<td>
 					<fmt:formatDate value="${wxAccount.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
