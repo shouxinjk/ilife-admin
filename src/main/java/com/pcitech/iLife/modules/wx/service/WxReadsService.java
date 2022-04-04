@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.wx.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,10 @@ import com.pcitech.iLife.modules.wx.dao.WxReadsDao;
 @Service
 @Transactional(readOnly = true)
 public class WxReadsService extends CrudService<WxReadsDao, WxReads> {
-
+	//查询阅读列表 
+	public List<WxReads> findReadingList(Map<String,Object> param){
+		return dao.findReadingList(param);
+	}
 	public WxReads get(String id) {
 		return super.get(id);
 	}

@@ -265,6 +265,8 @@ public class WxArticleController extends BaseController {
 			}
 			broker.setPoints(broker.getPoints()-pointsCost);//TODO：查询扣除虚拟豆数量
 			brokerService.save(broker);
+			result.put("points", pointsCost);	
+			result.put("pointsRemain", broker.getPoints());	
 			result.put("description","Article created successfully and points charged");
 			
 			//推送文章到企业微信群，便于群发：由于通过微信，无前端接入，只能从后端完成推送
@@ -369,6 +371,7 @@ public class WxArticleController extends BaseController {
 			result.put("nickname",broker.getName());
 			//result.put("avatarUrl",broker.getOpenid()); //TODO 需要补充
 			result.put("points",pointsCost);
+			result.put("pointsRemain",broker.getPoints());
 			result.put("status",true);
 			result.put("description","Article exposure pionts cosumed.[cost]"+pointsCost+"[remain]"+broker.getPoints());
 		}

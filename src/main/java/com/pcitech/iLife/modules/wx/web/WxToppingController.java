@@ -190,6 +190,8 @@ public class WxToppingController extends BaseController {
 		}catch(Exception ex) {
 			logger.error("error create topping record.",ex);
 		}
+		result.put("points", points);	
+		result.put("pointsRemain", broker.getPoints());	
 		return result;
 	}
 	

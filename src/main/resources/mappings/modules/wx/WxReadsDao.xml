@@ -24,6 +24,27 @@
 		LEFT JOIN mod_broker bb ON bb.id = a.broker_id	
 		LEFT JOIN wx_article aa ON aa.id = a.article_id
 	</sql>
+	
+	<!-- 获取报数明细：可根据阅读者、文章ID过滤。按照报数时间倒序排列 -->
+	<select id="findReadingList" resultType="WxReads">
+		SELECT 
+			<include refid="wxReadsColumns"/>
+		FROM wx_reads a
+		<include refid="wxReadsJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="articleId!=null and articleId != ''">
+				AND a.article_id = #{articleId}
+			</if>		
+			<if test="readerBrokerId!=null and readerBrokerId != ''">
+				AND a.broker_id = #{readerBrokerId}
+			</if>
+			<if test="readerOpenid != null and readerOpenid != ''">
+				AND a.openid = #{readerOpenid}
+			</if>
+		</where>
+		ORDER BY a.update_date DESC
+	</select>	
     
 	<select id="get" resultType="WxReads">
 		SELECT 

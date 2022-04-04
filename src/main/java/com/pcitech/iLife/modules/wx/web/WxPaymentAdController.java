@@ -168,6 +168,7 @@ public class WxPaymentAdController extends BaseController {
 			String id  = Util.md5(broker==null?Util.get32UUID():broker.getId() + json.getString("subjectType") + json.getString("subjectId") + item.getString("date") + item.getString("id") );
 			ad.setCreateDate(new Date());
 			ad.setUpdateDate(new Date());
+			ad.setPaymentDate(new Date());
 			ad.setId(id);
 			ad.setIsNewRecord(true);
 			try {

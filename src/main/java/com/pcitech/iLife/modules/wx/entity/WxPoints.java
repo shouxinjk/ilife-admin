@@ -18,7 +18,7 @@ public class WxPoints extends DataEntity<WxPoints> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// 产品名称
 	private int points;		// 虚拟豆数量
-	private String price;		// 价格
+	private int price;		// 价格
 	private String discount;		// 优惠策略
 	private String status="active";		// 状态
 	
@@ -48,11 +48,11 @@ public class WxPoints extends DataEntity<WxPoints> {
 		this.points = points;
 	}
 	
-	public String getPrice() {
+	public int getPrice() {
 		return price;
 	}
 
-	public void setPrice(String price) {
+	public void setPrice(int price) {
 		this.price = price;
 	}
 	

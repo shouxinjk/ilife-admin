@@ -3,6 +3,9 @@
  */
 package com.pcitech.iLife.modules.wx.web;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,14 +15,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.Broker;
+import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.wx.entity.WxReads;
+import com.pcitech.iLife.modules.wx.entity.WxTopping;
 import com.pcitech.iLife.modules.wx.service.WxReadsService;
 
 /**
@@ -33,6 +43,8 @@ public class WxReadsController extends BaseController {
 
 	@Autowired
 	private WxReadsService wxReadsService;
+	@Autowired
+	private BrokerService brokerService;
 	
 	@ModelAttribute
 	public WxReads get(@RequestParam(required=false) String id) {
@@ -80,4 +92,34 @@ public class WxReadsController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/wx/wxReads/?repage";
 	}
 
+
+	/**
+	 * 按照倒序获取时间阅读列表。参数包括 readerBrokerId,readerOpenid,articleId。其中readerBrokerId,readerOpenid可以只传递其中一个
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/latest", method = RequestMethod.GET)
+	public List<WxReads> listTopplingList( @RequestParam String readerBrokerId,@RequestParam String readerOpenid,@RequestParam String articleId) {
+		Map<String,Object> params = Maps.newHashMap();
+		//获取broker info
+		if(readerBrokerId!=null && readerBrokerId.trim().length()>0) {
+			params.put("brokerId", readerBrokerId.trim());
+		}else if(readerOpenid!=null && readerOpenid.trim().length()>0){
+			Broker broker = null;
+			broker = brokerService.getByOpenid(readerOpenid);
+			if(broker!=null)
+				params.put("brokerId", broker.getId());
+			else
+				return Lists.newArrayList();
+		}else {
+			//do nothing
+		}
+		
+		if(articleId!=null && articleId.trim().length()>0) {
+			params.put("articleId", articleId.trim());
+		}
+
+		return wxReadsService.findReadingList(params);
+	}
+	
 }
