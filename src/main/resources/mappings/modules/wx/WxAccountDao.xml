@@ -80,7 +80,7 @@
 			AND b.points > -2
 			AND a.broker_id = b.id
 			<if test="openid != null and openid != ''">
-				AND NOT EXISTS(select account_id from wx_reads where openid=#{openid} and account_id=a.id)
+				AND NOT EXISTS(select account_id from wx_subscribes where openid=#{openid} and account_id=a.id)
 			</if>		
 		</where>
 		ORDER BY b.points DESC,a.update_date DESC
