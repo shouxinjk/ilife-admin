@@ -38,7 +38,9 @@ import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.service.DictService;
 import com.pcitech.iLife.modules.wx.entity.WxArticle;
+import com.pcitech.iLife.modules.wx.entity.WxReads;
 import com.pcitech.iLife.modules.wx.service.WxArticleService;
+import com.pcitech.iLife.modules.wx.service.WxReadsService;
 import com.pcitech.iLife.util.HttpClientHelper;
 import com.pcitech.iLife.util.Util;
 import com.pcitech.iLife.util.WxHelper;
@@ -56,6 +58,8 @@ public class WxArticleController extends BaseController {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	private WxArticleService wxArticleService;
+	@Autowired
+	private WxReadsService wxReadsService;
 	
 	@Autowired
 	private BrokerService brokerService;
@@ -365,6 +369,15 @@ public class WxArticleController extends BaseController {
 				reader.setPoints(reader.getPoints()+pointsCost);//增加奖励
 				brokerService.save(reader);
 			}
+			//写入阅读记录
+			WxReads wxReads = new WxReads();
+			wxReads.setBroker(broker);
+			wxReads.setOpenid(openid);
+			wxReads.setArticle(article);
+			wxReads.setCreateDate(new Date());
+			wxReads.setUpdateDate(new Date());
+			wxReadsService.save(wxReads);
+			
 			//需要设置返回信息：发布者达人ID、openId、logo、消耗阅豆、
 			result.put("openid",broker.getOpenid());
 			result.put("brokerId",broker.getId());

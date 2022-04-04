@@ -52,7 +52,7 @@
 		<thead>
 			<tr>
 				<th>标题</th>
-				<th>封面</th>
+				<!--th>封面</th-->
 				<th>状态</th>
 				<th>达人</th>
 				<th>创建渠道</th>
@@ -66,14 +66,14 @@
 				<td><a href="${wxArticle.url}">
 					${wxArticle.title}
 				</a></td>
-				<td>
+				<!--td>
 					<img src="${wxArticle.coverImg}" width="60" height="60"/>
-				</td>
+				</td-->
 				<td>
 					${fns:getDictLabel(wxArticle.status, 'active_inactive', '')}
 				</td>
 				<td>
-					${wxArticle.broker.name} ${wxArticle.broker.nickname}
+					${wxArticle.broker.nickname}
 				</td>
 				<td>
 					${fns:getDictLabel(wxArticle.channel, 'wx_article_channel', '')}
