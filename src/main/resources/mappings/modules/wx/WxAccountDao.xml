@@ -23,7 +23,7 @@
 	</sql>
     
 
-	<!-- 查询置顶列表：根据权重倒序排列，仅显示在当前时间段的列表。能够根据当前用户openid及发布者openid过滤。注意，由于是付费，不受阅豆低于-2影响 -->
+	<!-- 查询置顶列表：根据权重倒序排列，仅显示在当前时间段的列表。能够根据当前用户openid及发布者openid过滤。注意，由于是付费，不受阅豆低于-5影响 -->
 	<select id="findToppingList" resultType="WxAccount">
 		SELECT 
 		a.id AS "id",
@@ -58,7 +58,7 @@
 		ORDER BY tt.advertise_weight DESC,a.update_date
 	</select>	
 		
-	<!-- 查询待关注列表：根据点数及时间倒序排列，点数大于-2才展示。能够根据指定openid过滤 -->
+	<!-- 查询待关注列表：根据点数及时间倒序排列，点数大于-5才展示。能够根据指定openid过滤 -->
 	<select id="findPendingList" resultType="WxAccount">
 		SELECT 
 		a.id AS "id",
@@ -80,7 +80,7 @@
 		<where>
 			a.del_flag = 0
 			AND a.status = 'active'
-			AND b.points > -2
+			AND b.points > -5
 			AND a.broker_id = b.id
 			<if test="openid != null and openid != ''">
 				AND NOT EXISTS(select account_id from wx_subscribes where openid=#{openid} and account_id=a.id)
