@@ -27,8 +27,8 @@ public class WxArticleService extends CrudService<WxArticleDao, WxArticle> {
 		return dao.findPendingList(param);
 	}
 	//根据openid获取待阅读置顶文章列表
-	public List<WxArticle> findToppingList(String openid){
-		return dao.findToppingList(openid);
+	public List<WxArticle> findToppingList(Map<String,Object> param){
+		return dao.findToppingList(param);
 	}
 	//根据openid获取已发布文章列表
 	public List<WxArticle> findMyArticles(Map<String,Object> param){

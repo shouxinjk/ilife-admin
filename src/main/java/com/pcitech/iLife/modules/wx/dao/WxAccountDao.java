@@ -20,7 +20,7 @@ public interface WxAccountDao extends CrudDao<WxAccount> {
 	//根据openid获取待阅读普通公众号列表
 	public List<WxAccount> findPendingList(Map<String,Object> param);
 	//根据openid获取待阅读置顶公众号列表
-	public List<WxAccount> findToppingList(String openid);
+	public List<WxAccount> findToppingList(Map<String,Object> param);
 	//根据openid获取已发布公众号列表 
 	public List<WxAccount> findMyAccounts(Map<String,Object> param);
 	//根据openid获取已发布公众号总数

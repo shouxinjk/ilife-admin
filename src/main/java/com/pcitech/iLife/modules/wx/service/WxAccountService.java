@@ -29,8 +29,8 @@ public class WxAccountService extends CrudService<WxAccountDao, WxAccount> {
 		return dao.findPendingList(param);
 	}
 	//根据openid获取待阅读置顶公众号列表
-	public List<WxAccount> findToppingList(String openid){
-		return dao.findToppingList(openid);
+	public List<WxAccount> findToppingList(Map<String,Object> param){
+		return dao.findToppingList(param);
 	}
 	//根据openid获取已发布公众号列表
 	public List<WxAccount> findMyAccounts(Map<String,Object> param){

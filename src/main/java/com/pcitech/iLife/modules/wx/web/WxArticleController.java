@@ -123,12 +123,7 @@ public class WxArticleController extends BaseController {
 	@RequestMapping(value = "rest/pending-articles", method = RequestMethod.GET)
 	public List<WxArticle> listPagedPendingArticles( @RequestParam(required=true) int from,@RequestParam(required=true) int to,@RequestParam String openid,@RequestParam String publisherOpenid) {
 		List<WxArticle> list = Lists.newArrayList();
-		//先查询获取指定文章列表，仅在第一页时加载
-		if(from==0) {
-			list.addAll(wxArticleService.findToppingList(openid));
-		}
-		
-		//然后获取普通文章列表
+		//组织参数
 		Map<String,Object> params = Maps.newHashMap();
 		params.put("from", from);
 		params.put("to", to);
@@ -139,6 +134,12 @@ public class WxArticleController extends BaseController {
 			params.put("publisherOpenid", publisherOpenid);
 		}
 		
+		//先查询获取指定文章列表，仅在第一页时加载
+		if(from==0) {
+			list.addAll(wxArticleService.findToppingList(params));
+		}
+		
+		//然后获取普通文章列表
 		list.addAll(wxArticleService.findPendingList(params));
 		return list;
 	}

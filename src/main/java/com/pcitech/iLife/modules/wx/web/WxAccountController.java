@@ -123,12 +123,7 @@ public class WxAccountController extends BaseController {
 	@RequestMapping(value = "rest/pending-accounts", method = RequestMethod.GET)
 	public List<WxAccount> listPagedPendingAccounts( @RequestParam(required=true) int from,@RequestParam(required=true) int to,@RequestParam String openid,@RequestParam String publisherOpenid) {
 		List<WxAccount> list = Lists.newArrayList();
-		//先查询获取指定公众号列表，仅在第一页时加载
-		if(from==0) {
-			list.addAll(wxAccountService.findToppingList(openid));
-		}
-		
-		//然后获取普通公众号列表
+		//组织参数
 		Map<String,Object> params = Maps.newHashMap();
 		params.put("from", from);
 		params.put("to", to);
@@ -138,7 +133,12 @@ public class WxAccountController extends BaseController {
 		if(publisherOpenid!=null && publisherOpenid.trim().length()>0) {
 			params.put("publisherOpenid", publisherOpenid);
 		}
+		//先查询获取指定公众号列表，仅在第一页时加载
+		if(from==0) {
+			list.addAll(wxAccountService.findToppingList(params));
+		}
 		
+		//然后获取普通公众号列表
 		list.addAll(wxAccountService.findPendingList(params));
 		return list;
 	}
