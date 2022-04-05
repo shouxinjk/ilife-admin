@@ -99,7 +99,7 @@ public class WxReadsController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/latest", method = RequestMethod.GET)
-	public List<WxReads> listTopplingList( @RequestParam String readerBrokerId,@RequestParam String readerOpenid,@RequestParam String articleId) {
+	public List<WxReads> listReadingList( @RequestParam String readerBrokerId,@RequestParam String readerOpenid,@RequestParam String articleId) {
 		Map<String,Object> params = Maps.newHashMap();
 		//获取broker info
 		if(readerBrokerId!=null && readerBrokerId.trim().length()>0) {
@@ -110,7 +110,7 @@ public class WxReadsController extends BaseController {
 			if(broker!=null)
 				params.put("brokerId", broker.getId());
 			else
-				return Lists.newArrayList();
+				params.put("brokerOpenid", readerOpenid);
 		}else {
 			//do nothing
 		}

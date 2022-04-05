@@ -63,6 +63,9 @@
 			AND a.del_flag = 0
 			AND a.status = 'active'
 			AND NOT EXISTS(select article_id from wx_reads where openid=#{openid} and article_id=tt.subject_id)		
+			<if test="publisherOpenid != null and publisherOpenid != ''">
+				AND b.openid = #{publisherOpenid}
+			</if>			
 		</where>
 		ORDER BY tt.advertise_weight DESC,a.update_date
 	</select>	
@@ -94,7 +97,10 @@
 			AND a.broker_id = b.id
 			<if test="openid != null and openid != ''">
 				AND NOT EXISTS(select article_id from wx_reads where openid=#{openid} and article_id=a.id)
-			</if>		
+			</if>	
+			<if test="publisherOpenid != null and publisherOpenid != ''">
+				AND b.openid = #{publisherOpenid}
+			</if>				
 		</where>
 		ORDER BY b.points DESC,a.update_date DESC
 		limit #{from},#{to}

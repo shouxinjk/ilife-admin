@@ -53,11 +53,11 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="wxReads">
 			<tr>
-				<td><a href="${ctx}/wx/wxReads/form?id=${wxReads.id}">
-					${wxReads.article.id}
+				<td><a href="${wxReads.url}">
+					${wxReads.article.name}
 				</a></td>
 				<td>
-					${wxReads.broker.id}
+					${wxReads.broker.nickname}
 				</td>
 				<td>
 					${wxReads.openid}

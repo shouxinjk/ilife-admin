@@ -23,6 +23,27 @@
 		LEFT JOIN wx_account aa ON aa.id = a.account_id	
 	</sql>
     
+	<!-- 获取关注明细：可根据阅读者、公众号ID过滤。按照关注时间倒序排列 -->
+	<select id="findSubscribingList" resultType="WxSubscribes">
+		SELECT 
+			<include refid="wxSubscribesColumns"/>
+		FROM wx_reads a
+		<include refid="wxSubscribesJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="accountId!=null and accountId != ''">
+				AND a.article_id = #{articleId}
+			</if>		
+			<if test="subscriberBrokerId!=null and subscriberBrokerId != ''">
+				AND a.broker_id = #{subscriberBrokerId}
+			</if>
+			<if test="subscriberOpenid != null and subscriberOpenid != ''">
+				AND a.openid = #{subscriberOpenid}
+			</if>
+		</where>
+		ORDER BY a.update_date DESC
+	</select>	    
+    
 	<select id="get" resultType="WxSubscribes">
 		SELECT 
 			<include refid="wxSubscribesColumns"/>

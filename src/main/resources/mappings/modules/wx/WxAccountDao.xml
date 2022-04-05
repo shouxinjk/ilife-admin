@@ -23,7 +23,7 @@
 	</sql>
     
 
-	<!-- 查询置顶列表：根据权重倒序排列，仅显示在当前时间段的列表。能够根据指定openid过滤。注意，由于是付费，不受阅豆低于-2影响 -->
+	<!-- 查询置顶列表：根据权重倒序排列，仅显示在当前时间段的列表。能够根据当前用户openid及发布者openid过滤。注意，由于是付费，不受阅豆低于-2影响 -->
 	<select id="findToppingList" resultType="WxAccount">
 		SELECT 
 		a.id AS "id",
@@ -50,7 +50,10 @@
 			AND curtime()&lt;tt.advertise_time_to
 			AND a.del_flag = 0
 			AND a.status = 'active'
-			AND NOT EXISTS(select account_id from wx_subscribes where openid=#{openid} and account_id=tt.subject_id)		
+			AND NOT EXISTS(select account_id from wx_subscribes where openid=#{openid} and account_id=tt.subject_id)	
+			<if test="publisherOpenid != null and publisherOpenid != ''">
+				AND b.openid = #{publisherOpenid}
+			</if>				
 		</where>
 		ORDER BY tt.advertise_weight DESC,a.update_date
 	</select>	
@@ -81,7 +84,10 @@
 			AND a.broker_id = b.id
 			<if test="openid != null and openid != ''">
 				AND NOT EXISTS(select account_id from wx_subscribes where openid=#{openid} and account_id=a.id)
-			</if>		
+			</if>	
+			<if test="publisherOpenid != null and publisherOpenid != ''">
+				AND b.openid = #{publisherOpenid}
+			</if>				
 		</where>
 		ORDER BY b.points DESC,a.update_date DESC
 		limit #{from},#{to}

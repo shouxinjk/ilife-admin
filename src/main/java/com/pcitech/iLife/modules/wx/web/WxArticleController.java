@@ -121,7 +121,7 @@ public class WxArticleController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/pending-articles", method = RequestMethod.GET)
-	public List<WxArticle> listPagedPendingArticles( @RequestParam(required=true) int from,@RequestParam(required=true) int to,@RequestParam String openid) {
+	public List<WxArticle> listPagedPendingArticles( @RequestParam(required=true) int from,@RequestParam(required=true) int to,@RequestParam String openid,@RequestParam String publisherOpenid) {
 		List<WxArticle> list = Lists.newArrayList();
 		//先查询获取指定文章列表，仅在第一页时加载
 		if(from==0) {
@@ -134,6 +134,9 @@ public class WxArticleController extends BaseController {
 		params.put("to", to);
 		if(openid!=null && openid.trim().length()>0) {
 			params.put("openid", openid);
+		}
+		if(publisherOpenid!=null && publisherOpenid.trim().length()>0) {
+			params.put("publisherOpenid", publisherOpenid);
 		}
 		
 		list.addAll(wxArticleService.findPendingList(params));

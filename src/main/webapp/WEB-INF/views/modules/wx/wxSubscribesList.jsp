@@ -43,6 +43,7 @@
 		<thead>
 			<tr>
 				<th>公众号</th>
+				<th>微信ID</th>
 				<th>粉丝broker</th>
 				<th>粉丝openid</th>
 				<th>更新时间</th>
@@ -52,11 +53,14 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="wxSubscribes">
 			<tr>
-				<td><a href="${ctx}/wx/wxSubscribes/form?id=${wxSubscribes.id}">
-					${wxSubscribes.account.id}
+				<td><a href="https://open.weixin.qq.com/qr/code?username==${wxSubscribes.account.originalId}">
+					${wxSubscribes.account.name}
 				</a></td>
 				<td>
-					${wxSubscribes.broker.id}
+					${wxSubscribes.account.originalId}
+				</td>				
+				<td>
+					${wxSubscribes.broker.nickname}
 				</td>
 				<td>
 					${wxSubscribes.openid}

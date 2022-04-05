@@ -46,7 +46,7 @@
 		<thead>
 			<tr>
 				<th>公众号名称</th>
-				<th>原始ID</th>
+				<th>微信ID</th>
 				<th>公众号描述</th>
 				<th>状态</th>
 				<th>发布达人</th>
@@ -57,7 +57,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="wxAccount">
 			<tr>
-				<td><a href="${ctx}/wx/wxAccount/form?id=${wxAccount.id}">
+				<td><a href="https://open.weixin.qq.com/qr/code?username=${wxAccount.originalId}">
 					${wxAccount.name}
 				</a></td>
 				<td>

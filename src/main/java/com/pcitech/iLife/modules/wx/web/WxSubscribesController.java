@@ -3,6 +3,9 @@
  */
 package com.pcitech.iLife.modules.wx.web;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,13 +15,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.Broker;
+import com.pcitech.iLife.modules.mod.service.BrokerService;
+import com.pcitech.iLife.modules.wx.entity.WxReads;
 import com.pcitech.iLife.modules.wx.entity.WxSubscribes;
 import com.pcitech.iLife.modules.wx.service.WxSubscribesService;
 
@@ -33,6 +43,8 @@ public class WxSubscribesController extends BaseController {
 
 	@Autowired
 	private WxSubscribesService wxSubscribesService;
+	@Autowired
+	private BrokerService brokerService;
 	
 	@ModelAttribute
 	public WxSubscribes get(@RequestParam(required=false) String id) {
@@ -79,5 +91,32 @@ public class WxSubscribesController extends BaseController {
 		addMessage(redirectAttributes, "删除关注记录成功");
 		return "redirect:"+Global.getAdminPath()+"/wx/wxSubscribes/?repage";
 	}
+	/**
+	 * 按照倒序获取关注列表。参数包括 subscriberBrokerId,subscriberOpenid,accountId。其中subscriberBrokerId,subscriberOpenid可以只传递其中一个
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/latest", method = RequestMethod.GET)
+	public List<WxSubscribes> listReadingList( @RequestParam String subscriberBrokerId,@RequestParam String subscriberOpenid,@RequestParam String accountId) {
+		Map<String,Object> params = Maps.newHashMap();
+		//获取broker info
+		if(subscriberBrokerId!=null && subscriberBrokerId.trim().length()>0) {
+			params.put("brokerId", subscriberBrokerId.trim());
+		}else if(subscriberOpenid!=null && subscriberOpenid.trim().length()>0){
+			Broker broker = null;
+			broker = brokerService.getByOpenid(subscriberOpenid);
+			if(broker!=null)
+				params.put("brokerId", broker.getId());
+			else
+				params.put("brokerOpenid", subscriberOpenid);
+		}else {
+			//do nothing
+		}
+		
+		if(accountId!=null && accountId.trim().length()>0) {
+			params.put("accountId", accountId.trim());
+		}
 
+		return wxSubscribesService.findSubscribingList(params);
+	}
 }

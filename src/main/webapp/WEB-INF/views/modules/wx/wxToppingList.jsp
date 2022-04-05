@@ -92,7 +92,14 @@
 					<fmt:formatDate value="${wxTopping.advertiseTimeTo}" pattern="HH:mm:ss"/>
 				</td>
 				<td>
-					${wxTopping.advertise.name}
+					<c:choose>
+						<c:when test="${empty wxTopping.advertise}">
+							无
+						</c:when>
+						<c:otherwise>
+						   ${wxTopping.advertise.name}                             
+						</c:otherwise>
+					</c:choose>
 				</td>				
 				<td>
 					${wxTopping.advertiseWeight}
@@ -110,10 +117,10 @@
 					${fns:getDictLabel(wxTopping.subjectType, 'wx_advertise_type', '')}
 				</td>
 				<td>
-					<c:if test="${wxTopping.advertise.type eq 'article'}">
+					<c:if test="${wxTopping.subjectType eq 'article'}">
 						<a href="${wxTopping.article.url}">${wxTopping.article.title}</a>
 					</c:if>
-					<c:if test="${wxTopping.advertise.type eq 'account'}">
+					<c:if test="${wxTopping.subjectType eq 'account'}">
 						${wxTopping.account.name}
 					</c:if>	
 				</td>
