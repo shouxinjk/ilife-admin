@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -30,6 +31,8 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
+import com.pcitech.iLife.util.HttpClientHelper;
+import com.pcitech.iLife.util.Util;
 
 import me.chanjar.weixin.common.error.WxErrorException;
 
@@ -241,6 +244,49 @@ public class BrokerController extends BaseController {
 		}
 		return result;
 	}
+	
+	//静默注册：根据openid查找是否有达人信息，如果没有则注册
+	@ResponseBody
+	@RequestMapping(value = "rest/silent-broker-check", method = RequestMethod.POST)
+	public Broker registerBrokerSilent(@RequestBody Broker broker) {
+		if(broker.getId()!=null && broker.getId().trim().length()>0){//表示已经存在，不需处理，直接返回
+			return brokerService.get(broker);
+		}else if(broker.getOpenid()!=null && broker.getOpenid().trim().length()>0) {
+			Broker b = brokerService.getByOpenid(broker.getOpenid());
+			if(b!=null){//如果存在则直接返回
+				return b;
+			}else {//否则执行静默注册
+				//如果不存在，表示未注册的情况下直接发了链接，默认注册达人
+				String parentdBrokerId = Global.getConfig("default_parent_broker_id");//固定达人ID 
+//				broker = new Broker();
+				broker.setId(Util.md5(broker.getOpenid()));
+				broker.setIsNewRecord(true);
+				broker.setParent(brokerService.get(parentdBrokerId));
+//				broker.setOpenid(broker.getOpenid());
+				broker.setPoints(20);//默认设置
+				String nickname = "确幸生活家";
+				if(broker.getNickname()!=null&&broker.getNickname().trim().length()>0) {
+					nickname = broker.getNickname();
+				}
+				broker.setNickname(nickname);
+				brokerService.save(broker);
+				//发送通知到上级达人
+				JSONObject json = new JSONObject();
+				json.put("title", "静默达人自动注册");
+				json.put("name", nickname);
+				json.put("openid", Global.getConfig("default_parent_broker_openid"));//固定达人openid
+				HttpClientHelper.getInstance().post(
+						Global.getConfig("wechat.templateMessenge")+"/notify-parent-broker", 
+						json,null);//推送上级达人通知
+				return broker;
+			}
+		}else {
+			//出错了。无法继续。直接返回吧
+			return new Broker();
+		}
+		
+	}
+	
 	
 	/**
 	 * 修改达人：包括修改单个属性如“升级状态”
