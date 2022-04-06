@@ -274,11 +274,11 @@ public class WxAccountController extends BaseController {
 			webhookItem.put("picurl" , img);//采用默认图片
 			JSONArray webhookItems = new JSONArray();
 			webhookItems.add(webhookItem);
-			JSONObject webhookAccounts = new JSONObject();
-			webhookAccounts.put("accounts", webhookItems);
+			JSONObject webhookArticles = new JSONObject();
+			webhookArticles.put("articles", webhookItems);
 			JSONObject webhookMsg = new JSONObject();
 			webhookMsg.put("msgtype", "news");
-			webhookMsg.put("news", webhookAccounts);
+			webhookMsg.put("news", webhookArticles);
 			logger.debug("try to post webhook msg."+webhookMsg);
 			Map<String,String> headers = Maps.newHashMap();
 			headers.put("Content-Type", "application/json");
