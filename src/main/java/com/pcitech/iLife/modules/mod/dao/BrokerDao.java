@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import com.pcitech.iLife.common.persistence.CrudDao;
@@ -24,4 +25,7 @@ public interface BrokerDao extends CrudDao<Broker> {
 	
 	//根据id查询下级数量
 	public int countChilds(String id);
+	
+	//根据parentId查询下级列表，分页返回
+	public List<Broker> findChildList(Map<String,Object> params);
 }

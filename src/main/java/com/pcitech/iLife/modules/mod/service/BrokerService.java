@@ -23,24 +23,26 @@ import com.pcitech.iLife.modules.mod.dao.BrokerDao;
 @Service
 @Transactional(readOnly = true)
 public class BrokerService extends CrudService<BrokerDao, Broker> {
-
-	@Autowired
-	private BrokerDao brokerDao;
+	
+	//根据parentId查询下级列表，分页返回
+	public List<Broker> findChildList(Map<String,Object> params){
+		return dao.findChildList(params);
+	}
 	
 	public Broker get(String id) {
 		return super.get(id);
 	}
 	
 	public Broker getByOpenid(String openid) {
-		return brokerDao.getByOpenid(openid);
+		return dao.getByOpenid(openid);
 	}
 	
 	public Map<String,Object> getMoney(String id) {
-		return brokerDao.getMoney(id);
+		return dao.getMoney(id);
 	}	
 	
 	public int countChilds(String id) {
-		return brokerDao.countChilds(id);
+		return dao.countChilds(id);
 	}
 	
 	public List<Broker> findList(Broker broker) {

@@ -163,15 +163,19 @@ public class BrokerController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/brokersByOpenid/{openid}", method = RequestMethod.GET)
-	public List<Broker> listBrokersByOpenid(@PathVariable String openid, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public List<Broker> listBrokersByOpenid(@PathVariable String openid, @RequestParam int from, @RequestParam int to) {
 		List<Broker> mapList = Lists.newArrayList();
 		Broker parent = brokerService.getByOpenid(openid);//根据openid获取父级达人
 		if(parent == null)//如果未找到对应的达人直接返回空
 			return mapList;
 		Broker broker = new Broker();
 		broker.setParent(parent);
-		List<Broker> list =brokerService.findList(broker);
-		return list;
+//		return brokerService.findList(broker);
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("parentId", parent.getId());
+		params.put("from", from);
+		params.put("to", to);
+		return brokerService.findChildList(params);
 	}
 	
 	/**

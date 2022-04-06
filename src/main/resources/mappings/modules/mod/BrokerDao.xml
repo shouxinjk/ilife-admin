@@ -82,6 +82,25 @@
 		WHERE a.openid = #{openid} limit 1
 	</select>	
 	
+	<!-- 分页返回下级列表 -->
+	<select id="findChildList" resultType="Broker">
+		SELECT 
+			<include refid="brokerColumns"/>
+		FROM mod_broker a
+		<include refid="brokerJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>			
+			<if test="parentId != null and parentId != ''">
+				AND a.parent_id = #{parentId}
+			</if>			
+		</where>
+		ORDER BY a.update_date DESC
+		limit #{from},#{to}
+	</select>	
+	
 	<select id="findList" resultType="Broker">
 		SELECT 
 			<include refid="brokerColumns"/>
