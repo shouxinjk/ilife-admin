@@ -333,19 +333,21 @@ public class WxArticleController extends BaseController {
 	}
 	
 	/**
-	 * 有效阅读，扣除阅豆
-	 * 扣除阅豆，并返回本次消耗
+	 * 有效阅读，扣除阅豆，并返回本次消耗。参数：
+	 * articleId：文章ID
+	 * readerOpenid：读者openid
+	 * readCount：阅读次数
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/exposure/{id}/{openid}", method = RequestMethod.POST)
-	public Map<String, Object> onArticleViewed(@PathVariable String id,@PathVariable String openid){
+	@RequestMapping(value = "rest/exposure", method = RequestMethod.POST)
+	public Map<String, Object> onArticleViewed(@RequestBody JSONObject json){
 		Map<String, Object> result = Maps.newHashMap();
-		WxArticle article = wxArticleService.get(id);
+		WxArticle article = wxArticleService.get(json.getString("articleId"));
 		
 		//检查文章
 		if(article == null) {
 			result.put("status",false);
-			result.put("description","Cannot find article by id:"+id);
+			result.put("description","Cannot find article by id:"+json.getString("articleId"));
 		}else{
 			//获取文章发布达人
 			Broker broker = brokerService.get(article.getBroker().getId());//重要：必须重新获取，否则会导致其他信息丢失
@@ -368,7 +370,7 @@ public class WxArticleController extends BaseController {
 			broker.setPoints(broker.getPoints()-pointsCost);//查询扣除虚拟豆数量
 			brokerService.save(broker);
 			//增加阅读者阅豆
-			Broker reader = brokerService.getByOpenid(openid);
+			Broker reader = brokerService.getByOpenid(json.getString("readerOpenid"));
 			if(reader==null || reader.getId()==null) {
 				//直接忽略
 				result.put("description","Cannot find broker info for current reader");
@@ -379,8 +381,9 @@ public class WxArticleController extends BaseController {
 			//写入阅读记录
 			WxReads wxReads = new WxReads();
 			wxReads.setBroker(broker);
-			wxReads.setOpenid(openid);
+			wxReads.setOpenid(json.getString("readerOpenid"));
 			wxReads.setArticle(article);
+			wxReads.setReadCount(json.getInteger("readCount"));
 			wxReads.setCreateDate(new Date());
 			wxReads.setUpdateDate(new Date());
 			wxReadsService.save(wxReads);
