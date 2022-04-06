@@ -279,13 +279,16 @@ public class WxArticleController extends BaseController {
 			
 			//推送文章到企业微信群，便于群发：由于通过微信，无前端接入，只能从后端完成推送
 			String img = Global.getConfig("wechat.image.default.prefix")+"logo"+(System.currentTimeMillis()%25)+".jpeg";
+			String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe12f24bb8146b774&redirect_uri=https://www.biglistoflittlethings.com/ilife-web-wx/dispatch.html&response_type=code&scope=snsapi_userinfo&state=____STATE____#wechat_redirect";
+
 			if(article.getCoverImg()!=null && article.getCoverImg().trim().length()>5) {//至少开头是https
 				img = article.getCoverImg();
 			}
 			JSONObject webhookItem = new JSONObject();
 			webhookItem.put("title" , article.getTitle());
 			webhookItem.put("description" , "有新文章发布，恭请批阅~~");
-			webhookItem.put("url" , article.getUrl());//TODO：需要进入文章列表界面，当前直接跳转到文章本身
+//			webhookItem.put("url" , article.getUrl());//TODO：需要进入文章列表界面，当前直接跳转到文章本身
+			webhookItem.put("url" ,url.replace("____STATE____", "publisher__articles___byPublisherOpenid="+article.getBroker().getOpenid()));
 			webhookItem.put("picurl" , img);//采用默认图片
 			JSONArray webhookItems = new JSONArray();
 			webhookItems.add(webhookItem);

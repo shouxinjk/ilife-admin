@@ -267,10 +267,12 @@ public class WxAccountController extends BaseController {
 			
 			//推送公众号到企业微信群，便于群发：由于通过微信，无前端接入，只能从后端完成推送
 			String img = "https://open.weixin.qq.com/qr/code?username="+account.getOriginalId();
+			String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe12f24bb8146b774&redirect_uri=https://www.biglistoflittlethings.com/ilife-web-wx/dispatch.html&response_type=code&scope=snsapi_userinfo&state=____STATE____#wechat_redirect";
 			JSONObject webhookItem = new JSONObject();
 			webhookItem.put("title" , account.getName());
 			webhookItem.put("description" , "有新公众号发布，我们去粉吧~~");
-			webhookItem.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/accounts.html?byPublisherOpenid="+account.getBroker().getOpenid());//TODO：需要进入公众号列表界面，当前直接跳转到公众号本身
+			//webhookItem.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/accounts.html?byPublisherOpenid="+account.getBroker().getOpenid());//TODO：需要进入公众号列表界面，当前直接跳转到公众号本身
+			webhookItem.put("url" ,url.replace("____STATE____", "publisher__accounts___byPublisherOpenid="+account.getBroker().getOpenid()));
 			webhookItem.put("picurl" , img);//采用默认图片
 			JSONArray webhookItems = new JSONArray();
 			webhookItems.add(webhookItem);
