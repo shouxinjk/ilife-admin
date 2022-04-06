@@ -270,7 +270,7 @@ public class WxAccountController extends BaseController {
 			JSONObject webhookItem = new JSONObject();
 			webhookItem.put("title" , account.getName());
 			webhookItem.put("description" , "有新公众号发布，我们去粉吧~~");
-			webhookItem.put("url" , img);//TODO：需要进入公众号列表界面，当前直接跳转到公众号本身
+			webhookItem.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/accounts.html?byPublisherOpenid="+account.getBroker().getOpenid());//TODO：需要进入公众号列表界面，当前直接跳转到公众号本身
 			webhookItem.put("picurl" , img);//采用默认图片
 			JSONArray webhookItems = new JSONArray();
 			webhookItems.add(webhookItem);
