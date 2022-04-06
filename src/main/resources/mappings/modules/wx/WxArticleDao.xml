@@ -51,6 +51,7 @@
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
+		(select count(id) from wx_reads rr where rr.article_id = tt.subject_id) AS "counts",
 		a.del_flag AS "delFlag"
 		FROM wx_topping tt 
 		left join wx_article a on a.id=tt.subject_id
@@ -87,6 +88,7 @@
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
+		(select count(id) from wx_reads rr where rr.article_id = a.id) AS "counts",
 		a.del_flag AS "delFlag"
 		FROM wx_article a
         left join mod_broker b on b.id=a.broker_id
@@ -120,6 +122,7 @@
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
+		(select count(id) from wx_reads rr where rr.article_id = a.id) AS "counts",
 		a.del_flag AS "delFlag"
 		FROM wx_article a,mod_broker b
 		<where>

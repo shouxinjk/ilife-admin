@@ -22,6 +22,7 @@ public class WxArticle extends DataEntity<WxArticle> {
 	private String status="active";		// 状态
 	private Broker broker;		// 达人ID
 	private String channel="auto";		// 创建渠道
+	private int counts;//阅读次数：仅用于读取
 	
 	public WxArticle() {
 		super();
@@ -29,6 +30,14 @@ public class WxArticle extends DataEntity<WxArticle> {
 
 	public WxArticle(String id){
 		super(id);
+	}
+
+	public int getCounts() {
+		return counts;
+	}
+
+	public void setCounts(int counts) {
+		this.counts = counts;
 	}
 
 	@Length(min=1, max=255, message="标题长度必须介于 1 和 255 之间")
@@ -40,6 +49,7 @@ public class WxArticle extends DataEntity<WxArticle> {
 		this.title = title;
 	}
 	
+
 	@Length(min=1, max=512, message="链接长度必须介于 1 和 512 之间")
 	public String getUrl() {
 		return url;

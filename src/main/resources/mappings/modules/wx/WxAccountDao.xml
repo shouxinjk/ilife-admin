@@ -39,6 +39,7 @@
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
+		(select count(id) from wx_subscribes ss where ss.account_id = tt.subject_id) AS "counts",
 		a.del_flag AS "delFlag"
 		FROM wx_topping tt 
 		left join wx_account a on a.id=tt.subject_id
@@ -74,6 +75,7 @@
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
+		(select count(id) from wx_subscribes ss where ss.account_id = a.id) AS "counts",
 		a.del_flag AS "delFlag"
 		FROM wx_account a
         left join mod_broker b on b.id=a.broker_id
@@ -106,6 +108,7 @@
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
+		(select count(id) from wx_subscribes ss where ss.account_id = a.id) AS "counts",
 		a.del_flag AS "delFlag"
 		FROM wx_account a,mod_broker b
 		<where>

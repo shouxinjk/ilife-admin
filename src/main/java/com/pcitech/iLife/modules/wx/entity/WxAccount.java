@@ -22,6 +22,7 @@ public class WxAccount extends DataEntity<WxAccount> {
 	private String qrcodeImg;		// 二维码图片
 	private String status="active";		// 状态
 	private Broker broker;		// 达人ID
+	private int counts;//关注次数：仅用于读取
 	
 	public WxAccount() {
 		super();
@@ -29,6 +30,14 @@ public class WxAccount extends DataEntity<WxAccount> {
 
 	public WxAccount(String id){
 		super(id);
+	}
+
+	public int getCounts() {
+		return counts;
+	}
+
+	public void setCounts(int counts) {
+		this.counts = counts;
 	}
 
 	@Length(min=1, max=255, message="公众号名称长度必须介于 1 和 255 之间")
@@ -40,6 +49,7 @@ public class WxAccount extends DataEntity<WxAccount> {
 		this.name = name;
 	}
 	
+
 	@Length(min=1, max=255, message="公众号原始ID长度必须介于 1 和 255 之间")
 	public String getOriginalId() {
 		return originalId;
