@@ -134,7 +134,7 @@ public class BrokerController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/brokerByOpenid/{openid}", method = RequestMethod.GET)
-	public Map<String, Object> getBrokerByOpenid(@PathVariable String openid, @RequestBody JSONObject json) {
+	public Map<String, Object> getBrokerByOpenid(@PathVariable String openid, @RequestParam String nickname , @RequestParam String avatarUrl) {
 		Map<String, Object> result = Maps.newHashMap();
 		Broker broker = brokerService.getByOpenid(openid);//根据openid获取达人
 		if(broker == null) {//如果未找到对应的达人直接返回空
@@ -142,12 +142,12 @@ public class BrokerController extends BaseController {
 		}else {
 			//检查并更新nickname与avatarUrl
 			boolean updateBroker = false;
-			if(json.getString("nickname")!=null && json.getString("nickname").trim().length()>0) {
-				broker.setNickname(json.getString("nickname"));
+			if(nickname!=null && nickname.trim().length()>0) {
+				broker.setNickname(nickname);
 				updateBroker = true;
 			}
-			if(json.getString("avatarUrl")!=null && json.getString("avatarUrl").trim().length()>0) {
-				broker.setAvatarUrl(json.getString("avatarUrl"));
+			if(avatarUrl!=null && avatarUrl.trim().length()>0) {
+				broker.setAvatarUrl(avatarUrl);
 				updateBroker = true;
 			}
 			if(updateBroker) {
