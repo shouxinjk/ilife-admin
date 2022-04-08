@@ -129,15 +129,30 @@ public class BrokerController extends BaseController {
 
 	/**
 	 * 根据openid获取指定达人信息
+	 * 如果带有nickname，则同时更新nickname
+	 * 如果带有avatarUrl，则同时更新avatarUrl
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/brokerByOpenid/{openid}", method = RequestMethod.GET)
-	public Map<String, Object> getBrokerByOpenid(@PathVariable String openid, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public Map<String, Object> getBrokerByOpenid(@PathVariable String openid, @RequestBody JSONObject json) {
 		Map<String, Object> result = Maps.newHashMap();
 		Broker broker = brokerService.getByOpenid(openid);//根据openid获取达人
 		if(broker == null) {//如果未找到对应的达人直接返回空
 			result.put("status", false);
 		}else {
+			//检查并更新nickname与avatarUrl
+			boolean updateBroker = false;
+			if(json.getString("nickname")!=null && json.getString("nickname").trim().length()>0) {
+				broker.setNickname(json.getString("nickname"));
+				updateBroker = true;
+			}
+			if(json.getString("avatarUrl")!=null && json.getString("avatarUrl").trim().length()>0) {
+				broker.setAvatarUrl(json.getString("avatarUrl"));
+				updateBroker = true;
+			}
+			if(updateBroker) {
+				brokerService.save(broker);
+			}
 			result.put("status", true);
 			result.put("data", broker);
 		}
@@ -250,7 +265,12 @@ public class BrokerController extends BaseController {
 	@RequestMapping(value = "rest/silent-broker-check", method = RequestMethod.POST)
 	public Broker registerBrokerSilent(@RequestBody Broker broker) {
 		if(broker.getId()!=null && broker.getId().trim().length()>0){//表示已经存在，不需处理，直接返回
-			return brokerService.get(broker);
+			Broker b = brokerService.get(broker);
+			if(broker.getNickname() !=null && broker.getNickname().trim().length()>0) {
+				b.setNickname(broker.getNickname());//由于不能静默获取微信用户信息，需要更新
+				brokerService.save(b);
+			}
+			return b;
 		}else if(broker.getOpenid()!=null && broker.getOpenid().trim().length()>0) {
 			Broker b = brokerService.getByOpenid(broker.getOpenid());
 			if(b!=null){//如果存在则直接返回

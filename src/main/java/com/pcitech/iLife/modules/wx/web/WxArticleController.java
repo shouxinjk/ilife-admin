@@ -392,7 +392,7 @@ public class WxArticleController extends BaseController {
 			result.put("openid",broker.getOpenid());
 			result.put("brokerId",broker.getId());
 			result.put("nickname",broker.getName());
-			//result.put("avatarUrl",broker.getOpenid()); //TODO 需要补充
+			result.put("avatarUrl",broker.getAvatarUrl()); 
 			result.put("points",pointsCost);
 			result.put("pointsRemain",broker.getPoints());
 			result.put("status",true);
