@@ -129,19 +129,35 @@ public class BrokerController extends BaseController {
 
 	/**
 	 * 根据openid获取指定达人信息
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/brokerByOpenid/{openid}", method = RequestMethod.GET)
+	public Map<String, Object> getBrokerByOpenid(@PathVariable String openid) {
+		Map<String, Object> result = Maps.newHashMap();
+		Broker broker = brokerService.getByOpenid(openid);//根据openid获取达人
+		if(broker == null) {//如果未找到对应的达人直接返回空
+			result.put("status", false);
+		}else {
+			result.put("status", true);
+			result.put("data", broker);
+		}
+		return result;
+	}
+	
+	/**
+	 * 更新达人nickname及avatarUrl：
 	 * 如果带有nickname，则同时更新nickname
 	 * 如果带有avatarUrl，则同时更新avatarUrl
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/brokerByOpenid/{openid}", method = RequestMethod.GET)
-	public Map<String, Object> getBrokerByOpenid(@PathVariable String openid/*, @RequestBody JSONObject json*/) {
+	@RequestMapping(value = "rest/sync/{openid}", method = RequestMethod.POST)
+	public Map<String, Object> syncBrokerInfo(@PathVariable String openid, @RequestBody JSONObject json) {
 		Map<String, Object> result = Maps.newHashMap();
 		Broker broker = brokerService.getByOpenid(openid);//根据openid获取达人
 		if(broker == null) {//如果未找到对应的达人直接返回空
 			result.put("status", false);
 		}else {
 			//检查并更新nickname与avatarUrl
-			/*
 			boolean updateBroker = false;
 			if(json.getString("nickname")!=null && json.getString("nickname").trim().length()>0) {
 				broker.setNickname(json.getString("nickname"));
@@ -154,7 +170,6 @@ public class BrokerController extends BaseController {
 			if(updateBroker) {
 				brokerService.save(broker);
 			}
-			*/
 			result.put("status", true);
 			result.put("data", broker);
 		}
