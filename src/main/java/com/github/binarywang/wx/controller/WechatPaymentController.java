@@ -106,9 +106,12 @@ public class WechatPaymentController extends GenericController {
             .build();
 
         try {
+        	WxPayUnifiedOrderResult unifiedOrder = this.payService.unifiedOrder(prepayInfo);
             Map<String, String> payInfo = this.payService.getPayInfo(prepayInfo);
+            payInfo.put("prepay_id", unifiedOrder.getPrepayId());
             result.put("success", true);
             result.put("data", payInfo);
+            result.put("unifiedOrder", new Gson().toJson(result));
         } catch (WxPayException e) {
         	logger.error(e.getErrCodeDes());
         	result.put("success", false);
