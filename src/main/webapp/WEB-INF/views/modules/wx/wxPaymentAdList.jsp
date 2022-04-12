@@ -70,7 +70,8 @@
 				<th>商户订单号</th>
 				<th>交易状态</th>
 				<th>支付流水号</th>
-				<th>更新时间</th>
+				<th>创建时间</th>
+				<th>最后更新</th>
 				<shiro:hasPermission name="wx:wxPaymentAd:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -118,6 +119,9 @@
 				<td>
 					${wxPaymentAd.transactionId}
 				</td>
+				<td>
+					<fmt:formatDate value="${wxPaymentAd.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>				
 				<td>
 					<fmt:formatDate value="${wxPaymentAd.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>

@@ -54,7 +54,7 @@
 		<c:forEach items="${page.list}" var="wxReads">
 			<tr>
 				<td><a href="${wxReads.article.url}">
-					${wxReads.article.name}
+					${wxReads.article.title}
 				</a></td>
 				<td>
 					${wxReads.broker.nickname}
