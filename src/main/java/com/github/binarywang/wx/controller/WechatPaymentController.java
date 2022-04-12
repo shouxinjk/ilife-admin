@@ -147,9 +147,12 @@ public class WechatPaymentController extends GenericController {
                     	params.put("transaction_id", kvm.get("transaction_id"));
                     	params.put("result_code", kvm.get("result_code"));
                     	String purchaseType = "微信购买";
-                    	if(outTradeNo !=null && outTradeNo.startsWith("pad")) {//表示购买广告
+                    	if(outTradeNo !=null && outTradeNo.startsWith("par")) {//表示购买广告：文章置顶
                     		wxPaymentAdService.updateWxTransactionInfoByTradeNo(params);
-                    		purchaseType = "购买置顶广告";
+                    		purchaseType = "文章置顶广告购买";
+                    	}else if(outTradeNo !=null && outTradeNo.startsWith("pac")) {//表示购买广告：公众号置顶
+                    		wxPaymentAdService.updateWxTransactionInfoByTradeNo(params);
+                    		purchaseType = "公众后置顶广告购买";
                     	}else if(outTradeNo !=null && outTradeNo.startsWith("ppt")) {//表示购买阅豆
                     		wxPaymentPointService.updateWxTransactionInfoByTradeNo(params);
                     		purchaseType = "阅豆充值";
