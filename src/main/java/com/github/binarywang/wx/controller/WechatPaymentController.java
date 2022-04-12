@@ -106,13 +106,13 @@ public class WechatPaymentController extends GenericController {
             .build();
 
         try {
-        	WxPayUnifiedOrderResult unifiedOrder = this.payService.unifiedOrder(prepayInfo);
+//        	WxPayUnifiedOrderResult unifiedOrder = this.payService.unifiedOrder(prepayInfo);
             Map<String, String> payInfo = this.payService.getPayInfo(prepayInfo);
-            payInfo.put("prepay_id", unifiedOrder.getPrepayId());
-            payInfo.put("appId", unifiedOrder.getAppid());
+//            payInfo.put("prepayId", unifiedOrder.getPrepayId());
+            payInfo.put("appId", payService.getConfig().getAppId());
             result.put("success", true);
             result.put("data", payInfo);
-            result.put("unifiedOrder",unifiedOrder );
+//            result.put("unifiedOrder",unifiedOrder );
         } catch (WxPayException e) {
         	logger.error(e.getErrCodeDes());
         	result.put("success", false);
