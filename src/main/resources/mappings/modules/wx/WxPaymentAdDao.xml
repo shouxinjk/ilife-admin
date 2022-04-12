@@ -152,6 +152,15 @@
 		)
 	</insert>
 	
+	<!-- 根据out_trade_no更新transaction_id及trade_state -->
+	<update id="updateWxTransactionInfoByTradeNo">
+		UPDATE wx_payment_ad SET 	
+			trade_state = #{result_code},
+			transaction_id = #{transaction_id},
+			update_date = now()
+		WHERE trade_no = #{out_trade_no}
+	</update>
+	
 	<update id="update">
 		UPDATE wx_payment_ad SET 	
 			broker_id = #{broker.id},

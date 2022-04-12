@@ -26,6 +26,7 @@ import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.util.SignUtils;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
@@ -108,13 +109,10 @@ public class WechatPaymentController extends GenericController {
         prepayInfo.setSignType("MD5");
 
         try {
-//        	WxPayUnifiedOrderResult unifiedOrder = this.payService.unifiedOrder(prepayInfo);
             Map<String, String> payInfo = this.payService.getPayInfo(prepayInfo);
-//            payInfo.put("prepayId", unifiedOrder.getPrepayId());
             payInfo.put("appId", payService.getConfig().getAppId());
             result.put("success", true);
             result.put("data", payInfo);
-//            result.put("unifiedOrder",unifiedOrder );
         } catch (WxPayException e) {
         	logger.error(e.getErrCodeDes());
         	result.put("success", false);
@@ -139,10 +137,27 @@ public class WechatPaymentController extends GenericController {
                 Map<String, String> kvm = XMLUtil.parseRequestXmlToMap(request);
                 if (SignUtils.checkSign(kvm, null, this.payConfig.getMchKey())) {
                     if (kvm.get("result_code").equals("SUCCESS")) {
-                        //TODO(user) 微信服务器通知此回调接口支付成功后，通知给业务系统做处理
-                    	//TODO 根据回传数据更改已经购买的商品状态：更改对应的记录状态
                     	//由于仅根据返回的prepayInfo更新，同时处理adPay及pointPay。其中adPay更新状态，pointPay则执行点数增加（仅执行一次）
-                    	//TODO发送通知到微信
+                    	//out_trade_no通过payAd、payPoint开头进行区分
+                    	
+                    	//根据回传数据更改已经购买的商品状态：更改对应的记录状态。根据out_trade_no修改所有购买记录的状态，增加transaction_id
+                    	String outTradeNo = kvm.get("out_trade_no");
+                    	Map<String,String> params = Maps.newHashMap();
+                    	params.put("out_trade_no", outTradeNo);
+                    	params.put("transaction_id", kvm.get("transaction_id"));
+                    	params.put("result_code", kvm.get("result_code"));
+                    	if(outTradeNo !=null && outTradeNo.startsWith("payAd")) {//表示购买广告
+                    		wxPaymentAdService.updateWxTransactionInfoByTradeNo(params);
+                    	}else if(outTradeNo !=null && outTradeNo.startsWith("payPoint")) {//表示购买阅豆
+                    		wxPaymentPointService.updateWxTransactionInfoByTradeNo(params);
+                    	}else {
+                    		//糟糕了，不做任何处理
+                    		logger.warn("wrong out_trade_no.[out_trade_no]"+outTradeNo);
+                    	}
+                    	
+                    	
+                    	
+                    	//发送通知到微信
                     	String amountStr = kvm.get("total_fee");
                     	try {
                     		int amount = Integer.parseInt(kvm.get("total_fee"));
@@ -158,7 +173,7 @@ public class WechatPaymentController extends GenericController {
             			msg.put("amount", amountStr);
             			msg.put("status", kvm.get("result_code"));
             			msg.put("time", fmt.format(new Date()));
-            			msg.put("ext", "购买流量主置顶广告");
+            			msg.put("ext", "订单号："+kvm.get("out_trade_no"));
             			msg.put("remark", kvm.toString());
             			result = HttpClientHelper.getInstance().post(
             					Global.getConfig("wechat.templateMessenge")+"/payment-success-notify", 

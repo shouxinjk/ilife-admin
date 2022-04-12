@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.wx.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,10 @@ public class WxPaymentAdService extends CrudService<WxPaymentAdDao, WxPaymentAd>
 	//获取指定天数的已售卖广告
 	public List<WxPaymentAd> findSoldAds(int days){
 		return dao.findSoldAds(days);
+	}
+	//更新微信支付记录状态
+	public void updateWxTransactionInfoByTradeNo(Map<String,String> params) {
+		dao.updateWxTransactionInfoByTradeNo(params);
 	}
 	
 	public WxPaymentAd get(String id) {
