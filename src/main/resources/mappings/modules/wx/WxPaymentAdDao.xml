@@ -50,6 +50,13 @@
 		WHERE a.advertise_date &gt; date_sub(curdate(), interval 1 day)
 		AND a.advertise_date &lt; date_add(curdate(), interval #{days} day)		
 	</select>    
+	
+	<!-- 获取所有缺少transaction_id信息的购买记录，用于数据补全 -->
+	<select id="findItemsWithoutTransactionId" resultType="java.lang.String">
+		select trade_no from wx_payment_ad where (transaction_id is null or transaction_id='') and trade_no is not null
+		UNION
+		select trade_no from wx_payment_point where (transaction_id is null or transaction_id='') and trade_no is not null
+	</select>   
     
 	<select id="get" resultType="WxPaymentAd">
 		SELECT 

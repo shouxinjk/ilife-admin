@@ -113,7 +113,7 @@
 					${wxPaymentAd.tradeNo}
 				</td>
 				<td>
-					${fns:getDictLabel(wxPaymentAd.tradeState, 'wx_trade_state', '')}
+					${fns:getDictLabel(wxPaymentAd.tradeState, 'wx_trade_state', wxPaymentAd.tradeState)}
 				</td>
 				<td>
 					${wxPaymentAd.transactionId}

@@ -71,7 +71,7 @@
 		<c:forEach items="${page.list}" var="wxPaymentPoint">
 			<tr>
 				<td>
-					${wxPaymentPoint.broker.name}
+					${wxPaymentPoint.broker.nickname}
 				</td>
 				<td>
 					${wxPaymentPoint.points.name}
@@ -86,7 +86,7 @@
 					${wxPaymentPoint.tradeNo}
 				</td>
 				<td>
-					${fns:getDictLabel(wxPaymentPoint.tradeState, 'wx_trade_state', '')}
+					${fns:getDictLabel(wxPaymentPoint.tradeState, 'wx_trade_state', wxPaymentPoint.tradeState)}
 				</td>
 				<td>
 					${wxPaymentPoint.transactionId}

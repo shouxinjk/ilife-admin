@@ -3,6 +3,7 @@ package com.github.binarywang.wx.controller;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +22,7 @@ import com.github.binarywang.wx.util.XMLUtil;
 import com.github.binarywang.wxpay.bean.entpay.EntPayRequest;
 import com.github.binarywang.wxpay.bean.entpay.EntPayResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.exception.WxPayException;
@@ -186,6 +188,12 @@ public class WechatPaymentController extends GenericController {
                     	//TODO支持分销机制，将订单加入order
                         logger.info("out_trade_no: " + kvm.get("out_trade_no") + " pay SUCCESS!");
                         response.getWriter().write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[ok]]></return_msg></xml>");
+                        //补全缺失transaction_id信息：每次支付后查询之前的空白记录
+                        List<String> itemsWithoutTransactionId = wxPaymentAdService.findItemsWithoutTransactionId();
+                        for(String item:itemsWithoutTransactionId) {
+                        	queryOrdersByTradeNo(item);
+                        }
+                        
                     } else {
                         this.logger.error("out_trade_no: "
                             + kvm.get("out_trade_no") + " result_code is FAIL");
@@ -203,7 +211,33 @@ public class WechatPaymentController extends GenericController {
             e.printStackTrace();
         }
     }
-
+    
+    //获取transaction_id为空的记录，并根据tradeNo查询补充transaction_id与state
+    public void queryOrdersByTradeNo(String outTradeNo) {
+    	try {
+			WxPayOrderQueryResult result = payService.queryOrder(null, outTradeNo);
+			if(result!=null) {
+            	Map<String,String> params = Maps.newHashMap();
+            	params.put("out_trade_no", outTradeNo);
+            	params.put("transaction_id", result.getTransactionId());
+            	params.put("result_code", result.getResultCode());
+            	if(outTradeNo !=null && outTradeNo.startsWith("par")) {//表示购买广告：文章置顶
+            		wxPaymentAdService.updateWxTransactionInfoByTradeNo(params);
+            	}else if(outTradeNo !=null && outTradeNo.startsWith("pac")) {//表示购买广告：公众号置顶
+            		wxPaymentAdService.updateWxTransactionInfoByTradeNo(params);
+            	}else if(outTradeNo !=null && outTradeNo.startsWith("ppt")) {//表示购买阅豆
+            		wxPaymentPointService.updateWxTransactionInfoByTradeNo(params);
+            	}else {
+            		//糟糕了，不做任何处理
+            		logger.warn("wrong out_trade_no.[out_trade_no]"+outTradeNo);
+            	}
+			}
+		} catch (WxPayException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
     @RequestMapping(value = "entPay")
     public void payToIndividual(HttpServletResponse response,
                                 HttpServletRequest request) {

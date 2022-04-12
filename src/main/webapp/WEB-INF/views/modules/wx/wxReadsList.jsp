@@ -53,7 +53,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="wxReads">
 			<tr>
-				<td><a href="${wxReads.url}">
+				<td><a href="${wxReads.article.url}">
 					${wxReads.article.name}
 				</a></td>
 				<td>

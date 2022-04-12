@@ -33,6 +33,11 @@ public class WxPaymentAdService extends CrudService<WxPaymentAdDao, WxPaymentAd>
 		dao.updateWxTransactionInfoByTradeNo(params);
 	}
 	
+	//查询缺少TransactionId的记录，包括paymentAd及paymentPoint
+	public List<String> findItemsWithoutTransactionId(){
+		return dao.findItemsWithoutTransactionId();
+	}
+	
 	public WxPaymentAd get(String id) {
 		return super.get(id);
 	}
