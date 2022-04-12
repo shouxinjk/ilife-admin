@@ -143,15 +143,22 @@ public class WechatPaymentController extends GenericController {
                     	//TODO 根据回传数据更改已经购买的商品状态：更改对应的记录状态
                     	//由于仅根据返回的prepayInfo更新，同时处理adPay及pointPay。其中adPay更新状态，pointPay则执行点数增加（仅执行一次）
                     	//TODO发送通知到微信
+                    	String amountStr = kvm.get("total_fee");
+                    	try {
+                    		int amount = Integer.parseInt(kvm.get("total_fee"));
+                    		amountStr = amount*0.01 + "元";
+                    	}catch(Exception ex) {
+                    		
+                    	}
                 	    Map<String,String> header = new HashMap<String,String>();
                 	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
                 	    JSONObject result = null;
                     	JSONObject msg = new JSONObject();
-            			msg.put("product", "article topping service");
-            			msg.put("amount", kvm.get("total_fee"));
+            			msg.put("product", "置顶广告服务");
+            			msg.put("amount", amountStr);
             			msg.put("status", kvm.get("result_code"));
-            			msg.put("orderTime", fmt.format(new Date()));
-            			msg.put("ext", "ext msg");
+            			msg.put("time", fmt.format(new Date()));
+            			msg.put("ext", "购买流量主置顶广告");
             			msg.put("remark", kvm.toString());
             			result = HttpClientHelper.getInstance().post(
             					Global.getConfig("wechat.templateMessenge")+"/payment-success-notify", 
