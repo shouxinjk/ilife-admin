@@ -104,6 +104,8 @@ public class WechatPaymentController extends GenericController {
             .spbillCreateIp(Global.getConfig("sx.server.ip"))//spbill_create_ip：用户地址需要传入，服务器端IP地址可配置
             .notifyUrl(Global.getConfig("sx.callback.prefix")+"/wxPay/rest/callback")//微信支付完成后将调用回传数据
             .build();
+        
+        prepayInfo.setSignType("MD5");
 
         try {
 //        	WxPayUnifiedOrderResult unifiedOrder = this.payService.unifiedOrder(prepayInfo);
