@@ -24,6 +24,7 @@ import com.pcitech.iLife.modules.wx.dao.WxPaymentPointDao;
 public class WxPaymentPointService extends CrudService<WxPaymentPointDao, WxPaymentPoint> {
 
 	//更新微信支付记录状态
+	@Transactional(readOnly = false)
 	public void updateWxTransactionInfoByTradeNo(Map<String,String> params) {
 		dao.updateWxTransactionInfoByTradeNo(params);
 	}
