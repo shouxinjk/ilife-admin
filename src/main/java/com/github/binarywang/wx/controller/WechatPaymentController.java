@@ -146,16 +146,18 @@ public class WechatPaymentController extends GenericController {
                     	params.put("out_trade_no", outTradeNo);
                     	params.put("transaction_id", kvm.get("transaction_id"));
                     	params.put("result_code", kvm.get("result_code"));
-                    	if(outTradeNo !=null && outTradeNo.startsWith("payAd")) {//表示购买广告
+                    	String purchaseType = "微信购买";
+                    	if(outTradeNo !=null && outTradeNo.startsWith("pad")) {//表示购买广告
                     		wxPaymentAdService.updateWxTransactionInfoByTradeNo(params);
-                    	}else if(outTradeNo !=null && outTradeNo.startsWith("payPoint")) {//表示购买阅豆
+                    		purchaseType = "购买置顶广告";
+                    	}else if(outTradeNo !=null && outTradeNo.startsWith("ppt")) {//表示购买阅豆
                     		wxPaymentPointService.updateWxTransactionInfoByTradeNo(params);
+                    		purchaseType = "阅豆充值";
                     	}else {
                     		//糟糕了，不做任何处理
                     		logger.warn("wrong out_trade_no.[out_trade_no]"+outTradeNo);
+                    		purchaseType = "未知支付类型";
                     	}
-                    	
-                    	
                     	
                     	//发送通知到微信
                     	String amountStr = kvm.get("total_fee");
@@ -169,12 +171,12 @@ public class WechatPaymentController extends GenericController {
                 	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
                 	    JSONObject result = null;
                     	JSONObject msg = new JSONObject();
-            			msg.put("product", "置顶广告服务");
+            			msg.put("product", purchaseType);
             			msg.put("amount", amountStr);
             			msg.put("status", kvm.get("result_code"));
             			msg.put("time", fmt.format(new Date()));
             			msg.put("ext", "订单号："+kvm.get("out_trade_no"));
-            			msg.put("remark", kvm.toString());
+            			msg.put("remark", "流水号："+kvm.get("transaction_id"));
             			result = HttpClientHelper.getInstance().post(
             					Global.getConfig("wechat.templateMessenge")+"/payment-success-notify", 
             					msg,header);
