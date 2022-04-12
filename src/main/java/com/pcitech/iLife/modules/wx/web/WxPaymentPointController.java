@@ -134,10 +134,11 @@ public class WxPaymentPointController extends BaseController {
 		wxPaymentPoint.setPoints(wxPoint);
 		wxPaymentPoint.setTradeNo(json.getString("out_trade_no"));
 		wxPaymentPoint.setTradeState(json.getString("result_code"));
-		wxPaymentPoint.setTransactionId("");//TODO 需要补充支付流水号
+		wxPaymentPoint.setTransactionId("");//默认为空，待微信支付后更新
 		wxPaymentPoint.setCreateDate(new Date());
 		wxPaymentPoint.setUpdateDate(new Date());
 		wxPaymentPoint.setPaymentDate(new Date());
+		wxPaymentPointService.save(wxPaymentPoint);//保存记录
 		try {
 			//更新达人阅豆
 			broker.setPoints(broker.getPoints()+wxPoint.getPoints());
