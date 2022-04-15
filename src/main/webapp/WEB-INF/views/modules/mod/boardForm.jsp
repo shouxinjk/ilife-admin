@@ -501,13 +501,12 @@
 		    console.log(canvas);
 		    var img = canvas.get(0).toDataURL("image/png");
 
-		    //将二维码图片上传到fastdfs
-		    uploadQrcode(img, "qrcode"+board.id+currentPosterScheme.id+(new Date().getTime())+".png");//文件名称以itemKey+posterId+时间戳唯一识别
+		    //将二维码图片上传
+		    uploadPngFile(img, "qrcode"+board.id+currentPosterScheme.id+(new Date().getTime())+".png");//文件名称以itemKey+posterId+时间戳唯一识别
 
 		    //隐藏canvas
 		    jQuery("#app-qrcode-box canvas").css("display","none");
 		}
-		
 
 		//上传二维码到poster服务器，便于生成使用
 		function uploadPngFile(dataurl, filename){
