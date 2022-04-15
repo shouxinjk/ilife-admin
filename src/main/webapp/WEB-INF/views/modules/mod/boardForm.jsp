@@ -51,7 +51,7 @@
 		        //requestPoster(scheme,broker,stuff,app.globalData.userInfo);//根据当前选择重新生成海报
 		        //requestPoster(scheme);//根据当前选择重新生成海报
 		        //生成分享二维码后生成海报
-		        generateQRcode();
+		        generateQrcode();
 		    });
 		    //注册图文内容生成事件
 		    $("#btnArticle").click(function(){
@@ -433,7 +433,7 @@
 
 		//生成短连接及二维码：海报生成带有系统达人分享信息
 		/**
-		function generateQRcode(){
+		function generateQrcode(){
 		    console.log("start generate qrcode......");
 		    var longUrl = "https://www.biglistoflittlethings.com/ilife-web-wx/board2-waterfall.html?fromBroker=system&posterId="
 		    			+currentPosterScheme.id+"&id="+board.id;//获取分享目标链接：包含boardId及posterId
