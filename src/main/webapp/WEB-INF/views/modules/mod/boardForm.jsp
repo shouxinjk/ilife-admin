@@ -476,8 +476,8 @@
 		    console.log("got short code",shortCode);
 		    saveShortCode(hex_md5(longUrl),"board_"+board.id,'system','system',"mp",encodeURIComponent(longUrl),shortCode);    
 		    var shortUrl = "https://www.biglistoflittlethings.com/ilife-web-wx/s.html?s="+shortCode;//必须是全路径
-		    var logoUrl = imgPrefix+app.globalData.userInfo.avatarUrl;//需要中转，否则会有跨域问题
-		    //var logoUrl = "http://www.shouxinjk.net/static/logo/distributor-square/"+stuff.source+".png";//注意由于跨域问题，必须使用当前域名下的图片
+		    //var logoUrl = imgPrefix+app.globalData.userInfo.avatarUrl;//需要中转，否则会有跨域问题
+		    var logoUrl = "http://www.shouxinjk.net/static/logo/distributor-square/default.jpg";//注意由于跨域问题，必须使用当前域名下的图片
 
 		    //生成二维码
 		    var qrcode = new QRCode(document.getElementById("app-qrcode-box"), {
