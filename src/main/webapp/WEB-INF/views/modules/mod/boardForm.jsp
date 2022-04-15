@@ -432,6 +432,7 @@
 
 
 		//生成短连接及二维码：海报生成带有系统达人分享信息
+		/**
 		function generateQRcode(){
 		    console.log("start generate qrcode......");
 		    var longUrl = "https://www.biglistoflittlethings.com/ilife-web-wx/board2-waterfall.html?fromBroker=system&posterId="
@@ -462,12 +463,56 @@
 		     }); 		    			
    
 		}
+//**/
 
+		//生成短连接及二维码
+		function generateQrcode(){
+		    console.log("start generate qrcode......");
+		    var longUrl = "https://www.biglistoflittlethings.com/ilife-web-wx/board2-waterfall.html?fromBroker=system&posterId="
+    			+currentPosterScheme.id+"&id="+board.id;//获取分享目标链接：包含boardId及posterId
+    			
+		    //生成短码并保存
+		    var shortCode = generateShortCode(longUrl);
+		    console.log("got short code",shortCode);
+		    saveShortCode(hex_md5(longUrl),"board_"+board.id,'system','system',"mp",encodeURIComponent(longUrl),shortCode);    
+		    var shortUrl = "https://www.biglistoflittlethings.com/ilife-web-wx/s.html?s="+shortCode;//必须是全路径
+		    var logoUrl = imgPrefix+app.globalData.userInfo.avatarUrl;//需要中转，否则会有跨域问题
+		    //var logoUrl = "http://www.shouxinjk.net/static/logo/distributor-square/"+stuff.source+".png";//注意由于跨域问题，必须使用当前域名下的图片
+
+		    //生成二维码
+		    var qrcode = new QRCode(document.getElementById("app-qrcode-box"), {
+		        text: shortUrl,
+		        width: 96,
+		        height: 96,    
+		        drawer: 'png',
+		        logo: logoUrl,
+		        logoWidth: 24,
+		        logoHeight: 24,
+		        logoBackgroundColor: '#ffffff',
+		        logoBackgroundTransparent: false
+		    });  
+		    setTimeout(generateImage,1200);
+		}
+
+		//转换二维码svg为图片
+		function generateImage() {
+		    console.log("try generate image.");
+		    var canvas = $('#app-qrcode-box canvas');
+		    console.log(canvas);
+		    var img = canvas.get(0).toDataURL("image/png");
+
+		    //将二维码图片上传到fastdfs
+		    uploadQrcode(img, "qrcode"+board.id+currentPosterScheme.id+(new Date().getTime())+".png");//文件名称以itemKey+posterId+时间戳唯一识别
+
+		    //隐藏canvas
+		    jQuery("#app-qrcode-box canvas").css("display","none");
+		}
+		
 
 		//上传二维码到poster服务器，便于生成使用
 		function uploadPngFile(dataurl, filename){
-		    dataurl = $("#app-qrcode-box img").attr("src");
-		    filename = "broker-qrcode-system.png";
+		    //dataurl = $("#app-qrcode-box img").attr("src");
+		    //filename = "broker-qrcode-system.png";
 		    console.log("try to upload qrcode.",dataurl,filename);
 		    var formData = new FormData();
 		    formData.append("file", dataURLtoFile(dataurl, filename));//注意，使用files作为字段名

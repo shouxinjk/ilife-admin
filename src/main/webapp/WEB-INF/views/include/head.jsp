@@ -21,9 +21,11 @@
 <link href="${ctxStatic}/jquery-ui/jquery-ui.css" rel="stylesheet" />
 <script src="${ctxStatic}/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 <script src="${ctxStatic}/tinymce/tinymce.min.js" type="text/javascript"></script>
-<script src="${ctxStatic}/html2canvas/qrcode.js" type="text/javascript"></script>
+<!-- script src="${ctxStatic}/html2canvas/qrcode.js" type="text/javascript"></script-->
 <link href="${ctxStatic}/common/iLife.css" type="text/css" rel="stylesheet" />
 <script src="${ctxStatic}/common/iLife.js" type="text/javascript"></script>
+<script src="${ctxStatic}/common/md5.js" type="text/javascript"></script>
+<script src="${ctxStatic}/common/common.js" type="text/javascript"></script>
 <script src="${ctxStatic}/common/util.js" type="text/javascript"></script>
 <script src="${ctxStatic}/common/options.js" type="text/javascript"></script>
 <script type="text/javascript">var ctx = '${ctx}', ctxStatic='${ctxStatic}';</script>
