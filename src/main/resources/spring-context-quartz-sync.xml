@@ -87,7 +87,7 @@
     </bean>
     <bean id="cpsDataSyncTaskCpsLinkTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskCpsLinkMethod"></property>
-        <property name="cronExpression" value="0 */15 * * * ?"></property>
+        <property name="cronExpression" value="0 30 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskCpsLinkScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -105,7 +105,7 @@
     </bean>
     <bean id="cpsDataSyncTaskVipTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskVipMethod"></property>
-        <property name="cronExpression" value="0 */30 * * * ?"></property>
+        <property name="cronExpression" value="0 */23 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskVipScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -123,7 +123,7 @@
     </bean>
     <bean id="cpsDataSyncTaskKaolaTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskKaolaMethod"></property>
-        <property name="cronExpression" value="0 */20 * * * ?"></property>
+        <property name="cronExpression" value="0 */17 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskKaolaScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -158,7 +158,7 @@
     </bean>
     <bean id="cpsDataSyncTask1PartyProfitTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTask1PartyProfitMethod"></property>
-        <property name="cronExpression" value="0 */15 * * * ?"></property>
+        <property name="cronExpression" value="0 */13 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTask1PartyProfitScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -176,7 +176,7 @@
     </bean>
     <bean id="cpsDataSyncTaskPddItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskPddItemSearchMethod"></property>
-        <property name="cronExpression" value="0 0 8,14,20  * * ?"></property>
+        <property name="cronExpression" value="0 0 2 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskPddItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -194,7 +194,7 @@
     </bean>
     <bean id="cpsDataSyncTaskMeituanItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskMeituanItemSearchMethod"></property>
-        <property name="cronExpression" value="0 20 8,11,14,17 * * ?"></property>
+        <property name="cronExpression" value="0 30 2 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskMeituanItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -230,7 +230,7 @@
     </bean>
     <bean id="cpsDataSyncTaskKaolaItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskKaolaItemSearchMethod"></property>
-        <property name="cronExpression" value="0 15 8,14,20  * * ?"></property>
+        <property name="cronExpression" value="0 30 3  * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskKaolaItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -248,7 +248,7 @@
     </bean>
     <bean id="cpsDataSyncTaskJdItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskJdItemSearchMethod"></property>
-        <property name="cronExpression" value="0 30 8,14,20 * * ?"></property>
+        <property name="cronExpression" value="0 0 4 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskJdItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -266,7 +266,7 @@
     </bean>
     <bean id="cpsDataSyncTaskSuningItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskSuningItemSearchMethod"></property>
-        <property name="cronExpression" value="0 45 8,16 * * ?"></property>
+        <property name="cronExpression" value="0 30 4 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskSuningItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -284,7 +284,7 @@
     </bean>
     <bean id="cpsDataSyncTaskVipItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskVipItemSearchMethod"></property>
-        <property name="cronExpression" value="0 15 7,11,15,19 * * ?"></property>
+        <property name="cronExpression" value="0 0 5 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskVipItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -302,7 +302,7 @@
     </bean>
     <bean id="cpsDataSyncTaskGomeItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskGomeItemSearchMethod"></property>
-        <property name="cronExpression" value="0 50 * * * ?"></property>
+        <property name="cronExpression" value="0 30 5 * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskGomeItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">

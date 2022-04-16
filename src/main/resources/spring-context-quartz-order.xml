@@ -123,7 +123,7 @@
     </bean>
     <bean id="cpsOrderSyncTaskGomeTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsOrderSyncTaskGomeMethod"></property>
-        <property name="cronExpression" value="0 */9 * * * ?"></property>
+        <property name="cronExpression" value="0 */50 * * * ?"></property>
     </bean>
     <bean id="cpsOrderSyncTaskGomeScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
