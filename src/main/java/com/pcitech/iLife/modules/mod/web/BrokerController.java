@@ -141,11 +141,14 @@ public class BrokerController extends BaseController {
 			//20220416：修复因为avatarUrl不为空导致的达人创建失败问题：因为没有达人导致前端一直在加载状态，此处临时创建达人。
 			Broker tmpBroker = new Broker();
 			Broker parentBroker = brokerService.get(Global.getConfig("default_parent_broker_id"));
+			tmpBroker.setId(Util.md5(openid));
+			tmpBroker.setIsNewRecord(true);
 			tmpBroker.setParent(parentBroker);
 			tmpBroker.setLevel("流量主");
 			tmpBroker.setPoints(20);//默认
 			tmpBroker.setRemarks("修复20220416错误自动创建");
 			tmpBroker.setStatus("ready");
+			tmpBroker.setHierarchy(parentBroker.getHierarchy()+1);
 			tmpBroker.setOpenid(openid);
 			tmpBroker.setCreateDate(new Date());
 			tmpBroker.setUpdateDate(new Date());
@@ -287,6 +290,7 @@ public class BrokerController extends BaseController {
 			result.put("description","Cannot find parent broker by id:"+id);
 		}else {
 			broker.setParent(parent);
+			broker.setHierarchy(parent.getHierarchy()+1);//默认设置为上级达人层级+1
 			brokerService.save(broker);
 			result.put("status",true);
 			result.put("description","Broker created successfully");
@@ -318,10 +322,12 @@ public class BrokerController extends BaseController {
 			}else {//否则执行静默注册
 				//如果不存在，表示未注册的情况下直接发了链接，默认注册达人
 				String parentdBrokerId = Global.getConfig("default_parent_broker_id");//固定达人ID 
+				Broker parentBroker = brokerService.get(parentdBrokerId);
 //				broker = new Broker();
 				broker.setId(Util.md5(broker.getOpenid()));
 				broker.setIsNewRecord(true);
-				broker.setParent(brokerService.get(parentdBrokerId));
+				broker.setParent(parentBroker);
+				broker.setHierarchy(parentBroker.getHierarchy()+1);
 //				broker.setOpenid(broker.getOpenid());
 				broker.setPoints(20);//默认设置
 				String nickname = "确幸生活家";
