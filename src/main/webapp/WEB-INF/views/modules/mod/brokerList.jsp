@@ -49,8 +49,8 @@
 				<th>虚拟豆</th>
 				<th>账户状态</th>
 				<!--th>升级状态</th-->
+				<th>更新时间</th>
 				<th>注册时间</th>
-				<!--th>更新时间</th-->
 				<shiro:hasPermission name="mod:broker:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -73,11 +73,11 @@
 				<td>${broker.status}</td>	
 				<!--td>${broker.upgrade}</td-->	
 				<td>
+					<fmt:formatDate value="${broker.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>				
+				<td>
 					<fmt:formatDate value="${broker.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>		
-				<!--td>
-					<fmt:formatDate value="${broker.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td-->
 				<shiro:hasPermission name="mod:broker:edit"><td>
     				<a href="${ctx}/mod/broker/form?id=${broker.id}">修改</a>
 					<a href="${ctx}/mod/broker/delete?id=${broker.id}" onclick="return confirmx('确认要删除该推广达人吗？', this.href)">删除</a>
