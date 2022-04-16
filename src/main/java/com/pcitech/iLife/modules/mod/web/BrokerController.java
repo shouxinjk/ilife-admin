@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -136,7 +137,29 @@ public class BrokerController extends BaseController {
 		Map<String, Object> result = Maps.newHashMap();
 		Broker broker = brokerService.getByOpenid(openid);//根据openid获取达人
 		if(broker == null) {//如果未找到对应的达人直接返回空
-			result.put("status", false);
+			//result.put("status", false);
+			//20220416：修复因为avatarUrl不为空导致的达人创建失败问题：因为没有达人导致前端一直在加载状态，此处临时创建达人。
+			Broker tmpBroker = new Broker();
+			Broker parentBroker = brokerService.get(Global.getConfig("default_parent_broker_id"));
+			tmpBroker.setParent(parentBroker);
+			tmpBroker.setLevel("流量主");
+			tmpBroker.setPoints(20);//默认
+			tmpBroker.setRemarks("修复20220416错误自动创建");
+			tmpBroker.setStatus("ready");
+			tmpBroker.setOpenid(openid);
+			tmpBroker.setCreateDate(new Date());
+			tmpBroker.setUpdateDate(new Date());
+			brokerService.save(tmpBroker);
+			broker = brokerService.getByOpenid(openid);//重新根据openid获取达人
+			if(broker == null) {
+				result.put("status", false);
+				result.put("msg", "该死，修复bug后还是没能获取broker");
+			}else {
+				result.put("status", true);
+				result.put("data", broker);
+				result.put("msg", "该死，这是临时修复bug自动创建的broker");
+			}
+			//20220416 临时修复结束
 		}else {
 			result.put("status", true);
 			result.put("data", broker);
