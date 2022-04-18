@@ -81,36 +81,34 @@ public class PddOrderSync {
 		//接下来写入Order
 		Order order = orderService.get(itemKey);
 		
-		if(order == null) {
+		if(order == null) {//仅对新订单创建记录
 			order = new Order();
 			order.setId(itemKey);//与NoSQL保持一致
 			order.setIsNewRecord(true);//新建记录
 			//对新同步订单需要设置状态，便于后续清分及发送通知
 			order.setNotification("0");//不用管通知状态，后续通知任务会自动更新
 			order.setStatus("pending");
-		}
-		order.setStatus("pending");//等待清分
-		order.setPlatform("pdd");
-		order.setOrderNo(""+item.getOrderSn());
-		order.setTraceCode(item.getCustomParameters());
-		order.setAmount(Double.parseDouble(String.format("%.2f",item.getOrderAmount()*0.01)));//返回为分的long型，仅保留2位小数
-		order.setCommissionEstimate(Double.parseDouble(String.format("%.2f",item.getPromotionAmount()*0.01)));//返回为分的long型，仅保留2位小数
-//		order.setCommissionSettlement();//留空，等着后面结算更新
-		order.setItem(item.getGoodsName());
-		order.setOrderTime(new Date(item.getOrderPayTime()*1000));//以订单支付时间为准
-		//customParameter格式为：{"uid":"20434335","brokerId":"o8HmJ1EdIUR8iZRwaq1T7D_nPIYc"}
-		String brokerId = "system";
-		Map<String,String> customParam = JSONObject.parseObject(item.getCustomParameters(),new TypeReference<Map<String,String>>(){});
-		if(customParam.get("brokerId")!=null)
-			brokerId = customParam.get("brokerId");
-		Broker broker = brokerService.get(brokerId);//跟踪码就是达人ID：注意需要解析自定义参数：构建链接时传递参数为{uid:xx,brokerId:xxxx}
-		if(broker==null)broker=brokerService.get("system");//如果找不到，则直接使用平台默认账户
-		order.setBroker(broker);
+			order.setPlatform("pdd");
+			order.setOrderNo(""+item.getOrderSn());
+			order.setTraceCode(item.getCustomParameters());
+			order.setAmount(Double.parseDouble(String.format("%.2f",item.getOrderAmount()*0.01)));//返回为分的long型，仅保留2位小数
+			order.setCommissionEstimate(Double.parseDouble(String.format("%.2f",item.getPromotionAmount()*0.01)));//返回为分的long型，仅保留2位小数
+//			order.setCommissionSettlement();//留空，等着后面结算更新
+			order.setItem(item.getGoodsName());
+			order.setOrderTime(new Date(item.getOrderPayTime()*1000));//以订单支付时间为准
+			//customParameter格式为：{"uid":"20434335","brokerId":"o8HmJ1EdIUR8iZRwaq1T7D_nPIYc"}
+			String brokerId = "system";
+			Map<String,String> customParam = JSONObject.parseObject(item.getCustomParameters(),new TypeReference<Map<String,String>>(){});
+			if(customParam.get("brokerId")!=null)
+				brokerId = customParam.get("brokerId");
+			Broker broker = brokerService.get(brokerId);//跟踪码就是达人ID：注意需要解析自定义参数：构建链接时传递参数为{uid:xx,brokerId:xxxx}
+			if(broker==null)broker=brokerService.get("system");//如果找不到，则直接使用平台默认账户
+			order.setBroker(broker);
 
-		orderService.save(order);
-		
-		processedAmount++;
-		
+			orderService.save(order);
+			
+			processedAmount++;
+		}
     }
 
     /**
