@@ -35,8 +35,10 @@ import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsRequest;
 import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsResponse;
 import com.pcitech.iLife.modules.mod.entity.Clearing;
 import com.pcitech.iLife.modules.mod.entity.Order;
+import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
 import com.pcitech.iLife.modules.mod.service.ClearingService;
 import com.pcitech.iLife.modules.mod.service.OrderService;
+import com.pcitech.iLife.modules.mod.service.PlatformCategoryService;
 import com.pcitech.iLife.util.ArangoDbClient;
 import com.pcitech.iLife.util.HttpClientHelper;
 import com.pcitech.iLife.util.Util;
@@ -76,6 +78,8 @@ public class SuningItemsSearcher {
     
     @Autowired
     SuningHelper suningHelper;
+    @Autowired
+	private PlatformCategoryService platformCategoryService;
     
     //默认设置
     int pageSize = 40;//最大单页40条
@@ -177,6 +181,29 @@ public class SuningItemsSearcher {
 		categories.add(categoryInfo.getString("thirdSaleCategoryName"));
 		doc.getProperties().put("category", categories);//更新类目，包含多级分类
 
+		String category = categoryInfo.getString("firstPurchaseCategoryName");//采购目录
+		category += " "+categoryInfo.getString("secondPurchaseCategoryName");
+		category += " "+categoryInfo.getString("thirdPurchaseCategoryName");
+		doc.getProperties().put("category", category);//更新类目，包含多级分类
+		//检查类目映射
+		PlatformCategory query = new PlatformCategory();
+		query.setName(category);
+		query.setPlatform("suning");
+		List<PlatformCategory> list = platformCategoryService.findMapping(query);
+		if(list.size()>0) {//有则更新
+			Map<String,Object> meta = new HashMap<String,Object>();
+			meta.put("category", list.get(0).getCategory().getId());
+			meta.put("categoryName", list.get(0).getCategory().getName());
+			doc.getProperties().put("meta", meta);	
+		}else {//否则写入等待标注
+			query.setIsNewRecord(true);
+			query.setId(Util.md5("suning"+category));//采用手动生成ID，避免多次查询生成多条记录
+			query.setPlatform("suning");
+			query.setCreateDate(new Date());
+			query.setUpdateDate(new Date());
+			platformCategoryService.save(query);
+		}
+		
 		//更新CPS链接：在link基础上补充
 //		link.put("wap2", item.getLinkInfo().getShortShareUrl());
 //		link.put("web2", item.getLinkInfo().getShortShareUrl());

@@ -28,8 +28,10 @@ import com.pcitech.iLife.common.utils.IdGen;
 import com.pcitech.iLife.cps.PddHelper;
 import com.pcitech.iLife.modules.mod.entity.Clearing;
 import com.pcitech.iLife.modules.mod.entity.Order;
+import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
 import com.pcitech.iLife.modules.mod.service.ClearingService;
 import com.pcitech.iLife.modules.mod.service.OrderService;
+import com.pcitech.iLife.modules.mod.service.PlatformCategoryService;
 import com.pcitech.iLife.util.ArangoDbClient;
 import com.pcitech.iLife.util.HttpClientHelper;
 import com.pcitech.iLife.util.Util;
@@ -67,6 +69,8 @@ public class PddItemsSearcher {
     
     @Autowired
     PddHelper pddHelper;
+    @Autowired
+	private PlatformCategoryService platformCategoryService;
     
     //默认设置
     int pageSize = 100;
@@ -138,6 +142,17 @@ public class PddItemsSearcher {
 		double commssion = salePrice*item.getPromotionRate()*0.001;//千分比，转换为元
 		profit.put("amount",parseNumber(commssion));//单位为元
 		doc.getProperties().put("profit", profit);	
+		//检查类目映射
+		PlatformCategory platformCategoryMapping = platformCategoryService.get("pdd"+item.getCatIds().get(item.getCatIds().size()-1));
+		if(platformCategoryMapping!=null) {//有则更新
+			doc.getProperties().put("category", platformCategoryMapping.getName());	//补充原始类目名称
+			if(platformCategoryMapping.getCategory()!=null) {//有则更新
+				Map<String,Object> meta = new HashMap<String,Object>();
+				meta.put("category", platformCategoryMapping.getCategory().getId());
+				meta.put("categoryName", platformCategoryMapping.getCategory().getName());
+				doc.getProperties().put("meta", meta);	
+			}
+		}
 		//设置状态。注意，需要设置sync=pending 等待计算CPS链接
 		//状态更新
 		Map<String,Object> status = new HashMap<String,Object>();

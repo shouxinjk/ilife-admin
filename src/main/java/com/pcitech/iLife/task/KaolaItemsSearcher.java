@@ -33,8 +33,10 @@ import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsRequest;
 import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsResponse;
 import com.pcitech.iLife.modules.mod.entity.Clearing;
 import com.pcitech.iLife.modules.mod.entity.Order;
+import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
 import com.pcitech.iLife.modules.mod.service.ClearingService;
 import com.pcitech.iLife.modules.mod.service.OrderService;
+import com.pcitech.iLife.modules.mod.service.PlatformCategoryService;
 import com.pcitech.iLife.util.ArangoDbClient;
 import com.pcitech.iLife.util.HttpClientHelper;
 import com.pcitech.iLife.util.Util;
@@ -73,6 +75,8 @@ public class KaolaItemsSearcher {
     
     @Autowired
     KaolaHelper kaolaHelper;
+    @Autowired
+	private PlatformCategoryService platformCategoryService;
     
     //默认设置
     int pageSize = 200;//最大单页200条
@@ -143,12 +147,40 @@ public class KaolaItemsSearcher {
 			doc.getProperties().put("summary", item.getBaseInfo().getGoodsSubTitle().replaceAll("\\s+"," "));
 		
 		//增加类目
-		List<String> categories = new ArrayList<String>();
-		for(CategoryInfo category:item.getCategoryInfo()){//增加类目
-			logger.debug("[category name]"+category.getCategoryName());
-			categories.add(category.getCategoryName());
+//		List<String> categories = new ArrayList<String>();
+//		for(CategoryInfo category:item.getCategoryInfo()){//增加类目
+//			logger.debug("[category name]"+category.getCategoryName());
+//			categories.add(category.getCategoryName());
+//		}
+//		doc.getProperties().put("category", categories);//更新类目，包含多级分类
+		
+		String category = "";
+		int categoryDepth = 0;
+		for(CategoryInfo categoryInfo:item.getCategoryInfo()){//增加类目
+			if(categoryDepth>0)
+				category+= " ";
+			category+= categoryInfo.getCategoryName();
+			categoryDepth++;
 		}
-		doc.getProperties().put("category", categories);//更新类目，包含多级分类
+		doc.getProperties().put("category", category);//更新类目，包含多级分类
+		//检查类目映射
+		PlatformCategory query = new PlatformCategory();
+		query.setName(category);
+		query.setPlatform("kaola");
+		List<PlatformCategory> list = platformCategoryService.findMapping(query);
+		if(list.size()>0) {//有则更新
+			Map<String,Object> meta = new HashMap<String,Object>();
+			meta.put("category", list.get(0).getCategory().getId());
+			meta.put("categoryName", list.get(0).getCategory().getName());
+			doc.getProperties().put("meta", meta);	
+		}else {//否则写入等待标注
+			query.setIsNewRecord(true);
+			query.setId(Util.md5("kaola"+category));//采用手动生成ID，避免多次查询生成多条记录
+			query.setPlatform("kaola");
+			query.setCreateDate(new Date());
+			query.setUpdateDate(new Date());
+			platformCategoryService.save(query);
+		}
 
 		//更新CPS链接：在link基础上补充
 		link.put("wap2", item.getLinkInfo().getShortShareUrl());

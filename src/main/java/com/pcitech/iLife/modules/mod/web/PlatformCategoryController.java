@@ -27,6 +27,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
+import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
@@ -72,8 +73,10 @@ public class PlatformCategoryController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(PlatformCategory platformCategory,String treeId, HttpServletRequest request, HttpServletResponse response, Model model) {
 		platformCategory.setPlatform(treeId);
-		List<PlatformCategory> list = platformCategoryService.findList(platformCategory); 
-		model.addAttribute("list", list);
+		//List<PlatformCategory> list = platformCategoryService.findList(platformCategory); 
+//		model.addAttribute("list", list);
+		Page<PlatformCategory> page = platformCategoryService.findPage(new Page<PlatformCategory>(request, response), platformCategory); 
+		model.addAttribute("page", page);
 		model.addAttribute("treeId", treeId);
 		return "modules/mod/platformCategoryList";
 	}

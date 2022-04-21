@@ -10,10 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
+import com.pcitech.iLife.common.persistence.Page;
+import com.pcitech.iLife.common.service.CrudService;
 import com.pcitech.iLife.common.service.TreeService;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
+import com.pcitech.iLife.modules.mod.entity.PlatformProperty;
 import com.pcitech.iLife.modules.sys.entity.User;
 import com.pcitech.iLife.modules.sys.utils.UserUtils;
 import com.pcitech.iLife.modules.mod.dao.PlatformCategoryDao;
@@ -25,7 +28,7 @@ import com.pcitech.iLife.modules.mod.dao.PlatformCategoryDao;
  */
 @Service
 @Transactional(readOnly = true)
-public class PlatformCategoryService extends TreeService<PlatformCategoryDao, PlatformCategory> {
+public class PlatformCategoryService extends CrudService<PlatformCategoryDao, PlatformCategory> {
 
 	public List<PlatformCategory> findMapping(PlatformCategory platformCategory) {
 		return dao.findMapping(platformCategory);
@@ -43,6 +46,10 @@ public class PlatformCategoryService extends TreeService<PlatformCategoryDao, Pl
 	
 	public PlatformCategory get(String id) {
 		return super.get(id);
+	}
+	
+	public Page<PlatformCategory> findPage(Page<PlatformCategory> page, PlatformCategory platformCategory) {
+		return super.findPage(page, platformCategory);
 	}
 	
 	public List<PlatformCategory> findList(PlatformCategory platformCategory) {
