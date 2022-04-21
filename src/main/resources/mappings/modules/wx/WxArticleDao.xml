@@ -104,7 +104,8 @@
 				AND b.openid = #{publisherOpenid}
 			</if>				
 		</where>
-		ORDER BY b.points DESC,a.update_date DESC
+		<!-- 默认优先阅豆，其次时间倒序；推广阶段优先时间倒序，其次阅豆倒序 -->
+		ORDER BY a.update_date DESC,b.points DESC
 		limit #{from},#{to}
 	</select>	
 	
