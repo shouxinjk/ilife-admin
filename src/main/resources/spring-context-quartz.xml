@@ -159,6 +159,25 @@
         </property>
     </bean>         
     
+  	<!-- 流量主效益统计任务: daily -->
+    <bean id="publisherPerformanceTaskDaily" class="com.pcitech.iLife.task.PublisherPerformanceNotifyTask"></bean>
+    <bean id="publisherPerformanceTaskMethodDaily" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="publisherPerformanceTaskDaily"></property>
+        <property name="targetMethod" value="execute"></property>
+        <!--property name="arguments" value="daily"></property-->
+    </bean>
+    <bean id="publisherPerformanceTaskTriggerDaily" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="publisherPerformanceTaskMethodDaily"></property>
+        <property name="cronExpression" value="0 0 15 * * ?"></property>
+    </bean>
+    <bean id="publisherPerformanceTaskSchedulerDaily" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="publisherPerformanceTaskTriggerDaily"></ref>
+            </list>
+        </property>
+    </bean>    
+    
 	<!-- 清单数据推送: 每周一、周四下午推送一次 -->
     <!-- bean id="newBoardBroadcastTask" class="com.pcitech.iLife.task.NewBoardBroadcast"></bean>
     <bean id="newBoardBroadcastMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

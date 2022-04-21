@@ -102,6 +102,33 @@
 		limit #{from},#{to}
 	</select>	
 	
+	<!-- 查询待通知流量主达人，输入查询的天数。返回达人ID列表，注意未分页， 是直接返回全部 -->
+	<select id="findNotifyCandidatePublisherIdList" resultType="String">
+	SELECT distinct(broker_id) FROM wx_reads where create_date>=date_sub(now(), interval #{days} day)
+	UNION
+	select distinct(broker_id) from wx_subscribes  where create_date>=date_sub(now(), interval #{days} day)
+	</select>
+
+	<!-- 
+	查询流量主收益，包括基本信息、获得阅读总数、订阅总数、文章总数、公众号数量 
+	输入参数：days：int 查询的天数，brokerId：string，达人ID
+	-->
+	<select id="findNotifyPublisherStat" resultType="java.util.Map">
+	select 
+	date_sub(now(), interval #{days} day) as timeStart, 
+	now() as timeEnd, 
+	a.id as brokerId, 
+	a.nickname as nickname, 
+	a.openid as openid, 
+	a.points as points, 
+	(select count(id) from wx_article where broker_id=a.id) as articlesCount,
+	(select count(id) from wx_account where broker_id=a.id) as accountsCount, 
+	(select count(rr.id) from wx_reads rr left join wx_article aa on aa.id=rr.article_id where aa.broker_id=a.id and rr.create_date>=date_sub(now(), interval #{days} day)) as readsCount, 
+	(select count(ss.id) from wx_subscribes ss left join wx_account ac on ac.id=ss.account_id where ac.broker_id=a.id and ss.create_date>=date_sub(now(), interval #{days} day)) as subscribesCount 
+	from mod_broker a where a.id = #{brokerId}
+	</select>		
+		
+	
 	<select id="findList" resultType="Broker">
 		SELECT 
 			<include refid="brokerColumns"/>
