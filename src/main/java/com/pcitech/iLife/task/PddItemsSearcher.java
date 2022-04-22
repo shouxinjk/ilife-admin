@@ -152,7 +152,13 @@ public class PddItemsSearcher {
 				meta.put("categoryName", platformCategoryMapping.getCategory().getName());
 				doc.getProperties().put("meta", meta);	
 			}
+		}else {
+			//检查是否支持无类目映射入库
+			if(!"true".equalsIgnoreCase(Global.getConfig("sx.enhouseWithoutCategoryMapping"))) {
+				return;
+			}
 		}
+
 		//设置状态。注意，需要设置sync=pending 等待计算CPS链接
 		//状态更新
 		Map<String,Object> status = new HashMap<String,Object>();

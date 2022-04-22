@@ -167,6 +167,10 @@ public class VipItemSearcher {
 			query.setCreateDate(new Date());
 			query.setUpdateDate(new Date());
 			platformCategoryService.save(query);
+			//检查是否支持无类目映射入库
+			if(!"true".equalsIgnoreCase(Global.getConfig("sx.enhouseWithoutCategoryMapping"))) {
+				return;
+			}
 		}
 
 		//更新价格：直接覆盖

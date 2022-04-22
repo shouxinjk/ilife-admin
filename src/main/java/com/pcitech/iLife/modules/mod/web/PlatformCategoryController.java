@@ -72,7 +72,8 @@ public class PlatformCategoryController extends BaseController {
 	@RequiresPermissions("mod:platformCategory:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(PlatformCategory platformCategory,String treeId, HttpServletRequest request, HttpServletResponse response, Model model) {
-		platformCategory.setPlatform(treeId);
+		if(treeId!=null && treeId.trim().length()>0)
+			platformCategory.setPlatform(treeId);
 		//List<PlatformCategory> list = platformCategoryService.findList(platformCategory); 
 //		model.addAttribute("list", list);
 		Page<PlatformCategory> page = platformCategoryService.findPage(new Page<PlatformCategory>(request, response), platformCategory); 

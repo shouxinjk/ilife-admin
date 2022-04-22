@@ -27,16 +27,16 @@
 		<ul class="ul-form">
 			<li><label>名称：</label>
 				<form:input path="name" htmlEscape="false" maxlength="100" class="input-medium"/>
-			</li>			
-			<!--li><label>原始类目：</label>
-				<sys:treeselect id="platformCategory" name="platformCategory.id" value="${platformCategory.id}" labelName="platformCategory.name" labelValue="${platformCategory.name}"
-					title="原始类目" url="/mod/platformCategory/treeData" notAllowSelectRoot="false"/>	
-			</li>
+			</li>		
 			<li><label>来源平台：</label>
 				<form:select path="platform" class="input-medium">
 					<form:option value="" label="不限"/>
 					<form:options items="${fns:getDictList('platform')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>	
+			</li>				
+			<!--li><label>原始类目：</label>
+				<sys:treeselect id="platformCategory" name="platformCategory.id" value="${platformCategory.id}" labelName="platformCategory.name" labelValue="${platformCategory.name}"
+					title="原始类目" url="/mod/platformCategory/treeData" notAllowSelectRoot="false"/>	
 			</li>
 			<li><label>标准类目：</label>
 				<sys:treeselect id="category" name="category.id" value="${platformCategory.category.id}" labelName="category.name" labelValue="${platformCategory.category.name}"
