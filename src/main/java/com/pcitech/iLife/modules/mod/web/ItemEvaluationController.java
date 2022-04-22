@@ -78,6 +78,8 @@ public class ItemEvaluationController extends BaseController {
 	@RequestMapping(value = "rest/markable-featured-evaluation", method = RequestMethod.GET)
 	public List<ItemEvaluation> listFeaturedDimensionByCategoryId(String categoryId) {
 		ItemCategory category = itemCategoryService.get(categoryId);
+		if(category==null)//如果目录没有则直接返回空
+			return Lists.newArrayList();
 		ItemEvaluation q = new ItemEvaluation(); 
 		q.setCategory(category);
 		q.setFeatured(true);//仅返回featured节点
