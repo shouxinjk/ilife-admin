@@ -61,7 +61,7 @@ public class PublisherPerformanceNotifyTask{
     			params.put("brokerId", publisherId);//设置指定达人
     			Map<String,Object> stat = brokerService.findNotifyPublisherStat(params);
     			//仅测试使用
-    			/**
+    			//**
     			if(!"o8HmJ1EdIUR8iZRwaq1T7D_nPIYc".equalsIgnoreCase(stat.get("openid").toString()) 
     					&& !"o8HmJ1ItjXilTlFtJNO25-CAQbbg".equalsIgnoreCase(stat.get("openid").toString()))
     				continue;
