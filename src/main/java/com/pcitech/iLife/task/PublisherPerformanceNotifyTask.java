@@ -49,7 +49,7 @@ public class PublisherPerformanceNotifyTask{
 		    Map<String,String> header = new HashMap<String,String>();
 		    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
     		
-    		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		
     		int days = 1;//查询当天的效益。执行时间减去24小时
     		List<String> pendingPublisherIds = brokerService.findNotifyCandidatePublisherIdList(days);
