@@ -66,6 +66,7 @@ public class PublisherPerformanceNotifyTask{
     				continue;
     			//组装模板消息
     			JSONObject json = new JSONObject();
+    			json.put("openid", stat.get("openid").toString());
     			json.put("title", "流量主收益日报");
     			json.put("timestamp", fmt2.format(new Date()));
     			json.put("points", stat.get("points")+" 阅豆");
