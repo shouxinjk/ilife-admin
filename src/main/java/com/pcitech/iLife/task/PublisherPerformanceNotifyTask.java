@@ -49,7 +49,7 @@ public class PublisherPerformanceNotifyTask{
 		    Map<String,String> header = new HashMap<String,String>();
 		    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
     		
-    		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     		
     		int days = 1;//查询当天的效益。执行时间减去24小时
     		List<String> pendingPublisherIds = brokerService.findNotifyCandidatePublisherIdList(days);
@@ -71,11 +71,11 @@ public class PublisherPerformanceNotifyTask{
     			json.put("timestamp", fmt2.format(new Date()));
     			json.put("points", stat.get("points")+" 阅豆");
     			String remark = "";
-    			remark+="阅读次数："+stat.get("readsCount");
-    			remark+="\n关注次数："+stat.get("subscribesCount");
+    			remark+="今日增阅："+stat.get("readsCount");
+    			remark+="\n今日增粉："+stat.get("subscribesCount");
     			remark+="\n文章总计："+stat.get("articlesCount");
     			remark+="\n公号总计："+stat.get("accountsCount");
-    			remark+="\n获取更多阅豆可让文章排名更靠前哦~~";
+    			remark+="\n\n阅读和关注都将奖励阅豆，阅豆越多文章排名越靠前，点击进入获取阅豆~~";
     			json.put("remark", remark);
     			//发送
     			HttpClientHelper.getInstance().post(

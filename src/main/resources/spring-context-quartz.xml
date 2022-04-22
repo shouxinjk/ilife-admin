@@ -168,7 +168,7 @@
     </bean>
     <bean id="publisherPerformanceTaskTriggerDaily" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="publisherPerformanceTaskMethodDaily"></property>
-        <property name="cronExpression" value="0 */10 * * * ?"></property>
+        <property name="cronExpression" value="0 0 15 * * ?"></property>
     </bean>
     <bean id="publisherPerformanceTaskSchedulerDaily" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
