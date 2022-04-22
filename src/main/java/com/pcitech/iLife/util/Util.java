@@ -1,5 +1,6 @@
 package com.pcitech.iLife.util;
 
+import java.math.BigInteger;
 import java.util.UUID;
 
 public class Util {
@@ -96,4 +97,48 @@ public class Util {
 		}
 		return sb.toString();
     }
+    
+    public static String get3bitCode(String seed) {
+    	int[] indexes = {0,1,2,3};//从6位短码中随机取3位，这里用于随机获取初始位置
+    	String code6bit = get6bitCodeRandom(seed);
+    	int r = (int)Math.random()*10;
+    	int rStartIndex = indexes[r%4];
+    	return code6bit.substring(rStartIndex);
+    }
+    
+	public static String get6bitCodeRandom(String seed){  
+		 //生成短码所用字符数组
+		 String[] chars = new String[]{ 
+			  "a","b","c","d","e","f","g","h", 
+			  "i","j","k","l","m","n","o","p", 
+			  "q","r","s","t","u","v","w","x", 
+			  "y","z","0","1","2","3","4","5", 
+			  "6","7","8","9","A","B","C","D", 
+			  "E","F","G","H","I","J","K","L", 
+			  "M","N","O","P","Q","R","S","T", 
+			  "U","V","W","X","Y","Z" 
+		 }; 
+		 //对传入网址进行MD5加密 
+		 String hex = md5(seed); 
+		 String[] shortCodes = new String[4]; 
+		 for (int i = 0; i < 4; i++) 
+		 { 
+			  //把加密字符按照8位一组16进制与0x3FFFFFFF进行位与运算 
+			  int hexint = 0x3FFFFFFF & new BigInteger("0x" + hex.substring(i * 8, 8), 16).intValue(); 
+			  String outChars = ""; 
+			  for (int j = 0; j < 6; j++) 
+			  { 
+			   //把得到的值与0x0000003D进行位与运算，取得字符数组chars索引 
+			   int index = 0x0000003D & hexint; 
+			   //把取得的字符相加 
+			   outChars += chars[index]; 
+			   //每次循环按位右移5位 
+			   hexint = hexint >> 5; 
+			  } 
+			  //把字符串存入对应索引的输出数组 
+			  shortCodes[i] = outChars; 
+			 } 
+		 	 int random = (int)System.currentTimeMillis()%4;
+			 return shortCodes[random]; 
+		} 
 }

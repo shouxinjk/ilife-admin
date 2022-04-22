@@ -21,7 +21,7 @@ public class Measure extends DataEntity<Measure> {
 	private String name;		// 属性名称
 	private Double percentage;		// 属性占比
 	private Double controlValue;		// 归一化参照值
-	private Double defaultScore;		// 默认评分
+	private Double defaultScore=5.0;		// 默认评分
 	private Integer defaultLevel;		// 默认等级
 	private String type;		// 类型
 	private String tags;		// 标签
@@ -38,7 +38,7 @@ public class Measure extends DataEntity<Measure> {
 	private ItemCategory autoLabelCategory;		// 自动标注引用类别
 	private TagCategory autoLabelTagCategory;		// 自动标注标签类别：将自动把tagging、tags打散写入该属性下
 	private String autoLabelDict;		// 自动标注引用字典
-	private String autoLabelType;		// 自动标注引用字典
+	private String autoLabelType="manual";		// 自动标注引用字典
 	private String normalizeType;		// 归一化类型，支持min-max、max-min、logx、logx-reverse、exp、exp-reverse
 	private String multiValueFunc;		// 多值处理方法，支持min、max、sum、avg
 	

@@ -130,7 +130,7 @@
 					${fns:getDictLabel(row.type, 'evaluation_type', row.type)}
 				</td>
 				<td>
-					${row.script}
+					${fn:replace(row.script, "//", "<br/>//")}
 				</td>				
 				<td>
 					<input type="text" value="${row.weight}" id="${row.type ne 'evaluation'?'dim-':'eval-'}${row.id}" data-section="sec-${row.parent.id}" data-entry="sec-${row.parent.id}-${row.id}" style="width:60px;margin:0 auto;padding:0;height:20px;font-size:12px;"/>
