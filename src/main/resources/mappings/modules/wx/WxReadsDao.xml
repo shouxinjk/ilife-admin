@@ -57,7 +57,7 @@
 		FROM wx_reads a
 		<include refid="wxReadsJoins"/>
 		<where>
-			a.del_flag = #{DEL_FLAG_NORMAL}
+			a.del_flag = 0
 			<if test="articleId!=null and articleId != ''">
 				AND a.article_id = #{articleId}
 			</if>		
