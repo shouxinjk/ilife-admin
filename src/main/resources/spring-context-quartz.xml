@@ -159,6 +159,25 @@
         </property>
     </bean>         
     
+  	<!-- 流量主互阅任务: 整点 -->
+    <bean id="publisherGroupingTaskDaily" class="com.pcitech.iLife.task.PublisherGroupingTask"></bean>
+    <bean id="publisherGroupingTaskMethodDaily" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="publisherGroupingTaskDaily"></property>
+        <property name="targetMethod" value="execute"></property>
+        <!--property name="arguments" value="daily"></property-->
+    </bean>
+    <bean id="publisherGroupingTaskTriggerDaily" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="publisherGroupingTaskMethodDaily"></property>
+        <property name="cronExpression" value="0 */10 7-22 * * ?"></property>
+    </bean>
+    <bean id="publisherGroupingTaskSchedulerDaily" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="publisherGroupingTaskTriggerDaily"></ref>
+            </list>
+        </property>
+    </bean>      
+    
   	<!-- 流量主效益统计任务: daily -->
     <bean id="publisherPerformanceTaskDaily" class="com.pcitech.iLife.task.PublisherPerformanceNotifyTask"></bean>
     <bean id="publisherPerformanceTaskMethodDaily" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

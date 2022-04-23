@@ -106,6 +106,10 @@ public class Util {
     	return code6bit.substring(rStartIndex);
     }
     
+    public static String get6bitCodeRandom() {
+    	return get6bitCodeRandom(get32UUID());
+    }
+    
 	public static String get6bitCodeRandom(String seed){  
 		 //生成短码所用字符数组
 		 String[] chars = new String[]{ 
@@ -124,16 +128,16 @@ public class Util {
 		 for (int i = 0; i < 4; i++) 
 		 { 
 			  //把加密字符按照8位一组16进制与0x3FFFFFFF进行位与运算 
-			  int hexint = 0x3FFFFFFF & new BigInteger("0x" + hex.substring(i * 8, 8), 16).intValue(); 
+			  long hexLong = 0x3FFFFFFF & Long.parseLong( hex.substring(i * 8, i * 8+8), 16); 
 			  String outChars = ""; 
 			  for (int j = 0; j < 6; j++) 
 			  { 
 			   //把得到的值与0x0000003D进行位与运算，取得字符数组chars索引 
-			   int index = 0x0000003D & hexint; 
+			   long index = 0x0000003D & hexLong; 
 			   //把取得的字符相加 
-			   outChars += chars[index]; 
+			   outChars += chars[(int)index]; 
 			   //每次循环按位右移5位 
-			   hexint = hexint >> 5; 
+			   hexLong = hexLong >> 5; 
 			  } 
 			  //把字符串存入对应索引的输出数组 
 			  shortCodes[i] = outChars; 

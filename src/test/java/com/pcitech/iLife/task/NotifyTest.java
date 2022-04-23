@@ -47,11 +47,24 @@ public class NotifyTest {
   
 	@Autowired
 	PublisherPerformanceNotifyTask publisherPerformanceNotifyTask;
+	
+	@Autowired
+	PublisherGroupingTask publisherGroupingTask;
 
 	@Test
 	public void publisherDailyNotify() {
 		try {
 			publisherPerformanceNotifyTask.execute();
+		} catch (JobExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void publisherGroupingTask() {
+		try {
+			publisherGroupingTask.execute();
 		} catch (JobExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
