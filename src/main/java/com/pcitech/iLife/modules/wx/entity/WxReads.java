@@ -20,6 +20,7 @@ public class WxReads extends DataEntity<WxReads> {
 	private WxArticle article;		// 文章
 	private Broker broker;		// 读者broker
 	private String openid;		// 读者openid
+	private String grouping;		// 互阅班车code
 	private Integer readCount;		// 阅读报数
 	
 	public WxReads() {
@@ -57,6 +58,14 @@ public class WxReads extends DataEntity<WxReads> {
 		this.openid = openid;
 	}
 	
+	public String getGrouping() {
+		return grouping;
+	}
+
+	public void setGrouping(String grouping) {
+		this.grouping = grouping;
+	}
+
 	@NotNull(message="阅读报数不能为空")
 	public Integer getReadCount() {
 		return readCount;

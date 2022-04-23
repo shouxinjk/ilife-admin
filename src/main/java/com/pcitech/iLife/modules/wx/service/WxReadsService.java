@@ -22,6 +22,10 @@ import com.pcitech.iLife.modules.wx.dao.WxReadsDao;
 @Service
 @Transactional(readOnly = true)
 public class WxReadsService extends CrudService<WxReadsDao, WxReads> {
+	//查询班车互阅列表 
+	public List<WxReads> findGroupingList(Map<String,Object> param){
+		return dao.findGroupingList(param);
+	}
 	//查询阅读列表 
 	public List<WxReads> findReadingList(Map<String,Object> param){
 		return dao.findReadingList(param);

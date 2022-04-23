@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -122,4 +123,22 @@ public class WxReadsController extends BaseController {
 		return wxReadsService.findReadingList(params);
 	}
 	
+
+	/**
+	 * 获取班车互阅列表。参数：code
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/grouping/{code}", method = RequestMethod.GET)
+	public List<WxReads> getGroupingList( @PathVariable String code) {
+		Map<String,Object> params = Maps.newHashMap();
+		
+		if(code!=null && code.trim().length()>0) {
+			params.put("grouping", code.trim());
+		}else {//如果没有code则返回空白列表
+			return Lists.newArrayList();
+		}
+
+		return wxReadsService.findGroupingList(params);
+	}
 }

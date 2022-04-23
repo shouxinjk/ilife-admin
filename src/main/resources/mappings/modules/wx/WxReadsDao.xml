@@ -11,6 +11,7 @@
 		bb.nickname AS "broker.nickname",
 		a.openid AS "openid",
 		a.read_count AS "readCount",
+		a.grouping AS "grouping",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -39,11 +40,38 @@
 			<if test="readerBrokerId!=null and readerBrokerId != ''">
 				AND a.broker_id = #{readerBrokerId}
 			</if>
+			<if test="grouping != null and grouping != ''">
+				AND a.grouping = #{grouping}
+			</if>			
 			<if test="readerOpenid != null and readerOpenid != ''">
 				AND a.openid = #{readerOpenid}
 			</if>
 		</where>
 		ORDER BY a.update_date DESC
+	</select>	
+	
+	<!-- 获取班车互阅报数明细：可根据班车号等过滤，按照文章ID、阅读时间升序排列 -->
+	<select id="findGroupingList" resultType="WxReads">
+		SELECT 
+			<include refid="wxReadsColumns"/>
+		FROM wx_reads a
+		<include refid="wxReadsJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="articleId!=null and articleId != ''">
+				AND a.article_id = #{articleId}
+			</if>		
+			<if test="readerBrokerId!=null and readerBrokerId != ''">
+				AND a.broker_id = #{readerBrokerId}
+			</if>
+			<if test="grouping != null and grouping != ''">
+				AND a.grouping = #{grouping}
+			</if>			
+			<if test="readerOpenid != null and readerOpenid != ''">
+				AND a.openid = #{readerOpenid}
+			</if>
+		</where>
+		ORDER BY a.article_id,a.update_date
 	</select>	
     
 	<select id="get" resultType="WxReads">
@@ -67,6 +95,9 @@
 			<if test="broker!=null and broker.id != null and broker.id != ''">
 				AND a.broker_id = #{broker.id}
 			</if>
+			<if test="grouping != null and grouping != ''">
+				AND a.grouping = #{grouping}
+			</if>			
 			<if test="openid != null and openid != ''">
 				AND a.openid = #{openid}
 			</if>
@@ -106,6 +137,7 @@
 			broker_id,
 			openid,
 			read_count,
+			grouping,
 			create_by,
 			create_date,
 			update_by,
@@ -117,6 +149,7 @@
 			#{broker.id},
 			#{openid},
 			#{readCount},
+			#{grouping},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -131,6 +164,7 @@
 			broker_id = #{broker.id},
 			openid = #{openid},
 			read_count = #{readCount},
+			grouping = #{grouping},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}

@@ -18,6 +18,8 @@ import com.pcitech.iLife.modules.wx.entity.WxTopping;
  */
 @MyBatisDao
 public interface WxReadsDao extends CrudDao<WxReads> {
+	//查询班车阅读列表 
+	public List<WxReads> findGroupingList(Map<String,Object> param);
 	//查询阅读列表 
 	public List<WxReads> findReadingList(Map<String,Object> param);
 }
