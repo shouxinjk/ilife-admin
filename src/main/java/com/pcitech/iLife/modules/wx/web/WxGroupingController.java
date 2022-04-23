@@ -96,6 +96,9 @@ public class WxGroupingController extends BaseController {
 	 * code：班车号
 	 * subjectType：主题类型
 	 * subjectId：主题ID
+	 * timeFrom: 开始时间，是long型，需要转换为Date
+	 * timeTo：截止时间，是long型，需要转换为Date
+	 * 
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/grouping", method = RequestMethod.POST)
@@ -108,6 +111,22 @@ public class WxGroupingController extends BaseController {
 		wxGrouping.setSubjectId(json.getString("subjectId"));
 		wxGrouping.setCreateDate(new Date());
 		wxGrouping.setUpdateDate(new Date());
+		try {
+			Date from = new Date(json.getLong("timeFrom"));
+			wxGrouping.setEventTimeFrom(from);
+			wxGrouping.setEventDate(from);
+		}catch(Exception ex) {
+			//do nothing
+			logger.debug("failed parse time from.",ex);
+		}
+		try {
+			Date to = new Date(json.getLong("timeTo"));
+			wxGrouping.setEventTimeTo(to);
+		}catch(Exception ex) {
+			//do nothing
+			logger.debug("failed parse time from.",ex);
+		}
+		wxGrouping.setEventTimeFrom(null);
 		wxGroupingService.save(wxGrouping);
 		result.put("data", wxGrouping);
 		result.put("success", true);
