@@ -417,6 +417,7 @@ public class WxArticleController extends BaseController {
 			WxReads wxReads = new WxReads();
 			wxReads.setBroker(broker);
 			wxReads.setOpenid(json.getString("readerOpenid"));
+			wxReads.setGrouping(json.getString("groupingCode"));
 			wxReads.setArticle(article);
 			wxReads.setReadCount(json.getInteger("readCount"));
 			wxReads.setCreateDate(new Date());
