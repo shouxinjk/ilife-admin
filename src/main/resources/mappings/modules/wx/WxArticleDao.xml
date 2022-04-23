@@ -134,7 +134,7 @@
 	        g.subject_type='article'
 	        and a.id=g.subject_id
 	        and b.id=a.broker_id		
-			<if test="wxGroupingCode != null and wxGroupingCode != ''">
+			<if test="code != null and code != ''">
 				AND g.code = #{code}
 			</if>				
 			<if test="openid != null and openid != ''">

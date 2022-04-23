@@ -154,7 +154,7 @@ public class WxArticleController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/grouping-articles", method = RequestMethod.GET)
-	public List<WxArticle> listPagedPendingGroupingArticles( @RequestParam(required=true) int from,
+	public List<WxArticle> listPagedGroupingArticles( @RequestParam(required=true) int from,
 			@RequestParam(required=true) int to,
 			@RequestParam String openid,
 			@RequestParam String code,
@@ -170,8 +170,10 @@ public class WxArticleController extends BaseController {
 		if(publisherOpenid!=null && publisherOpenid.trim().length()>0) {
 			params.put("publisherOpenid", publisherOpenid);
 		}
-		if(code!=null && code.trim().length()>4) {//如果带有微信群编码，则获取指定群文章列表
+		if(code!=null && code.trim().length()>0) {//如果带有微信群编码，则获取指定群文章列表
 			params.put("code", code);
+		}else {//code必须传递，如果没有则返回空列表
+			return list;
 		}
 		list.addAll(wxArticleService.findPendingGroupingList(params));
 		return list;
