@@ -93,8 +93,8 @@ public class PublisherGroupingTask{
     			JSONObject json = new JSONObject();
     			json.put("msgtype", "news");
     			JSONObject jsonArticle = new JSONObject();
-    			jsonArticle.put("title" , currentHour+"点班车，高速，15分发报告");
-    			jsonArticle.put("description" , wxGroup.getLabel()+"专属，点击进入，发文上车，并保持10秒有效阅读");
+    			jsonArticle.put("title" , currentHour+"点班车，15分钟发报告");
+    			jsonArticle.put("description" , wxGroup.getLabel()+"专属，发文上车，并保持10秒有效阅读");
     			jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/articles-grouping.html?code="+code+"&timeFrom="+timeFrom.getTime()+"&timeTo="+timeTo.getTime());
     			jsonArticle.put("picurl" , "https://www.biglistoflittlethings.com/static/logo/grouping/default.png");
     			JSONArray jsonArticles = new JSONArray();
