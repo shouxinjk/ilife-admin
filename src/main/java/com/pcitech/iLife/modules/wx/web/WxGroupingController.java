@@ -114,8 +114,7 @@ public class WxGroupingController extends BaseController {
 		try {
 			Date from = new Date(json.getLong("timeFrom"));
 			wxGrouping.setEventTimeFrom(from);
-			Date date = new Date(json.getLong("timeFrom"));
-			wxGrouping.setEventDate(date);
+			wxGrouping.setEventDate(from);
 		}catch(Exception ex) {
 			//do nothing
 			logger.debug("failed parse time from.",ex);
@@ -127,7 +126,6 @@ public class WxGroupingController extends BaseController {
 			//do nothing
 			logger.debug("failed parse time from.",ex);
 		}
-		wxGrouping.setEventTimeFrom(null);
 		wxGroupingService.save(wxGrouping);
 		result.put("data", wxGrouping);
 		result.put("success", true);

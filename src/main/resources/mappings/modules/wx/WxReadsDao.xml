@@ -50,7 +50,7 @@
 		ORDER BY a.update_date DESC
 	</select>	
 	
-	<!-- 获取班车互阅报数明细：可根据班车号等过滤，按照文章ID、阅读时间升序排列 -->
+	<!-- 已废弃。直接通过ck获取。获取班车互阅报数明细：可根据班车号等过滤，按照文章ID、阅读时间升序排列 -->
 	<select id="findGroupingList" resultType="WxReads">
 		SELECT 
 			<include refid="wxReadsColumns"/>
