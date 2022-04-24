@@ -31,18 +31,19 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 /**
- * 流量主互阅、互关开车任务自动生成
- * 如：生成整点互阅开车。每到整点根据配置的微信群生成开车互阅链接，并发送到企业微信群。由运营人员转发后发起互阅互关
+ * 流量主互阅、互关开车任务报告自动生成
+ * 
+ * 每到15分钟自动汇总。其实就是发个链接而已
  * 
  */
 @Service
-public class PublisherGroupingTask{
-    private static Logger logger = LoggerFactory.getLogger(PublisherGroupingTask.class);
+public class PublisherGroupingReportTask{
+    private static Logger logger = LoggerFactory.getLogger(PublisherGroupingReportTask.class);
     
     @Autowired
     DictService dictService;
 
-    public PublisherGroupingTask() {
+    public PublisherGroupingReportTask() {
     }
 
     /**
@@ -53,9 +54,9 @@ public class PublisherGroupingTask{
             "news": {
                "articles" : [
                    {
-                       "title" : "xxx群 9点班车",
-                       "description" : "9点发车，发文章并完成阅读，9点15发报告",
-                       "url" : "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/articles-grouping.html?code="+code+"&timeTo="+timeTo,
+                       "title" : "xxx群 9点班车 报告",
+                       "description" : "点击查看收益",
+                       "url" : "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/report-grouping.html?code="+code,
                        "picurl" : "班车logo图片"
                    }
                 ]
@@ -68,6 +69,7 @@ public class PublisherGroupingTask{
 		    Map<String,String> header = new HashMap<String,String>();
 		    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
     		
+		    //用于获取指定长度的字符串，生成固定的随机码
     		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		
     		//当前固定为整点发车，发报告时间为15分，截止时间为1小时
@@ -80,7 +82,7 @@ public class PublisherGroupingTask{
     		Date timeTo = cal.getTime();
     		
     		String seed = fmt.format(timeFrom);
-    		String code = Util.get6bitCodeRandom(seed);//需要固定seed，在生成报告时能够获取
+    		String code = Util.get6bitCodeRandom(seed);//需要固定seed，与发出开车通知时保持一致
     		
     		//查询得到所有微信群
     		Dict dict = new Dict();
@@ -93,10 +95,10 @@ public class PublisherGroupingTask{
     			JSONObject json = new JSONObject();
     			json.put("msgtype", "news");
     			JSONObject jsonArticle = new JSONObject();
-    			jsonArticle.put("title" , currentHour+"点班车，高速，15分发报告");
-    			jsonArticle.put("description" , wxGroup.getLabel()+"专属，点击进入，发文上车，并保持10秒有效阅读");
-    			jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/articles-grouping.html?code="+code+"&timeFrom="+timeFrom.getTime()+"&timeTo="+timeTo.getTime());
-    			jsonArticle.put("picurl" , "https://www.biglistoflittlethings.com/static/logo/grouping/default.png");
+    			jsonArticle.put("title" , currentHour+"点班车 报告");
+    			jsonArticle.put("description" , wxGroup.getLabel()+"专属，点击查看明细，查缺补漏");
+    			jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/report-grouping.html?code="+code);
+    			jsonArticle.put("picurl" , "https://www.biglistoflittlethings.com/static/logo/grouping/report.png");
     			JSONArray jsonArticles = new JSONArray();
     			jsonArticles.add(jsonArticle);
     			JSONObject jsonNews = new JSONObject();

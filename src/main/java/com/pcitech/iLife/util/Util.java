@@ -142,7 +142,8 @@ public class Util {
 			  //把字符串存入对应索引的输出数组 
 			  shortCodes[i] = outChars; 
 			 } 
-		 	 int random = (int)System.currentTimeMillis()%4;
+		 	 //int random = (int)System.currentTimeMillis()%4;
+		 	 int random = seed.length()%4;//根据长度随机获取
 			 return shortCodes[random]; 
 		} 
 }
