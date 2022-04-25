@@ -242,7 +242,7 @@ public class WxArticleController extends BaseController {
 				broker.setParent(brokerService.get(parentdBrokerId));
 				broker.setOpenid(article.getBroker().getOpenid());
 				broker.setPoints(20);//默认设置
-				String nickname = "流量主达人";
+				String nickname = "号主";
 				if(article.getBroker().getNickname()!=null&&article.getBroker().getNickname().trim().length()>0) {
 					nickname = article.getBroker().getNickname();
 				}
@@ -277,7 +277,7 @@ public class WxArticleController extends BaseController {
 				}
 			}catch(Exception ex) {
 				logger.error("failed check wechat article.",ex);
-				article.setTitle("新发布文章");
+				article.setTitle("新发布文章 By "+broker.getNickname());
 				article.setCoverImg("");
 			}
 			//发布文章
