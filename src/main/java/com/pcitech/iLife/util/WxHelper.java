@@ -42,7 +42,8 @@ public class WxHelper {
 		  //获取标题
 			Elements titles = doc.getElementsByClass("rich_media_title");
 			String title = titles.text();
-			data.put("title", title);
+			if(title != null && title.trim().length() ==0)//标题有时无法获取，前端会采用默认设置
+				data.put("title", title);
 			logger.debug("got title. [title]"+title);
 		  //获取封面图片
 			String picUrl = null;

@@ -270,11 +270,13 @@ public class WxArticleController extends BaseController {
 			//获取文章信息
 			try {
 				JSONObject wechatArticle = WxHelper.getInstance().getWxArticleInfo(article.getUrl());
-				if(wechatArticle.getString("title")!=null)
-					  article.setTitle(wechatArticle.getString("title"));
-				  if(wechatArticle.getString("coverImg")!=null) {
+				if(wechatArticle.getString("title")!=null && wechatArticle.getString("title").trim().length()>0)
+					 article.setTitle(wechatArticle.getString("title"));
+				else
+					article.setTitle("新发布文章");
+				if(wechatArticle.getString("coverImg")!=null) {
 					  article.setCoverImg(wechatArticle.getString("coverImg"));
-				  }
+				}
 			}catch(Exception ex) {
 				logger.error("failed check wechat article.",ex);
 			}
