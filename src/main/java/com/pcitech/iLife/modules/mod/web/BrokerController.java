@@ -183,6 +183,8 @@ public class BrokerController extends BaseController {
 		if(broker == null) {//如果未找到对应的达人直接返回空
 			result.put("status", false);
 		}else {
+			//更新状态为ready：将之前取关的收回来
+			broker.setStatus("ready");
 			//检查并更新nickname与avatarUrl
 			boolean updateBroker = false;
 			if(json.getString("nickname")!=null && json.getString("nickname").trim().length()>0) {
