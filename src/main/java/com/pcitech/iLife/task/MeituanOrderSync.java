@@ -170,7 +170,7 @@ public class MeituanOrderSync {
 	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
 	    JSONObject result = null;
 		JSONObject msg = new JSONObject();
-		msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
+		msg.put("openid", Global.getConfig("default_tech_guy_openid"));//固定发送
 		msg.put("title", "订单同步任务结果");
 		msg.put("task", "美团订单数据 已同步");
 		msg.put("time", fmt.format(new Date()));

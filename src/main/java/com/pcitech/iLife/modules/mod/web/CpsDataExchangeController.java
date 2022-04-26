@@ -142,7 +142,8 @@ public class CpsDataExchangeController extends BaseController {
 		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	    Map<String,String> header = new HashMap<String,String>();
 	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
-		msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
+//		msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
+		msg.put("openid", Global.getConfig("default_tech_guy_openid"));//固定发送
 		msg.put("time", fmt.format(new Date()));
 		msg.put("color", totalAmount-processedAmount==0?"#FF0000":"#000000");
 		JSONObject result = HttpClientHelper.getInstance().post(

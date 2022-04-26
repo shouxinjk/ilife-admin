@@ -138,7 +138,7 @@ public class ClearOrder {
     	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
     	    JSONObject result = null;
 		JSONObject msg = new JSONObject();
-		msg.put("openid", "o8HmJ1EdIUR8iZRwaq1T7D_nPIYc");//固定发送
+		msg.put("openid", Global.getConfig("default_tech_guy_openid"));//固定发送
 		msg.put("title", "订单任务结果");
 		msg.put("task", "新订单 已清分");
 		msg.put("time", fmt.format(new Date()));
