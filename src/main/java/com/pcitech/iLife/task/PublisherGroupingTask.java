@@ -68,7 +68,7 @@ public class PublisherGroupingTask{
 		    Map<String,String> header = new HashMap<String,String>();
 		    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
     		
-    		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");//("yyyy-MM-dd HH:mm");//默认每天发一班
     		
     		//当前固定为整点发车，发报告时间为15分，截止时间为1小时
     		Calendar cal = Calendar.getInstance();
@@ -76,7 +76,7 @@ public class PublisherGroupingTask{
     		cal.set(Calendar.MINUTE, 0);//整点开始
     		cal.set(Calendar.SECOND, 0);
     		Date timeFrom = cal.getTime();
-    		cal.add(Calendar.HOUR, 1);//截止时间为一小时后
+    		cal.add(Calendar.HOUR, 24);//截止时间为一小时后；每天一班为24小时
     		Date timeTo = cal.getTime();
     		
     		String seed = fmt.format(timeFrom);
@@ -93,10 +93,25 @@ public class PublisherGroupingTask{
     			JSONObject json = new JSONObject();
     			json.put("msgtype", "news");
     			JSONObject jsonArticle = new JSONObject();
-    			jsonArticle.put("title" , currentHour+"点班车，15分钟发报告");
-    			jsonArticle.put("description" , wxGroup.getLabel()+"专属，发文上车，并保持10秒有效阅读");
-    			jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/articles-grouping.html?code="+code+"&timeFrom="+timeFrom.getTime()+"&timeTo="+timeTo.getTime());
-    			jsonArticle.put("picurl" , "https://www.biglistoflittlethings.com/static/logo/grouping/default.png");
+//    			jsonArticle.put("title" , currentHour+"点班车，15分钟发报告");
+//    			jsonArticle.put("description" , wxGroup.getLabel()+"专属，发文上车，并保持10秒有效阅读");
+//    			jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/articles-grouping.html?code="+code+"&timeFrom="+timeFrom.getTime()+"&timeTo="+timeTo.getTime());
+//    			jsonArticle.put("picurl" , "https://www.biglistoflittlethings.com/static/logo/grouping/default.png");
+//    			
+    			if(wxGroup.getId().indexOf("subscribe")>=0) {
+        			jsonArticle.put("title" , seed+"互关班车，每日发车，整点发报告");
+        			jsonArticle.put("description" , wxGroup.getLabel()+"专属，发公众号上车，关注确认");
+        			jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/accounts-grouping.html?code="+code+"&timeFrom="+timeFrom.getTime()+"&timeTo="+timeTo.getTime());
+        			jsonArticle.put("picurl" , "https://www.biglistoflittlethings.com/static/logo/grouping/subscribe.png");
+    			}else if(wxGroup.getId().indexOf("read")>=0) {
+        			jsonArticle.put("title" , seed+"互阅班车，每天发车，整点发报告");
+        			jsonArticle.put("description" , wxGroup.getLabel()+"专属，发文上车，需要保持10秒有效阅读");
+        			jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/articles-grouping.html?code="+code+"&timeFrom="+timeFrom.getTime()+"&timeTo="+timeTo.getTime());
+        			jsonArticle.put("picurl" , "https://www.biglistoflittlethings.com/static/logo/grouping/default.png");
+    			}else {
+    				logger.debug("wrong wechat group key. must be one of subscribe or read "+wxGroup.getId());
+    			}
+    			
     			JSONArray jsonArticles = new JSONArray();
     			jsonArticles.add(jsonArticle);
     			JSONObject jsonNews = new JSONObject();
