@@ -9,6 +9,7 @@ import java.util.Map;
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.wx.entity.WxAccount;
+import com.pcitech.iLife.modules.wx.entity.WxArticle;
 
 /**
  * 微信公众号管理DAO接口
@@ -17,6 +18,8 @@ import com.pcitech.iLife.modules.wx.entity.WxAccount;
  */
 @MyBatisDao
 public interface WxAccountDao extends CrudDao<WxAccount> {
+	//根据openid获取待阅班车公众号
+	public List<WxAccount> findPendingGroupingList(Map<String,Object> param);
 	//根据openid获取待阅读普通公众号列表
 	public List<WxAccount> findPendingList(Map<String,Object> param);
 	//根据openid获取待阅读置顶公众号列表

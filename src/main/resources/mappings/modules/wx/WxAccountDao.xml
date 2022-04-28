@@ -121,6 +121,44 @@
 		limit #{from},#{to}
 	</select>
 
+
+	<!-- 查询互关列表待关注公众号列表：根据时间倒序排列。能够根据指定openid过滤 -->
+	<select id="findPendingGroupingList" resultType="WxAccount">
+		SELECT 
+		a.id AS "id",
+		a.name AS "name",
+		a.original_id AS "originalId",
+		a.description AS "description",
+		a.status AS "status",
+		a.broker_id AS "broker.id",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		(select count(id) from wx_subscribes ss where ss.account_id = a.id) AS "counts",
+		a.del_flag AS "delFlag"
+		FROM 
+		wx_grouping g,wx_account a,mod_broker b
+		<where>
+	        g.subject_type='account'
+	        and a.id=g.subject_id
+	        and b.id=a.broker_id		
+			<if test="code != null and code != ''">
+				AND g.code = #{code}
+			</if>				
+			<if test="openid != null and openid != ''">
+				AND NOT EXISTS(select account_id from wx_subscribes where openid=#{openid} and account_id=a.id)
+			</if>	
+			<if test="publisherOpenid != null and publisherOpenid != ''">
+				AND b.openid = #{publisherOpenid}
+			</if>				
+		</where>
+		<!-- 默认优先阅豆，其次时间倒序；推广阶段优先时间倒序，其次阅豆倒序 -->
+		ORDER BY a.update_date DESC,b.points DESC
+		limit #{from},#{to}
+	</select>
+	
+
 	<!-- 根据openid查询指定达人发布的文章总数 -->
 	<select id="countMyAccounts" resultType="java.lang.Integer">
 		SELECT count(a.id)

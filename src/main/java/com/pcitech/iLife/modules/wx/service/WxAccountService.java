@@ -23,7 +23,11 @@ import com.pcitech.iLife.modules.wx.dao.WxAccountDao;
 @Service
 @Transactional(readOnly = true)
 public class WxAccountService extends CrudService<WxAccountDao, WxAccount> {
-
+	//根据openid获取待阅班车文章列表
+	public List<WxAccount> findPendingGroupingList(Map<String,Object> param){
+		return dao.findPendingGroupingList(param);
+	}
+	
 	//根据openid获取待阅读普通公众号列表
 	public List<WxAccount> findPendingList(Map<String,Object> param){
 		return dao.findPendingList(param);

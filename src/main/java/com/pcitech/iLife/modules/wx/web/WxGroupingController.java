@@ -102,7 +102,7 @@ public class WxGroupingController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/grouping", method = RequestMethod.POST)
-	public Map<String, Object> addArticleToGrouping(@RequestBody JSONObject json){
+	public Map<String, Object> addItemToGrouping(@RequestBody JSONObject json){
 		logger.debug("try to insert grouping.[data]"+json);
 		Map<String, Object> result = Maps.newHashMap();
 		WxGrouping wxGrouping = new WxGrouping();

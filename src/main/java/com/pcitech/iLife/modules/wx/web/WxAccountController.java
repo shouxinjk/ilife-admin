@@ -38,6 +38,7 @@ import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.service.DictService;
 import com.pcitech.iLife.modules.wx.entity.WxAccount;
+import com.pcitech.iLife.modules.wx.entity.WxArticle;
 import com.pcitech.iLife.modules.wx.entity.WxSubscribes;
 import com.pcitech.iLife.modules.wx.service.WxAccountService;
 import com.pcitech.iLife.modules.wx.service.WxSubscribesService;
@@ -140,6 +141,38 @@ public class WxAccountController extends BaseController {
 		
 		//然后获取普通公众号列表
 		list.addAll(wxAccountService.findPendingList(params));
+		return list;
+	}
+
+	
+	/**
+	 * 获取班车待互关公众号列表:支持根据发布者 openid 过滤
+	 * 显示开车群code内的所有公众号列表，按照加入时间升序排列
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/grouping-accounts", method = RequestMethod.GET)
+	public List<WxAccount> listPagedGroupingAccounts( @RequestParam(required=true) int from,
+			@RequestParam(required=true) int to,
+			@RequestParam String openid,
+			@RequestParam String code,
+			@RequestParam String publisherOpenid) {
+		List<WxAccount> list = Lists.newArrayList();
+		//组织参数
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("from", from);
+		params.put("to", to);
+		if(openid!=null && openid.trim().length()>0) {
+			params.put("openid", openid);
+		}
+		if(publisherOpenid!=null && publisherOpenid.trim().length()>0) {
+			params.put("publisherOpenid", publisherOpenid);
+		}
+		if(code!=null && code.trim().length()>0) {//如果带有微信群编码，则获取指定群文章列表
+			params.put("code", code);
+		}else {//code必须传递，如果没有则返回空列表
+			return list;
+		}
+		list.addAll(wxAccountService.findPendingGroupingList(params));
 		return list;
 	}
 	
