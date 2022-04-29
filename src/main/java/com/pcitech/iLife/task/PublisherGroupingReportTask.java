@@ -100,12 +100,12 @@ public class PublisherGroupingReportTask{
 //    			jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/report-grouping.html?code="+code);
 //    			jsonArticle.put("picurl" , "https://www.biglistoflittlethings.com/static/logo/grouping/report.png");
     			
-    			if(wxGroup.getId().indexOf("subscribe")>=0) {
+    			if(wxGroup.getValue().indexOf("subscribe")>=0) {
     				jsonArticle.put("title" , seed+" 互关班车 报告");
     				jsonArticle.put("description" , wxGroup.getLabel()+"专属，点击查看明细，查缺补漏");
     				jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/report-grouping2.html?code="+code);
     				jsonArticle.put("picurl" , "https://www.biglistoflittlethings.com/static/logo/grouping/report.png");
-    			}else if(wxGroup.getId().indexOf("read")>=0) {
+    			}else if(wxGroup.getValue().indexOf("read")>=0) {
     				jsonArticle.put("title" , seed+" 互阅班车 报告");
     				jsonArticle.put("description" , wxGroup.getLabel()+"专属，点击查看明细，查缺补漏");
     				jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/report-grouping.html?code="+code);

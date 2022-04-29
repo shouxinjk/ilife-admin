@@ -98,12 +98,12 @@ public class PublisherGroupingTask{
 //    			jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/articles-grouping.html?code="+code+"&timeFrom="+timeFrom.getTime()+"&timeTo="+timeTo.getTime());
 //    			jsonArticle.put("picurl" , "https://www.biglistoflittlethings.com/static/logo/grouping/default.png");
 //    			
-    			if(wxGroup.getId().indexOf("subscribe")>=0) {
+    			if(wxGroup.getValue().indexOf("subscribe")>=0) {
         			jsonArticle.put("title" , seed+"互关班车，每日发车，整点发报告");
         			jsonArticle.put("description" , wxGroup.getLabel()+"专属，发公众号上车，关注确认");
         			jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/accounts-grouping.html?code="+code+"&timeFrom="+timeFrom.getTime()+"&timeTo="+timeTo.getTime());
         			jsonArticle.put("picurl" , "https://www.biglistoflittlethings.com/static/logo/grouping/subscribe.png");
-    			}else if(wxGroup.getId().indexOf("read")>=0) {
+    			}else if(wxGroup.getValue().indexOf("read")>=0) {
         			jsonArticle.put("title" , seed+"互阅班车，每天发车，整点发报告");
         			jsonArticle.put("description" , wxGroup.getLabel()+"专属，发文上车，需要保持10秒有效阅读");
         			jsonArticle.put("url" , "https://www.biglistoflittlethings.com/ilife-web-wx/publisher/articles-grouping.html?code="+code+"&timeFrom="+timeFrom.getTime()+"&timeTo="+timeTo.getTime());
