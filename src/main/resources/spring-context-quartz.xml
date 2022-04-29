@@ -168,7 +168,7 @@
     </bean>
     <bean id="publisherGroupingTaskTriggerDaily" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="publisherGroupingTaskMethodDaily"></property>
-        <property name="cronExpression" value="0 0 7-23 * * ?"></property>
+        <property name="cronExpression" value="0 0 6-23 * * ?"></property>
     </bean>
     <bean id="publisherGroupingTaskSchedulerDaily" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -187,7 +187,7 @@
     </bean>
     <bean id="publisherGroupingReportTaskTriggerDaily" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="publisherGroupingReportTaskMethodDaily"></property>
-        <property name="cronExpression" value="0 15 7-23 * * ?"></property>
+        <property name="cronExpression" value="0 0 7-23 * * ?"></property>
     </bean>
     <bean id="publisherGroupingReportTaskSchedulerDaily" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
