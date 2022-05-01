@@ -159,7 +159,7 @@
         </property>
     </bean>         
     
-  	<!-- 流量主互阅任务: 整点 -->
+  	<!-- 流量主互阅任务: 每天发送一次，当天有效 -->
     <bean id="publisherGroupingTaskDaily" class="com.pcitech.iLife.task.PublisherGroupingTask"></bean>
     <bean id="publisherGroupingTaskMethodDaily" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="publisherGroupingTaskDaily"></property>
@@ -168,7 +168,7 @@
     </bean>
     <bean id="publisherGroupingTaskTriggerDaily" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="publisherGroupingTaskMethodDaily"></property>
-        <property name="cronExpression" value="0 0 6-23 * * ?"></property>
+        <property name="cronExpression" value="0 0 6 * * ?"></property>
     </bean>
     <bean id="publisherGroupingTaskSchedulerDaily" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -178,7 +178,7 @@
         </property>
     </bean> 
     
-  	<!-- 流量主互阅互关报告: 每15分发送 -->
+  	<!-- 流量主互阅互关报告: 整点发送 -->
     <bean id="publisherGroupingReportTaskDaily" class="com.pcitech.iLife.task.PublisherGroupingReportTask"></bean>
     <bean id="publisherGroupingReportTaskMethodDaily" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="publisherGroupingReportTaskDaily"></property>
