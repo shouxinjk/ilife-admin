@@ -10,6 +10,7 @@
 		a.qrcode_img AS "qrcodeImg",
 		a.status AS "status",
 		a.broker_id AS "broker.id",
+		b.nickname AS "broker.nickname",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",

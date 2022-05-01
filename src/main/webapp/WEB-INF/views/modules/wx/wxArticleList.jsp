@@ -40,6 +40,7 @@
 			<li><label>创建渠道：</label>
 				<form:select path="channel" class="input-medium">
 					<form:option value="" label=""/>
+					<form:option value="" label="不限"/>
 					<form:options items="${fns:getDictList('wx_article_channel')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
@@ -52,9 +53,10 @@
 		<thead>
 			<tr>
 				<th>标题</th>
+				<th>发布达人</th>
 				<!--th>封面</th-->
 				<th>状态</th>
-				<th>达人</th>
+				
 				<th>创建渠道</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="wx:wxArticle:edit"><th>操作</th></shiro:hasPermission>
@@ -66,15 +68,16 @@
 				<td><a href="${wxArticle.url}">
 					${wxArticle.title}
 				</a></td>
+				<td>
+					${wxArticle.broker.nickname}
+				</td>				
 				<!--td>
 					<img src="${wxArticle.coverImg}" width="60" height="60"/>
 				</td-->
 				<td>
 					${fns:getDictLabel(wxArticle.status, 'active_inactive', '')}
 				</td>
-				<td>
-					${wxArticle.broker.nickname}
-				</td>
+
 				<td>
 					${fns:getDictLabel(wxArticle.channel, 'wx_article_channel', '')}
 				</td>

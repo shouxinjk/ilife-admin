@@ -31,12 +31,14 @@
 			<li><label>广告类型：</label>
 				<form:select path="status" class="input-medium">
 					<form:option value="" label=""/>
+					<form:option value="" label="不限"/>
 					<form:options items="${fns:getDictList('wx_advertise_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
 			<li><label>状态：</label>
 				<form:select path="status" class="input-medium">
 					<form:option value="" label=""/>
+					<form:option value="" label="不限"/>
 					<form:options items="${fns:getDictList('active_inactive')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>

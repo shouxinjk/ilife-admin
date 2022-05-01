@@ -34,6 +34,7 @@
 			<li><label>状态：</label>
 				<form:select path="status" class="input-medium">
 					<form:option value="" label=""/>
+					<form:option value="" label="不限"/>
 					<form:options items="${fns:getDictList('active_inactive')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
@@ -46,10 +47,11 @@
 		<thead>
 			<tr>
 				<th>公众号名称</th>
+				<th>发布达人</th>
 				<th>微信ID</th>
 				<th>公众号描述</th>
 				<th>状态</th>
-				<th>发布达人</th>
+				
 				<th>更新时间</th>
 				<shiro:hasPermission name="wx:wxAccount:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -61,6 +63,9 @@
 					${wxAccount.name}
 				</a></td>
 				<td>
+					${wxAccount.broker.nickname}
+				</td>				
+				<td>
 					${wxAccount.originalId}
 				</td>
 				<td>
@@ -68,9 +73,6 @@
 				</td>
 				<td>
 					${fns:getDictLabel(wxAccount.status, 'active_inactive', '')}
-				</td>
-				<td>
-					${wxAccount.broker.nickname}
 				</td>
 				<td>
 					<fmt:formatDate value="${wxAccount.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
