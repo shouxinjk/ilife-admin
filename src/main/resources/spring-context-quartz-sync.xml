@@ -79,7 +79,7 @@
         </property>
     </bean> 	
 
-	<!-- 手动拼接CPS链接数据同步: 每分钟执行 -->
+	<!-- CPS链接数据同步: 每15分钟执行 -->
     <bean id="cpsDataSyncTaskCpsLink" class="com.pcitech.iLife.task.CpsLinkSync"></bean>
     <bean id="cpsDataSyncTaskCpsLinkMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="cpsDataSyncTaskCpsLink"></property>
@@ -87,7 +87,7 @@
     </bean>
     <bean id="cpsDataSyncTaskCpsLinkTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="cpsDataSyncTaskCpsLinkMethod"></property>
-        <property name="cronExpression" value="0 30 * * * ?"></property>
+        <property name="cronExpression" value="0 */15 * * * ?"></property>
     </bean>
     <bean id="cpsDataSyncTaskCpsLinkScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">

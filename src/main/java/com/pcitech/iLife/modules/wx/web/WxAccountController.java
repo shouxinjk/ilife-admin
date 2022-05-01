@@ -405,7 +405,7 @@ public class WxAccountController extends BaseController {
 			//需要设置返回信息：发布者达人ID、openId、logo、消耗阅豆、
 			result.put("openid",broker.getOpenid());
 			result.put("brokerId",broker.getId());
-			result.put("nickname",broker.getName());
+			result.put("nickname",broker.getNickname());
 			result.put("avatarUrl",broker.getAvatarUrl()); 
 			result.put("points",pointsCost);
 			result.put("pointsRemain",broker.getPoints());
