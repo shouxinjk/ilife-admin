@@ -393,8 +393,9 @@ public class BrokerController extends BaseController {
 	
 	//激活沉寂流量主。向所有已关注，但未发生任何操作的流量主发出激活消息
 	@ResponseBody
-	@RequestMapping(value = "rest/publisher/activate", method = RequestMethod.GET)
-	public void sendPublisherActivateMsg() throws JobExecutionException {
+	@RequestMapping(value = "rest/publisher/activate", method = RequestMethod.POST)
+	public Map<String, Object> sendPublisherActivateMsg() {
+		Map<String, Object> result = Maps.newHashMap();
    	    //准备发起HTTP请求：设置data server Authorization
 	    Map<String,String> header = new HashMap<String,String>();
 	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
@@ -408,7 +409,7 @@ public class BrokerController extends BaseController {
 		List<Broker> publishers = brokerService.findInactivePublisherIdList(maps);//注意当前未采用参数，直接发送给全部流量主
 		
 		logger.debug("Try to activate publisher.[total]"+publishers.size());
-		Map<String,Object> params = new HashMap<String,Object>();
+		int total = 0;
 		for(Broker publisher:publishers) {
 			//仅测试使用 
 			//**
@@ -431,6 +432,9 @@ public class BrokerController extends BaseController {
 			HttpClientHelper.getInstance().post(
 					Global.getConfig("wechat.templateMessenge")+"/notify-mp-publisher", 
 					json,header);
+			total ++ ;
 		}
+		result.put("total", total);
+		return result;
 	}
 }
