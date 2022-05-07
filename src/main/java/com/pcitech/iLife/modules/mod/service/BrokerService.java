@@ -29,6 +29,11 @@ public class BrokerService extends CrudService<BrokerDao, Broker> {
 		return dao.findNotifyCandidatePublisherIdList(days);
 	}
 	
+	//查询沉寂流量主
+	public List<Broker> findInactivePublisherIdList(Map<String,Object> params){
+		return dao.findInactivePublisherIdList(params);
+	}
+	
 	//根据达人ID、天数，查询流量主收益数据
 	public Map<String,Object> findNotifyPublisherStat(Map<String,Object> params){
 		return dao.findNotifyPublisherStat(params);

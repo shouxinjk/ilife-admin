@@ -3,7 +3,9 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -386,5 +389,48 @@ public class BrokerController extends BaseController {
 	@RequestMapping(value = "rest/money/{id}", method = RequestMethod.GET)
 	public Map<String, Object> getMoney(@PathVariable String id, HttpServletRequest request, HttpServletResponse response, Model model) {
 		return brokerService.getMoney(id);
+	}
+	
+	//激活沉寂流量主。向所有已关注，但未发生任何操作的流量主发出激活消息
+	@ResponseBody
+	@RequestMapping(value = "rest/publisher/activate", method = RequestMethod.GET)
+	public void sendPublisherActivateMsg() throws JobExecutionException {
+   	    //准备发起HTTP请求：设置data server Authorization
+	    Map<String,String> header = new HashMap<String,String>();
+	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
+		
+		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		
+		Map<String,Object> maps = Maps.newHashMap();
+		maps.put("from", 0);
+		maps.put("to", 1000);//单次最多发送1000条
+		
+		List<Broker> publishers = brokerService.findInactivePublisherIdList(maps);//注意当前未采用参数，直接发送给全部流量主
+		
+		logger.debug("Try to activate publisher.[total]"+publishers.size());
+		Map<String,Object> params = new HashMap<String,Object>();
+		for(Broker publisher:publishers) {
+			//仅测试使用 
+			//**
+			if(!"o8HmJ1EdIUR8iZRwaq1T7D_nPIYc".equalsIgnoreCase(publisher.getOpenid()) 
+					&& !"o8HmJ1ItjXilTlFtJNO25-CAQbbg".equalsIgnoreCase(publisher.getOpenid())
+					&& !"o8HmJ1APyNtRkT1dIVXpBD-yN4Kc".equalsIgnoreCase(publisher.getOpenid()))
+				continue;
+			//**/
+			//组装模板消息
+			JSONObject json = new JSONObject();
+			json.put("openid", publisher.getOpenid());
+			json.put("title", "流量主福利");
+			json.put("timestamp", fmt2.format(new Date()));
+			json.put("points", publisher.getPoints()+" 阅豆");
+			String remark = "";
+			remark+="号主大大，感谢一直陪伴。我们最近上线了流量主工具，能够展示文章和公众号，助力增粉增阅。";
+			remark+="\n\n我们希望这个工具能帮助节省时间，以集中精力创作更好的内容，把公众号做的更好。并已赠送"+publisher.getPoints()+"阅豆，请点击进入查看详情~~";
+			json.put("remark", remark);
+			//发送
+			HttpClientHelper.getInstance().post(
+					Global.getConfig("wechat.templateMessenge")+"/notify-mp-publisher", 
+					json,header);
+		}
 	}
 }

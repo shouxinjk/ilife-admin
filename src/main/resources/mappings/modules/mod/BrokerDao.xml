@@ -127,7 +127,22 @@
 	(select count(ss.id) from wx_subscribes ss left join wx_account ac on ac.id=ss.account_id where ac.broker_id=a.id and ss.create_date>=date_sub(now(), interval #{days} day)) as subscribesCount 
 	from mod_broker a where a.id = #{brokerId}
 	</select>		
-		
+
+	<!-- 
+	查询沉寂流量主
+	输入参数：无
+	查询条件：status != 'offline' and (nickname ='' or nickname is null)
+	-->
+	<select id="findInactivePublisherIdList" resultType="Broker">
+		SELECT 
+			<include refid="brokerColumns"/>
+		FROM mod_broker a
+		<include refid="brokerJoins"/>
+		<where>
+			(a.status = 'ready' or a.status = 'pending')
+			AND (a.nickname is null or a.nickname = '')		
+		</where>
+	</select>		
 	
 	<select id="findList" resultType="Broker">
 		SELECT 
