@@ -131,7 +131,7 @@
 	<!-- 
 	查询沉寂流量主
 	输入参数：无
-	查询条件：status != 'offline' and (nickname ='' or nickname is null)
+	查询条件：status != 'offline' and (nickname ='' or nickname is null) and points=20
 	-->
 	<select id="findInactivePublisherIdList" resultType="Broker">
 		SELECT 
@@ -140,7 +140,8 @@
 		<include refid="brokerJoins"/>
 		<where>
 			(a.status = 'ready' or a.status = 'pending')
-			AND (a.nickname is null or a.nickname = '')		
+			AND (a.nickname is null or a.nickname = '')	
+			AND a.points = 20	
 		</where>
 	</select>		
 	
