@@ -215,7 +215,15 @@ public class BoardController extends BaseController {
 			result.put("description","Broker does not exist. [id]"+brokerId);
 		}else {
 			Board board = old;
-			board.setTitle(board.getTitle()+" by "+broker.getName());
+			//先要判定是不是一个已经克隆的board，如果是则去掉其他克隆信息
+			String title = board.getTitle();
+			if(title.indexOf(" by ")>0) {
+				title = title.split("by")[0];//如果有分隔，则仅取原始名称
+			}
+			if(broker.getNickname()!=null && broker.getNickname().trim().length()>0)
+				board.setTitle(title+" by "+broker.getNickname());
+			else
+				board.setTitle(title+" by 确幸生活家");
 			//String idstr = Util.md5(id+brokerId);
 			String idstr = Util.get32UUID();//不限制克隆条数，采用随机ID
 			board.setBroker(broker);
