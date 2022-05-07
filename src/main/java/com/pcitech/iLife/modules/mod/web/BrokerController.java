@@ -412,7 +412,7 @@ public class BrokerController extends BaseController {
 		int total = 0;
 		for(Broker publisher:publishers) {
 			//仅测试使用 
-			//**
+			/**
 			if(!"o8HmJ1EdIUR8iZRwaq1T7D_nPIYc".equalsIgnoreCase(publisher.getOpenid()) 
 					&& !"o8HmJ1ItjXilTlFtJNO25-CAQbbg".equalsIgnoreCase(publisher.getOpenid())
 					&& !"o8HmJ1APyNtRkT1dIVXpBD-yN4Kc".equalsIgnoreCase(publisher.getOpenid()))
