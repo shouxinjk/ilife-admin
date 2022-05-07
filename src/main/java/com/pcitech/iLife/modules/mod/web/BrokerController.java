@@ -426,7 +426,8 @@ public class BrokerController extends BaseController {
 			json.put("points", publisher.getPoints()+" 阅豆");
 			String remark = "";
 			remark+="号主大大，感谢一直陪伴。我们最近上线了流量主工具，能够展示文章和公众号，助力增粉增阅。";
-			remark+="\n\n我们希望这个工具能帮助节省时间，以集中精力创作更好的内容，把公众号做的更好。并已赠送"+publisher.getPoints()+"阅豆，请点击进入查看详情~~";
+			remark+="\n\n我们真心希望能帮助节省时间，以集中精力创作更好的内容，把公众号做的更好。"
+					+ "\n\n并已赠送"+publisher.getPoints()+"阅豆，可立即发布文章和公众号，请点击进入查看~~";
 			json.put("remark", remark);
 			//发送
 			HttpClientHelper.getInstance().post(
