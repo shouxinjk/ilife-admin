@@ -366,6 +366,16 @@ public class WxAccountController extends BaseController {
 		}else{
 			//获取公众号发布达人
 			Broker broker = brokerService.get(account.getBroker().getId());//重要：必须重新获取，否则会导致其他信息丢失
+			//获取关注者
+			Broker subscriber = brokerService.getByOpenid(openid);
+			//出现自动用脚本提交的情况，此处直接禁止
+			if("disabled".equalsIgnoreCase(subscriber.getStatus()) || "disabled".equalsIgnoreCase(broker.getStatus())) {
+				//视为无效关注，直接禁止
+				result.put("description","账户异常，已记录本次请求，请停止访问");
+				result.put("status",false);
+				return result;
+			}
+			
 			//扣除虚拟豆
 			Dict dict = new Dict();
 			dict.setType("publisher_point_cost");//查找流量主虚拟豆字典设置
@@ -385,7 +395,6 @@ public class WxAccountController extends BaseController {
 			broker.setPoints(broker.getPoints()-pointsCost);//查询扣除虚拟豆数量
 			brokerService.save(broker);
 			//增加阅读者阅豆
-			Broker subscriber = brokerService.getByOpenid(openid);
 			if(subscriber==null || subscriber.getId()==null) {
 				//直接忽略
 				result.put("description","Cannot find broker info for current subscriber");
