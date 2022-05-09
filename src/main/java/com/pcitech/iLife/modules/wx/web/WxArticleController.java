@@ -224,6 +224,9 @@ public class WxArticleController extends BaseController {
 			return result;
 		}
 		
+		//仅支持不带参数的短链接
+		article.setUrl(article.getUrl().split("\\?")[0]);//仅获取前半截，不需要参数
+		
 		//设置ID，并检查是否存在：
 		String id = Util.md5(article.getUrl());
 		WxArticle article2 = wxArticleService.get(id);
