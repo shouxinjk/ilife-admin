@@ -187,7 +187,8 @@ public class BrokerController extends BaseController {
 			result.put("status", false);
 		}else {
 			//更新状态为ready：将之前取关的收回来
-			broker.setStatus("ready");
+			if("offline".equalsIgnoreCase(broker.getStatus()))//仅对于取关的进行更新，其他的如disabled不做调整
+				broker.setStatus("ready");
 			//检查并更新nickname与avatarUrl
 			boolean updateBroker = false;
 			if(json.getString("nickname")!=null && json.getString("nickname").trim().length()>0) {

@@ -217,6 +217,13 @@ public class WxArticleController extends BaseController {
 		Map<String, Object> result = Maps.newHashMap();
 		Broker broker = null;
 		
+		//后台校验URL是否合规
+		if(!article.getUrl().startsWith("https://mp.weixin.qq.com/s")) {
+			result.put("status",false);
+			result.put("description","已记录本次异常请求，请通过通过界面正常使用.");
+			return result;
+		}
+		
 		//设置ID，并检查是否存在：
 		String id = Util.md5(article.getUrl());
 		WxArticle article2 = wxArticleService.get(id);
