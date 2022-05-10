@@ -35,6 +35,8 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
+import com.pcitech.iLife.modules.sys.entity.Dict;
+import com.pcitech.iLife.modules.sys.service.DictService;
 import com.pcitech.iLife.util.HttpClientHelper;
 import com.pcitech.iLife.util.Util;
 
@@ -53,6 +55,9 @@ public class BrokerController extends BaseController {
 	//注意：当前未启用，需要提供WxMpService实现类
 	//@Autowired
 	//private WxMpService wxMpService;
+	
+	@Autowired
+	private DictService dictService;
 	
 	@Autowired
 	private BrokerService brokerService;
@@ -133,6 +138,73 @@ public class BrokerController extends BaseController {
 
 	/**
 	 * 根据openid获取指定达人信息
+	 * 不会自动创建
+	 * 
+	 * 当前仅在scan及subscribe事件中应用
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/checkBrokerByOpenid/{openid}", method = RequestMethod.GET)
+	public Map<String, Object> checkBrokerByOpenid(@PathVariable String openid) {
+		Map<String, Object> result = Maps.newHashMap();
+		Broker broker = brokerService.getByOpenid(openid);//根据openid获取达人
+		if(broker == null) {//如果未找到对应的达人直接返回空
+			result.put("status", false);
+			result.put("msg", "no broker found by openid:"+openid);
+		}else {
+			result.put("status", true);
+			result.put("data", broker);
+		}
+		return result;
+	}
+	
+	/**
+	 * 接受邀请后给上级达人增加邀请阅豆
+	 * @param openid
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/reward/invite/{brokerId}", method = RequestMethod.POST)
+	public Map<String, Object> addInvitePoints(@PathVariable String brokerId) {
+		Map<String, Object> result = Maps.newHashMap();
+		Broker broker = brokerService.get(brokerId);//根据openid获取达人
+		if(broker == null) {//如果未找到对应的达人直接返回空
+			result.put("status", false);
+			result.put("msg", "no broker found by id:"+brokerId);
+		}else {
+			if("disabled".equalsIgnoreCase(broker.getStatus())) {
+				result.put("status", false);
+				result.put("msg", "账号异常。请与我们联系。");//给不怀好意的人的善意提示
+			}else if("offline".equalsIgnoreCase(broker.getStatus())) {//如果已经取关，也就不管了
+				result.put("status", false);
+				result.put("msg", "账号异常。请与我们联系。");//给不怀好意的人的善意提示
+			}else {//正常更新
+				//查询增加虚拟豆
+				Dict dict = new Dict();
+				dict.setType("publisher_point_cost");//查找流量主虚拟豆字典设置
+				List<Dict> points = dictService.findList(dict);
+				int pointsReward = 50;//默认为50个
+				for(Dict point:points) {
+					if("invite-person".equalsIgnoreCase(point.getValue())) {
+						try {
+							pointsReward = Integer.parseInt(point.getLabel());
+						}catch(Exception ex) {
+							//do nothing
+						}
+						break;
+					}
+				}
+				broker.setPoints(broker.getPoints()+pointsReward);
+				brokerService.save(broker);
+				result.put("status", true);
+				result.put("points", pointsReward);
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * 根据openid获取指定达人信息
+	 * 如果不存在会自动创建
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/brokerByOpenid/{openid}", method = RequestMethod.GET)
@@ -281,6 +353,20 @@ public class BrokerController extends BaseController {
 		broker.setParent(parent);
 		List<Broker> list =brokerService.findList(broker);
 		return list;
+	}
+	
+	/**
+	 * 根据id获取下级达人总数
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/count/{id}", method = RequestMethod.GET)
+	public Map<String,Object> countChildBrokers(@PathVariable String id, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String,Object> result = Maps.newHashMap();
+		result.put("count", 0);
+		result.put("parentId", id);
+		int count =brokerService.countChilds(id);
+		result.put("count", count);
+		return result;
 	}
 	
 	/**
