@@ -194,6 +194,7 @@ public class BrokerController extends BaseController {
 					}
 				}
 				broker.setPoints(broker.getPoints()+pointsReward);
+				broker.setUpdateDate(new Date());
 				brokerService.save(broker);
 				result.put("status", true);
 				result.put("points", pointsReward);
