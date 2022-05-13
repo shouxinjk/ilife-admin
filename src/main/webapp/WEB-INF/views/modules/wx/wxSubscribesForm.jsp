@@ -41,7 +41,7 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">粉丝broker：</label>
+			<label class="control-label">号主：</label>
 			<div class="controls">
 				<form:input path="broker.id" htmlEscape="false" maxlength="32" class="input-xlarge "/>
 			</div>

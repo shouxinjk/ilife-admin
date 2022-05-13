@@ -172,10 +172,11 @@ public class WxForwardController extends BaseController {
 			result.put("msg", "cannot find starter wx account by id."+accountId);
 			return result;
 		}
-		remark = "申请者昵称:"+broker.getNickname()
-				+"\n开白类型："+("account".equalsIgnoreCase(wxForward.getType())?"单篇文章开白":"全局开白")
-				+"\n申请公众号:"+requesterAccount.getName()
-				+"\n公众号ID:"+requesterAccount.getOriginalId()
+		remark =   "粉丝昵称 ："+broker.getNickname()
+				+"\n开白类型 ："+("article".equalsIgnoreCase(wxForward.getType())?"单篇文章开白":"全局开白")
+				+"\n粉丝公众号名称 ："+requesterAccount.getName()
+				+"\n粉丝公众号ID  ："+requesterAccount.getOriginalId()
+				+"\n粉丝公众号简介 ："+requesterAccount.getDescription()
 				+"\n\n开白后请点击卡片回复哦，不想开白可直接点击卡片回绝~~";
 		
 		if(publisher ==null) {
@@ -206,8 +207,8 @@ public class WxForwardController extends BaseController {
 		}else {
 			//do nothing
 		}
-		
-		String id = Util.md5(wxForward.getRequester().getId()+wxForward.getSubjectType()+wxForward.getSubjectId());
+		//请求者+请求公众号+请求内容类别+请求内容ID 为唯一识别码
+		String id = Util.md5(wxForward.getRequester().getId()+requesterAccount.getId()+wxForward.getSubjectType()+wxForward.getSubjectId());
 		
 		wxForward.setCreateDate(new Date());
 		wxForward.setUpdateDate(new Date());
@@ -278,9 +279,9 @@ public class WxForwardController extends BaseController {
 		}
 		
 		String remark = "";
-		remark = "我的公众号:"+wxForward.getRequestAccount().getName()
-				+"\n开白类型："+("account".equalsIgnoreCase(wxForward.getType())?"单篇文章开白":"全局开白")
-				+"\n开白结果:"+statusStr
+		remark =   "我的公众号："+wxForward.getRequestAccount().getName()
+				+"\n开白类型 ："+("article".equalsIgnoreCase(wxForward.getType())?"单篇文章开白":"全局开白")
+				+"\n开白结果 ："+statusStr
 				+"\n\n"+statusTips;
 		
 		WxArticle article = null;

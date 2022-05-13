@@ -28,7 +28,7 @@
 			<li><label>公众号：</label>
 				<form:input path="account.id" htmlEscape="false" maxlength="32" class="input-medium"/>
 			</li>
-			<li><label>粉丝broker：</label>
+			<li><label>号主：</label>
 				<form:input path="broker.id" htmlEscape="false" maxlength="32" class="input-medium"/>
 			</li>
 			<li><label>粉丝openid：</label>
@@ -43,8 +43,8 @@
 		<thead>
 			<tr>
 				<th>公众号</th>
-				<th>微信ID</th>
-				<th>粉丝broker</th>
+				<th>微信原始ID</th>
+				<th>号主</th>
 				<th>粉丝openid</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="wx:wxSubscribes:edit"><th>操作</th></shiro:hasPermission>

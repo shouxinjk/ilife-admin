@@ -158,6 +158,11 @@ public class WxToppingController extends BaseController {
 		int points = 10;//默认消耗10点
 		try {
 			points = Integer.parseInt(json.getString("points"));
+			//杜绝直接通过rest接口注入
+			if(points<10) {
+				points = 10000;//直接惩罚扣除
+				result.put("msg", "系统已记录异常操作。请与我们联系 。");	
+			}
 		}catch(Exception ex) {
 			logger.error("failed parse points. required integer.[input]"+json.getString("points"));
 		}
