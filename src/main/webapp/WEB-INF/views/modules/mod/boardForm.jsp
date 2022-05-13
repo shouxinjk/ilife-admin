@@ -162,6 +162,9 @@
 		            success:function(res){
 		                console.log("\n=== published ===\n",res);
 		                sendItemArticleToWebhook(board.article[templateId]);//发送到企业微信群便于分享
+		                //提交文章到 索引
+		                var doc = createArticleDoc(res.id);
+		                indexArticleDoc(doc);  
 		                //显示预览链接
 		                $("#btnPreview").attr("href",app.config.mp_api+"/archives/"+res.id);
 		                $("#btnPreview").css("display","block");		                
@@ -188,6 +191,9 @@
 		                $("#messageBox").text("图文已发布。");
 		                board.article[templateId]=res.id;
 		                sendItemArticleToWebhook(res.id);//发送到企业微信群便于分享
+		                //提交文章到 索引
+		                var doc = createArticleDoc(res.id);
+		                indexArticleDoc(doc);  		                
 		                //显示预览链接
 		                $("#btnPreview").attr("href",app.config.mp_api+"/archives/"+res.id);
 		                $("#btnPreview").css("display","block");
@@ -196,6 +202,103 @@
 		        }); 
 		    }
 		}
+
+
+		//建立Article索引doc
+		function createArticleDoc(articleId){
+
+		    console.log("try to build article doc.",articleId);
+		    var articleUrl = app.config.mp_api+"/archives/"+articleId;
+
+		    var templateId = $("#articleScheme").val();//获取当前文章对应的ID
+		    var postTitle = $("#postTitle").val();//获取发布内容标题
+		    //var postContent = $("#article").html();//使用html作为内容
+		    var postContent = tinyMCE.activeEditor.getContent();
+		    console.log(" got content from editor.",postContent);
+
+		    //合并tags及tagging
+		    var tags  = [];
+		    if(board.tags){
+		        board.tags.forEach(function(item){
+		            if(tags.indexOf(item)<0)tags.push(item);
+		        });
+		    }
+		    if(board.keywords){
+		        board.keywords.forEach(function(item){
+		            if(tags.indexOf(item)<0)tags.push(item);
+		        });
+		    }
+
+		    //根据条目构建价格等信息
+		    var profitMin = 999999999;//集合内最低佣金
+		    var profitMax = 0;//集合内最高佣金
+		    var priceMin = 999999999;//最低价格
+		    var priceMax = 0;//最低价格
+		    var distributors = [];
+		    var sources = [];
+		    items.forEach(function(item){
+		    	if(item.price.sale>priceMax)priceMax = item.price.sale;
+		    	if(item.price.sale<priceMin)priceMin = item.price.sale;
+		    	if(item.profit.order>profitMax)profitMax = item.profit.order;
+		    	if(item.profit.order<profitMin)profitMin = item.profit.order;
+		    	if(distributors.indexOf(item.distributor.name)<0)distributors.push(item.distributor.name);
+		    	if(sources.indexOf(item.source)<0)source.push(item.source);
+		    });
+
+		    //装配索引文档
+		    var doc = {
+		        source: sources,
+		        type: "board" ,
+		        itemkey: board.id,   //单品直接用itemKey，列表用boardId
+		        template: templateId ,                               
+		        url: articleUrl,
+		        title: postTitle,
+		        summary: board.description + " "+ postContent, //一股脑扔进去就可以
+		        tags: tags,
+		        price: {
+		            currency: "",
+		            bid: priceMax,
+		            sale: priceMin,
+		            profit: profitMin,
+		            profit2: profitMax
+		        },                
+		        logo: board.logo?board.logo:items[0].images[0],
+		        distributor: {
+		            country: "",
+		            language: "",
+		            name: distributors
+		        },
+		        timestamp: new Date()
+		    }
+
+		    return doc;
+		}
+
+		//提交索引。将整个文档提交ES建立所以，便于检索物料
+		function indexArticleDoc(doc){
+		    console.log("try to index article doc.",doc);
+		    var data = {
+		        records:[{
+		            value:doc
+		        }]
+		    };
+		    $.ajax({
+		        url:"http://kafka-rest.shouxinjk.net/topics/article",
+		        type:"post",
+		        data:JSON.stringify(data),//注意：不能使用JSON对象
+		        headers:{
+		            "Content-Type":"application/vnd.kafka.json.v2+json",
+		            "Accept":"application/vnd.kafka.v2+json"
+		        },
+		        success:function(result){
+		            siiimpleToast.message('图文索引已提交',{
+		                  position: 'bottom|center'
+		                });
+		        }
+		    }) 
+		}
+
+
 
 		//发送信息到运营群：运营团队收到新内容提示
 		function sendItemArticleToWebhook(articleId){
