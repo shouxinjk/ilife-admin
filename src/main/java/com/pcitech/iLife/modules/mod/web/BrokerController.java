@@ -159,6 +159,7 @@ public class BrokerController extends BaseController {
 	
 	/**
 	 * 接受邀请后给上级达人增加邀请阅豆
+	 * 仅增加阅豆，适用于在达人分享自己的二维码之后，扫码进入的场景
 	 * @param openid
 	 * @return
 	 */
@@ -200,6 +201,96 @@ public class BrokerController extends BaseController {
 				result.put("points", pointsReward);
 			}
 		}
+		return result;
+	}
+	
+	/**
+	 * 确认接受邀请并建立邀请关系。
+	 * 适用于通过分享文章或列表页面链接后关注的用户。其逻辑为：
+	 * 1，达人分享文章或公众号列表链接，链接带有fromBroker参数
+	 * 2，新用户扫码关注，默认作为defaultBroker的下级达人。此时defaultBroker能够收到加入信息
+	 * 3，扫码后新用户将立即进入列表页面，会带有isNewBroker及fromBroker参数，发起修改邀请信息请求
+	 * 4，进入本方法：将新加入达人的上级达人修改为fromBroker；给fromBroker增加阅豆，并向fromBroker发送奖励通知
+	 * @param brokerId 新加入达人ID
+	 * @param fromBrokerId 邀请达人ID，即上级达人ID
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/change/invite/{brokerId}/{fromBrokerId}", method = RequestMethod.POST)
+	public Map<String, Object> changeInviteInfo(@PathVariable String brokerId,@PathVariable String fromBrokerId) {
+		Map<String, Object> result = Maps.newHashMap();
+   	    //准备发起HTTP请求：设置data server Authorization
+	    Map<String,String> header = new HashMap<String,String>();
+	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
+		
+		//获取新加入达人
+		Broker broker = brokerService.get(brokerId);//根据brokerId获取被邀请达人
+		if(broker == null) {//如果未找到对应的达人直接返回空
+			result.put("status", false);
+			result.put("msg", "no broker found by id:"+brokerId);
+			return result;
+		}
+		
+		//获取上级达人
+		Broker parentBroker = brokerService.get(fromBrokerId);//根据fromBrokerId获取上级达人
+		if(parentBroker == null) {//如果未找到对应的达人直接返回空
+			result.put("status", false);
+			result.put("msg", "no broker found by id:"+fromBrokerId);
+		}else {
+			if("disabled".equalsIgnoreCase(parentBroker.getStatus())) {
+				result.put("status", false);
+				result.put("msg", "账号异常。请与我们联系。");//给不怀好意的人的善意提示
+			}else if("offline".equalsIgnoreCase(parentBroker.getStatus())) {//如果已经取关，也就不管了
+				result.put("status", false);
+				result.put("msg", "账号异常。请与我们联系。");//给不怀好意的人的善意提示
+			}else {//正常更新
+				//查询增加虚拟豆
+				Dict dict = new Dict();
+				dict.setType("publisher_point_cost");//查找流量主虚拟豆字典设置
+				List<Dict> points = dictService.findList(dict);
+				int pointsReward = 50;//默认为50个
+				for(Dict point:points) {
+					if("invite-person".equalsIgnoreCase(point.getValue())) {
+						try {
+							pointsReward = Integer.parseInt(point.getLabel());
+						}catch(Exception ex) {
+							//do nothing
+						}
+						break;
+					}
+				}
+				parentBroker.setPoints(parentBroker.getPoints()+pointsReward);
+				parentBroker.setUpdateDate(new Date());
+				brokerService.save(parentBroker);
+				
+				//修改当前达人的邀请关系
+				broker.setParent(parentBroker);
+				broker.setUpdateDate(new Date());
+				brokerService.save(broker);
+				
+				//给上级达人发送通知
+				//组装模板消息
+				JSONObject json = new JSONObject();
+				json.put("openid", parentBroker.getOpenid());
+				json.put("title", "亲，有新成员接受邀请哦~~");
+				json.put("name", broker.getNickname());
+				json.put("url", "http://www.biglistoflittlethings.com/ilife-web-wx/publisher/team.html");//调到流量主团队界面
+				String remark = "以下奖励及权益已到账："
+						+ "\n\n邀请奖励："+pointsReward+"阅豆"
+						+ "\n权益激活：将分享新成员内容带货收益"
+						+ "\n\n。感谢分享，我们一起把公众号做的更好~~";
+
+				json.put("remark", remark);
+				//发送
+				HttpClientHelper.getInstance().post(
+						Global.getConfig("wechat.templateMessenge")+"/notify-parent-broker", 
+						json,header);
+				
+				result.put("status", true);
+				result.put("points", pointsReward);
+			}
+		}
+		
 		return result;
 	}
 	
