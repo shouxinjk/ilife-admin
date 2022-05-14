@@ -310,7 +310,7 @@ public class WxForwardController extends BaseController {
 		JSONObject json = new JSONObject();
 		json.put("title", title);
 		json.put("openid", broker.getOpenid());//发给请求者
-		json.put("redirectUrl", "http://www.biglistoflittlethings.com/ilife-web-wx/publisher/articles.html");
+		json.put("redirectUrl", "http://www.biglistoflittlethings.com/ilife-web-wx/publisher/forward.html?id="+id);
 		json.put("request", requestContent);
 		json.put("requestTime", sdf.format(new Date()));
 		json.put("remark", remark);
