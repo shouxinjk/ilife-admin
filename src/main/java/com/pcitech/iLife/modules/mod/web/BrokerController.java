@@ -278,7 +278,7 @@ public class BrokerController extends BaseController {
 				String remark = "以下奖励及权益已到账："
 						+ "\n\n邀请奖励："+pointsReward+"阅豆"
 						+ "\n权益激活：将分享新成员内容带货收益"
-						+ "\n\n。感谢分享，我们一起把公众号做的更好~~";
+						+ "\n\n感谢分享，我们一起把公众号做的更好~~";
 
 				json.put("remark", remark);
 				//发送
