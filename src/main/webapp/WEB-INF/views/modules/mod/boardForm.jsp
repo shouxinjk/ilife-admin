@@ -218,13 +218,13 @@
 
 		    //合并tags及tagging
 		    var tags  = [];
-		    if(board.tags){
-		        board.tags.forEach(function(item){
+		    if(board.tags && board.tags.trim().length>0){
+		        board.tags.split(" ").forEach(function(item){
 		            if(tags.indexOf(item)<0)tags.push(item);
 		        });
 		    }
-		    if(board.keywords){
-		        board.keywords.forEach(function(item){
+		    if(board.keywords && board.keywords.trim().length>0){
+		        board.keywords.split(" ").forEach(function(item){
 		            if(tags.indexOf(item)<0)tags.push(item);
 		        });
 		    }
