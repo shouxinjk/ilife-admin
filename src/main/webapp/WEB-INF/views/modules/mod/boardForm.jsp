@@ -237,14 +237,22 @@
 		    var distributors = [];
 		    var sources = [];
 		    items.forEach(function(item){
-		    	if(item.price.sale>priceMax)priceMax = item.price.sale;
-		    	if(item.price.sale<priceMin)priceMin = item.price.sale;
-		    	if(item.profit.order>profitMax)profitMax = item.profit.order;
-		    	if(item.profit.order<profitMin)profitMin = item.profit.order;
-		    	if(distributors.indexOf(item.distributor.name)<0)distributors.push(item.distributor.name);
-		    	if(sources.indexOf(item.source)<0)source.push(item.source);
+		    	console.log("try to insert item.",item);
+		    	if(item.stuff.price.sale>priceMax)priceMax = item.stuff.price.sale;
+		    	if(item.stuff.price.sale<priceMin)priceMin = item.stuff.price.sale;
+		    	if(item.stuff.profit && item.stuff.profit.order>profitMax)profitMax = item.stuff.profit.order;
+		    	if(item.stuff.profit && item.stuff.profit.order<profitMin)profitMin = item.stuff.profit.order;
+		    	if(distributors.indexOf(item.stuff.distributor.name)<0)distributors.push(item.stuff.distributor.name);
+		    	if(sources.indexOf(item.stuff.source)<0)source.push(item.stuff.source);
 		    });
-
+			//防止数据错误	
+		    if(priceMin>999999){
+		    	priceMin = priceMax;
+		    }
+		    if(profitMin>999999){
+		    	profitMin = profitMax;
+		    }
+		    
 		    //装配索引文档
 		    var doc = {
 		        source: sources,
@@ -262,7 +270,7 @@
 		            profit: profitMin,
 		            profit2: profitMax
 		        },                
-		        logo: board.logo?board.logo:items[0].images[0],
+		        logo: board.logo?board.logo:items[0].stuff.images[0],
 		        distributor: {
 		            country: "",
 		            language: "",
