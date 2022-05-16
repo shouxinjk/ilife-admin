@@ -243,7 +243,7 @@
 		    	if(item.stuff.profit && item.stuff.profit.order>profitMax)profitMax = item.stuff.profit.order;
 		    	if(item.stuff.profit && item.stuff.profit.order<profitMin)profitMin = item.stuff.profit.order;
 		    	if(distributors.indexOf(item.stuff.distributor.name)<0)distributors.push(item.stuff.distributor.name);
-		    	if(sources.indexOf(item.stuff.source)<0)source.push(item.stuff.source);
+		    	if(sources.indexOf(item.stuff.source)<0)sources.push(item.stuff.source);
 		    });
 			//防止数据错误	
 		    if(priceMin>999999){
