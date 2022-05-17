@@ -262,14 +262,16 @@ public class BrokerController extends BaseController {
 						break;
 					}
 				}
-				parentBroker.setPoints(parentBroker.getPoints()+pointsReward);
-				parentBroker.setUpdateDate(new Date());
-				brokerService.save(parentBroker);
 				
 				//修改当前达人的邀请关系
 				broker.setParent(parentBroker);
 				broker.setUpdateDate(new Date());
 				brokerService.save(broker);
+				
+				//奖励上级达人阅豆
+				parentBroker.setPoints(parentBroker.getPoints()+pointsReward);
+				parentBroker.setUpdateDate(new Date());
+				brokerService.save(parentBroker);
 				
 				//给上级达人发送通知
 				//组装模板消息
