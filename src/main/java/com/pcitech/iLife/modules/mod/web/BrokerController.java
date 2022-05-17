@@ -243,6 +243,9 @@ public class BrokerController extends BaseController {
 			}else if("offline".equalsIgnoreCase(parentBroker.getStatus())) {//如果已经取关，也就不管了
 				result.put("status", false);
 				result.put("msg", "账号异常。请与我们联系。");//给不怀好意的人的善意提示
+			}else if(broker.getParent()!=null && broker.getParent().getId().equalsIgnoreCase(fromBrokerId)) {//如果已经是当前邀请达人了，则不重复奖励
+				result.put("status", true);
+				result.put("msg", "done with no points reward.");
 			}else {//正常更新
 				//查询增加虚拟豆
 				Dict dict = new Dict();
