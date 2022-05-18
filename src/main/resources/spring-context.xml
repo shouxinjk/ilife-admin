@@ -82,6 +82,9 @@
 		<property name="url" value="${jdbc.url}" />
 		<property name="username" value="${jdbc.username}" />
 		<property name="password" value="${jdbc.password}" />
+
+		<!-- 支持utf8mb4 -->
+		<property name="connectionInitSqls" value="set names utf8mb4;"/>
 		
 		<!-- 配置初始化大小、最小、最大 -->
 		<property name="initialSize" value="${jdbc.pool.init}" />

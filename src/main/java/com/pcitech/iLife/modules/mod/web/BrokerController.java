@@ -390,11 +390,14 @@ public class BrokerController extends BaseController {
 			//检查并更新nickname与avatarUrl
 			boolean updateBroker = false;
 			if(json.getString("nickname")!=null && json.getString("nickname").trim().length()>0) {
+				broker.setNickname(json.getString("nickname"));
+				/**
 				try {
 					broker.setNickname(URLEncoder.encode(json.getString("nickname"),"utf-8"));
 				} catch (UnsupportedEncodingException e) {
 					broker.setNickname(json.getString("nickname"));
 				}
+				//**/
 				updateBroker = true;
 			}
 			if(json.getString("avatarUrl")!=null && json.getString("avatarUrl").trim().length()>0) {
