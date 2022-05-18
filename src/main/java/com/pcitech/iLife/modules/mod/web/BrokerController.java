@@ -244,8 +244,11 @@ public class BrokerController extends BaseController {
 				result.put("status", false);
 				result.put("msg", "账号异常。请与我们联系。");//给不怀好意的人的善意提示
 			}else if(broker.getParent()!=null && broker.getParent().getId().equalsIgnoreCase(fromBrokerId)) {//如果已经是当前邀请达人了，则不重复奖励
-				result.put("status", true);
+				result.put("status", false);
 				result.put("msg", "done with no points reward.");
+			}else if(broker.getId().equalsIgnoreCase(fromBrokerId)) {//自己邀请自己：如果当前达人的Id和上级达人Id相同，则直接忽略。当前原因未知：可能是被API接口注入
+				result.put("status", false);
+				result.put("msg", "数据错误。已记录本次请求。");
 			}else {//正常更新
 				//查询增加虚拟豆
 				Dict dict = new Dict();

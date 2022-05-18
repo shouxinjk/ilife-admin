@@ -23,7 +23,11 @@ import com.pcitech.iLife.modules.mod.dao.BrokerDao;
 @Service
 @Transactional(readOnly = true)
 public class BrokerService extends CrudService<BrokerDao, Broker> {
-	
+	//查询昨日阅读排行
+	public List<Map<String,Object>> countPublisherReads(Map<String,Object> params){
+		return dao.countPublisherReads(params);
+	}
+		
 	//查询指定天数内有收益的流量主ID
 	public List<String> findNotifyCandidatePublisherIdList(int days){
 		return dao.findNotifyCandidatePublisherIdList(days);

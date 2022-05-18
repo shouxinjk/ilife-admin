@@ -129,6 +129,20 @@
 	</select>		
 
 	<!-- 
+	查询流量主阅读汇总：查询当前时间前一天的阅读汇总，并按照阅读数倒序排列。
+	参数：days：查询天数；total：返回结果数
+	-->
+	<select id="countPublisherReads" resultType="java.util.Map">
+		SELECT count(rr.id) as total,b.openid,b.nickname,b.points,b.id
+		from mod_broker b 
+		left join wx_reads rr on rr.openid=b.openid 
+		where rr.create_date>= date_sub(now(), interval #{days} day) 
+		group by rr.openid 
+		order by total desc 
+		limit #{total}
+	</select>	
+
+	<!-- 
 	查询沉寂流量主
 	输入参数：无
 	查询条件：status != 'offline' and (nickname ='' or nickname is null) and points=20

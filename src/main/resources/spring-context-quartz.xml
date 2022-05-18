@@ -179,11 +179,10 @@
     </bean> 
     
   	<!-- 流量主互阅互关报告: 整点发送 -->
-    <bean id="publisherGroupingReportTaskDaily" class="com.pcitech.iLife.task.PublisherGroupingReportTask"></bean>
+    <!--bean id="publisherGroupingReportTaskDaily" class="com.pcitech.iLife.task.PublisherGroupingReportTask"></bean>
     <bean id="publisherGroupingReportTaskMethodDaily" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="publisherGroupingReportTaskDaily"></property>
         <property name="targetMethod" value="execute"></property>
-        <!--property name="arguments" value="daily"></property-->
     </bean>
     <bean id="publisherGroupingReportTaskTriggerDaily" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="publisherGroupingReportTaskMethodDaily"></property>
@@ -195,7 +194,7 @@
                 <ref bean="publisherGroupingReportTaskTriggerDaily"></ref>
             </list>
         </property>
-    </bean>           
+    </bean-->           
     
   	<!-- 流量主效益统计任务: daily -->
     <bean id="publisherPerformanceTaskDaily" class="com.pcitech.iLife.task.PublisherPerformanceNotifyTask"></bean>
@@ -215,6 +214,25 @@
             </list>
         </property>
     </bean>    
+    
+  	<!-- 流量主阅读统计排行: daily -->
+    <bean id="publisherPerformanceRankTaskDaily" class="com.pcitech.iLife.task.PublisherPerformanceNotifyTask"></bean>
+    <bean id="publisherPerformanceRankTaskMethodDaily" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="publisherPerformanceRankTaskDaily"></property>
+        <property name="targetMethod" value="execute"></property>
+        <!--property name="arguments" value="daily"></property-->
+    </bean>
+    <bean id="publisherPerformanceRankTaskTriggerDaily" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="publisherPerformanceRankTaskMethodDaily"></property>
+        <property name="cronExpression" value="0 */10 * * * ?"></property>
+    </bean>
+    <bean id="publisherPerformanceRankTaskSchedulerDaily" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="publisherPerformanceRankTaskTriggerDaily"></ref>
+            </list>
+        </property>
+    </bean>     
     
 	<!-- 清单数据推送: 每周一、周四下午推送一次 -->
     <!-- bean id="newBoardBroadcastTask" class="com.pcitech.iLife.task.NewBoardBroadcast"></bean>

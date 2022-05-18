@@ -20,6 +20,9 @@ public interface BrokerDao extends CrudDao<Broker> {
 	//查询指定天数内有收益的流量主ID
 	public List<String> findNotifyCandidatePublisherIdList(int days);
 	
+	//查询昨日阅读排行
+	public List<Map<String,Object>> countPublisherReads(Map<String,Object> params);	
+	
 	//查询沉寂流量主
 	public List<Broker> findInactivePublisherIdList(Map<String,Object> params);
 	
