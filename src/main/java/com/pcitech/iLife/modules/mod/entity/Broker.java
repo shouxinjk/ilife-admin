@@ -66,7 +66,7 @@ public class Broker extends DataEntity<Broker> {
 	}
 	public String getNickname() {
 		try {
-			return URLDecoder.decode(nickname,"utf-8");
+			return URLDecoder.decode(nickname,"utf-8");//support emoji
 		} catch (UnsupportedEncodingException e) {
 			return nickname;
 		}
@@ -74,7 +74,7 @@ public class Broker extends DataEntity<Broker> {
 
 	public void setNickname(String nickname) {
 		try {
-			this.nickname = URLEncoder.encode(nickname,"utf-8");
+			this.nickname = URLEncoder.encode(nickname,"utf-8");//support emoji
 		} catch (UnsupportedEncodingException e) {
 			this.nickname = nickname;
 		}
