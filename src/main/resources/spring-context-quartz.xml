@@ -216,7 +216,7 @@
     </bean>    
     
   	<!-- 流量主阅读统计排行: daily -->
-    <bean id="publisherPerformanceRankTaskDaily" class="com.pcitech.iLife.task.PublisherPerformanceNotifyTask"></bean>
+    <bean id="publisherPerformanceRankTaskDaily" class="com.pcitech.iLife.task.PublisherPerformanceRankTask"></bean>
     <bean id="publisherPerformanceRankTaskMethodDaily" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="publisherPerformanceRankTaskDaily"></property>
         <property name="targetMethod" value="execute"></property>
