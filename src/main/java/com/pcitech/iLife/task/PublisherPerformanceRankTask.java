@@ -88,8 +88,7 @@ public class PublisherPerformanceRankTask{
     			//仅测试使用
     			if(test) {
     				if(!"system".equalsIgnoreCase(publisherId) 
-    					&& !"77276df7ae5c4058b3dfee29f43a3d3b".equalsIgnoreCase(publisherId)
-    					&& !"3a9481059921e30e220754b4571fd77b".equalsIgnoreCase(publisherId))
+    					&& !"77276df7ae5c4058b3dfee29f43a3d3b".equalsIgnoreCase(publisherId))
     				continue;
     			}
     			
@@ -102,12 +101,14 @@ public class PublisherPerformanceRankTask{
     				}
     				remark += "\nTop "+rankNumber+"："+rank.get("nickname");
     				rankNumber++;
+    				if(rankNumber>5)//仅显示3条
+    					break;
     			}
     			remark+="\n\n每天阅读额外奖励："
     					+ "\n超过50：额外奖励10阅豆"
     					+ "\n超过80：额外奖励20阅豆"
     					+ "\n超过100：额外奖励30阅豆"
-    					+ "\n\n阅豆越多文章排名越靠前，阅豆少于0文章或公众号将不在列表中展示。点击进入获取阅豆~~";
+    					+ "\n\n阅豆越多文章排名越靠前，阅豆少于0文章或公众号将不在列表中展示哦。点击进入获取阅豆~~";
     			
     			//组装模板消息
     			JSONObject json = new JSONObject();

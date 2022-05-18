@@ -224,7 +224,7 @@
     </bean>
     <bean id="publisherPerformanceRankTaskTriggerDaily" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="publisherPerformanceRankTaskMethodDaily"></property>
-        <property name="cronExpression" value="0 */10 * * * ?"></property>
+        <property name="cronExpression" value="0 0 * * * ?"></property>
     </bean>
     <bean id="publisherPerformanceRankTaskSchedulerDaily" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">

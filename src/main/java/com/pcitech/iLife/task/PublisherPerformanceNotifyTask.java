@@ -77,7 +77,7 @@ public class PublisherPerformanceNotifyTask{
     			remark+="\n今日增粉："+stat.get("subscribesCount");
     			remark+="\n文章总计："+stat.get("articlesCount");
     			remark+="\n公号总计："+stat.get("accountsCount");
-    			remark+="\n\n阅读和关注都将奖励阅豆，阅豆越多文章排名越靠前，阅豆少于0文章或公众号将不在列表中展示。点击进入获取阅豆~~";
+    			remark+="\n\n阅读和关注都将奖励阅豆，阅豆越多文章排名越靠前，阅豆少于0文章或公众号将不在列表中展示哦~~\n\n点击进入获取阅豆~~";
     			json.put("remark", remark);
     			//发送
     			HttpClientHelper.getInstance().post(
