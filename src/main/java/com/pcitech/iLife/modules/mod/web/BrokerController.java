@@ -51,7 +51,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
 @Controller
 @RequestMapping(value = "${adminPath}/mod/broker")
 public class BrokerController extends BaseController {
-
+	SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	//注意：当前未启用，需要提供WxMpService实现类
 	//@Autowired
 	//private WxMpService wxMpService;
@@ -96,8 +96,32 @@ public class BrokerController extends BaseController {
 			return form(broker, model);
 		}
 		//检查虚拟豆
+		/*
 		if(broker.getPoints()==0) {
 			broker.setPoints(20);//默认虚拟豆：固化写死
+		}//**/
+		//检查阅豆，如果低于0则发送提示消息
+		if(broker.getPoints()<0) {
+			//组装模板消息
+			JSONObject json = new JSONObject();
+			json.put("openid", broker.getOpenid());
+			json.put("nickname", broker.getNickname());
+			json.put("title", "亲，阅豆用完了哦~~");
+			json.put("timestamp", fmt2.format(new Date()));
+			json.put("points", broker.getPoints()+" 阅豆");
+			json.put("remark", "为让大家对等阅读和关注，当阅豆低于0时，发布的文章和公众号将不再在列表展示哦~~\n\n阅读或关注都能奖励阅豆哦，点击进入获取~~");
+			if(broker.getPoints()<20) {
+				json.put("color", "#ff0000");//低于20则高亮显示
+			}else {
+				json.put("color", "#000000");
+			}
+			//发送
+			//准备发起HTTP请求：设置data server Authorization
+		    Map<String,String> header = new HashMap<String,String>();
+		    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
+			HttpClientHelper.getInstance().post(
+					Global.getConfig("wechat.templateMessenge")+"/notify-mp-publisher-rank", 
+					json,header);			
 		}
 		//检查达人等级：强制达人等级=parent等级+1
 		Broker parent = brokerService.get(broker.getParent().getId());//注意需要另外获取，broker.parent内不包含hierarchy信息
