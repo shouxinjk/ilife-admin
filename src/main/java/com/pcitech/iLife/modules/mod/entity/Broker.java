@@ -4,6 +4,11 @@
 package com.pcitech.iLife.modules.mod.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
 import org.hibernate.validator.constraints.Length;
 
 import com.pcitech.iLife.common.persistence.DataEntity;
@@ -60,11 +65,19 @@ public class Broker extends DataEntity<Broker> {
 		this.openid = openid;
 	}
 	public String getNickname() {
-		return org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(nickname);
+		try {
+			return URLDecoder.decode(nickname,"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			return nickname;
+		}
 	}
 
 	public void setNickname(String nickname) {
-		this.nickname = org.apache.commons.lang3.StringEscapeUtils.escapeHtml4(nickname);
+		try {
+			this.nickname = URLEncoder.encode(nickname,"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			this.nickname = nickname;
+		}
 	}
 	public String getAvatarUrl() {
 		return avatarUrl;
