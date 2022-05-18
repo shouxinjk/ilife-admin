@@ -65,19 +65,11 @@ public class Broker extends DataEntity<Broker> {
 		this.openid = openid;
 	}
 	public String getNickname() {
-		try {
-			return URLDecoder.decode(nickname,"utf-8");//support emoji
-		} catch (UnsupportedEncodingException e) {
-			return nickname;
-		}
+		return nickname;
 	}
 
 	public void setNickname(String nickname) {
-		try {
-			this.nickname = URLEncoder.encode(nickname,"utf-8");//support emoji
-		} catch (UnsupportedEncodingException e) {
-			this.nickname = nickname;
-		}
+		this.nickname = nickname;
 	}
 	public String getAvatarUrl() {
 		return avatarUrl;
