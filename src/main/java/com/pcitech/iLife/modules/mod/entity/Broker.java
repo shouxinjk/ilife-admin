@@ -60,11 +60,11 @@ public class Broker extends DataEntity<Broker> {
 		this.openid = openid;
 	}
 	public String getNickname() {
-		return nickname;
+		return org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(nickname);
 	}
 
 	public void setNickname(String nickname) {
-		this.nickname = nickname;
+		this.nickname = org.apache.commons.lang3.StringEscapeUtils.escapeHtml4(nickname);
 	}
 	public String getAvatarUrl() {
 		return avatarUrl;
