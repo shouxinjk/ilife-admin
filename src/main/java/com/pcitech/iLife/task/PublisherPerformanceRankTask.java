@@ -93,7 +93,7 @@ public class PublisherPerformanceRankTask{
     			}
     			
     			//循环装载排行数据：如果数据量过低则跳过，总共显示前三名
-    			String remark = "昨日阅读排名：";
+    			String remark = "昨日阅读达人：";
     			int rankNumber  = 1;
     			for(Map<String,Object> rank:rankList) {
     				if(rank.get("id").toString().equalsIgnoreCase(publisherId) && Integer.parseInt(rank.get("total").toString())<50) {//以奖励的最低线过滤
