@@ -63,7 +63,7 @@
 				<td>${broker.nickname}</td>
 				<td>${broker.name}</td>
 				<td>${broker.orgnization.name}</td>
-				<td>${broker.parent.name}</td>				
+				<td>${broker.parent.nickname}</td>				
 				<td>${broker.phone}</td>	
 				<td>${broker.qrcodeUrl== null?"无":"已生成"}</td>		
 				<!--td>${broker.email}</td-->	
