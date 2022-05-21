@@ -102,8 +102,8 @@ public class BrokerController extends BaseController {
 		if(broker.getPoints()==0) {
 			broker.setPoints(20);//默认虚拟豆：固化写死
 		}//**/
-		//检查阅豆，如果低于0则发送提示消息
-		if(broker.getPoints()<0) {
+		//检查阅豆，如果低于0则发送提示消息：在-1和-2时，发送通知
+		if(broker.getPoints()<0 && broker.getPoints()>-3) {
 			//组装模板消息
 			JSONObject json = new JSONObject();
 			json.put("openid", broker.getOpenid());
