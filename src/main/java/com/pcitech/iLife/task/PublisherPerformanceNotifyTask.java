@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.modules.mod.entity.Order;
+import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.entity.BrokerPerformance;
 import com.pcitech.iLife.modules.mod.service.OrderService;
 import com.pcitech.iLife.modules.mod.service.BrokerPerformanceService;
@@ -54,6 +55,35 @@ public class PublisherPerformanceNotifyTask{
     		int days = 1;//查询当天的效益。执行时间减去24小时
     		List<String> pendingPublisherIds = brokerService.findNotifyCandidatePublisherIdList(days);
     		
+    		//查询得到排行数据
+    		Map<String,Object> countParams = new HashMap<String,Object>();
+    		countParams.put("days", days);//设置时间跨度
+    		countParams.put("total", 100);//TODO 注意这里是固定设置。设置返回条数：默认取100条，需要同时完成额外奖励
+    		List<Map<String,Object>> rankList = brokerService.countPublisherReads(countParams);
+    		
+    		boolean test=false;
+    		//先完成奖励：注意此处不严谨，仅根据排行前100进行奖励
+    		Map<String,Integer> rewardMap = new HashMap<String,Integer>();//记录当前接收通知达人是否有奖励
+    		if(!test) {
+				for(Map<String,Object> rank:rankList) {
+					int reads = Integer.parseInt(rank.get("total").toString());
+					Broker broker = brokerService.get(rank.get("id").toString());
+					if(reads>=100) {
+						broker.setPoints(broker.getPoints()+30);
+						rewardMap.put(broker.getId(), 30);
+					}else if(reads>=80) {
+						broker.setPoints(broker.getPoints()+20);
+						rewardMap.put(broker.getId(), 20);
+					}else if(reads>=50) {
+						broker.setPoints(broker.getPoints()+10);
+						rewardMap.put(broker.getId(), 10);
+					}else {
+						break;//因为是按倒序排列，遇到低于50的就可以直接收工了
+					}
+					brokerService.save(broker);
+				}
+    		}
+    		
 			logger.debug("Try to send publisher stat.[total]"+pendingPublisherIds.size());
     		Map<String,Object> params = new HashMap<String,Object>();
     		params.put("days", days);//设置时间跨度
@@ -61,7 +91,7 @@ public class PublisherPerformanceNotifyTask{
     			params.put("brokerId", publisherId);//设置指定达人
     			Map<String,Object> stat = brokerService.findNotifyPublisherStat(params);
     			//仅测试使用
-    			/**
+    			//**
     			if(!"o8HmJ1EdIUR8iZRwaq1T7D_nPIYc".equalsIgnoreCase(stat.get("openid").toString()) 
     					&& !"o8HmJ1ItjXilTlFtJNO25-CAQbbg".equalsIgnoreCase(stat.get("openid").toString()))
     				continue;
@@ -75,9 +105,37 @@ public class PublisherPerformanceNotifyTask{
     			String remark = "";
     			remark+="今日增阅："+stat.get("readsCount");
     			remark+="\n今日增粉："+stat.get("subscribesCount");
-    			remark+="\n文章总计："+stat.get("articlesCount");
-    			remark+="\n公号总计："+stat.get("accountsCount");
-    			remark+="\n\n阅读和关注都将奖励阅豆，阅豆越多文章排名越靠前，阅豆少于0文章或公众号将不在列表中展示哦~~\n\n点击进入获取阅豆~~";
+//    			remark+="\n文章总计："+stat.get("articlesCount");
+//    			remark+="\n公号总计："+stat.get("accountsCount");
+    			
+    			
+    			//循环装载排行数据：如果数据量过低则跳过，总共显示前三名
+    			//TODO：当前阅读数据量太少，排行榜可能会打击积极参与的人，暂时不发布
+    			/**
+    			remark += "\n\n昨日阅读达人：";
+    			int rankNumber  = 1;
+    			for(Map<String,Object> rank:rankList) {
+    				if(rank.get("id").toString().equalsIgnoreCase(publisherId) && Integer.parseInt(rank.get("total").toString())<50) {//以奖励的最低线过滤
+    					continue;
+    				}
+    				remark += "\nTop "+rankNumber+"："+rank.get("nickname");
+    				if(rank.get("id").toString().equalsIgnoreCase(publisherId) && rewardMap.get("publisherId")!=null && rewardMap.get("publisherId")>0) {//以奖励的最低线过滤
+    					remark += "(+"+rewardMap.get("publisherId")+"豆)";
+    				}
+    				rankNumber++;
+    				if(rankNumber>3)//仅显示3条
+    					break;
+    			}
+    			//**/
+    			
+    			remark+="\n\n每天阅读额外奖励："
+    					+ "\n超过100：+30豆"+(rewardMap.get("publisherId")!=null && rewardMap.get("publisherId")==30?"*":"")
+    					+ "\n超过80：+20豆"+(rewardMap.get("publisherId")!=null && rewardMap.get("publisherId")==20?"*":"")
+    					+ "\n超过50：+10豆"+(rewardMap.get("publisherId")!=null && rewardMap.get("publisherId")==10?"*":"")
+    					+ "\n\n阅豆越多文章排名越靠前，阅豆少于0文章或公众号将不在列表中展示哦。点击进入获取阅豆~~";
+    			
+    			
+//    			remark+="\n\n阅读和关注都将奖励阅豆，阅豆越多文章排名越靠前，阅豆少于0文章或公众号将不在列表中展示哦~~\n\n点击进入获取阅豆~~";
     			json.put("remark", remark);
     			//发送
     			HttpClientHelper.getInstance().post(

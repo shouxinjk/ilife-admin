@@ -101,13 +101,13 @@ public class PublisherPerformanceRankTask{
     				}
     				remark += "\nTop "+rankNumber+"："+rank.get("nickname");
     				rankNumber++;
-    				if(rankNumber>5)//仅显示3条
+    				if(rankNumber>10)//仅显示3条
     					break;
     			}
     			remark+="\n\n每天阅读额外奖励："
-    					+ "\n超过100：额外奖励30阅豆"
-    					+ "\n超过80：额外奖励20阅豆"
-    					+ "\n超过50：额外奖励10阅豆"
+    					+ "\n超过100：+30阅豆"
+    					+ "\n超过80：+20阅豆"
+    					+ "\n超过50：+10阅豆"
     					+ "\n\n阅豆越多文章排名越靠前，阅豆少于0文章或公众号将不在列表中展示哦。点击进入获取阅豆~~";
     			
     			//组装模板消息
