@@ -338,8 +338,9 @@ public class BrokerController extends BaseController {
 		Map<String, Object> result = Maps.newHashMap();
 		Broker broker = brokerService.getByOpenid(openid);//根据openid获取达人
 		if(broker == null) {//如果未找到对应的达人直接返回空
-			//result.put("status", false);
+			result.put("status", false);
 			//20220416：修复因为avatarUrl不为空导致的达人创建失败问题：因为没有达人导致前端一直在加载状态，此处临时创建达人。
+			/**
 			Broker tmpBroker = new Broker();
 			Broker parentBroker = brokerService.get(Global.getConfig("default_parent_broker_id"));
 			tmpBroker.setId(Util.md5(openid));
@@ -363,6 +364,7 @@ public class BrokerController extends BaseController {
 				result.put("data", broker);
 				result.put("msg", "该死，这是临时修复bug自动创建的broker");
 			}
+			//**/
 			//20220416 临时修复结束
 		}else {
 			result.put("status", true);

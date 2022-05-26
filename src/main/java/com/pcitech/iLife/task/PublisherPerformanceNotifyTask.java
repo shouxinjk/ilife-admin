@@ -104,7 +104,16 @@ public class PublisherPerformanceNotifyTask{
     			json.put("points", stat.get("points")+" 阅豆");
     			String remark = "";
     			remark+="今日增阅："+stat.get("readsCount");
-    			remark+="\n今日增粉："+stat.get("subscribesCount");
+    			
+    			try {
+    				int subscriberCount = Integer.parseInt(""+stat.get("subscribesCount"));
+    				if(subscriberCount>0) {
+    					remark+="\n今日增粉："+stat.get("subscribesCount");
+    				}
+    			}catch(Exception ex) {
+    				//do nothing
+    			}
+    			
 //    			remark+="\n文章总计："+stat.get("articlesCount");
 //    			remark+="\n公号总计："+stat.get("accountsCount");
     			
