@@ -327,10 +327,26 @@ public class BrokerController extends BaseController {
 		
 		return result;
 	}
-	
+
+	/**
+	 * 根据id获取指定达人信息
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/brokerById/{id}", method = RequestMethod.GET)
+	public Map<String, Object> getBrokerById(@PathVariable String id) {
+		Map<String, Object> result = Maps.newHashMap();
+		Broker broker = brokerService.get(id);//根据id获取达人
+		if(broker == null) {//如果未找到对应的达人直接返回空
+			result.put("status", false);
+		}else {
+			result.put("status", true);
+			result.put("data", broker);
+		}
+		return result;
+	}
+		
 	/**
 	 * 根据openid获取指定达人信息
-	 * 如果不存在会自动创建
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/brokerByOpenid/{openid}", method = RequestMethod.GET)
