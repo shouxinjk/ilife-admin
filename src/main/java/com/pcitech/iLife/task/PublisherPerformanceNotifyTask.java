@@ -99,24 +99,35 @@ public class PublisherPerformanceNotifyTask{
     			//组装模板消息
     			JSONObject json = new JSONObject();
     			json.put("openid", stat.get("openid").toString());
-    			json.put("title", "流量主收益日报");
+    			json.put("title", "流量主收益报告");
     			json.put("timestamp", fmt2.format(new Date()));
     			json.put("points", stat.get("points")+" 阅豆");
     			String remark = "";
-    			remark+="今日增阅："+stat.get("readsCount");
-    			
+    			remark+="累计增阅："+stat.get("readsCount");
+    			remark+="\n累计增粉："+stat.get("subscribesCount");
+    			/**
     			try {
     				int subscriberCount = Integer.parseInt(""+stat.get("subscribesCount"));
     				if(subscriberCount>0) {
-    					remark+="\n今日增粉："+stat.get("subscribesCount");
+    					remark+="\n累计增粉："+stat.get("subscribesCount");
     				}
     			}catch(Exception ex) {
     				//do nothing
     			}
+    			//**/
     			
-//    			remark+="\n文章总计："+stat.get("articlesCount");
-//    			remark+="\n公号总计："+stat.get("accountsCount");
-    			
+    			remark+="\n文章总计："+stat.get("articlesCount"); 
+    			remark+="\n公众号总计："+stat.get("accountsCount");
+    			/**
+    			try {
+    				int accountsCount = Integer.parseInt(""+stat.get("accountsCount"));
+    				if(accountsCount>0) {
+    					remark+="\n公号总计："+stat.get("accountsCount");
+    				}
+    			}catch(Exception ex) {
+    				//do nothing
+    			}    			
+    			//**/
     			
     			//循环装载排行数据：如果数据量过低则跳过，总共显示前三名
     			//TODO：当前阅读数据量太少，排行榜可能会打击积极参与的人，暂时不发布
@@ -138,9 +149,9 @@ public class PublisherPerformanceNotifyTask{
     			//**/
     			
     			remark+="\n\n每天阅读额外奖励："
-    					+ "\n超过100：+30豆"+(rewardMap.get("publisherId")!=null && rewardMap.get("publisherId")==30?"*":"")
-    					+ "\n超过80：+20豆"+(rewardMap.get("publisherId")!=null && rewardMap.get("publisherId")==20?"*":"")
-    					+ "\n超过50：+10豆"+(rewardMap.get("publisherId")!=null && rewardMap.get("publisherId")==10?"*":"")
+    					+ "\n超过100：+30豆"+(rewardMap.get("publisherId")!=null && rewardMap.get("publisherId")==30?" * 已奖励":"")
+    					+ "\n超过80：+20豆"+(rewardMap.get("publisherId")!=null && rewardMap.get("publisherId")==20?" * 已奖励":"")
+    					+ "\n超过50：+10豆"+(rewardMap.get("publisherId")!=null && rewardMap.get("publisherId")==10?" * 已奖励":"")
     					+ "\n\n阅豆越多文章排名越靠前，阅豆少于0文章或公众号将不在列表中展示哦。点击进入获取阅豆~~";
     			
     			
