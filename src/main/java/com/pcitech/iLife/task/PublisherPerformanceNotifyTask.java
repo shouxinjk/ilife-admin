@@ -52,13 +52,13 @@ public class PublisherPerformanceNotifyTask{
     		
     		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		
-    		int days = 1;//查询当天的效益。执行时间减去24小时
+    		int days = 365;//查询当天的效益。执行时间减去24小时
     		List<String> pendingPublisherIds = brokerService.findNotifyCandidatePublisherIdList(days);
     		
     		//查询得到排行数据
     		Map<String,Object> countParams = new HashMap<String,Object>();
-    		countParams.put("days", days);//设置时间跨度
-    		countParams.put("total", 365);//TODO 注意这里是固定设置。设置返回条数：默认取100条，需要同时完成额外奖励
+    		countParams.put("days", 1);//设置时间跨度：只能是当天数据排行
+    		countParams.put("total", 100);//TODO 注意这里是固定设置。设置返回条数：默认取100条，需要同时完成额外奖励
     		List<Map<String,Object>> rankList = brokerService.countPublisherReads(countParams);
     		
     		boolean test=false;
@@ -86,12 +86,12 @@ public class PublisherPerformanceNotifyTask{
     		
 			logger.debug("Try to send publisher stat.[total]"+pendingPublisherIds.size());
     		Map<String,Object> params = new HashMap<String,Object>();
-    		params.put("days", 100);//设置时间跨度：当前查询100天累计数据
+    		params.put("days", days);//设置时间跨度：当前查询100天累计数据
     		for(String publisherId:pendingPublisherIds) {
     			params.put("brokerId", publisherId);//设置指定达人
     			Map<String,Object> stat = brokerService.findNotifyPublisherStat(params);
     			//仅测试使用
-    			/**
+    			//**
     			if(!"o8HmJ1EdIUR8iZRwaq1T7D_nPIYc".equalsIgnoreCase(stat.get("openid").toString()) 
     					&& !"o8HmJ1ItjXilTlFtJNO25-CAQbbg".equalsIgnoreCase(stat.get("openid").toString()))
     				continue;
