@@ -58,7 +58,7 @@ public class PublisherPerformanceNotifyTask{
     		//查询得到排行数据
     		Map<String,Object> countParams = new HashMap<String,Object>();
     		countParams.put("days", days);//设置时间跨度
-    		countParams.put("total", 100);//TODO 注意这里是固定设置。设置返回条数：默认取100条，需要同时完成额外奖励
+    		countParams.put("total", 365);//TODO 注意这里是固定设置。设置返回条数：默认取100条，需要同时完成额外奖励
     		List<Map<String,Object>> rankList = brokerService.countPublisherReads(countParams);
     		
     		boolean test=false;
@@ -91,7 +91,7 @@ public class PublisherPerformanceNotifyTask{
     			params.put("brokerId", publisherId);//设置指定达人
     			Map<String,Object> stat = brokerService.findNotifyPublisherStat(params);
     			//仅测试使用
-    			//**
+    			/**
     			if(!"o8HmJ1EdIUR8iZRwaq1T7D_nPIYc".equalsIgnoreCase(stat.get("openid").toString()) 
     					&& !"o8HmJ1ItjXilTlFtJNO25-CAQbbg".equalsIgnoreCase(stat.get("openid").toString()))
     				continue;
