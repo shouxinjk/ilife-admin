@@ -52,7 +52,7 @@ public class PublisherPerformanceNotifyTask{
     		
     		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		
-    		int days = 1;//当前数据较少，采用一年的数据汇总。1;//查询当天的效益。执行时间减去24小时
+    		int days = 1;//查询当天的效益。执行时间减去24小时
     		List<String> pendingPublisherIds = brokerService.findNotifyCandidatePublisherIdList(days);
     		
     		//查询得到排行数据
@@ -86,7 +86,7 @@ public class PublisherPerformanceNotifyTask{
     		
 			logger.debug("Try to send publisher stat.[total]"+pendingPublisherIds.size());
     		Map<String,Object> params = new HashMap<String,Object>();
-    		params.put("days", days);//设置时间跨度
+    		params.put("days", 100);//设置时间跨度：当前查询100天累计数据
     		for(String publisherId:pendingPublisherIds) {
     			params.put("brokerId", publisherId);//设置指定达人
     			Map<String,Object> stat = brokerService.findNotifyPublisherStat(params);
