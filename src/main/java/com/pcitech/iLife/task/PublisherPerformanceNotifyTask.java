@@ -52,7 +52,7 @@ public class PublisherPerformanceNotifyTask{
     		
     		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		
-    		int days = 365;//当前数据较少，采用一年的数据汇总。1;//查询当天的效益。执行时间减去24小时
+    		int days = 1;//当前数据较少，采用一年的数据汇总。1;//查询当天的效益。执行时间减去24小时
     		List<String> pendingPublisherIds = brokerService.findNotifyCandidatePublisherIdList(days);
     		
     		//查询得到排行数据
