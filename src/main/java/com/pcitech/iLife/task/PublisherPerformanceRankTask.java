@@ -99,7 +99,7 @@ public class PublisherPerformanceRankTask{
     				if(rank.get("id").toString().equalsIgnoreCase(publisherId) && Integer.parseInt(rank.get("total").toString())<50) {//以奖励的最低线过滤
     					continue;
     				}
-    				remark += "\nTop "+rankNumber+"："+rank.get("nickname");
+    				remark += "\nTop "+rankNumber+"："+rank.get("nickname")+" "+rank.get("total");
     				rankNumber++;
     				if(rankNumber>10)//仅显示3条
     					break;
