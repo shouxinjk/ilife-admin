@@ -17,6 +17,7 @@ public class ViewTemplate extends DataEntity<ViewTemplate> {
 	private static final long serialVersionUID = 1L;
 	private String type;		// 模板适用类型字典定义，如persona、item-article
 	private String name;		// 名称
+	private String logo;	//logo：用于海报模板类的展示图标
 	private String subType;		// 预留。子类型
 	private String expression;		// 模板表达式
 	private String priority;		// 预留。优先级
@@ -48,6 +49,14 @@ public class ViewTemplate extends DataEntity<ViewTemplate> {
 		this.name = name;
 	}
 	
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+
 	@Length(min=0, max=64, message="预留。子类型长度必须介于 0 和 64 之间")
 	public String getSubType() {
 		return subType;

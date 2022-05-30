@@ -37,6 +37,7 @@
 		<thead>
 			<tr>
 				<th>名称</th>
+				<th>LOGO</th>
 				<th>类型</th>
 				<th>格式</th>			
 				<th>优先级</th>
@@ -51,6 +52,9 @@
 				<td><a href="${ctx}/mod/viewTemplate/form?id=${viewTemplate.id}">
 					${viewTemplate.name}
 				</a></td>
+				<td>
+					<img src="${viewTemplate.logo}" width="60"/>			
+				</td>
 				<td>${fns:getDictLabel(viewTemplate.type, 'viewTemplateType', '-')}</td>
 				<td>${fns:getDictLabel(viewTemplate.subType, 'viewTemplateFormat', '-')}</td>
 				<td>${viewTemplate.priority}</td>

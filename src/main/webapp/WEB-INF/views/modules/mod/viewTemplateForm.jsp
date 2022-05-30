@@ -44,6 +44,8 @@
 			<span class="help-inline"><font color="red">*</font> </span><br/><br/>
 			<div>名称：</div>
 			<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/><br/><br/>
+			<div>Logo：</div>
+			<form:input path="logo" htmlEscape="false" maxlength="255" class="input-xlarge "/><br/><br/>			
 			<div>优先级：</div>
 			<form:input path="priority" htmlEscape="false" maxlength="8" class="input-xlarge "/><br/><br/>
 			<div>描述：</div>
