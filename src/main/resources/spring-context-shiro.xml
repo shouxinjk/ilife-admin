@@ -23,6 +23,7 @@
 				${adminPath}/mod/measure/** = anon
 				${adminPath}/ope/**/rest/** = anon
 				${adminPath}/rest/api/** = anon
+				${adminPath}/rest/cps/** = anon
 				${adminPath}/third-party/** = anon
 				${adminPath}/mod/**/rest/** = anon
 				${adminPath}/wx/**/rest/** = anon
