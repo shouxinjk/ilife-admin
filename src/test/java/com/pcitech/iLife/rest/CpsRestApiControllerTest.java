@@ -41,4 +41,26 @@ public class CpsRestApiControllerTest {
 		JSONObject result = cpsRestApiController.getPddItem(data);
 		System.err.println(result);
 	}
+	
+	@Test
+	public void taobao() {
+		String openid="o8HmJ1JeYicv-JFGPyHvicLO6QQ8";
+		String url = "https://m.tb.cn/h.fGscjyV?tk=i3Y72O1udob";
+		JSONObject data = new JSONObject();
+		data.put("url", url);
+		data.put("openid", openid);
+		JSONObject result = cpsRestApiController.getTaobaoItem(data);
+		System.err.println(result);
+	}
+	
+	@Test
+	public void manual() {
+		String openid="o8HmJ1JeYicv-JFGPyHvicLO6QQ8";
+		String url = "https://m.tb.cn/h.fGscjyV?tk=i3Y72O1udob";
+		JSONObject data = new JSONObject();
+		data.put("url", url);
+		data.put("openid", openid);
+		JSONObject result = cpsRestApiController.enhouseItem(data);
+		System.err.println(result);
+	}
 }

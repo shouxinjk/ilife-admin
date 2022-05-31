@@ -326,6 +326,86 @@ public class CpsRestApiController extends BaseController {
 		
 		return result;
 	}
+	
+
+	/**
+	 * 淘宝、天猫、飞猪商品上架
+	 * 
+	 * 输入参数：
+	 * 1, url:淘宝、飞猪、天猫等淘系商品链接
+	 * 2, openid:提交人openid。可以为空。如果传递则推送上架结果
+	 * 
+	 * 处理逻辑：
+	 * TODO 通过API检查商品。当前无API权限。
+	 * 直接返回达人信息完事
+	 */
+	@ResponseBody
+	@RequestMapping(value = "taobao", method = RequestMethod.POST)
+	public JSONObject getTaobaoItem(@RequestBody JSONObject json) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		
+		//检查参数
+		if(json.getString("url")==null || json.getString("url").trim().length()==0) {
+			result.put("msg", "URL错误");
+			return result;
+		}
+		
+		//检查openid：如果为非推广商品，则根据openid加载达人信息，需要人工介入后返回
+		if(json.getString("openid")!=null && json.getString("openid").trim().length()>0) {
+			Broker broker = brokerService.getByOpenid(json.getString("openid"));
+			if(broker != null) {
+				JSONObject brokerInfo = new JSONObject();
+				brokerInfo.put("nickname", broker.getNickname());
+				brokerInfo.put("avatarUrl", broker.getAvatarUrl());
+				result.put("broker", brokerInfo);
+			}
+		}
+		
+		String brokerId = "system";//默认达人为system
+		
+		return result;
+	}
+	
+
+	/**
+	 * 手动上架商品
+	 * 
+	 * 输入参数：
+	 * 1, url:京东商品链接
+	 * 2, openid:提交人openid。可以为空。如果传递则推送上架结果
+	 * 
+	 * 处理逻辑：
+	 * TODO 通过API检查商品。当前无API权限。
+	 * 直接返回达人信息完事
+	 */
+	@ResponseBody
+	@RequestMapping(value = "manual", method = RequestMethod.POST)
+	public JSONObject enhouseItem(@RequestBody JSONObject json) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		
+		//检查参数
+		if(json.getString("url")==null || json.getString("url").trim().length()==0) {
+			result.put("msg", "URL错误");
+			return result;
+		}
+		
+		//检查openid：如果为非推广商品，则根据openid加载达人信息，需要人工介入后返回
+		if(json.getString("openid")!=null && json.getString("openid").trim().length()>0) {
+			Broker broker = brokerService.getByOpenid(json.getString("openid"));
+			if(broker != null) {
+				JSONObject brokerInfo = new JSONObject();
+				brokerInfo.put("nickname", broker.getNickname());
+				brokerInfo.put("avatarUrl", broker.getAvatarUrl());
+				result.put("broker", brokerInfo);
+			}
+		}
+		
+		String brokerId = "system";//默认达人为system
+		
+		return result;
+	}
 
     private double parseNumber(double d) {
 //		return Double.valueOf(String.format("%.2f", d ));//会四舍五入，丢弃
