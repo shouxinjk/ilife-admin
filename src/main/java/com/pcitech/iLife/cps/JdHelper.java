@@ -140,9 +140,29 @@ public class JdHelper {
 		return null;
 	}
 	
+	//获取当前时间端的订单列表
 	public OrderRowResp[] getOrder() throws Exception {
-		UnionOpenOrderRowQueryRequest request=new UnionOpenOrderRowQueryRequest();
 		Calendar cal = Calendar.getInstance();
+		
+		//手动补全缺失订单：注意需要在执行后消除
+		if(cal.get(Calendar.YEAR)==2022 &&
+			cal.get(Calendar.MONTH)==5 &&
+			cal.get(Calendar.DATE)==1 && 
+			cal.get(Calendar.HOUR_OF_DAY)< 14
+		) {
+			cal.set(Calendar.YEAR, 2022);
+			cal.set(Calendar.MONTH, 4);//月份，开始为0
+			cal.set(Calendar.DATE, 27);//日期，开始为1
+			cal.set(Calendar.HOUR, 8);
+		}
+		
+		return getOrder(cal);
+	}
+	
+	//获取指定时间段的时间列表：指定时间前30分钟的订单
+	public OrderRowResp[] getOrder(Calendar cal) throws Exception {
+		logger.debug("start query orders by calendar.[calendar]"+cal);
+		UnionOpenOrderRowQueryRequest request=new UnionOpenOrderRowQueryRequest();
 		Date end = cal.getTime();
 		cal.add(Calendar.MINUTE, -30);//每半小时查询一次；API要求 间隔时间不超过1小时
 		Date from = cal.getTime();

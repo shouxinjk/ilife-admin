@@ -74,29 +74,33 @@ public class JdOrderSync {
 		//写入 arangodb
 		arangoClient.insert("order", doc);    
 		
-		//接下来写入Order
-		Order order = new Order();
-		order.setStatus("pending");//等待清分
-		order.setId(itemKey);//与NoSQL保持一致
-		order.setPlatform("jd");
-		order.setOrderNo(""+item.getOrderId());
-		order.setTraceCode(item.getExt1());
-		order.setAmount(item.getPrice());
-		order.setCommissionEstimate(item.getEstimateFee());
-		order.setCommissionSettlement(item.getActualFee());//可能为空，没关系，等着后面结算更新
-		order.setItem(item.getSkuName());
-		long timestamp = System.currentTimeMillis();
-		try {timestamp = Long.parseLong(item.getOrderTime());}catch(Exception ex){}//"1529271683000"，直接取值
-		order.setOrderTime(new Date(timestamp));
-		Broker broker = brokerService.get(item.getExt1());//跟踪码就是达人ID
-		if(broker==null)broker=brokerService.get("system");//如果找不到，则直接使用平台默认账户
-		order.setBroker(broker);
-		order.setNotification("pending");//不用管通知状态，后续通知任务会自动更新
-		order.setStatus("pending");
-		
-		orderService.save(order);
-		
-		processedAmount++;
+		//先查看是否已经入库：仅对未入库订单操作
+		Order order = orderService.get(itemKey);
+		if(order == null) {//仅对新订单创建记录
+			//接下来写入Order
+			order = new Order();
+			order.setStatus("pending");//等待清分
+			order.setId(itemKey);//与NoSQL保持一致
+			order.setPlatform("jd");
+			order.setOrderNo(""+item.getOrderId());
+			order.setTraceCode(item.getExt1());
+			order.setAmount(item.getPrice());
+			order.setCommissionEstimate(item.getEstimateFee());
+			order.setCommissionSettlement(item.getActualFee());//可能为空，没关系，等着后面结算更新
+			order.setItem(item.getSkuName());
+			long timestamp = System.currentTimeMillis();
+			try {timestamp = Long.parseLong(item.getOrderTime());}catch(Exception ex){}//"1529271683000"，直接取值
+			order.setOrderTime(new Date(timestamp));
+			Broker broker = brokerService.get(item.getExt1());//跟踪码就是达人ID
+			if(broker==null)broker=brokerService.get("system");//如果找不到，则直接使用平台默认账户
+			order.setBroker(broker);
+			order.setNotification("pending");//不用管通知状态，后续通知任务会自动更新
+			order.setStatus("pending");
+			
+			orderService.save(order);
+			
+			processedAmount++;
+		}
 		
     }
 
