@@ -164,7 +164,7 @@ public class JdClientTest {
 			cal.set(Calendar.HOUR, 8);//24小时时间
 			
 			//获取当前时间段前30分钟订单
-			OrderRowResp[] orders = jdHelper.getOrder();
+			OrderRowResp[] orders = jdHelper.getOrder(cal);
 			if(orders == null) {//还没有订单，要努力哦
 				System.err.println("一个订单都没有，还不赶紧去推广");
 			}else {//有订单，我们看看挣了多少银子吧
