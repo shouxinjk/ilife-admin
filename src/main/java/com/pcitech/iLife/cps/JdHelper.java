@@ -147,7 +147,7 @@ public class JdHelper {
 		//手动补全缺失订单：注意需要在执行后消除
 		if(cal.get(Calendar.YEAR)==2022 &&
 			cal.get(Calendar.MONTH)==5 &&
-			cal.get(Calendar.DATE)==1 && 
+			cal.get(Calendar.DATE)==2 && 
 			cal.get(Calendar.HOUR_OF_DAY)< 14
 		) {
 			cal.set(Calendar.YEAR, 2022);
