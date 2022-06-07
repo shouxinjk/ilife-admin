@@ -46,6 +46,21 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">协议类型：</label>
+			<div class="controls">
+				<form:select path="type" class="input-xlarge ">
+					<form:option value="" label=""/>
+					<form:options items="${fns:getDictList('wx_bot_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">协议Token：</label>
+			<div class="controls">
+				<form:input path="token" htmlEscape="false" maxlength="512" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">wechaty id：</label>
 			<div class="controls">
 				<form:input path="wechatyId" htmlEscape="false" maxlength="512" class="input-xlarge "/>

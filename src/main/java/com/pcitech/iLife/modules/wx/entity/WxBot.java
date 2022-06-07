@@ -20,6 +20,8 @@ public class WxBot extends DataEntity<WxBot> {
 	private static final long serialVersionUID = 1L;
 	private Broker broker;		// 所属达人
 	private String name;		// 机器人名称
+	private String type;		// 协议类型
+	private String token;		// 协议token
 	private String wechatyId;		// wechaty id
 	private String qrcodeUrl;		// 二维码URL
 	private String status;		// 状态
@@ -53,6 +55,22 @@ public class WxBot extends DataEntity<WxBot> {
 		this.name = name;
 	}
 	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
 	@Length(min=0, max=512, message="wechaty id长度必须介于 0 和 512 之间")
 	public String getWechatyId() {
 		return wechatyId;

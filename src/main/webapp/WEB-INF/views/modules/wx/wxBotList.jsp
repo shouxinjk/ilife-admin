@@ -47,6 +47,8 @@
 			<tr>
 				<th>所属达人</th>
 				<th>机器人名称</th>
+				<th>协议类型</th>
+				<th>协议token</th>
 				<th>wechaty id</th>
 				<th>状态</th>
 				<th>心跳时间</th>
@@ -67,6 +69,12 @@
 				<td>
 					${wxBot.name}
 				</td>
+				<td>
+					${fns:getDictLabel(wxBot.type, 'wx_bot_type', '')}
+				</td>
+				<td>
+					${wxBot.token}
+				</td>				
 				<td>
 					${wxBot.wechatyId}
 				</td>
