@@ -64,7 +64,19 @@
 			<div class="controls">
 				<form:input path="points" htmlEscape="false" maxlength="20" class="input-xlarge "/>
 			</div>
-		</div>			
+		</div>	
+		<div class="control-group">
+			<label class="control-label">金币：</label>
+			<div class="controls">
+				<form:input path="coins" htmlEscape="false" maxlength="20" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">BOT激活码：</label>
+			<div class="controls">
+				<form:input path="token" htmlEscape="false" maxlength="20" class="input-xlarge "/>
+			</div>
+		</div>						
 		<div class="control-group">
 			<label class="control-label">真实姓名：</label>
 			<div class="controls">

@@ -39,6 +39,8 @@ public class Broker extends DataEntity<Broker> {
 	private String upgrade;		// 升级状态
 	private String qrcodeUrl;		// 二维码地址
 	private int points=20;		// 虚拟豆数量:默认设为20
+	private int coins=0;//默认金币为0
+	private String token;//机器人口令
 	
 	public Broker() {
 		super();
@@ -182,6 +184,22 @@ public class Broker extends DataEntity<Broker> {
 
 	public void setPoints(int points) {
 		this.points = points;
+	}
+
+	public int getCoins() {
+		return coins;
+	}
+
+	public void setCoins(int coins) {
+		this.coins = coins;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	public Office getOrgnization() {

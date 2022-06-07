@@ -38,15 +38,17 @@
 			<tr>
 				<th>OpenId</th>
 				<th>昵称</th>
-				<th>姓名</th>
+				<!--th>姓名</th-->
 				<th>机构</th>
 				<th>上级达人</th>
-				<th>电话</th>
+				<!--th>电话</th-->
 				<th>二维码</th>
 				<!--th>邮件</th-->
 				<th>层级</th>
 				<th>等级</th>
 				<th>虚拟豆</th>
+				<th>金币</th>
+				<th>激活码</th>
 				<th>账户状态</th>
 				<!--th>升级状态</th-->
 				<th>更新时间</th>
@@ -61,15 +63,17 @@
 					${broker.openid}
 				</a></td>
 				<td>${broker.nickname}</td>
-				<td>${broker.name}</td>
+				<!--td>${broker.name}</td-->
 				<td>${broker.orgnization.name}</td>
 				<td>${broker.parent.nickname}</td>				
-				<td>${broker.phone}</td>	
+				<!--td>${broker.phone}</td-->	
 				<td>${broker.qrcodeUrl== null?"无":"已生成"}</td>		
 				<!--td>${broker.email}</td-->	
 				<td>${broker.hierarchy}</td>	
 				<td>${broker.level}</td>	
 				<td>${broker.points}</td>
+				<td>${broker.coins}</td>
+				<td>${broker.token}</td>
 				<td>${broker.status}</td>	
 				<!--td>${broker.upgrade}</td-->	
 				<td>
