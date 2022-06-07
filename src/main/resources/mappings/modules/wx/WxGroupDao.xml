@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.wx.dao.WxGroupDao">
+    
+	<sql id="wxGroupColumns">
+		a.id AS "id",
+		a.broker_id AS "broker.id",
+		b.name AS "broker.name",
+		b.nickname AS "broker.nickname",		
+		a.persona_id AS "persona.id",
+		p.name AS "persona.name",
+		a.schedule AS "schedule",
+		a.name AS "name",
+		a.owner AS "owner",
+		a.gid AS "gid",
+		a.members AS "members",
+		a.token AS "token",
+		a.status AS "status",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="wxGroupJoins">
+		LEFT JOIN mod_broker b ON b.id = a.broker_id
+		LEFT JOIN mod_persona p ON p.id = a.persona_id
+	</sql>
+    
+	<select id="get" resultType="WxGroup">
+		SELECT 
+			<include refid="wxGroupColumns"/>
+		FROM wx_group a
+		<include refid="wxGroupJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="WxGroup">
+		SELECT 
+			<include refid="wxGroupColumns"/>
+		FROM wx_group a
+		<include refid="wxGroupJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="broker != null and broker.id != null and broker.id != ''">
+				AND a.broker_id = #{broker.id}
+			</if>
+			<if test="persona != null and persona.id != null and persona.id != ''">
+				AND a.persona_id = #{persona.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="owner != null and owner != ''">
+				AND a.owner = #{owner}
+			</if>
+			<if test="token != null and token != ''">
+				AND a.token = #{token}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="WxGroup">
+		SELECT 
+			<include refid="wxGroupColumns"/>
+		FROM wx_group a
+		<include refid="wxGroupJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO wx_group(
+			id,
+			broker_id,
+			persona_id,
+			schedule,
+			name,
+			owner,
+			gid,
+			members,
+			token,
+			status,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{broker.id},
+			#{persona.id},
+			#{schedule},
+			#{name},
+			#{owner},
+			#{gid},
+			#{members},
+			#{token},
+			#{status},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE wx_group SET 	
+			broker_id = #{broker.id},
+			persona_id = #{persona.id},
+			schedule = #{schedule},
+			name = #{name},
+			owner = #{owner},
+			gid = #{gid},
+			members = #{members},
+			token = #{token},
+			status = #{status},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE wx_group SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
