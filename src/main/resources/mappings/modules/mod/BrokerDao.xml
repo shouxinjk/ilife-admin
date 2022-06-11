@@ -86,6 +86,14 @@
 		WHERE a.openid = #{openid} limit 1
 	</select>	
 	
+	<select id="getByNickname" resultType="Broker">
+		SELECT 
+			<include refid="brokerColumns"/>
+		FROM mod_broker a
+		<include refid="brokerJoins"/>
+		WHERE a.nickname = #{nickname} limit 1
+	</select>		
+	
 	<!-- 分页返回下级列表 -->
 	<select id="findChildList" resultType="Broker">
 		SELECT 

@@ -57,6 +57,10 @@ public class BrokerService extends CrudService<BrokerDao, Broker> {
 		return dao.getByOpenid(openid);
 	}
 	
+	public Broker getByNickname(String nickname) {
+		return dao.getByNickname(nickname);
+	}
+	
 	public Map<String,Object> getMoney(String id) {
 		return dao.getMoney(id);
 	}	

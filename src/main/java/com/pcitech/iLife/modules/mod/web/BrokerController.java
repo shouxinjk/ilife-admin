@@ -371,6 +371,25 @@ public class BrokerController extends BaseController {
 		}
 		return result;
 	}
+
+	
+/**
+ * 根据nickname获取指定达人信息
+ * 用于在微信群阅读报数时使用
+ */
+@ResponseBody
+@RequestMapping(value = "rest/brokerByNickname", method = RequestMethod.GET)
+public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) String nickname) {
+	Map<String, Object> result = Maps.newHashMap();
+	Broker broker = brokerService.getByNickname(nickname);//根据nickname获取达人
+	if(broker == null) {//如果未找到对应的达人直接返回空
+		result.put("status", false);
+	}else {
+		result.put("status", true);
+		result.put("data", broker);
+	}
+	return result;
+}
 	
 	/**
 	 * 更新达人nickname及avatarUrl：

@@ -32,6 +32,9 @@ public interface BrokerDao extends CrudDao<Broker> {
 	//根据openid获取指定达人信息
 	public Broker getByOpenid(String openid);
 	
+	//根据nickname获取指定达人信息
+	public Broker getByNickname(String nickname);
+	
 	//根据id查询达人收益信息
 	public Map<String,Object> getMoney(String id);
 	

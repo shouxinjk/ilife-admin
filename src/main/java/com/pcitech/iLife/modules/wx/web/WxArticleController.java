@@ -383,6 +383,7 @@ public class WxArticleController extends BaseController {
 	 * 有效阅读，扣除阅豆，并返回本次消耗。参数：
 	 * articleId：文章ID
 	 * readerOpenid：读者openid
+	 * readerNickname：读者昵称。与readerOpenid至少传递一个，同时传递以openid优先
 	 * readCount：阅读次数
 	 */
 	@ResponseBody
@@ -399,7 +400,14 @@ public class WxArticleController extends BaseController {
 			//获取文章发布达人
 			Broker broker = brokerService.get(article.getBroker().getId());//重要：必须重新获取，否则会导致其他信息丢失
 			//获取读者
-			Broker reader = brokerService.getByOpenid(json.getString("readerOpenid"));
+			Broker reader = null;
+			if(json.getString("readerOpenid")!=null && json.getString("readerOpenid").trim().length()>0) {
+				broker = brokerService.getByOpenid(json.getString("readerOpenid"));	
+			}else if(json.getString("readerNickname")!=null && json.getString("readerNickname").trim().length()>0) {
+				broker = brokerService.getByNickname(json.getString("readerNickname"));	
+			}else {
+				result.put("description","no reader info found. must be one of readerOpenid or readerNickname.");
+			}
 			
 			//出现自动用脚本提交的情况，此处直接禁止
 			if("disabled".equalsIgnoreCase(reader.getStatus()) || "disabled".equalsIgnoreCase(broker.getStatus())) {
