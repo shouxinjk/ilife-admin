@@ -402,9 +402,9 @@ public class WxArticleController extends BaseController {
 			//获取读者
 			Broker reader = null;
 			if(json.getString("readerOpenid")!=null && json.getString("readerOpenid").trim().length()>0) {
-				broker = brokerService.getByOpenid(json.getString("readerOpenid"));	
+				reader = brokerService.getByOpenid(json.getString("readerOpenid"));	
 			}else if(json.getString("readerNickname")!=null && json.getString("readerNickname").trim().length()>0) {
-				broker = brokerService.getByNickname(json.getString("readerNickname"));	
+				reader = brokerService.getByNickname(json.getString("readerNickname"));	
 			}else {
 				result.put("description","no reader info found. must be one of readerOpenid or readerNickname.");
 			}
