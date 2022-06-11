@@ -28,7 +28,7 @@
     
     <select id="getByNickname" resultType="WxGroupTask">
 		SELECT 
-			<include refid="brokerColumns"/>
+			<include refid="wxGroupTaskColumns"/>
 		FROM wx_group_task a
 		<include refid="wxGroupTaskJoins"/>
 		WHERE b.nickname = #{nickname} 
