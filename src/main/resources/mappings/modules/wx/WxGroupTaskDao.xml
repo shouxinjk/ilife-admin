@@ -9,6 +9,7 @@
 		b.nickname AS "broker.nickname",
 		a.group_id AS "wxgroup.id",
 		g.name AS "wxgroup.name",
+		g.gid AS "wxgroup.gid",
 		a.name AS "name",
 		a.type AS "type",
 		a.cron AS "cron",
