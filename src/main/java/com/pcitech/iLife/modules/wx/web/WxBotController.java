@@ -126,7 +126,7 @@ public class WxBotController extends BaseController {
 	 * 根据brokerId请求开通机器人
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/botByBrokerId/{brokerId}", method = RequestMethod.POST)
+	@RequestMapping(value = "rest/byBrokerId/{brokerId}", method = RequestMethod.POST)
 	public Map<String,Object> createBotByBrokerId(@PathVariable String brokerId, @RequestBody JSONObject json) {
 		Map<String,Object> result = Maps.newHashMap();
 		result.put("success", false);

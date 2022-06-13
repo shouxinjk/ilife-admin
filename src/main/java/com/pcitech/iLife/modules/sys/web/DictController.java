@@ -122,5 +122,13 @@ public class DictController extends BaseController {
 		dict.setType(type);
 		return dictService.findList(dict);
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/byType")
+	public List<Dict> listDictByType(@RequestParam(required=true) String type) {
+		Dict dict = new Dict();
+		dict.setType(type);
+		return dictService.findList(dict);
+	}
 
 }
