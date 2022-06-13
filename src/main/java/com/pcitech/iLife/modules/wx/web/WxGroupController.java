@@ -138,6 +138,8 @@ public class WxGroupController extends BaseController {
 		wxGroupTask.setBroker(broker);
 		wxGroupTask.setWxgroup(wxGroup);
 		wxGroupTask.setType("sendItem");
+		wxGroupTask.setTags("*");
+		wxGroupTask.setStatus("active");
 		wxGroupTask.setCron("0 */15 * * * ?");
 		wxGroupTask.setName("默认任务");
 		wxGroupTask.setCreateDate(new Date());
