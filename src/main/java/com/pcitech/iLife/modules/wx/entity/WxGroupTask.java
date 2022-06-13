@@ -24,6 +24,9 @@ public class WxGroupTask extends DataEntity<WxGroupTask> {
 	private String tags;		// 任务关键字
 	private String status;		// 任务状态
 	
+	private String cronDesc; //只读，仅用于读取字典label
+	private String typeDesc; //只读，仅用于读取字典label
+	
 	public WxGroupTask() {
 		super();
 	}
@@ -34,6 +37,22 @@ public class WxGroupTask extends DataEntity<WxGroupTask> {
 
 
 	
+	public String getCronDesc() {
+		return cronDesc;
+	}
+
+	public void setCronDesc(String cronDesc) {
+		this.cronDesc = cronDesc;
+	}
+
+	public String getTypeDesc() {
+		return typeDesc;
+	}
+
+	public void setTypeDesc(String typeDesc) {
+		this.typeDesc = typeDesc;
+	}
+
 	public Broker getBroker() {
 		return broker;
 	}
