@@ -153,6 +153,7 @@ public class JdHelper {
 			cal.set(Calendar.MONTH, 4);//月份，开始为0
 			cal.set(Calendar.DATE, 27);//日期，开始为1
 			cal.set(Calendar.HOUR, 8);
+			cal.set(Calendar.MINUTE, 0);
 		}
 		
 		return getOrder(cal);

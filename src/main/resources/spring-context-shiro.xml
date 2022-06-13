@@ -29,6 +29,7 @@
 				${adminPath}/wx/**/rest/** = anon
 				${adminPath}/wxPay/**/rest/** = anon
 				${adminPath}/dict/**/rest/** = anon
+				${adminPath}/sys/**/rest/** = anon
 				${adminPath}/** = user
 				/act/editor/** = user
 				/ReportServer/** = user

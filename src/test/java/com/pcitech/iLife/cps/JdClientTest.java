@@ -162,6 +162,7 @@ public class JdClientTest {
 			cal.set(Calendar.MONTH, 4);//月份，开始为0
 			cal.set(Calendar.DATE, 27);//日期，开始为1
 			cal.set(Calendar.HOUR, 8);//24小时时间
+			cal.set(Calendar.MINUTE, 0);
 			
 			//获取当前时间段前30分钟订单
 			OrderRowResp[] orders = jdHelper.getOrder(cal);
