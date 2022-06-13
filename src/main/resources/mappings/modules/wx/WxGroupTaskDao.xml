@@ -27,8 +27,8 @@
 	<sql id="wxGroupTaskJoins">
 		LEFT JOIN mod_broker b ON b.id = a.broker_id
 		LEFT JOIN wx_group g ON g.id = a.group_id
-		LEFT JOIN sys_dict dt ON dd.type = "wx_group_task_type" and dt.value = a.type
-		LEFT JOIN sys_dict dc ON dd.type = "wx_group_task_cron" and dc.value = a.cron
+		LEFT JOIN sys_dict dt ON dt.type = "wx_group_task_type" and dt.value = a.type
+		LEFT JOIN sys_dict dc ON dc.type = "wx_group_task_cron" and dc.value = a.cron
 	</sql>
     
     <select id="getByNickname" resultType="WxGroupTask">
