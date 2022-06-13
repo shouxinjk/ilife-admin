@@ -3,6 +3,9 @@
  */
 package com.pcitech.iLife.modules.wx.web;
 
+import java.util.Date;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,16 +14,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.Broker;
+import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.wx.entity.WxGroup;
+import com.pcitech.iLife.modules.wx.entity.WxGroupTask;
 import com.pcitech.iLife.modules.wx.service.WxGroupService;
+import com.pcitech.iLife.modules.wx.service.WxGroupTaskService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 微信群Controller
@@ -33,6 +47,10 @@ public class WxGroupController extends BaseController {
 
 	@Autowired
 	private WxGroupService wxGroupService;
+	@Autowired
+	private WxGroupTaskService wxGroupTaskService;
+	@Autowired
+	private BrokerService brokerService;
 	
 	@ModelAttribute
 	public WxGroup get(@RequestParam(required=false) String id) {
@@ -78,6 +96,57 @@ public class WxGroupController extends BaseController {
 		wxGroupService.delete(wxGroup);
 		addMessage(redirectAttributes, "删除微信群成功");
 		return "redirect:"+Global.getAdminPath()+"/wx/wxGroup/?repage";
+	}
+	
+	/**
+	 * 同步微信群。
+	 * 如果已经存在，则不做处理。
+	 * 如果不存在则建立群，并且建立默认群任务
+	 * 参数：
+	 * gname: 群名称
+	 * gid: 群ID
+	 * token: 激活码
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/sync", method = RequestMethod.POST)
+	public Map<String,Object> updateGroupTask(@RequestBody JSONObject data) {
+		Map<String,Object> result = Maps.newHashMap();
+		result.put("success", false);
+		WxGroup wxGroup = new WxGroup();
+		wxGroup.setGid(data.getString("gid"));
+		if(wxGroupService.findList(wxGroup).size()>0) {
+			result.put("msg", "group exists. skipped.");
+			result.put("success", true);
+			return result;
+		}
+		//新建群
+		Broker broker = brokerService.get(data.getString("brokerId"));
+		String id = Util.md5(data.getString("gid"));
+		wxGroup.setId(id);
+		wxGroup.setIsNewRecord(true);
+		wxGroup.setBroker(broker);
+		wxGroup.setName(data.getString("gname"));
+		wxGroup.setMembers(data.getInteger("members"));
+		wxGroup.setToken(data.getString("token"));
+		wxGroup.setStatus("active");
+		wxGroup.setCreateDate(new Date());
+		wxGroup.setUpdateDate(new Date());
+		wxGroupService.save(wxGroup);
+		
+		//新建群任务
+		WxGroupTask wxGroupTask = new WxGroupTask();
+		wxGroupTask.setBroker(broker);
+		wxGroupTask.setWxgroup(wxGroup);
+		wxGroupTask.setType("sendItem");
+		wxGroupTask.setCron("0 */15 * * * ?");
+		wxGroupTask.setName("默认任务");
+		wxGroupTask.setCreateDate(new Date());
+		wxGroupTask.setUpdateDate(new Date());
+		wxGroupTaskService.save(wxGroupTask);
+		
+		result.put("msg", "group and group task created.");
+		result.put("success", true);
+		return result;
 	}
 
 }

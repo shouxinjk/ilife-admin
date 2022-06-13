@@ -56,7 +56,7 @@
 			<tr>
 				<th>所属达人</th>
 				<th>对应分群</th>
-				<th>推送规则CRON</th>
+				<!--th>推送规则CRON</th-->
 				<th>微信群名称</th>
 				<th>群主</th>
 				<th>微信群ID</th>
@@ -77,9 +77,9 @@
 				<td>
 					${wxGroup.persona.name}
 				</td>
-				<td>
+				<!--td>
 					${wxGroup.schedule}
-				</td>
+				</td-->
 				<td>
 					${wxGroup.name}
 				</td>

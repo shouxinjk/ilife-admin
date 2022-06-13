@@ -58,6 +58,9 @@
 			<if test="owner != null and owner != ''">
 				AND a.owner = #{owner}
 			</if>
+			<if test="gid != null and gid != ''">
+				AND a.gid = #{gid}
+			</if>			
 			<if test="token != null and token != ''">
 				AND a.token = #{token}
 			</if>
