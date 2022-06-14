@@ -3,9 +3,13 @@
  */
 package com.pcitech.iLife.modules.wx.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.wx.entity.WxBot;
+import com.pcitech.iLife.modules.wx.entity.WxTopping;
 
 /**
  * 微信机器人DAO接口
@@ -14,5 +18,6 @@ import com.pcitech.iLife.modules.wx.entity.WxBot;
  */
 @MyBatisDao
 public interface WxBotDao extends CrudDao<WxBot> {
-	
+	//获取待更新Bot记录 
+	public WxBot getPendingBot();
 }

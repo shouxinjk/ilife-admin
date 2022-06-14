@@ -166,4 +166,158 @@ public class WxBotController extends BaseController {
 		return result;
 	}
 
+
+	/**
+	 * 机器人启动时信息同步。
+	 * 同步内容主要为botId及qrcode
+	 * 对于重新启动或退出后重新登录的情况，包含有oldBotId，直接根据oldBotId更新即可。更新内容包括botId、qrcodeUrl。并发送通知到指定达人通知重新登录
+	 * 对于新建机器人，启动后将只有botId，默认将优先自动分配给botId为空的记录；如果没有botId为空的记录则新建一个机器人记录
+	 * 
+	 * 参数:
+	 * botId：必须。是当前启动bot实例ID。更新到到wechatyid 
+	 * oldBotId：可选。有则更新原有记录，否则新建
+	 * status: 可选。状态
+	 * qrcodeUrl：可选。二维码链接
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/sync", method = RequestMethod.POST)
+	public Map<String,Object> syncBotInfo( @RequestBody JSONObject json) {
+		Map<String,Object> result = Maps.newHashMap();
+		result.put("success", false);
+		
+		//参数检查，必须有botId
+		if(json.getString("botId")==null || json.getString("botId").trim().length()==0) {
+			result.put("msg", "bot id cannot be empty.");
+			return result;
+		}
+
+		//先检查是否有oldBotId
+		if(json.getString("oldBotId")!=null && json.getString("oldBotId").trim().length()>0) {//表示是一个已有bot重启或重新登录
+			logger.debug("try to update existed bot.[oldBotId]"+json.getString("oldBotId"));
+			WxBot wxBot = new WxBot();
+			wxBot.setWechatyId(json.getString("oldBotId"));
+			List<WxBot> wxBots = wxBotService.findList(wxBot);
+			if(wxBots == null || wxBots.size()==0) {
+				logger.debug("cannot find bot by wechatyId:"+json.getString("oldBotId"));
+				//后续按照新bot处理。
+			}else {
+				wxBot = wxBots.get(0);
+				wxBot.setWechatyId(json.getString("botId"));
+				if(json.getString("qrcodeUrl")!=null)
+					wxBot.setQrcodeUrl(json.getString("qrcodeUrl"));
+				if(json.getString("status")!=null)
+					wxBot.setStatus(json.getString("status"));
+				wxBot.setUpdateDate(new Date());
+				wxBotService.save(wxBot);
+				//TODO 需要发送通知给对应达人，扫码登录
+				result.put("success", true);
+				result.put("msg", "update botId on existed bot record. done.");
+				return result;
+			}
+		}
+		
+		//其次更新当前botId 更新：此情况仅出现在bot重启，但能够自动登录时
+		WxBot wxBot = new WxBot();
+		wxBot.setWechatyId(json.getString("botId"));
+		List<WxBot> wxBots = wxBotService.findList(wxBot);
+		if(wxBots == null || wxBots.size()==0) {
+			logger.debug("cannot find bot by wechatyId:"+json.getString("botId"));
+			//后续按照新bot处理。
+		}else {
+			wxBot = wxBots.get(0);
+			//wxBot.setWechatyId(json.getString("botId"));
+			if(json.getString("qrcodeUrl")!=null)
+				wxBot.setQrcodeUrl(json.getString("qrcodeUrl"));
+			if(json.getString("status")!=null)
+				wxBot.setStatus(json.getString("status"));
+			if(json.getDate("heartBeat")!=null)
+				wxBot.setHeartBeat(json.getDate("heartBeat"));
+			wxBot.setUpdateDate(new Date());
+			wxBotService.save(wxBot);
+			result.put("success", true);
+			result.put("msg", "update existed bot done.");
+			return result;
+		}
+		
+		//然后查看是否有botId为空的记录
+		wxBot = wxBotService.getPendingBot();
+		if(wxBot!=null) {
+			wxBot.setWechatyId(json.getString("botId"));
+			if(json.getString("qrcodeUrl")!=null)
+				wxBot.setQrcodeUrl(json.getString("qrcodeUrl"));
+			if(json.getString("status")!=null)
+				wxBot.setStatus(json.getString("status"));
+			wxBot.setUpdateDate(new Date());
+			wxBotService.save(wxBot);
+			//TODO 需要发送通知给对应达人，扫码登录
+			result.put("success", true);
+			result.put("msg", "assign bot to pending request done.");
+			return result;
+		}
+		
+		//最后新建一个bot记录。达人分配给system
+		wxBot = new WxBot();
+		Broker broker = brokerService.get("system");//默认分配给系统达人
+		String botId = Util.get32UUID();
+		wxBot.setBroker(broker);
+		wxBot.setId(botId);
+		wxBot.setIsNewRecord(true);
+		wxBot.setName("待分配BOT");
+		wxBot.setWechatyId(json.getString("botId"));
+		if(json.getString("qrcodeUrl")!=null)
+			wxBot.setQrcodeUrl(json.getString("qrcodeUrl"));
+		if(json.getString("status")!=null)
+			wxBot.setStatus(json.getString("status"));
+		wxBot.setType(json.getString("type")!=null?json.getString("type"):"web");//默认设为web
+		wxBot.setEffectFrom(json.getDate("effectFrom")!=null?json.getDate("effectFrom"):new Date());
+		wxBot.setExpireOn(json.getDate("expireOn")!=null?json.getDate("expireOn"):null);
+		wxBot.setCreateDate(new Date());
+		wxBot.setUpdateDate(new Date());
+		wxBotService.save(wxBot);
+		result.put("success", true);
+		result.put("data", wxBotService.get(botId));
+		result.put("msg", "new bot created successfully.");
+		return result;
+	}
+
+	/**
+	 * 更新机器人心跳
+	 * 
+	 * 参数:
+	 * botId：必须。是当前启动bot实例ID
+	 * heartBeat：必须。是心跳检测时间
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/heartbeat", method = RequestMethod.POST)
+	public Map<String,Object> syncHeartBeat( @RequestBody JSONObject json) {
+		Map<String,Object> result = Maps.newHashMap();
+		result.put("success", false);
+		
+		//参数检查，必须有botId
+		if(json.getString("botId")==null || json.getString("botId").trim().length()==0) {
+			result.put("msg", "bot id cannot be empty.");
+			return result;
+		}
+
+		//其次更新当前botId 更新：此情况仅出现在bot重启，但能够自动登录时
+		WxBot wxBot = new WxBot();
+		wxBot.setWechatyId(json.getString("botId"));
+		List<WxBot> wxBots = wxBotService.findList(wxBot);
+		if(wxBots == null || wxBots.size()==0) {
+			logger.debug("cannot find bot by wechatyId:"+json.getString("botId"));
+			result.put("msg", "cannot find bot by id."+json.getString("botId"));
+			return result;
+		}else {
+			wxBot = wxBots.get(0);
+			if(json.getDate("heartBeat")!=null)
+				wxBot.setHeartBeat(json.getDate("heartBeat"));
+			else
+				wxBot.setHeartBeat(new Date());
+			wxBot.setUpdateDate(new Date());
+			wxBotService.save(wxBot);
+			result.put("success", true);
+			result.put("msg", "heart beat updated.");
+			return result;
+		}
+	}
 }

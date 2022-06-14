@@ -21,7 +21,11 @@ import com.pcitech.iLife.modules.wx.dao.WxBotDao;
 @Service
 @Transactional(readOnly = true)
 public class WxBotService extends CrudService<WxBotDao, WxBot> {
-
+	//获取待更新Bot记录 
+	public WxBot getPendingBot() {
+		return dao.getPendingBot();
+	}
+	
 	public WxBot get(String id) {
 		return super.get(id);
 	}

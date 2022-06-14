@@ -37,6 +37,17 @@
 		WHERE a.id = #{id}
 	</select>
 	
+	<!-- 查询得到一个wechatyId为空的记录。按照时间升序仅取第一个 -->
+	<select id="getPendingBot" resultType="WxBot">
+		SELECT 
+			<include refid="wxBotColumns"/>
+		FROM wx_bot a
+		<include refid="wxBotJoins"/>
+		WHERE a.wechaty_id = "" or a.wechaty_id is null
+		order by a.create_date 
+		limit 1
+	</select>	
+	
 	<select id="findList" resultType="WxBot">
 		SELECT 
 			<include refid="wxBotColumns"/>
