@@ -309,6 +309,8 @@ public class WxBotController extends BaseController {
 			return result;
 		}else {
 			wxBot = wxBots.get(0);
+			if(json.getString("status")!=null)
+				wxBot.setStatus(json.getString("status"));
 			if(json.getDate("heartBeat")!=null)
 				wxBot.setHeartBeat(json.getDate("heartBeat"));
 			else
