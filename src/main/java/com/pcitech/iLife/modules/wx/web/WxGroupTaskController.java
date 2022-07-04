@@ -119,6 +119,7 @@ public class WxGroupTaskController extends BaseController {
 		}
 		WxGroupTask wxGroupTask = new WxGroupTask();
 		wxGroupTask.setBroker(broker);
+		wxGroupTask.setStatus("active");
 		return wxGroupTaskService.findList(wxGroupTask);//根据brokerId获取列表
 	}
 
