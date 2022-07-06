@@ -482,6 +482,10 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 		Broker broker = brokerService.getByOpenid(openid);//根据openid获取父级达人
 		if(broker == null)//如果未找到对应的达人直接返回空
 			return map;
+		//注销时直接将阅豆归零。如果是负数则保持不变
+		if(broker.getPoints()>0) {
+			broker.setPoints(0);
+		}
 		broker.setStatus("offline");
 		try {
 			brokerService.save(broker);
