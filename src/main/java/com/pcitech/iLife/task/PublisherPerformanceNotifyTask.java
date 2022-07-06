@@ -52,7 +52,7 @@ public class PublisherPerformanceNotifyTask{
     		
     		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		
-    		int days = 365;//查询当天的效益。执行时间减去24小时
+    		int days = 30;//查询当天的效益。执行时间减去24小时。由于活跃度不高，调整为当月数据
     		List<String> pendingPublisherIds = brokerService.findNotifyCandidatePublisherIdList(days);
     		
     		//查询得到排行数据
@@ -104,8 +104,8 @@ public class PublisherPerformanceNotifyTask{
     			json.put("timestamp", fmt2.format(new Date()));
     			json.put("points", stat.get("points")+" 阅豆");
     			String remark = "";
-    			remark+="累计增阅："+stat.get("readsCount");
-    			remark+="\n累计增粉："+stat.get("subscribesCount");
+    			remark+="增阅："+stat.get("readsCount");
+    			remark+="\n增粉："+stat.get("subscribesCount");
     			/**
     			try {
     				int subscriberCount = Integer.parseInt(""+stat.get("subscribesCount"));
