@@ -52,7 +52,7 @@ public class PublisherPerformanceNotifyTask{
     		
     		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		
-    		int days = 30;//查询当天的效益。执行时间减去24小时。由于活跃度不高，调整为当月数据
+    		int days = 365;//查询当天的效益。执行时间减去24小时。由于活跃度不高，调整为当月数据
     		List<String> pendingPublisherIds = brokerService.findNotifyCandidatePublisherIdList(days);
     		
     		//查询得到排行数据
