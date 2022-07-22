@@ -5,6 +5,8 @@ package com.pcitech.iLife.modules.wx.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.Broker;
@@ -18,5 +20,5 @@ import com.pcitech.iLife.modules.wx.entity.WxGroupTask;
 @MyBatisDao
 public interface WxGroupTaskDao extends CrudDao<WxGroupTask> {
 	//根据nickname获取指定达人的微信群任务
-	public List<WxGroupTask> getByNickname(String nickname);
+	public List<WxGroupTask> getByNickname(@Param("nickname") String nickname);
 }
