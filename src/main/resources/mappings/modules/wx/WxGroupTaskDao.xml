@@ -7,6 +7,7 @@
 		a.broker_id AS "broker.id",
 		b.name AS "broker.name",
 		b.nickname AS "broker.nickname",
+		b.openid AS "broker.openid",
 		a.group_id AS "wxgroup.id",
 		g.name AS "wxgroup.name",
 		g.gid AS "wxgroup.gid",
@@ -36,10 +37,13 @@
 			<include refid="wxGroupTaskColumns"/>
 		FROM wx_group_task a
 		<include refid="wxGroupTaskJoins"/>
-		WHERE b.nickname = #{nickname} 
+		WHERE a.del_flag = 0
 		AND g.status = "active" 
+		AND a.status = "active" 
 		AND g.del_flag = 0
-		AND a.del_flag = 0
+		<if test="nickname != null and nickname != ''">
+			AND b.nickname = #{nickname}
+		</if>		
 	</select>    
     
 	<select id="get" resultType="WxGroupTask">
