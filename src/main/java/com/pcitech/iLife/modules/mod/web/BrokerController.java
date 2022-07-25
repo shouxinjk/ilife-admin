@@ -104,7 +104,8 @@ public class BrokerController extends BaseController {
 		if(broker.getPoints()==0) {
 			broker.setPoints(20);//默认虚拟豆：固化写死
 		}//**/
-		//检查阅豆，如果低于0则发送提示消息：在-1和-2时，发送通知
+		//检查阅豆，如果低于0则发送提示消息：在-1和-2时，发送通知：当前暂停通知
+		/**
 		if(broker.getPoints()<0 && broker.getPoints()>-3) {
 			//组装模板消息
 			JSONObject json = new JSONObject();
@@ -127,6 +128,7 @@ public class BrokerController extends BaseController {
 					Global.getConfig("wechat.templateMessenge")+"/notify-mp-publisher-rank", 
 					json,header);			
 		}
+		//**/
 		//检查达人等级：强制达人等级=parent等级+1
 		Broker parent = brokerService.get(broker.getParent().getId());//注意需要另外获取，broker.parent内不包含hierarchy信息
 		broker.setHierarchy(parent==null?1:parent.getHierarchy()+1);
