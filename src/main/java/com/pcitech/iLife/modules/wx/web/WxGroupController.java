@@ -141,7 +141,7 @@ public class WxGroupController extends BaseController {
 		wxGroupTask.setType("sendItem");
 		wxGroupTask.setTags("*");
 		wxGroupTask.setStatus("active");
-		wxGroupTask.setCron((System.currentTimeMillis()%60)+" */15 * * * ?");//随机取开始秒数
+		wxGroupTask.setCron((System.currentTimeMillis()%60)+" */15 7-22 * * ?");//随机取开始秒数
 		wxGroupTask.setName("自动推送商品");
 		wxGroupTask.setCreateDate(new Date());
 		wxGroupTask.setUpdateDate(new Date());
@@ -154,7 +154,7 @@ public class WxGroupController extends BaseController {
 		wxGroupTask.setType("sendFeature");
 		wxGroupTask.setTags("*");
 		wxGroupTask.setStatus("active");
-		wxGroupTask.setCron((System.currentTimeMillis()%60)+" */5 * * * ?");//随机取开始秒数
+		wxGroupTask.setCron((System.currentTimeMillis()%60)+" */5 7-23 * * ?");//随机取开始秒数
 		wxGroupTask.setName("手动推送商品");
 		wxGroupTask.setCreateDate(new Date());
 		wxGroupTask.setUpdateDate(new Date());
