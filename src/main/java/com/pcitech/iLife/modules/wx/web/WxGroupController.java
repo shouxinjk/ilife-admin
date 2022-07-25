@@ -134,15 +134,28 @@ public class WxGroupController extends BaseController {
 		wxGroup.setUpdateDate(new Date());
 		wxGroupService.save(wxGroup);
 		
-		//新建群任务
+		//新建群任务：自动推送
 		WxGroupTask wxGroupTask = new WxGroupTask();
 		wxGroupTask.setBroker(broker);
 		wxGroupTask.setWxgroup(wxGroup);
 		wxGroupTask.setType("sendItem");
 		wxGroupTask.setTags("*");
 		wxGroupTask.setStatus("active");
-		wxGroupTask.setCron("0 */15 * * * ?");
-		wxGroupTask.setName("默认任务");
+		wxGroupTask.setCron((System.currentTimeMillis()%60)+" */15 * * * ?");//随机取开始秒数
+		wxGroupTask.setName("自动推送商品");
+		wxGroupTask.setCreateDate(new Date());
+		wxGroupTask.setUpdateDate(new Date());
+		wxGroupTaskService.save(wxGroupTask);
+		
+		//新建群任务：手动推送
+		wxGroupTask = new WxGroupTask();
+		wxGroupTask.setBroker(broker);
+		wxGroupTask.setWxgroup(wxGroup);
+		wxGroupTask.setType("sendFeature");
+		wxGroupTask.setTags("*");
+		wxGroupTask.setStatus("active");
+		wxGroupTask.setCron((System.currentTimeMillis()%60)+" */5 * * * ?");//随机取开始秒数
+		wxGroupTask.setName("手动推送商品");
 		wxGroupTask.setCreateDate(new Date());
 		wxGroupTask.setUpdateDate(new Date());
 		wxGroupTaskService.save(wxGroupTask);
