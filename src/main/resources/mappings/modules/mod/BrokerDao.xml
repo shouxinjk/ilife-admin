@@ -8,6 +8,9 @@
 		p.nickname AS "parent.nickname",
 		a.orgnization_id AS "orgnization.id",
 		org.name AS "orgnization.name",
+		a.sys_user_id AS "sysUser.id",
+		su.name AS "sysUser.name",
+		su.login_name AS "sysUser.loginName",
 		a.id AS "id",
 		a.openid AS "openid",
 		a.nickname AS "nickname",
@@ -36,6 +39,7 @@
 	<sql id="brokerJoins">
 		LEFT JOIN sys_user uu ON uu.id = a.update_by 
 		LEFT JOIN sys_office org ON org.id = a.orgnization_id 
+		LEFT JOIN sys_user su ON su.id = a.sys_user_id 
 		LEFT JOIN mod_broker p ON p.id = a.parent_id	
 	</sql>
     
@@ -222,6 +226,7 @@
 		INSERT INTO mod_broker(
 			parent_id,
 			orgnization_id,
+			sys_user_id,
 			id,
 			openid,
 			nickname,
@@ -248,6 +253,7 @@
 		) VALUES (
 			#{parent.id},
 			#{orgnization.id},
+			#{sysUser.id},
 			#{id},
 			#{openid},
 			#{nickname},
@@ -278,6 +284,7 @@
 		UPDATE mod_broker SET 	
 			parent_id = #{parent.id},
 			orgnization_id = #{orgnization.id},
+			sys_user_id = #{sysUser.id},
 			openid = #{openid},
 			nickname = #{nickname},
 			avatarUrl = #{avatarUrl},

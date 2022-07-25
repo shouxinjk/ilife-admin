@@ -41,6 +41,13 @@
 			</div>
 		</div>		
 		<div class="control-group">
+			<label class="control-label">系统用户:</label>
+			<div class="controls">
+                <sys:treeselect id="sysUser" name="sysUser.id" value="${broker.sysUser.id}" labelName="sysUser.name" labelValue="${broker.sysUser.name}"
+					title="系统用户" url="/sys/user/treeData" cssClass="" allowClear="true"/>
+			</div>
+		</div>			
+		<div class="control-group">
 			<label class="control-label">上级达人：</label>
 			<div class="controls">
 				<sys:treeselect id="parent" name="parent.id" value="${broker.parent.id}" labelName="parent.name" labelValue="${broker.parent.name}"

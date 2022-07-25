@@ -40,6 +40,7 @@
 				<th>昵称</th>
 				<!--th>姓名</th-->
 				<th>机构</th>
+				<th>系统用户</th>
 				<th>上级达人</th>
 				<!--th>电话</th-->
 				<th>二维码</th>
@@ -65,6 +66,7 @@
 				<td>${broker.nickname}</td>
 				<!--td>${broker.name}</td-->
 				<td>${broker.orgnization.name}</td>
+				<td>${broker.sysUser.name}</td>
 				<td>${broker.parent.nickname}</td>				
 				<!--td>${broker.phone}</td-->	
 				<td>${broker.qrcodeUrl== null?"无":"已生成"}</td>		

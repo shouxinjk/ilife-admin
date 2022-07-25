@@ -13,6 +13,7 @@ import org.hibernate.validator.constraints.Length;
 
 import com.pcitech.iLife.common.persistence.DataEntity;
 import com.pcitech.iLife.modules.sys.entity.Office;
+import com.pcitech.iLife.modules.sys.entity.User;
 
 /**
  * 达人管理Entity
@@ -23,6 +24,7 @@ public class Broker extends DataEntity<Broker> {
 	
 	private static final long serialVersionUID = 1L;
 	private Office orgnization;	// 归属公司
+	private User sysUser; //对应系统账户
 	private Broker parent;		// 上级达人
 	private String openid;		// openid
 	private String nickname;		// 昵称：从微信获取
@@ -66,6 +68,14 @@ public class Broker extends DataEntity<Broker> {
 	public void setOpenid(String openid) {
 		this.openid = openid;
 	}
+	public User getSysUser() {
+		return sysUser;
+	}
+
+	public void setSysUser(User sysUser) {
+		this.sysUser = sysUser;
+	}
+
 	public String getNickname() {
 		return nickname;
 	}

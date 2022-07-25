@@ -201,7 +201,9 @@
 			a.id, a.name, a.login_name
 		FROM sys_user a
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="office != null and office.id != null and office.id != ''">
 			AND a.office_id = #{office.id}
+		</if>
 		ORDER BY a.name
 	</select>
 	
