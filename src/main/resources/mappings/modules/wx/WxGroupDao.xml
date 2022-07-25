@@ -35,6 +35,16 @@
 		<include refid="wxGroupJoins"/>
 		WHERE a.id = #{id}
 	</select>
+
+	<!-- 根据微信群名称 -->
+	<select id="findGroupByName" resultType="WxGroup">
+		SELECT 
+			<include refid="wxGroupColumns"/>
+		FROM wx_group a
+		<include refid="wxGroupJoins"/>
+		WHERE a.name = #{name}
+		limit 1		
+	</select>
 	
 	<!-- 查询所有建立有sendFeature任务的微信群 -->
 	<select id="findFeaturedGroup" resultType="WxGroup">

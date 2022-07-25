@@ -5,6 +5,7 @@ package com.pcitech.iLife.modules.wx.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,11 @@ public class WxGroupService extends CrudService<WxGroupDao, WxGroup> {
 	//查询建立有sendFeature任务的微信群
 	public List<WxGroup> findFeaturedGroup(WxGroup wxGroup){
 		return dao.findFeaturedGroup(wxGroup);
+	}
+	
+	//根据名称查询微信群
+	public WxGroup findGroupByName(String name) {
+		return dao.findGroupByName(name);
 	}
 	
 	public WxGroup get(String id) {

@@ -9,7 +9,6 @@
 		b.nickname AS "broker.nickname",
 		b.openid AS "broker.openid",
 		a.group_id AS "wxgroup.id",
-		g.id AS "wxgroup.id",
 		g.name AS "wxgroup.name",
 		g.gid AS "wxgroup.gid",
 		a.name AS "name",

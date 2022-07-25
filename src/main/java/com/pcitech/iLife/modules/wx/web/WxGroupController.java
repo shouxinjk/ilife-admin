@@ -152,6 +152,29 @@ public class WxGroupController extends BaseController {
 		return result;
 	}
 
+	/**
+	 * 修改微信名称
+	 * 参数：
+	 * old 原有名称
+	 * new 修改后名称
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/changeTopic", method = RequestMethod.POST)
+	public Map<String,Object> changeGroupName(@RequestBody JSONObject data) {
+		Map<String,Object> result = Maps.newHashMap();
+		result.put("success", false);
+		WxGroup wxGroup = wxGroupService.findGroupByName(data.getString("old"));
+		if(wxGroup == null) {
+			result.put("msg", "group doesnot exist.");
+		}else {
+			wxGroup.setName(data.getString("new"));
+			wxGroupService.save(wxGroup);
+			result.put("msg", "group name updated.");
+			result.put("success", true);
+		}
+		return result;
+	}
 
 	/**
 	 * 根据brokerId加载微信群
