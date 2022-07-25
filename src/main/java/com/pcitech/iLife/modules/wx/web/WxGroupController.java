@@ -168,7 +168,8 @@ public class WxGroupController extends BaseController {
 			Broker broker = brokerService.get(brokerId);
 			wxGroup.setBroker(broker);
 		}
-		return wxGroupService.findList(wxGroup);
+		//return wxGroupService.findList(wxGroup);
+		return wxGroupService.findFeaturedGroup(wxGroup);
 	}
 	
 }

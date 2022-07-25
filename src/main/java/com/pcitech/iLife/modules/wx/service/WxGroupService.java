@@ -21,7 +21,11 @@ import com.pcitech.iLife.modules.wx.dao.WxGroupDao;
 @Service
 @Transactional(readOnly = true)
 public class WxGroupService extends CrudService<WxGroupDao, WxGroup> {
-
+	//查询建立有sendFeature任务的微信群
+	public List<WxGroup> findFeaturedGroup(WxGroup wxGroup){
+		return dao.findFeaturedGroup(wxGroup);
+	}
+	
 	public WxGroup get(String id) {
 		return super.get(id);
 	}

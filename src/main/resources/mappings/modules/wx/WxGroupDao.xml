@@ -36,6 +36,25 @@
 		WHERE a.id = #{id}
 	</select>
 	
+	<!-- 查询所有建立有sendFeature任务的微信群 -->
+	<select id="findFeaturedGroup" resultType="WxGroup">
+		SELECT 
+			a.id AS "id",
+			a.name AS "name",
+			a.owner AS "owner",
+			a.gid AS "gid"
+		FROM wx_group_task b
+		left join wx_group a on b.group_id = a.id
+		WHERE a.status="active"
+		AND b.status = "active"
+		AND a.del_flag = 0
+		AND b.del_flag = 0
+		AND b.type="sendFeature"
+		<if test="broker != null and broker.id != null and broker.id != ''">
+			AND a.broker_id = #{broker.id}
+		</if>		
+	</select>
+	
 	<select id="findList" resultType="WxGroup">
 		SELECT 
 			<include refid="wxGroupColumns"/>
