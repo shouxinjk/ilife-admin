@@ -26,11 +26,15 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
+import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.ope.entity.Item;
 import com.pcitech.iLife.modules.ope.entity.Person;
 import com.pcitech.iLife.modules.ope.service.ItemService;
+import com.pcitech.iLife.modules.sys.entity.User;
+import com.pcitech.iLife.modules.sys.utils.UserUtils;
 
 /**
  * 商品Controller
@@ -40,7 +44,8 @@ import com.pcitech.iLife.modules.ope.service.ItemService;
 @Controller
 @RequestMapping(value = "${adminPath}/ope/item")
 public class ItemController extends BaseController {
-
+	@Autowired
+	private BrokerService brokerService;
 	@Autowired
 	private ItemService itemService;
 	@Autowired
@@ -125,6 +130,11 @@ public class ItemController extends BaseController {
 	@RequiresPermissions("ope:item:view")
 	@RequestMapping(value = "index")
 	public String index(Model model) {
+		//获取当前用户账户，并根据当前用户账户获取对应的达人
+		User currentUser = UserUtils.getUser();
+		Broker broker = brokerService.getBySysUserid(currentUser.getId());
+		if(broker!=null)
+			model.addAttribute("brokerId",broker.getId());
 		model.addAttribute("url","ope/item");
 		model.addAttribute("title","商品");
 		return "treeData/index";

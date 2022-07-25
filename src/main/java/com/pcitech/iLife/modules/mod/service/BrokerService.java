@@ -52,7 +52,11 @@ public class BrokerService extends CrudService<BrokerDao, Broker> {
 	public Broker get(String id) {
 		return super.get(id);
 	}
-	
+	//根据sysUserId获取指定达人信息
+	public Broker getBySysUserid(String sysUserId) {
+		return dao.getBySysUserid(sysUserId);
+	}
+		
 	public Broker getByOpenid(String openid) {
 		return dao.getByOpenid(openid);
 	}

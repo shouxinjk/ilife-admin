@@ -29,6 +29,9 @@ public interface BrokerDao extends CrudDao<Broker> {
 	//根据达人ID、天数，查询流量主收益数据
 	public Map<String,Object> findNotifyPublisherStat(Map<String,Object> params);
 	
+	//根据sysUserId获取指定达人信息
+	public Broker getBySysUserid(String sysUserId);
+	
 	//根据openid获取指定达人信息
 	public Broker getByOpenid(String openid);
 	

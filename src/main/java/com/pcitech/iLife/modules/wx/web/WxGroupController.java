@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.wx.web;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -151,4 +152,23 @@ public class WxGroupController extends BaseController {
 		return result;
 	}
 
+
+	/**
+	 * 根据brokerId加载微信群
+	 * 如果broker为空，则加载所有活跃状态微信群
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/listByBrokerId", method = RequestMethod.GET)
+	public List<WxGroup> listGroupByBrokerId(@RequestParam String brokerId) {
+		Map<String,Object> result = Maps.newHashMap();
+		result.put("success", false);
+		WxGroup wxGroup = new WxGroup();
+		wxGroup.setStatus("active");//仅支持活跃微信群
+		if(brokerId!=null&&brokerId.trim().length()>0) {
+			Broker broker = brokerService.get(brokerId);
+			wxGroup.setBroker(broker);
+		}
+		return wxGroupService.findList(wxGroup);
+	}
+	
 }

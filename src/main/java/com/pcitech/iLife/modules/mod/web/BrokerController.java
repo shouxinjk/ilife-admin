@@ -38,7 +38,9 @@ import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.sys.entity.Dict;
+import com.pcitech.iLife.modules.sys.entity.User;
 import com.pcitech.iLife.modules.sys.service.DictService;
+import com.pcitech.iLife.modules.sys.utils.UserUtils;
 import com.pcitech.iLife.util.HttpClientHelper;
 import com.pcitech.iLife.util.Util;
 
@@ -162,6 +164,7 @@ public class BrokerController extends BaseController {
 		return mapList;
 	}
 
+	
 	/**
 	 * 根据openid获取指定达人信息
 	 * 不会自动创建
