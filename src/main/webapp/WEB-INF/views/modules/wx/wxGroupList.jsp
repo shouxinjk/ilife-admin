@@ -66,7 +66,7 @@
 				<th>微信群名称</th>
 				<th>合作类型</th>
 				<th>群主</th>
-				<th>微信群ID</th>
+				<!--th>微信群ID</th-->
 				<th>成员人数</th>
 				<th>激活码</th>
 				<th>状态</th>
@@ -96,9 +96,9 @@
 				<td>
 					${wxGroup.owner}
 				</td>
-				<td>
+				<!--td>
 					${wxGroup.gid}
-				</td>
+				</td-->
 				<td>
 					${wxGroup.members}
 				</td>
