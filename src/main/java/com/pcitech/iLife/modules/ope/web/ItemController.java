@@ -77,7 +77,14 @@ public class ItemController extends BaseController {
 			} catch (UnsupportedEncodingException e) {
 			}
 		}
-		return "redirect:http://www.shouxinjk.net/list-admin/index.html?classify="+treeId+categoryName;//直接跳转到商品标注界面，需要保留header显示，提供搜索及排序功能
+		//获取当前用户账户，并根据当前用户账户获取对应的达人
+		String brokerId = "";
+		User currentUser = UserUtils.getUser();
+		Broker broker = brokerService.getBySysUserid(currentUser.getId());
+		if(broker!=null) {
+			brokerId = "&brokerId="+broker.getId();
+		}
+		return "redirect:http://www.shouxinjk.net/list-admin/index.html?classify="+treeId+categoryName+brokerId;//直接跳转到商品标注界面，需要保留header显示，提供搜索及排序功能
 	}
 
 	@RequiresPermissions("ope:item:view")
