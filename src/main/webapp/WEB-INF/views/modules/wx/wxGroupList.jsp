@@ -58,6 +58,7 @@
 				<th>对应分群</th>
 				<!--th>推送规则CRON</th-->
 				<th>微信群名称</th>
+				<th>合作类型</th>
 				<th>群主</th>
 				<th>微信群ID</th>
 				<th>成员人数</th>
@@ -83,6 +84,9 @@
 				<td>
 					${wxGroup.name}
 				</td>
+				<td>
+					${fns:getDictLabel(wxGroup.type, 'wx_group_type', '')}
+				</td>				
 				<td>
 					${wxGroup.owner}
 				</td>

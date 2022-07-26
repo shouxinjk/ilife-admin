@@ -22,6 +22,7 @@ public class WxGroup extends DataEntity<WxGroup> {
 	private Persona persona;		// 对应分群
 	private String schedule;		// 推送规则CRON
 	private String name;		// 微信群名称
+	private String type;		// 微信群类型：合作、自建、非合作
 	private String owner;		// 群主
 	private String gid;		// 微信群ID
 	private Integer members;		// 成员人数
@@ -72,6 +73,14 @@ public class WxGroup extends DataEntity<WxGroup> {
 		this.name = name;
 	}
 	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	@Length(min=0, max=512, message="群主长度必须介于 0 和 512 之间")
 	public String getOwner() {
 		return owner;

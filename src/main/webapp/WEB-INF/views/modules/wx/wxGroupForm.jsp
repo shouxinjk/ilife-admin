@@ -34,6 +34,15 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
+			<label class="control-label">合作类型：</label>
+			<div class="controls">
+				<form:select path="type" class="input-xlarge ">
+					<form:option value="" label=""/>
+					<form:options items="${fns:getDictList('wx_group_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">所属达人：</label>
 			<div class="controls">
 				<form:input path="broker.id" htmlEscape="false" maxlength="64" class="input-xlarge "/>
