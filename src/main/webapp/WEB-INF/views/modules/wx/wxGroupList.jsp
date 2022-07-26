@@ -40,6 +40,12 @@
 			<li><label>激活码：</label>
 				<form:input path="token" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
+			<li><label>类型：</label>
+				<form:select path="type" class="input-medium">
+					<form:option value="" label=""/>
+					<form:options items="${fns:getDictList('wx_group_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+			</li>			
 			<li><label>状态：</label>
 				<form:select path="status" class="input-medium">
 					<form:option value="" label=""/>
