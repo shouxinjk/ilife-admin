@@ -113,6 +113,32 @@ public class WxArticleController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/wx/wxArticle/?repage";
 	}
 	
+	
+	/**
+	 * 获取当前时段的所有指定文章列表。
+	 * 包括充值置顶，及阅豆置顶
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/topping-articles", method = RequestMethod.GET)
+	public List<WxArticle> listPagedGroupingArticles( @RequestParam(required=true) int from,
+			@RequestParam(required=true) int to,
+			@RequestParam String openid,
+			@RequestParam String publisherOpenid) {
+		//组织参数
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("from", from);
+		params.put("to", to);
+		if(openid!=null && openid.trim().length()>0) {
+			params.put("openid", openid);
+		}
+		if(publisherOpenid!=null && publisherOpenid.trim().length()>0) {
+			params.put("publisherOpenid", publisherOpenid);
+		}
+		
+		return wxArticleService.findToppingList(params);
+
+	}
+	
 	/**
 	 * 获取待阅读文章列表:支持根据发布者 openid 过滤
 	 * 包括置顶文章及普通文章两部分，在获取第一页时，优先获取指定列表，

@@ -146,6 +146,27 @@ public class WxAccountController extends BaseController {
 
 	
 	/**
+	 * 查询置顶公众号列表
+	 * 包括充值置顶，阅豆置顶
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/topping-accounts", method = RequestMethod.GET)
+	public List<WxAccount> listPagedToppingAccounts( @RequestParam(required=true) int from,@RequestParam(required=true) int to,@RequestParam String openid,@RequestParam String publisherOpenid) {
+		//组织参数
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("from", from);
+		params.put("to", to);
+		if(openid!=null && openid.trim().length()>0) {
+			params.put("openid", openid);
+		}
+		if(publisherOpenid!=null && publisherOpenid.trim().length()>0) {
+			params.put("publisherOpenid", publisherOpenid);
+		}
+		return wxAccountService.findToppingList(params);
+	}
+
+	
+	/**
 	 * 获取班车待互关公众号列表:支持根据发布者 openid 过滤
 	 * 显示开车群code内的所有公众号列表，按照加入时间升序排列
 	 */
