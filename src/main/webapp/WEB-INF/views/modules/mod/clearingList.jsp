@@ -67,8 +67,8 @@
 				<td>${clearing.statusClear}</td>
 				<td>${clearing.statusSettle}</td>
 				<td>${clearing.statusCash}</td>
-				<td>${clearing.seller.name}</td>
-				<td>${clearing.beneficiary.name}</td>
+				<td>${clearing.seller.nickname}</td>
+				<td>${clearing.beneficiary.nickname}</td>
 				<td>${fns:getDictLabel(clearing.beneficiaryType, 'beneficiaryCategory', '-')}</td>
 				<td>${clearing.scheme.name}-${fns:getDictLabel(clearing.schemeItem.beneficiary, 'beneficiaryType', '-')}</td>	
 				<td>

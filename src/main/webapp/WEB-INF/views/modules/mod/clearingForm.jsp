@@ -90,7 +90,7 @@
 		<div class="control-group">
 			<label class="control-label">受益方：</label>
 			<div class="controls">
-				<form:input path="beneficiary" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				<form:input path="beneficiary.id" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
