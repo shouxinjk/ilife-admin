@@ -482,6 +482,9 @@
 		            if(ret.length==0){
 		                $("#wxGroup").append("<div style='line-height:20px;font-size:12px;color:red;'>请先建立微信群，并设置手动推送任务</div>");
 		                $("#sendWxGroup").css("display","none");
+		            }else{
+		            	$("#btnCheckAll").css("display","block");
+		            	$("#btnUncheckAll").css("display","block");
 		            }
 		        }
 		    }); 
@@ -505,6 +508,14 @@
 		        }
 		               
 		    });
+		    //选中全部
+		    $("#btnCheckAll").click(function(){
+		        $("input[name='wxgroups']").prop("checked","true"); 
+		    });
+		    //取消选中
+		    $("#btnUncheckAll").click(function(){
+		        $("input[name='wxgroups']").removeAttr("checked"); 
+		    });     
 		}
 		//存储featured item到ck
 		function saveFeaturedItem(eventId, brokerId, groupType, groupId, groupName,itemType, itemKey, jsonStr, status){
@@ -840,7 +851,11 @@
 	        </div>  
 			<!-- 推送到微信群 -->  
             <div id="wxGroupInfo">
-                <div id="wxGroupTitle" class="prop-key" style="width:90%;margin:10px 0px;">请选择微信群:</div> 
+                <div id="wxGroupTitle" class="prop-key" style="width:90%;margin:10px 0px;">
+                  <span style="display: inline-block;">请选择微信群:</span>
+                  <span style="display: inline-block;"><a id='btnCheckAll' href='#' style='font-size:12px;color:blue;display:none;'>选中全部</a></span>
+                  <span style="display: inline-block;"><a id='btnUncheckAll' href='#' style='font-size:12px;color:blue;display:none;'>取消选择</a></span>
+                </div> 
                 <div id="wxGroup" style="width:100%;">
                 </div>     
                 <div style="width:90%;margin:10px 0px;"><a id='sendWxGroup' href='#' style='font-size:12px;color:blue;'>推送到已选择微信群</a></div>                    
