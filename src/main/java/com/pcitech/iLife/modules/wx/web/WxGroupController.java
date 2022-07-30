@@ -31,6 +31,7 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
+import com.pcitech.iLife.modules.sys.utils.UserUtils;
 import com.pcitech.iLife.modules.wx.entity.WxGroup;
 import com.pcitech.iLife.modules.wx.entity.WxGroupTask;
 import com.pcitech.iLife.modules.wx.service.WxGroupService;
@@ -208,4 +209,18 @@ public class WxGroupController extends BaseController {
 		return wxGroupService.findFeaturedGroup(wxGroup);
 	}
 	
+	/**
+	 * 根据brokerId加载微信群
+	 * 如果broker为空，则加载所有活跃状态微信群
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/listByCurrentUser", method = RequestMethod.GET)
+	public List<WxGroup> listByCurrentUser() {
+		Map<String,Object> result = Maps.newHashMap();
+		result.put("success", false);
+		Map<String,String> param = Maps.newHashMap();
+		param.put("status", "active");//仅支持活跃微信群
+		param.put("userId", UserUtils.getUser().getId());//查询当前用户关联的所有微信群
+		return wxGroupService.findFeaturedGroupByUserId(param);
+	}
 }

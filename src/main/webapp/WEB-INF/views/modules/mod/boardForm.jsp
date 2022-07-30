@@ -34,6 +34,9 @@
 		    requestPosterScheme();
 		    //获取图文模板
 		    requestArticleScheme();
+		    //加载微信群
+		    loadWxGroups();
+		    
 		    //注册事件
 		    registerSxEvents();
 		});
@@ -461,6 +464,64 @@
 		        }
 		    });     
 		}
+
+		//加载当前用户关联的微信群
+		function loadWxGroups(){
+		    console.log("try to load wx groups by current user.");
+		    $.ajax({
+		        url:$("#sxContextPath").val()+"/wx/wxGroup/rest/listByCurrentUser",
+		        type:"get",        
+		        success:function(ret){
+		            console.log("===got wx groups===\n",ret);
+		            //加载到界面供选择
+		            ret.forEach(function(wxgroup){
+		                console.log("===got wx groups===\n",wxgroup);
+		                $("#wxGroup").append("<div style='line-height:20px;'><input id='wxg"+wxgroup.id+"' name='wxgroups' type='checkbox' data-name='"+wxgroup.name+"' value='"+wxgroup.id+"' style='vertical-align:middle;' checked/><label for='wxg"+wxgroup.id+"' style='margin-top:5px;margin-left:2px;'>"+wxgroup.name+"</label></div>");
+		            });
+		            //没有微信群则提示
+		            if(ret.length==0){
+		                $("#wxGroup").append("<div style='line-height:20px;font-size:12px;color:red;'>请先建立微信群，并设置手动推送任务</div>");
+		                $("#sendWxGroup").css("display","none");
+		            }
+		        }
+		    }); 
+		    //注册点击事件
+		    $("#sendWxGroup").click(function(){
+		        var selectedWxGroups = [];
+		        $("input[name='wxgroups']:checked").each(function(){
+		            selectedWxGroups.push($(this).val());
+		            saveFeaturedItem(getUUID(), 'sysUser', "wechat", $(this).val(), $(this).attr("data-name"), "board", board.id, JSON.stringify(board), "pending");
+		        });   
+		        if(selectedWxGroups.length>0){
+		            console.log("selected wxgroups.",selectedWxGroups);
+		            siiimpleToast.message('哦耶，推送已安排',{
+		              position: 'bottom|center'
+		            });             
+		        }else{
+		            console.log("no group selected.");
+		            siiimpleToast.message('请选择微信群先~~',{
+		              position: 'bottom|center'
+		            });             
+		        }
+		               
+		    });
+		}
+		//存储featured item到ck
+		function saveFeaturedItem(eventId, brokerId, groupType, groupId, groupName,itemType, itemKey, jsonStr, status){
+		  var q = "insert into ilife.features values ('"+eventId+"','"+brokerId+"','"+groupType+"','"+groupId+"','"+groupName+"','"+itemType+"','"+itemKey+"','"+jsonStr+"','"+status+"',now())";
+		  console.log("try to save featured item.",q);
+		  jQuery.ajax({
+		    url:app.config.analyze_api+"?query="+encodeURIComponent(q),
+		    type:"post",
+		    //data:{},
+		    headers:{
+		      "Authorization":"Basic ZGVmYXVsdDohQG1AbjA1"
+		    },         
+		    success:function(json){
+		      console.log("===featured item saved.===\n",json);
+		    }
+		  });    
+		}		
 		
 		//根据boardId查询清单：这里有重复调用，直接读取board内容，未通过服务器端返回
 		function loadBoard(boardId){
@@ -745,6 +806,7 @@
 	        <ul>
 	          <li><a href="#posterInfo">分享海报</a></li>
 	          <li><a href="#articleInfo">图文内容</a></li>
+	          <li><a href="#wxGroupInfo">微信推送</a></li>
 	        </ul>
 	        <!-- 海报 -->
 	        <div id="posterInfo">
@@ -775,7 +837,15 @@
 	                <!--label for="article">内容</label-->
 	                <textarea id="article" rows="50" style="min-height:600px;"></textarea> 
 	            </div>                  
-	        </div>                  
+	        </div>  
+			<!-- 推送到微信群 -->  
+            <div id="wxGroupInfo">
+                <div id="wxGroupTitle" class="prop-key" style="width:90%;margin:10px 0px;">请选择微信群:</div> 
+                <div id="wxGroup" style="width:100%;">
+                </div>     
+                <div style="width:90%;margin:10px 0px;"><a id='sendWxGroup' href='#' style='font-size:12px;color:blue;'>推送到已选择微信群</a></div>                    
+            </div>  
+	                        
 	    </div>  	
 	</div>
 </body>
