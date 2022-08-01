@@ -162,6 +162,13 @@ public class ItemController extends BaseController {
 	public String none(Model model) {
 		model.addAttribute("message","请在左侧选择一个类型。");
 		//return "treeData/none";
-		return "redirect:http://www.shouxinjk.net/list-admin/index.html?classify=all&classifyName=-&showAllItems=true";//默认显示首页
+		//获取当前用户账户，并根据当前用户账户获取对应的达人
+		String brokerId = "";
+		User currentUser = UserUtils.getUser();
+		Broker broker = brokerService.getBySysUserid(currentUser.getId());
+		if(broker!=null) {
+			brokerId = "&brokerId="+broker.getId();
+		}		
+		return "redirect:http://www.shouxinjk.net/list-admin/index.html?classify=all&classifyName=-&showAllItems=true"+brokerId;//默认显示首页
 	}
 }
