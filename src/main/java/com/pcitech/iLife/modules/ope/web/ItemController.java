@@ -161,6 +161,7 @@ public class ItemController extends BaseController {
 	@RequestMapping(value = "none")
 	public String none(Model model) {
 		model.addAttribute("message","请在左侧选择一个类型。");
-		return "treeData/none";
+		//return "treeData/none";
+		return "redirect:http://www.shouxinjk.net/list-admin/index.html?classify=all&classifyName=-&showAllItems=true";//默认显示首页
 	}
 }
