@@ -817,7 +817,7 @@
 	        <ul>
 	          <li><a href="#posterInfo">分享海报</a></li>
 	          <li><a href="#articleInfo">图文内容</a></li>
-	          <li><a href="#wxGroupInfo">微信推送</a></li>
+	          <li><a href="#wxGroupInfo">云推送</a></li>
 	        </ul>
 	        <!-- 海报 -->
 	        <div id="posterInfo">
