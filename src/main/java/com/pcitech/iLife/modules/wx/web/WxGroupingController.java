@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.wx.web;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
@@ -30,6 +33,7 @@ import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.wx.entity.WxArticle;
 import com.pcitech.iLife.modules.wx.entity.WxGrouping;
+import com.pcitech.iLife.modules.wx.entity.WxReads;
 import com.pcitech.iLife.modules.wx.service.WxGroupingService;
 
 /**
@@ -132,4 +136,21 @@ public class WxGroupingController extends BaseController {
 		return result;
 	}
 
+	/**
+	 * 获取班车互阅结果汇总。参数：groupingCode, size
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/groupingResult/{code}/{size}", method = RequestMethod.GET)
+	public List<Map<String,Object>> getGroupingResult( @PathVariable String code,@PathVariable int size) {
+		Map<String,Object> params = Maps.newHashMap();
+		if(code!=null && code.trim().length()>0) {
+			params.put("groupingCode", code.trim());
+			params.put("size", size);
+		}else {//如果参数不匹配则返回空白列表
+			return Lists.newArrayList();
+		}
+		return wxGroupingService.findGroupingResultMap(params);
+	}
+	
 }

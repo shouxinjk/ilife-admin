@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.wx.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,11 @@ import com.pcitech.iLife.modules.wx.dao.WxGroupingDao;
 @Transactional(readOnly = true)
 public class WxGroupingService extends CrudService<WxGroupingDao, WxGrouping> {
 
+	//查询班车阅读结果 
+	public List<Map<String,Object>> findGroupingResultMap(Map<String,Object> param){
+		return dao.findGroupingResultMap(param);
+	}
+	
 	public WxGrouping get(String id) {
 		return super.get(id);
 	}

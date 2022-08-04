@@ -115,12 +115,12 @@ public class WxArticleController extends BaseController {
 	
 	
 	/**
-	 * 获取当前时段的所有指定文章列表。
+	 * 获取当前时段的所有置顶文章列表。
 	 * 包括充值置顶，及阅豆置顶
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/topping-articles", method = RequestMethod.GET)
-	public List<WxArticle> listPagedGroupingArticles( @RequestParam(required=true) int from,
+	public List<WxArticle> listPagedToppingArticles( @RequestParam(required=true) int from,
 			@RequestParam(required=true) int to,
 			@RequestParam String openid,
 			@RequestParam String publisherOpenid) {

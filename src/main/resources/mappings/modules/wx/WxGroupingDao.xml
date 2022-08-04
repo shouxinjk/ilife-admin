@@ -72,6 +72,27 @@
 		</choose>
 	</select>
 	
+	<!-- 根据groupingCode查询互阅结果。是一个List列表，每一项为一个Map -->
+	<select id="findGroupingResultMap" resultType="java.util.HashMap">
+		SELECT 
+			a.title AS "title",
+			b.nickname AS "nickname",
+			b.points AS "points",
+			(select count(id) from wx_reads rr where rr.article_id = a.id and rr.grouping=#{groupingCode}) AS "gotCounts",
+			(select count(id) from wx_reads rr where rr.article_id = a.id and (rr.grouping is null || rr.grouping != #{groupingCode}) and rr.openid in (select distinct(bb.openid) from wx_grouping gg,wx_article aa, mod_broker bb where gg.code=#{groupingCode} and gg.subject_type='article' and aa.id=gg.subject_id and bb.id=aa.broker_id)) AS "gotCounts2",
+			(select count(id) from wx_reads rr where rr.openid = b.openid and rr.grouping=#{groupingCode}) AS "paidCounts",
+			(select count(id) from wx_reads rr where rr.openid = b.openid and (rr.grouping is null || rr.grouping != #{groupingCode}) and rr.article_id in (select subject_id from wx_grouping where code=#{groupingCode} and subject_type='article' )) AS "paidCounts2"
+		FROM 
+			wx_grouping g,wx_article a,mod_broker b
+		where
+		    g.subject_type='article'
+		    and a.id=g.subject_id
+		    and b.id=a.broker_id		
+			AND g.code = #{groupingCode}
+		ORDER BY a.update_date,b.points DESC
+		limit #{size}
+	</select>	
+	
 	<insert id="insert">
 		INSERT INTO wx_grouping(
 			id,
