@@ -28,4 +28,7 @@ public interface WxGroupDao extends CrudDao<WxGroup> {
 	//根据名称查询微信群
 	public WxGroup findGroupByName(@Param("name") String name);
 	
+	//根据gid查询微信群
+	public WxGroup findGroupByGid(@Param("gid") String gid);
+	
 }

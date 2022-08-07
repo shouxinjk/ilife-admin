@@ -38,6 +38,11 @@ public class WxGroupService extends CrudService<WxGroupDao, WxGroup> {
 		return dao.findGroupByName(name);
 	}
 	
+	//根据gid查询微信群
+	public WxGroup findGroupByGid(@Param("gid") String gid) {
+		return dao.findGroupByGid(gid);
+	}
+	
 	public WxGroup get(String id) {
 		return super.get(id);
 	}

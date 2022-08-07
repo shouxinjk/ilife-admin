@@ -167,24 +167,29 @@ public class WxGroupController extends BaseController {
 	}
 
 	/**
-	 * 修改微信名称
+	 * 修改微信群信息：根据gid修改topic及群员数量
 	 * 参数：
-	 * old 原有名称
-	 * new 修改后名称
+	 * owner:string 群主微信ID（注意不是openid） 当前备用
+	 * gid: string 微信群ID
+	 * name：string 微信群名称
+	 * members：int 成员人数
 	 * 
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/changeTopic", method = RequestMethod.POST)
-	public Map<String,Object> changeGroupName(@RequestBody JSONObject data) {
+	@RequestMapping(value = "rest/syncByGid", method = RequestMethod.POST)
+	public Map<String,Object> changeGroupInfo(@RequestBody JSONObject data) {
 		Map<String,Object> result = Maps.newHashMap();
 		result.put("success", false);
-		WxGroup wxGroup = wxGroupService.findGroupByName(data.getString("old"));
+		WxGroup wxGroup = wxGroupService.findGroupByGid(data.getString("gid"));
 		if(wxGroup == null) {
 			result.put("msg", "group doesnot exist.");
+			result.put("data", data);
 		}else {
-			wxGroup.setName(data.getString("new"));
+			wxGroup.setName(data.getString("name"));
+			wxGroup.setOwner(data.getString("owner"));
+			wxGroup.setMembers(data.getInteger("members"));
 			wxGroupService.save(wxGroup);
-			result.put("msg", "group name updated.");
+			result.put("msg", "group info updated.");
 			result.put("success", true);
 		}
 		return result;

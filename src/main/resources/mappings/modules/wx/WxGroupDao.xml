@@ -37,13 +37,23 @@
 		WHERE a.id = #{id}
 	</select>
 
-	<!-- 根据微信群名称 -->
+	<!-- 根据微信群名称查找：注意，可能重名，仅取第一个 -->
 	<select id="findGroupByName" resultType="WxGroup">
 		SELECT 
 			<include refid="wxGroupColumns"/>
 		FROM wx_group a
 		<include refid="wxGroupJoins"/>
 		WHERE a.name = #{name}
+		limit 1		
+	</select>
+	
+	<!-- 根据微信群ID查询 -->
+	<select id="findGroupByGid" resultType="WxGroup">
+		SELECT 
+			<include refid="wxGroupColumns"/>
+		FROM wx_group a
+		<include refid="wxGroupJoins"/>
+		WHERE a.gid = #{gid}
 		limit 1		
 	</select>
 	
