@@ -187,7 +187,11 @@ public class WxGroupController extends BaseController {
 			//新建群
 			wxGroup = new WxGroup();
 			wxGroup.setIsNewRecord(true);
-			Broker broker = brokerService.get(Global.getConfig("default_parent_broker_id")); //默认为固定达人
+			//Broker broker = brokerService.get(Global.getConfig("default_parent_broker_id")); //默认为固定达人
+			Broker broker = null;
+			if(data.getString("brokerId") != null && data.getString("gid").trim().length()>0) {
+				broker = brokerService.get(data.getString("brokerId"));
+			}
 			String id = Util.md5(data.getString("gid"));
 			wxGroup.setId(id);
 			wxGroup.setBroker(broker);
