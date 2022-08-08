@@ -107,7 +107,7 @@
 					${wxGroupTask.broker.nickname}
 				</a></td>
 				<td>
-					${wxGroupTask.wxgroup.name}
+					${wxGroupTask.wxgroup.name} ${wxGroupTask.wxgroup.type} / ${wxGroupTask.wxgroup.members}人 / ${wxGroupTask.wxgroup.status}
 				</td>
 				<td>
 					${wxGroupTask.name}

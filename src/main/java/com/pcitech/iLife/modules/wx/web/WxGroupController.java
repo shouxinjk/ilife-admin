@@ -136,27 +136,29 @@ public class WxGroupController extends BaseController {
 		wxGroupService.save(wxGroup);
 		
 		//新建群任务：自动推送
+		long sendItemMinutes = 20+System.currentTimeMillis()%10; //在20-30分钟一条
 		WxGroupTask wxGroupTask = new WxGroupTask();
 		wxGroupTask.setBroker(broker);
 		wxGroupTask.setWxgroup(wxGroup);
 		wxGroupTask.setType("sendItem");
 		wxGroupTask.setTags("*");
 		wxGroupTask.setStatus("active");
-		wxGroupTask.setCron((System.currentTimeMillis()%60)+" */15 7-22 * * ?");//随机取开始秒数
+		wxGroupTask.setCron((System.currentTimeMillis()%60)+" */"+sendItemMinutes+" 7-22 * * ?");//随机取开始秒数
 		wxGroupTask.setName("自动推送商品");
 		wxGroupTask.setCreateDate(new Date());
 		wxGroupTask.setUpdateDate(new Date());
 		wxGroupTaskService.save(wxGroupTask);
 		
 		//新建群任务：手动推送
+		long sendFeatureMinutes = 20+System.currentTimeMillis()%10; //在20-30分钟一条
 		wxGroupTask = new WxGroupTask();
 		wxGroupTask.setBroker(broker);
 		wxGroupTask.setWxgroup(wxGroup);
 		wxGroupTask.setType("sendFeature");
 		wxGroupTask.setTags("*");
 		wxGroupTask.setStatus("active");
-		wxGroupTask.setCron((System.currentTimeMillis()%60)+" */5 7-23 * * ?");//随机取开始秒数
-		wxGroupTask.setName("手动推送商品");
+		wxGroupTask.setCron((System.currentTimeMillis()%60)+" */"+sendFeatureMinutes+" 7-23 * * ?");//随机取开始秒数
+		wxGroupTask.setName("手动推送选品");
 		wxGroupTask.setCreateDate(new Date());
 		wxGroupTask.setUpdateDate(new Date());
 		wxGroupTaskService.save(wxGroupTask);

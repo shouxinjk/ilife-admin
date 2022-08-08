@@ -11,6 +11,9 @@
 		a.group_id AS "wxgroup.id",
 		g.name AS "wxgroup.name",
 		g.gid AS "wxgroup.gid",
+		g.members AS "wxgroup.members",
+		dgs.label AS "wxgroup.status",
+		dgt.label AS "wxgroup.type",
 		a.name AS "name",
 		a.type AS "type",
 		dt.label AS "typeDesc",
@@ -30,6 +33,8 @@
 		LEFT JOIN wx_group g ON g.id = a.group_id
 		LEFT JOIN sys_dict dt ON dt.type = "wx_group_task_type" and dt.value = a.type
 		LEFT JOIN sys_dict dc ON dc.type = "wx_group_task_cron" and dc.value = a.cron
+		LEFT JOIN sys_dict dgt ON dgt.type = "wx_group_type" and dgt.value = g.type
+		LEFT JOIN sys_dict dgs ON dgs.type = "active_inactive" and dgs.value = g.status
 	</sql>
     
     <select id="getByNickname" resultType="WxGroupTask">
