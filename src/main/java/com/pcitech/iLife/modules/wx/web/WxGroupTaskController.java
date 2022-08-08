@@ -159,4 +159,31 @@ public class WxGroupTaskController extends BaseController {
 		result.put("success", true);
 		return result;
 	}
+	
+	/**
+	 * 更新微信群任务cron
+	 * 参数：
+	 * id：群任务ID
+	 * cron：群任务cron表达式
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/cron/{id}", method = RequestMethod.POST)
+	public Map<String,Object> updateCron(@PathVariable String id, @RequestBody JSONObject data) {
+		Map<String,Object> result = Maps.newHashMap();
+		result.put("success", false);
+		
+		//根据id查询groupTask
+		WxGroupTask wxGroupTask = wxGroupTaskService.get(id);
+		if(wxGroupTask==null) {
+			result.put("msg", "cannot find group task by id."+id);
+			return result;
+		}
+		wxGroupTask.setCron(data.getString("cron"));
+		wxGroupTask.setUpdateDate(new Date());
+		wxGroupTaskService.save(wxGroupTask);
+		result.put("success", true);
+		result.put("data", wxGroupTask);
+		return result;
+	}
 }

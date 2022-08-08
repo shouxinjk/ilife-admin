@@ -5,9 +5,44 @@
 	<title>微信群任务管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
+		var sxdebug = true;
 		$(document).ready(function() {
-			
+			registerEventListener();
 		});
+		
+		//注册监听事件：直接修改cron表达式
+		function registerEventListener(){
+			//监听所有weight input
+            $("input[data-section^='sec-']").each((index, item) => {
+            	var inputId = $(item).attr("id");
+            	if(sxdebug)console.log("got input.[index]"+index,inputId);
+                $("#"+inputId).blur(function(e){
+                	var cron2 = $("#"+e.currentTarget.id).val();
+                	if(sxdebug)console.log("start change cron.",e.currentTarget.id,cron2);
+                    var data = {
+                    		id: e.currentTarget.id,
+                    		cron: cron2
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: "${ctx}/wx/wxGroupTask/rest/cron/"+e.currentTarget.id,
+                        data: JSON.stringify(data),  
+			            headers:{
+			                "Content-Type":"application/json",
+			                "Accept":"application/json"
+			            },  
+			            success:function(result){
+			            	if(sxdebug)console.log("update cron done.",result);   
+			                //提示修改
+				            siiimpleToast.message('cron已修改',{
+				                  position: 'bottom|center'
+				                });
+			            }
+                    });
+                }); 
+              });
+		}
+		
 		function page(n,s){
 			$("#pageNo").val(n);
 			$("#pageSize").val(s);
@@ -81,7 +116,8 @@
 					${fns:getDictLabel(wxGroupTask.type, 'wx_group_task_type', '')}
 				</td>
 				<td>
-					${wxGroupTask.cron}
+					<input type="text" value="${wxGroupTask.cron}" id="${wxGroupTask.id}" data-section="sec-${wxGroupTask.id}" style="width:120px;margin:0 auto;padding:0;line-height:24px;font-size:12px;"/>
+					
 				</td>
 				<td>
 					${wxGroupTask.tags}
