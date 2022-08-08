@@ -183,9 +183,53 @@ public class WxGroupController extends BaseController {
 		Map<String,Object> result = Maps.newHashMap();
 		result.put("success", false);
 		WxGroup wxGroup = wxGroupService.findGroupByGid(data.getString("gid"));
-		if(wxGroup == null) {
-			result.put("msg", "group doesnot exist.");
+		if(wxGroup == null) { //如果不存在则认为是新群，自动建立，但状态为pending
+			//新建群
+			wxGroup = new WxGroup();
+			wxGroup.setIsNewRecord(true);
+			Broker broker = brokerService.get(Global.getConfig("default_parent_broker_id")); //默认为固定达人
+			String id = Util.md5(data.getString("gid"));
+			wxGroup.setId(id);
+			wxGroup.setBroker(broker);
+			wxGroup.setName(data.getString("name"));
+			wxGroup.setOwner(data.getString("owner"));
+			wxGroup.setMembers(data.getInteger("members"));
+			wxGroup.setStatus("pending");//状态为pending，等待确认
+			wxGroup.setCreateDate(new Date());
+			wxGroup.setUpdateDate(new Date());
+			wxGroupService.save(wxGroup);
+			
+			//新建群任务：自动推送
+			long sendItemMinutes = 20+System.currentTimeMillis()%10; //在20-30分钟一条
+			WxGroupTask wxGroupTask = new WxGroupTask();
+			wxGroupTask.setBroker(broker);
+			wxGroupTask.setWxgroup(wxGroup);
+			wxGroupTask.setType("sendItem");
+			wxGroupTask.setTags("*");
+			wxGroupTask.setStatus("pending");//状态为pending
+			wxGroupTask.setCron((System.currentTimeMillis()%60)+" */"+sendItemMinutes+" 7-22 * * ?");//随机取开始秒数
+			wxGroupTask.setName("自动推送商品");
+			wxGroupTask.setCreateDate(new Date());
+			wxGroupTask.setUpdateDate(new Date());
+			wxGroupTaskService.save(wxGroupTask);
+			
+			//新建群任务：手动推送
+			long sendFeatureMinutes = 20+System.currentTimeMillis()%10; //在20-30分钟一条
+			wxGroupTask = new WxGroupTask();
+			wxGroupTask.setBroker(broker);
+			wxGroupTask.setWxgroup(wxGroup);
+			wxGroupTask.setType("sendFeature");
+			wxGroupTask.setTags("*");
+			wxGroupTask.setStatus("pending");//状态为pending
+			wxGroupTask.setCron((System.currentTimeMillis()%60)+" */"+sendFeatureMinutes+" 7-23 * * ?");//随机取开始秒数
+			wxGroupTask.setName("手动推送选品");
+			wxGroupTask.setCreateDate(new Date());
+			wxGroupTask.setUpdateDate(new Date());
+			wxGroupTaskService.save(wxGroupTask);
+			
+			result.put("msg", "group doesnot exist. create new one and default tasks.");
 			result.put("data", data);
+			result.put("success", true);
 		}else {
 			wxGroup.setName(data.getString("name"));
 			wxGroup.setOwner(data.getString("owner"));
