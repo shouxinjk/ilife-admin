@@ -61,11 +61,18 @@
 	<select id="findFeaturedGroup" resultType="WxGroup">
 		SELECT 
 			a.id AS "id",
+			a.broker_id AS "broker.id",
+			bb.name AS "broker.name",
+			bb.nickname AS "broker.nickname",	
 			a.name AS "name",
 			a.owner AS "owner",
+			a.members AS "members",
+			dgt.label AS "type",
 			a.gid AS "gid"
 		FROM wx_group_task b
 		left join wx_group a on b.group_id = a.id
+		LEFT JOIN sys_dict dgt ON dgt.type = "wx_group_type" and dgt.value = a.type
+		LEFT JOIN mod_broker bb ON bb.id = a.broker_id
 		WHERE a.status="active"
 		AND b.status = "active"
 		AND a.del_flag = 0

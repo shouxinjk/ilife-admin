@@ -165,10 +165,14 @@ public class ItemController extends BaseController {
 		//获取当前用户账户，并根据当前用户账户获取对应的达人
 		String brokerId = "";
 		User currentUser = UserUtils.getUser();
-		Broker broker = brokerService.getBySysUserid(currentUser.getId());
-		if(broker!=null) {
-			brokerId = "&brokerId="+broker.getId();
-		}		
+		if(currentUser.getCompany().getName().equalsIgnoreCase("ilife") || currentUser.getCompany().getName().equalsIgnoreCase("确幸生活")){ //如果是系统运营用户则直接显示所有微信群
+			brokerId = "";
+		}else {
+			Broker broker = brokerService.getBySysUserid(currentUser.getId());
+			if(broker!=null) {
+				brokerId = "&brokerId="+broker.getId();
+			}
+		}
 		return "redirect:http://www.shouxinjk.net/list-admin/index.html?classify=all&classifyName=-&showAllItems=true"+brokerId;//默认显示首页
 	}
 }

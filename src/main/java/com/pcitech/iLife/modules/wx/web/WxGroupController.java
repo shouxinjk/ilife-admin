@@ -198,6 +198,7 @@ public class WxGroupController extends BaseController {
 			wxGroup.setName(data.getString("name"));
 			wxGroup.setOwner(data.getString("owner"));
 			wxGroup.setMembers(data.getInteger("members"));
+			wxGroup.setType("pending");//合作类型为pending，等待确认
 			wxGroup.setStatus("pending");//状态为pending，等待确认
 			wxGroup.setCreateDate(new Date());
 			wxGroup.setUpdateDate(new Date());
