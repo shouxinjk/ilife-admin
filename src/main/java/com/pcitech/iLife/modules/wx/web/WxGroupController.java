@@ -276,7 +276,12 @@ public class WxGroupController extends BaseController {
 		result.put("success", false);
 		Map<String,String> param = Maps.newHashMap();
 		param.put("status", "active");//仅支持活跃微信群
-		param.put("userId", UserUtils.getUser().getId());//查询当前用户关联的所有微信群
+		if(UserUtils.getUser().getCompany().getName().equalsIgnoreCase("ilife") || 
+				UserUtils.getUser().getCompany().getName().equalsIgnoreCase("确幸生活")){ //如果是系统运营用户则直接显示所有微信群
+			param.put("userId", "");//运营人员查询所有微信群
+		}else {
+			param.put("userId", UserUtils.getUser().getId());//查询当前用户关联的所有微信群
+		}
 		return wxGroupService.findFeaturedGroupByUserId(param);
 	}
 }
