@@ -78,9 +78,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="wxGroup">
 			<tr>
-				<td><a href="${ctx}/wx/wxGroup/form?id=${wxGroup.id}">
+				<td>
 					${wxGroup.broker.nickname}
-				</a></td>
+				</td>
 				<td>
 					${wxGroup.persona.name}
 				</td>
@@ -88,7 +88,7 @@
 					${wxGroup.schedule}
 				</td-->
 				<td>
-					${wxGroup.name}
+					<a href="${ctx}/wx/wxGroupTask?wxgroup.id=${wxGroup.id}">${wxGroup.name}</a>
 				</td>
 				<td>
 					${fns:getDictLabel(wxGroup.type, 'wx_group_type', '')}
