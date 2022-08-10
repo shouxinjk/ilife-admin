@@ -60,7 +60,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>所属达人</th>
+				<th>所属达人/Agent</th>
 				<th>对应分群</th>
 				<!--th>推送规则CRON</th-->
 				<th>微信群名称</th>
