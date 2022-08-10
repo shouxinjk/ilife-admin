@@ -37,9 +37,9 @@
 			<li><label>群主：</label>
 				<form:input path="owner" htmlEscape="false" maxlength="512" class="input-medium"/>
 			</li>
-			<li><label>激活码：</label>
+			<!--li><label>激活码：</label>
 				<form:input path="token" htmlEscape="false" maxlength="50" class="input-medium"/>
-			</li>
+			</li-->
 			<li><label>类型：</label>
 				<form:select path="type" class="input-medium">
 					<form:option value="" label=""/>
@@ -68,7 +68,7 @@
 				<th>群主</th>
 				<!--th>微信群ID</th-->
 				<th>成员人数</th>
-				<th>激活码</th>
+				<!--th>激活码</th-->
 				<th>状态</th>
 				<th>创建时间</th>
 				<th>更新时间</th>
@@ -102,9 +102,9 @@
 				<td>
 					${wxGroup.members}
 				</td>
-				<td>
+				<!--td>
 					${wxGroup.token}
-				</td>
+				</td-->
 				<td>
 					${fns:getDictLabel(wxGroup.status, 'active_inactive', '')}
 				</td>
