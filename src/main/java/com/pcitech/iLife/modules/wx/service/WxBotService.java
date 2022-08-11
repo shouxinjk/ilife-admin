@@ -26,6 +26,11 @@ public class WxBotService extends CrudService<WxBotDao, WxBot> {
 		return dao.getPendingBot();
 	}
 	
+	//根据达人微信任务获取所有代理Bot记录 
+	public List<WxBot> listAgentBotByBrokerId(String brokerId) {
+		return dao.listAgentBotByBrokerId(brokerId);
+	}
+	
 	public WxBot get(String id) {
 		return super.get(id);
 	}

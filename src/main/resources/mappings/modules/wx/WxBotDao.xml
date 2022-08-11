@@ -48,6 +48,19 @@
 		limit 1
 	</select>	
 	
+	<!-- 查询所有代理BOT：根据brokerId查询所有微信任务，根据微信任务查找对应的微信群，根据微信群Agent获取bot -->
+    <select id="listAgentBotByBrokerId" resultType="WxBot">
+		SELECT 
+			<include refid="wxBotColumns"/>
+		FROM wx_bot a
+		<include refid="wxBotJoins"/>
+		WHERE a.broker_id in (
+			select distinct(broker_id) from wx_group where id in (
+				SELECT distinct(group_id) FROM `wx_group_task` WHERE broker_id=#{brokerId}
+			)
+		)    
+	</select>   	
+	
 	<select id="findList" resultType="WxBot">
 		SELECT 
 			<include refid="wxBotColumns"/>

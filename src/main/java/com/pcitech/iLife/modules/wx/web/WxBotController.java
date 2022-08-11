@@ -111,11 +111,23 @@ public class WxBotController extends BaseController {
 			result.put("msg", "cannot find broker by id:"+brokerId);
 			return result;
 		}
+		/**
+		//直接根据达人查询独占Bot
 		wxBot.setBroker(broker);
 		List<WxBot> wxBots = wxBotService.findList(wxBot);
 		if(wxBots.size()>0) {
 			result.put("success", true);
-			result.put("data", wxBots.get(0));
+			result.put("data", wxBots);
+		}else {
+			result.put("msg", "no bot found by broker id:"+brokerId);
+		}
+		//**/
+		//查询所有独占及代理Bot
+		//根据达人已经开通的推送任务查询对应的微信群（每一个微信群有一个agent，能够汇总得到已经植入的agent列表）
+		List<WxBot> allAgentBots = wxBotService.listAgentBotByBrokerId(brokerId);
+		if(allAgentBots.size()>0) {
+			result.put("success", true);
+			result.put("data", allAgentBots);
 		}else {
 			result.put("msg", "no bot found by broker id:"+brokerId);
 		}

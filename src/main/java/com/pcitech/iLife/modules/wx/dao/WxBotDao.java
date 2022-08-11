@@ -6,6 +6,8 @@ package com.pcitech.iLife.modules.wx.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.wx.entity.WxBot;
@@ -20,4 +22,6 @@ import com.pcitech.iLife.modules.wx.entity.WxTopping;
 public interface WxBotDao extends CrudDao<WxBot> {
 	//获取待更新Bot记录 
 	public WxBot getPendingBot();
+	//根据达人微信任务获取所有代理Bot记录 
+	public List<WxBot> listAgentBotByBrokerId(@Param("brokerId") String brokerId);
 }
