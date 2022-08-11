@@ -101,6 +101,7 @@ public class PaymentController extends BaseController {
 		String id = Util.get32UUID();
 		payment.setId(id);
 		payment.setIsNewRecord(true);
+		payment.setStatus("pending");
 		payment.setCreateDate(new Date());
 		payment.setUpdateDate(new Date());
 		paymentService.save(payment);
