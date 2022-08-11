@@ -3,6 +3,9 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.Date;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,16 +14,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Payment;
 import com.pcitech.iLife.modules.mod.service.PaymentService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 支付管理Controller
@@ -78,6 +87,27 @@ public class PaymentController extends BaseController {
 		paymentService.delete(payment);
 		addMessage(redirectAttributes, "删除支付管理成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/payment/?repage";
+	}
+	
+	/**
+	 * 发起提现申请，建立支付记录
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/payment", method = RequestMethod.POST)
+	public Map<String,Object> createPaymentInfo(@RequestBody Payment payment) {
+		Map<String,Object> result = Maps.newHashMap();
+		result.put("success", false);
+		String id = Util.get32UUID();
+		payment.setId(id);
+		payment.setIsNewRecord(true);
+		payment.setCreateDate(new Date());
+		payment.setUpdateDate(new Date());
+		paymentService.save(payment);
+		payment = paymentService.get(id);
+		result.put("success", true);
+		result.put("data", payment);
+		return result;
 	}
 
 }
