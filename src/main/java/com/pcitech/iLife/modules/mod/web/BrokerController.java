@@ -632,7 +632,9 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 	/**
 	 * 获取达人收益汇总数据:总额、已锁定总额(已收款+已锁定)、可提款总额（已收款+已清算）、已提现总额
 	 * 结算中金额 = 总额-已锁定总额-可提款总额
-	 * 提现金额 = 可提款总额-已提现总额
+	 * 提现中金额 = 状态为pending的提现申请
+	 * 已提现金额 = 状态为done的提现申请
+	 * 可提现金额 = 可提款总额-已提现总额-提现中金额
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/money/{id}", method = RequestMethod.GET)

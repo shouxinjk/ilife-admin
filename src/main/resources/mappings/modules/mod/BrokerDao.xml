@@ -53,6 +53,8 @@
 		a.level AS "level",
 		a.create_date AS "createDate",
 		ifnull((SELECT sum(sTotal.amount_profit) FROM mod_clearing sTotal where sTotal.beneficiary=a.id),0) AS "totalAmount",
+		ifnull((SELECT sum(sPaying.amount_request) FROM mod_payment sPaying where sPaying.broker_id=a.id and sPaying.status='pending'),0) AS "payingAmount",
+		ifnull((SELECT sum(sPaid.amount_request) FROM mod_payment sPaid where sPaid.broker_id=a.id and sPaid.status='done'),0) AS "paidAmount",
 		ifnull((SELECT sum(sCashed.amount_profit) FROM mod_clearing sCashed where sCashed.status_clear="cleared" and sCashed.status_cash="cashed" and sCashed.beneficiary=a.id),0) AS "payableAmount",
 		ifnull((SELECT sum(sLocked.amount_profit) FROM mod_clearing sLocked where sLocked.status_clear="locked" and sLocked.status_cash="cashed" and sLocked.beneficiary=a.id),0) AS "lockedAmount",
 		ifnull(sum(pay.amount_request),0) AS "paidAmount"
