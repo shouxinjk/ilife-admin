@@ -141,7 +141,7 @@
 		<div class="control-group">
 			<label class="control-label">公司联系电话：</label>
 			<div class="controls">
-				<form:input path="companyContactTelephone" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				<form:input path="companyTelephone" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 			</div>
 		</div>											
 		<div class="control-group">
