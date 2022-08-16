@@ -83,7 +83,13 @@
 			<div class="controls">
 				<form:input path="token" htmlEscape="false" maxlength="20" class="input-xlarge "/>
 			</div>
-		</div>						
+		</div>	
+		<div class="control-group">
+			<label class="control-label">账户类型：</label>
+			<div class="controls">
+				<form:input path="accountType" htmlEscape="false" maxlength="20" class="input-xlarge "/>
+			</div>
+		</div>								
 		<div class="control-group">
 			<label class="control-label">真实姓名：</label>
 			<div class="controls">
@@ -91,11 +97,53 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">身份证号码：</label>
+			<div class="controls">
+				<form:input path="securityNo" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">电话号码：</label>
 			<div class="controls">
 				<form:input path="phone" htmlEscape="false" maxlength="20" class="input-xlarge "/>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">微信ID：</label>
+			<div class="controls">
+				<form:input path="wechatId" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">公司全称：</label>
+			<div class="controls">
+				<form:input path="companyName" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+			</div>
+		</div>	
+		<div class="control-group">
+			<label class="control-label">开户行：</label>
+			<div class="controls">
+				<form:input path="companyBank" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">公司账户：</label>
+			<div class="controls">
+				<form:input path="companyAccount" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+			</div>
+		</div>	
+		<div class="control-group">
+			<label class="control-label">公司联系人：</label>
+			<div class="controls">
+				<form:input path="companyContact" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+			</div>
+		</div>	
+		<div class="control-group">
+			<label class="control-label">公司联系电话：</label>
+			<div class="controls">
+				<form:input path="companyContactTelephone" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+			</div>
+		</div>											
 		<div class="control-group">
 			<label class="control-label">二维码URL：</label>
 			<div class="controls">
@@ -114,12 +162,6 @@
 				<form:input path="hierarchy" htmlEscape="false" maxlength="11" class="input-xlarge "/>
 			</div>
 		</div-->
-		<div class="control-group">
-			<label class="control-label">身份证号码：</label>
-			<div class="controls">
-				<form:input path="securityNo" htmlEscape="false" maxlength="50" class="input-xlarge "/>
-			</div>
-		</div>
 		<div class="control-group">
 			<label class="control-label">等级：</label>
 			<div class="controls">

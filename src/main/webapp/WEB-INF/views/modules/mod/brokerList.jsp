@@ -49,7 +49,8 @@
 				<th>等级</th>
 				<th>虚拟豆</th>
 				<th>金币</th>
-				<th>激活码</th>
+				<!--th>激活码</th-->
+				<th>账户类型</th>
 				<th>账户状态</th>
 				<!--th>升级状态</th-->
 				<th>更新时间</th>
@@ -75,7 +76,8 @@
 				<td>${broker.level}</td>	
 				<td>${broker.points}</td>
 				<td>${broker.coins}</td>
-				<td>${broker.token}</td>
+				<!--td>${broker.token}</td-->
+				<td>${broker.accountType}</td>	
 				<td>${broker.status}</td>	
 				<!--td>${broker.upgrade}</td-->	
 				<td>
