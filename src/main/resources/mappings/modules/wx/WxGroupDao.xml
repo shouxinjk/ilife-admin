@@ -7,7 +7,7 @@
 		a.broker_id AS "broker.id",
 		b.name AS "broker.name",
 		b.nickname AS "broker.nickname",		
-		a.persona_id AS "persona.id",
+		a.persona_id AS "persona.id",<!-- 注意：必须直接从group查询personaId，实际存储于Arangodb -->
 		p.name AS "persona.name",
 		a.schedule AS "schedule",
 		a.name AS "name",

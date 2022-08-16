@@ -310,7 +310,7 @@ public class WxGroupController extends BaseController {
 			persona.setDescription(data.getString("description"));
 			persona.setCreateDate(new Date());
 			persona.setUpdateDate(new Date());
-			personaService.save(persona);
+			//personaService.save(persona); //重要：此处不创建新的persona，达人建立的persona存储于arangodb，不在mysql存储
 		}
 		wxGroup.setPersona(persona);
 		wxGroup.setUpdateDate(new Date());

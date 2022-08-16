@@ -11,7 +11,7 @@
 		a.group_id AS "wxgroup.id",
 		g.name AS "wxgroup.name",
 		g.gid AS "wxgroup.gid",
-		pa.id AS "wxgroup.persona.id",
+		g.persona_id AS "wxgroup.persona.id",<!-- 注意：必须直接从group查询personaId，实际存储于Arangodb -->
 		pa.name AS "wxgroup.persona.name",
 		pa.logo AS "wxgroup.persona.logo",
 		g.members AS "wxgroup.members",
