@@ -44,6 +44,15 @@ public class Broker extends DataEntity<Broker> {
 	private int coins=0;//默认金币为0
 	private String token;//机器人口令
 	
+	private String wechatId; //微信ID
+	private String companyName; //公司全称
+	private String companyBank; //公司开户行
+	private String companyAccount; //公司账户
+	private String companyContact; //公司联系人
+	private String companyTelephone;//公司联系人电话
+	
+	private String accountType = "person"; //结算账户类型
+	
 	public Broker() {
 		super();
 	}
@@ -210,6 +219,62 @@ public class Broker extends DataEntity<Broker> {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public String getWechatId() {
+		return wechatId;
+	}
+
+	public void setWechatId(String wechatId) {
+		this.wechatId = wechatId;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getCompanyBank() {
+		return companyBank;
+	}
+
+	public void setCompanyBank(String companyBank) {
+		this.companyBank = companyBank;
+	}
+
+	public String getCompanyAccount() {
+		return companyAccount;
+	}
+
+	public void setCompanyAccount(String companyAccount) {
+		this.companyAccount = companyAccount;
+	}
+
+	public String getCompanyContact() {
+		return companyContact;
+	}
+
+	public void setCompanyContact(String companyContact) {
+		this.companyContact = companyContact;
+	}
+
+	public String getCompanyTelephone() {
+		return companyTelephone;
+	}
+
+	public void setCompanyTelephone(String companyTelephone) {
+		this.companyTelephone = companyTelephone;
+	}
+
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
 	}
 
 	public Office getOrgnization() {
