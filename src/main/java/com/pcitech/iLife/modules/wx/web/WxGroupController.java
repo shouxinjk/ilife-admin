@@ -30,7 +30,9 @@ import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Broker;
+import com.pcitech.iLife.modules.mod.entity.Persona;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
+import com.pcitech.iLife.modules.mod.service.PersonaService;
 import com.pcitech.iLife.modules.sys.utils.UserUtils;
 import com.pcitech.iLife.modules.wx.entity.WxGroup;
 import com.pcitech.iLife.modules.wx.entity.WxGroupTask;
@@ -53,6 +55,8 @@ public class WxGroupController extends BaseController {
 	private WxGroupTaskService wxGroupTaskService;
 	@Autowired
 	private BrokerService brokerService;
+	@Autowired
+	private PersonaService personaService;
 	
 	@ModelAttribute
 	public WxGroup get(@RequestParam(required=false) String id) {
@@ -270,6 +274,31 @@ public class WxGroupController extends BaseController {
 		}
 		//return wxGroupService.findList(wxGroup);
 		return wxGroupService.findFeaturedGroup(wxGroup);
+	}
+	
+	/**
+	 * 更新微信群上的persona
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/persona/{groupId}/{personaId}", method = RequestMethod.POST)
+	public Map<String,Object> updatePersona(@PathVariable String groupId, @PathVariable String personaId) {
+		Map<String,Object> result = Maps.newHashMap();
+		result.put("success", false);
+		WxGroup wxGroup = wxGroupService.get(groupId);
+		if(wxGroup==null) {
+			result.put("msg", "cannot find group by id."+groupId);
+			return result;
+		}
+		Persona persona = personaService.get(personaId);
+		if(persona==null) {
+			result.put("msg", "cannot find persona by id."+personaId);
+			return result;
+		}
+		wxGroup.setPersona(persona);
+		wxGroup.setUpdateDate(new Date());
+		wxGroupService.save(wxGroup);
+		result.put("success", true);
+		return result;
 	}
 	
 	/**

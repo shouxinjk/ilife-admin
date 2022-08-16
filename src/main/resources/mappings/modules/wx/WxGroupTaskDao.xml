@@ -11,6 +11,9 @@
 		a.group_id AS "wxgroup.id",
 		g.name AS "wxgroup.name",
 		g.gid AS "wxgroup.gid",
+		pa.id AS "wxgroup.persona.id",
+		pa.name AS "wxgroup.persona.name",
+		pa.logo AS "wxgroup.persona.logo",
 		g.members AS "wxgroup.members",
 		dgs.label AS "wxgroup.status",
 		dgt.label AS "wxgroup.type",
@@ -31,6 +34,7 @@
 	<sql id="wxGroupTaskJoins">
 		LEFT JOIN mod_broker b ON b.id = a.broker_id
 		LEFT JOIN wx_group g ON g.id = a.group_id
+		LEFT JOIN mod_persona pa ON pa.id = g.persona_id
 		LEFT JOIN sys_dict dt ON dt.type = "wx_group_task_type" and dt.value = a.type
 		LEFT JOIN sys_dict dgt ON dgt.type = "wx_group_type" and dgt.value = g.type
 		LEFT JOIN sys_dict dgs ON dgs.type = "active_inactive" and dgs.value = g.status
