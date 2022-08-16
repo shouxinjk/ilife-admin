@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.mod.web;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +29,7 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.entity.Payment;
 import com.pcitech.iLife.modules.mod.service.PaymentService;
 import com.pcitech.iLife.util.Util;
@@ -109,6 +112,20 @@ public class PaymentController extends BaseController {
 		result.put("success", true);
 		result.put("data", payment);
 		return result;
+	}
+	
+	/**
+	 * 根据达人ID查询所有支付记录。
+	 * 按时间倒序排列
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/payments/byBroker/{brokerId}", method = RequestMethod.GET)
+	public List<Payment> listPaymentsByBrokerId(@PathVariable String brokerId) {
+		Payment payment = new Payment();
+		Broker broker = new Broker();
+		broker.setId(brokerId);
+		return paymentService.findList(payment);
 	}
 
 }

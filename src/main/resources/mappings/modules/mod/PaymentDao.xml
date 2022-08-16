@@ -41,6 +41,15 @@
 		<include refid="paymentJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="broker!=null and broker.id != null and broker.id != ''">
+				AND a.broker_id = #{broker.id}
+			</if>		
+			<if test="status!=null and status != ''">
+				AND a.status = #{status}
+			</if>		
+			<if test="type!=null and type != ''">
+				AND a.type = #{type}
+			</if>					
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
