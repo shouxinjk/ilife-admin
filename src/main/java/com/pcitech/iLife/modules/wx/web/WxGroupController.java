@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -281,7 +282,7 @@ public class WxGroupController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/persona/{groupId}/{personaId}", method = RequestMethod.POST)
-	public Map<String,Object> updatePersona(@PathVariable String groupId, @PathVariable String personaId) {
+	public Map<String,Object> updatePersona(@PathVariable String groupId, @PathVariable String personaId, @RequestBody JSONObject data) {
 		Map<String,Object> result = Maps.newHashMap();
 		result.put("success", false);
 		WxGroup wxGroup = wxGroupService.get(groupId);
@@ -291,8 +292,25 @@ public class WxGroupController extends BaseController {
 		}
 		Persona persona = personaService.get(personaId);
 		if(persona==null) {
-			result.put("msg", "cannot find persona by id."+personaId);
-			return result;
+			result.put("msg", "create persona by id."+personaId);
+			persona = new Persona();
+			persona.setId(personaId);
+			persona.setIsNewRecord(true);
+			persona.setName(data.getString("name"));
+			String tags = "";
+			JSONArray tagArray = data.getJSONArray("tags");
+			if(tagArray != null && tagArray.size()>0) {
+				for(int i=0;i<tagArray.size();i++) {
+					tags += " "+tagArray.getString(i);
+				}
+			}
+			persona.setLambda(tags.trim());
+			if(data.getString("image")!=null && data.getString("image").trim().length()>0)
+				persona.setLogo(data.getString("image"));
+			persona.setDescription(data.getString("description"));
+			persona.setCreateDate(new Date());
+			persona.setUpdateDate(new Date());
+			personaService.save(persona);
 		}
 		wxGroup.setPersona(persona);
 		wxGroup.setUpdateDate(new Date());
