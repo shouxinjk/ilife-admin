@@ -67,6 +67,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">任务CRON描述：</label>
+			<div class="controls">
+				<form:input path="cronDesc" htmlEscape="false" maxlength="64" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">任务关键字：</label>
 			<div class="controls">
 				<form:input path="tags" htmlEscape="false" maxlength="512" class="input-xlarge "/>

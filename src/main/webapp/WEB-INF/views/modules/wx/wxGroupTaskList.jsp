@@ -12,36 +12,45 @@
 		
 		//注册监听事件：直接修改cron表达式
 		function registerEventListener(){
-			//监听所有weight input
+			//监听所有cron input
             $("input[data-section^='sec-']").each((index, item) => {
-            	var inputId = $(item).attr("id");
+            	var inputId = $(item).attr("id").replace(/desc/g,"");
             	if(sxdebug)console.log("got input.[index]"+index,inputId);
                 $("#"+inputId).blur(function(e){
-                	var cron2 = $("#"+e.currentTarget.id).val();
-                	if(sxdebug)console.log("start change cron.",e.currentTarget.id,cron2);
-                    var data = {
-                    		id: e.currentTarget.id,
-                    		cron: cron2
-                    };
-                    $.ajax({
-                        type: "POST",
-                        url: "${ctx}/wx/wxGroupTask/rest/cron/"+e.currentTarget.id,
-                        data: JSON.stringify(data),  
-			            headers:{
-			                "Content-Type":"application/json",
-			                "Accept":"application/json"
-			            },  
-			            success:function(result){
-			            	if(sxdebug)console.log("update cron done.",result);   
-			                //提示修改
-				            siiimpleToast.message('cron已修改',{
-				                  position: 'bottom|center'
-				                });
-			            }
-                    });
+                	updateCron(inputId);
                 }); 
+                $("#desc"+inputId).blur(function(e){
+                	updateCron(inputId);
+                });
               });
 		}
+		
+		function updateCron(id){
+        	var cron2 = $("#"+id).val();
+        	var cronDesc2 = $("#desc"+id).val();
+        	if(sxdebug)console.log("start change cron.",id,cron2,cronDesc2);
+            var data = {
+            		id: id,
+            		cron: cron2,
+            		cronDesc: cronDesc2
+            };
+            $.ajax({
+                type: "POST",
+                url: "${ctx}/wx/wxGroupTask/rest/cron/"+id,
+                data: JSON.stringify(data),  
+	            headers:{
+	                "Content-Type":"application/json",
+	                "Accept":"application/json"
+	            },  
+	            success:function(result){
+	            	if(sxdebug)console.log("update cron done.",result);   
+	                //提示修改
+		            siiimpleToast.message('cron已修改',{
+		                  position: 'bottom|center'
+		                });
+	            }
+            });
+        }
 		
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -94,6 +103,7 @@
 				<th>任务名称</th>
 				<th>任务类型</th>
 				<th>任务CRON</th>
+				<th>任务CRON描述</th>
 				<th>任务关键字</th>
 				<th>任务状态</th>
 				<th>更新时间</th>
@@ -117,8 +127,10 @@
 				</td>
 				<td>
 					<input type="text" value="${wxGroupTask.cron}" id="${wxGroupTask.id}" data-section="sec-${wxGroupTask.id}" style="width:120px;margin:0 auto;padding:0;line-height:24px;font-size:12px;"/>
-					
 				</td>
+				<td>
+					<input type="text" value="${wxGroupTask.cronDesc}" id="desc${wxGroupTask.id}" data-section="sec-${wxGroupTask.id}" style="width:120px;margin:0 auto;padding:0;line-height:24px;font-size:12px;"/>
+				</td>				
 				<td>
 					${wxGroupTask.tags}
 				</td>

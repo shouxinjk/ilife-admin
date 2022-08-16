@@ -21,10 +21,9 @@ public class WxGroupTask extends DataEntity<WxGroupTask> {
 	private String name;		// 任务名称
 	private String type;		// 任务类型
 	private String cron;		// 任务CRON
+	private String cronDesc;		// 任务CRON描述
 	private String tags;		// 任务关键字
 	private String status;		// 任务状态
-	
-	private String cronDesc; //只读，仅用于读取字典label
 	private String typeDesc; //只读，仅用于读取字典label
 	
 	public WxGroupTask() {

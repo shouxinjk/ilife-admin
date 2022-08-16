@@ -180,6 +180,7 @@ public class WxGroupTaskController extends BaseController {
 			return result;
 		}
 		wxGroupTask.setCron(data.getString("cron"));
+		wxGroupTask.setCronDesc(data.getString("cronDesc"));
 		wxGroupTask.setUpdateDate(new Date());
 		wxGroupTaskService.save(wxGroupTask);
 		result.put("success", true);

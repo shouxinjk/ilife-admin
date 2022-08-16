@@ -18,7 +18,7 @@
 		a.type AS "type",
 		dt.label AS "typeDesc",
 		a.cron AS "cron",
-		dc.label AS "cronDesc",
+		a.cronDesc AS "cronDesc",
 		a.tags AS "tags",
 		a.status AS "status",
 		a.create_by AS "createBy.id",
@@ -32,7 +32,6 @@
 		LEFT JOIN mod_broker b ON b.id = a.broker_id
 		LEFT JOIN wx_group g ON g.id = a.group_id
 		LEFT JOIN sys_dict dt ON dt.type = "wx_group_task_type" and dt.value = a.type
-		LEFT JOIN sys_dict dc ON dc.type = "wx_group_task_cron" and dc.value = a.cron
 		LEFT JOIN sys_dict dgt ON dgt.type = "wx_group_type" and dgt.value = g.type
 		LEFT JOIN sys_dict dgs ON dgs.type = "active_inactive" and dgs.value = g.status
 	</sql>
@@ -121,6 +120,7 @@
 			name,
 			type,
 			cron,
+			cronDesc,
 			tags,
 			status,
 			create_by,
@@ -135,6 +135,7 @@
 			#{name},
 			#{type},
 			#{cron},
+			#{cronDesc},
 			#{tags},
 			#{status},
 			#{createBy.id},
@@ -152,6 +153,7 @@
 			name = #{name},
 			type = #{type},
 			cron = #{cron},
+			cronDesc = #{cronDesc},
 			tags = #{tags},
 			status = #{status},
 			update_by = #{updateBy.id},
