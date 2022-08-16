@@ -82,7 +82,18 @@
 					${wxGroup.broker.nickname}
 				</td>
 				<td>
-					${wxGroup.persona.name}
+					<c:choose>
+						<c:when test="${empty wxGroup.persona.id}">
+							
+						</c:when>
+						<c:when test="${empty wxGroup.persona.name}">
+							*移动端可见
+						</c:when>						
+						<c:otherwise>
+						     ${wxGroup.persona.name}                  
+						</c:otherwise>
+					</c:choose>				
+					
 				</td>
 				<!--td>
 					${wxGroup.schedule}
