@@ -10,6 +10,7 @@
 		a.type AS "type",
 		a.tags AS "tags",
 		b.name AS "broker.name",
+		b.nickname AS "broker.nickname",
 		a.broker_id AS "broker.id",
 		a.poster AS "poster",
 		a.article AS "article",
