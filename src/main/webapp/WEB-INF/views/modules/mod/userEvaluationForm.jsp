@@ -27,8 +27,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/userEvaluation/">用户主观评价列表</a></li>
-		<li class="active"><a href="${ctx}/mod/userEvaluation/form?id=${userEvaluation.id}&parent.id=${userEvaluationparent.id}">用户主观评价<shiro:hasPermission name="mod:userEvaluation:edit">${not empty userEvaluation.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:userEvaluation:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/mod/userEvaluation/">主观评价列表</a></li>
+		<li class="active"><a href="${ctx}/mod/userEvaluation/form?id=${userEvaluation.id}&parent.id=${userEvaluationparent.id}">添加主观评价<shiro:hasPermission name="mod:userEvaluation:edit">${not empty userEvaluation.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:userEvaluation:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="userEvaluation" action="${ctx}/mod/userEvaluation/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>

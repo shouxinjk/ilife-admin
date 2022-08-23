@@ -53,7 +53,7 @@
 		        url:"${ctx}/mod/userDimension/rest/dim-tree-by-category",
 		        type:"get",     
 		        data:data,
-		        success:function(ret){
+		        success:function(res){
 		        	console.log("======\nload dimension.",data,res);
 			        if (res.length>0) {//本地存储评价数据
 			            measureScheme = res;
@@ -168,10 +168,10 @@
 		        categoryId:"user"
 		    };
 		    $.ajax({
-		        url:"${ctx}/mod/itemEvaluation/rest/dim-tree-by-category",
+		        url:"${ctx}/mod/userEvaluation/rest/dim-tree-by-category",
 		        type:"get",     
 		        data:data,
-		        success:function(ret){
+		        success:function(res){
 		        	console.log("======\nload evalution.",data,res);
 			        if (res.length>0) {//本地存储评价数据
 			            measureScheme = res;
@@ -184,7 +184,7 @@
 
 		    //获取类目下的特征维度列表
 		    $.ajax({
-		        url:app.config.sx_api+"/mod/itemEvaluation/rest/markable-featured-evaluation",
+		        url:"${ctx}/mod/userEvaluation/rest/markable-featured-evaluation",
 		        type:"get",
 		        //async:false,//同步调用
 		        data:data,
@@ -304,7 +304,7 @@
 				        itemScore[measureId] = newScore;
 				        $("#mscore"+measureId).html(newScore.toFixed(2));
 				        $("#radarImg").empty();//隐藏原有图片
-				        showRadar();//重新生成雷达图
+				        //showRadar();//重新生成雷达图
 
 				        //提交数据并更新
 				        var priority = old.parentIds.length - old.parentIds.replace(/\,/g,"").length;
@@ -335,7 +335,7 @@
 		        tmpScores2[measureScores2[i].id] = measureScores2[i];
 		        var html = "";
 		        html += "<div style='display:flex;flex-direction:row;flex-wrap:nowrap;margin:10px 0;'>";
-		        html += "<div style='width:120px;line-height:24px;'>"+measureScores2[i].type+"</div>";
+		        html += "<div style='width:120px;line-height:24px;'>"+measureScores2[i].name+"</div>";
 		        html += "<div style='width:60px;text-align:center;line-height:24px;' id='mscore2"+measureScores2[i].id+"'>"+measureScores2[i].score+"</div>";
 		        html += "<div style='width:70%' id='score2_"+measureScores2[i].id+"'></div>";
 		        html += "</div>";
@@ -356,7 +356,7 @@
 		                itemScore2[measureId] = newScore;
 		                $("#mscore2"+measureId).html(newScore.toFixed(2));
 		                $("#radarImg2").empty();//隐藏原有图片
-		                showRadar2();//重新生成雷达图
+		                //showRadar2();//重新生成雷达图
 
 		                //提交数据并更新
 		                var priority = old.parentIds.length - old.parentIds.replace(/\,/g,"").length;
@@ -385,7 +385,7 @@
 		<li class="active"><a href="${ctx}/mod/broker/form?id=${broker.id}">推广达人<shiro:hasPermission name="mod:broker:edit">${not empty broker.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:broker:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<div style="display:flex;flex-direction:row;flex-wrap:nowrap">
-		<div style="width:30%">	
+		<div style="width:40%">	
 			<form:form id="inputForm" modelAttribute="broker" action="${ctx}/mod/broker/save" method="post" class="form-horizontal">
 				<form:hidden path="id"/>
 				<sys:message content="${message}"/>		
@@ -555,16 +555,16 @@
 			</form:form>
 		</div>
 		<!-- 主客观标注 -->
-	    <div id="tabs" style="width:70%">
+	    <div id="tabs" style="width:55%;border-left:1px solid silver;padding-left:5px;margin-left:5px;">
             <!--客观评价结果：支持标注时手动录入-->
             <div id="measuresDiv" style="display:none">
-                <label class="formLabel" style="line-height: 30px;margin:5px 0; padding:5px 0;">客观评价结果</label>
+                <label class="formLabel" style="line-height: 30px;margin:5px 0; padding:5px 0;background-color:#fbe7e2;width:100%;">客观评价结果</label>
                 <div id="measuresList"></div>
             </div> 
             
             <!--客观评价结果：支持标注时手动录入-->
             <div id="measuresDiv2" style="display:none">
-                <label class="formLabel" style="line-height: 30px;margin:5px 0; padding:5px 0;">主观评价结果</label>
+                <label class="formLabel" style="line-height: 30px;margin:5px 0; padding:5px 0;background-color:#ccf8d1;width:100%;">主观评价结果</label>
                 <div id="measuresList2"></div>
             </div>  	    
 	   	</div>  	

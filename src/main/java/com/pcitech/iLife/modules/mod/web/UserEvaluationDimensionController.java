@@ -81,7 +81,7 @@ public class UserEvaluationDimensionController extends BaseController {
 		}
 		userEvaluationDimensionService.save(userEvaluationDimension);
 		addMessage(redirectAttributes, "保存用户主观评价-维度成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/userEvaluationDimension/?evaluation.id="+userEvaluationDimension.getEvaluation().getId()+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/userEvaluation/?evaluation.id="+userEvaluationDimension.getEvaluation().getId()+"&repage";
 	}
 	
 	@RequiresPermissions("mod:userEvaluationDimension:edit")
@@ -89,7 +89,7 @@ public class UserEvaluationDimensionController extends BaseController {
 	public String delete(UserEvaluationDimension userEvaluationDimension, RedirectAttributes redirectAttributes) {
 		userEvaluationDimensionService.delete(userEvaluationDimension);
 		addMessage(redirectAttributes, "删除用户主观评价-维度成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/userEvaluationDimension/?evaluation.id="+userEvaluationDimension.getEvaluation().getId()+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/userEvaluation/?evaluation.id="+userEvaluationDimension.getEvaluation().getId()+"&repage";
 	}
 
 }

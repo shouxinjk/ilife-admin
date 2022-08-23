@@ -67,12 +67,10 @@ public class UserDimensionMeasureController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(UserDimensionMeasure userDimensionMeasure, Model model) {
 		if(userDimensionMeasure.getId() == null) {//对于新添加记录默认放到根节点下
-			if(userDimensionMeasure.getDimension()!=null && userDimensionMeasure.getDimension().getId()!=null)//从标签页开始添加不带有dimension信息，只有从维度操作列添加带有该信息
+			if(userDimensionMeasure.getDimension()!=null && userDimensionMeasure.getDimension().getId()!=null){//从标签页开始添加不带有dimension信息，只有从维度操作列添加带有该信息
 				userDimensionMeasure.setDimension(userDimensionService.get(userDimensionMeasure.getDimension().getId()));
-			if(userDimensionMeasure.getDimension()!=null && userDimensionMeasure.getDimension().getId()!=null)//从标签页开始添加不带有dimension信息，只有从维度操作列添加带有该信息
 				userDimensionMeasure.setName(userDimensionMeasure.getDimension().getName());
-			else
-				userDimensionMeasure.setName("-");
+			}
 		}		
 		model.addAttribute("userDimensionMeasure", userDimensionMeasure);
 		return "modules/mod/userDimensionMeasureForm";

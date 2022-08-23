@@ -400,6 +400,7 @@ public class UserDimensionController extends BaseController {
 			//添加本级节点
 			JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(rootDimension);
 			node.put("type", rootDimension.getType());
+			node.put("category", rootDimension.getCategory());
 			node.put("id", rootDimension.getId());
 			node.put("parent", rootDimension.getParent());
 			node.put("name", rootDimension.getName());
@@ -425,6 +426,7 @@ public class UserDimensionController extends BaseController {
 			//添加本级节点
 			JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(item);
 			node.put("type", item.getType());
+			node.put("category", item.getCategory());
 			node.put("id", item.getId());
 			node.put("parent", item.getParent());
 			node.put("name", item.getName());
@@ -446,6 +448,7 @@ public class UserDimensionController extends BaseController {
 			//添加属性
 			JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(item);
 			node.put("type", dimension.getType());//"measure");
+			node.put("featured", false);
 			node.put("id", item.getId());
 			node.put("parent", dimension);//将dimension作为parent设置
 			logger.debug("[measure.category.id]"+measure.getCategory().getId());
