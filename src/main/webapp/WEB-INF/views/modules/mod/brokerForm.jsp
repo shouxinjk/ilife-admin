@@ -389,6 +389,7 @@
 			<form:form id="inputForm" modelAttribute="broker" action="${ctx}/mod/broker/save" method="post" class="form-horizontal">
 				<form:hidden path="id"/>
 				<sys:message content="${message}"/>		
+				<label class="formLabel" style="line-height: 30px;margin:5px 0; padding:5px 0;background-color:#f2f3d9;width:100%;">基本信息</label>
 				<div class="control-group">
 					<label class="control-label">所属机构:</label>
 					<div class="controls">
@@ -406,7 +407,7 @@
 				<div class="control-group">
 					<label class="control-label">上级达人：</label>
 					<div class="controls">
-						<sys:treeselect id="parent" name="parent.id" value="${broker.parent.id}" labelName="parent.name" labelValue="${broker.parent.name}"
+						<sys:treeselect id="parent" name="parent.id" value="${broker.parent.id}" labelName="parent.nickname" labelValue="${broker.parent.nickname}"
 							title="上级达人" url="/mod/broker/treeData" extId="${broker.id}" cssClass="" allowClear="true"/>
 					</div>
 				</div>
@@ -422,6 +423,7 @@
 						<form:input path="nickname" htmlEscape="false" maxlength="64" class="input-xlarge "/>
 					</div>
 				</div>
+				<label class="formLabel" style="line-height: 30px;margin:5px 0; padding:5px 0;background-color:#f2f3d9;width:100%;">BOT信息</label>
 				<div class="control-group">
 					<label class="control-label">虚拟豆：</label>
 					<div class="controls">
@@ -440,6 +442,7 @@
 						<form:input path="token" htmlEscape="false" maxlength="20" class="input-xlarge "/>
 					</div>
 				</div>	
+				<label class="formLabel" style="line-height: 30px;margin:5px 0; padding:5px 0;background-color:#f2f3d9;width:100%;">账户信息</label>
 				<div class="control-group">
 					<label class="control-label">账户类型：</label>
 					<div class="controls">
@@ -499,7 +502,8 @@
 					<div class="controls">
 						<form:input path="companyTelephone" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 					</div>
-				</div>											
+				</div>		
+				<label class="formLabel" style="line-height: 30px;margin:5px 0; padding:5px 0;background-color:#f2f3d9;width:100%;">其他杂项</label>									
 				<div class="control-group">
 					<label class="control-label">二维码URL：</label>
 					<div class="controls">

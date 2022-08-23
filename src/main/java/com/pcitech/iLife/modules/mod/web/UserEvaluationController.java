@@ -86,7 +86,7 @@ public class UserEvaluationController extends BaseController {
 		List<UserEvaluation> result = userEvaluationService.findList(q);
 		List<UserEvaluation> list = Lists.newArrayList();
 		for(UserEvaluation item:result) {
-			if(",a,b,c,d,e,x,y,z".indexOf(item.getType())>0) {
+			if(",a,b,c,d,e,x,y,z,alpha,beta,gamma,delte,epsilon,eta,zeta,theta".indexOf(","+item.getType())>-1) {
 				list.add(item);
 			}
 		}
