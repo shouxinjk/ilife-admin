@@ -5,15 +5,46 @@
 	<title>用户分群管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
+		var sxdebug = true;
+		var ratio = 1000;
+		var colors = ['#8b0000', '#dc143c', '#ff4500', '#ff6347', '#1e90ff','#00ffff','#40e0d0','#9acd32','#32cd32','#228b22'];
 		$(document).ready(function() {
-			
+            //将vals slider实例化
+            $("div[id^='slider-']").each((index, item) => {
+            	var sliderId = $(item).attr("id");
+            	var sliderVal = Number($('#'+sliderId).attr("data-slider-value"))*ratio;
+            	$( "#"+sliderId ).slider({
+            	      orientation: "horizontal",
+            	      range: "min",
+            	      min: 0,
+            	      max: ratio,
+            	      value: sliderVal,
+            	      slide: changeSlide,
+            	      change: changeSlide
+            	    });
+            	
+            	//设置颜色
+            	if(sxdebug)console.log("got silder val:",$('#'+sliderId).val(), Math.floor(sliderVal/ratio*10));
+            	$( '#'+sliderId +" .ui-slider-range" ).css( "background", colors[Math.floor(sliderVal/ratio*10)] );
+            	$( '#'+sliderId +" .ui-slider-handle" ).css( "border-color", colors[Math.floor(sliderVal/ratio*10)] );
+              });
 		});
+		
 		function page(n,s){
 			$("#pageNo").val(n);
 			$("#pageSize").val(s);
 			$("#searchForm").submit();
         	return false;
         }
+		
+		function changeSlide(event, ui) {
+			var sliderId = event.target.id;
+			var sliderVal = ui.value;
+			if(sxdebug)console.log("slider changed...", sliderId, sliderVal );
+        	$( '#'+sliderId +" .ui-slider-range" ).css( "background", colors[Math.floor(sliderVal/ratio*10)] );
+        	$( '#'+sliderId +" .ui-slider-handle" ).css( "border-color", colors[Math.floor(sliderVal/ratio*10)] );
+		}
+		
 	</script>
 </head>
 <body>
@@ -43,8 +74,8 @@
 				<th>默认头像</th>
 				<th>画像名称</th>
 				<th>基本信息</th>
-				<th>VALS模型</th>
-				<th>能力模型</th>
+				<th colspan="2" align="center">VALS模型</th>
+				<th colspan="2" align="center">能力模型</th>
 				<th>偏好标签</th>
 				<th>识别规则</th>
 				<shiro:hasPermission name="mod:persona:edit"><th>操作</th></shiro:hasPermission>
@@ -67,18 +98,37 @@
 					阶层：${persona.hierarchy.name}(${persona.hierarchy.displayName})<br/>
 					分群：${persona.parent.name}
 				</td>
-				<td>
-					生理：${persona.alpha}<br/>
-					安全：${persona.beta}<br/>
-					情感：${persona.gamma}<br/>
-					尊重：${persona.delte}<br/>
-					价值：${persona.epsilon}
+				<td align="right" width="40px">
+					生存：<br/>
+					安全：<br/>
+					情感：<br/>
+					尊重：<br/>
+					价值：<br/>
+				</td>				
+				<td align="center" width="150px">
+					<div id="slider-alpha-${persona.id}" data-slider-value="${persona.alpha}" style="width:90%;margin:10px;"></div>
+					<div id="slider-beta-${persona.id}" data-slider-value="${persona.beta}" style="width:90%;margin:10px;"></div>
+					<div id="slider-gamma-${persona.id}" data-slider-value="${persona.gamma}" style="width:90%;margin:10px;"></div>
+					<div id="slider-delte-${persona.id}" data-slider-value="${persona.delte}" style="width:90%;margin:10px;"></div>
+					<div id="slider-epsilon-${persona.id}" data-slider-value="${persona.epsilon}" style="width:90%;margin:10px;"></div>
 				</td>
-				<td>
-					经济：${persona.zeta} (${persona.hierarchy.economyScoreMin }-${persona.hierarchy.economyScoreMax })<br/>
-					社会：${persona.eta} (${persona.hierarchy.cultureScoreMin }-${persona.hierarchy.cultureScoreMax })<br/>
-					文化：${persona.theta} (${persona.hierarchy.societyScoreMin }-${persona.hierarchy.societyScoreMax })
+				<!--td>
+					${persona.alpha}<br/>
+					${persona.beta}<br/>
+					${persona.gamma}<br/>
+					${persona.delte}<br/>
+					${persona.epsilon}<br/>
+				</td-->					
+				<td width="40px">
+					经济：<br/>
+					社会：<br/>
+					文化：<br/>
 				</td>
+				<td align="center" width="150px;">
+					<div id="slider-zeta-${persona.id}" data-slider-value="${persona.zeta}" style="width:90%;margin:10px;"></div>
+					<div id="slider-eta-${persona.id}" data-slider-value="${persona.eta}" style="width:90%;margin:10px;"></div>
+					<div id="slider-theta-${persona.id}" data-slider-value="${persona.theta}" style="width:90%;margin:10px;"></div>
+				</td>				
 				<td>
 					${persona.lambda}
 				</td>
