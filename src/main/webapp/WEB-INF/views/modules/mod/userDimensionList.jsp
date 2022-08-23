@@ -59,7 +59,7 @@
         		if(sxdebug)console.log("sum section.[section]"+index,section);
 				//获取该section下的所有节点，并汇总其weight值
 				var sum = 0;
-                $("input[data-entry^='"+section+"']").each((index, item) => {
+                $("input[data-entry^='"+section+"-']").each((index, item) => {
                 	var weight = Number($(item).val());
                 	if(sxdebug)console.log("got entry.[index]"+index,weight,sum);
                 	if(weight>0&&weight<=100){
