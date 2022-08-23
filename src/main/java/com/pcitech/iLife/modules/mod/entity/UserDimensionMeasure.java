@@ -19,7 +19,7 @@ public class UserDimensionMeasure extends DataEntity<UserDimensionMeasure> {
 	private UserMeasure measure;		// 关键属性编号
 	private String name;		// name
 	private String description;		// description
-	private String weight;		// weight
+	private double weight;		// weight
 	private String sort;		// sort
 	private String category;		// category
 	
@@ -64,11 +64,11 @@ public class UserDimensionMeasure extends DataEntity<UserDimensionMeasure> {
 		this.description = description;
 	}
 	
-	public String getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(String weight) {
+	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 	

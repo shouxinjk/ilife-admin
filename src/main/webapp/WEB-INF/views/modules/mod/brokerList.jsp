@@ -18,7 +18,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/mod/broker/">推广达人列表</a></li>
+		<li class="active"><a href="${ctx}/mod/broker/">达人列表</a></li>
 		<shiro:hasPermission name="mod:broker:edit"><li><a href="${ctx}/mod/broker/form">推广达人添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="broker" action="${ctx}/mod/broker/" method="post" class="breadcrumb form-search">

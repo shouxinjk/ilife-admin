@@ -24,10 +24,10 @@ public class UserDimension extends TreeEntity<UserDimension> {
 	private String parentIds;		// 所有父级编号
 	private String name;		// name
 	private String description;		// description
-	private String weight;		// weight
+	private double weight;		// weight
 	private String type;		// type
 	private String script;		// script
-	private String featured;		// featured
+	private boolean featured;		// featured
 	private String sort;		// sort
 	private String category;		// category
 	private String propKey;		// 键名，用于计算引用
@@ -76,11 +76,11 @@ public class UserDimension extends TreeEntity<UserDimension> {
 		this.description = description;
 	}
 	
-	public String getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(String weight) {
+	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 	
@@ -101,12 +101,11 @@ public class UserDimension extends TreeEntity<UserDimension> {
 		this.script = script;
 	}
 	
-	@Length(min=1, max=1, message="featured长度必须介于 1 和 1 之间")
-	public String getFeatured() {
+	public boolean isFeatured() {
 		return featured;
 	}
 
-	public void setFeatured(String featured) {
+	public void setFeatured(boolean featured) {
 		this.featured = featured;
 	}
 	

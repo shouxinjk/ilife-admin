@@ -19,6 +19,7 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.UserDimension;
 import com.pcitech.iLife.modules.mod.entity.UserDimensionMeasure;
 import com.pcitech.iLife.modules.mod.service.UserDimensionMeasureService;
 import com.pcitech.iLife.modules.mod.service.UserDimensionService;
@@ -65,9 +66,13 @@ public class UserDimensionMeasureController extends BaseController {
 	@RequiresPermissions("mod:userDimensionMeasure:view")
 	@RequestMapping(value = "form")
 	public String form(UserDimensionMeasure userDimensionMeasure, Model model) {
-		if(userDimensionMeasure.getId() == null) {//对于新添加记录需要根据ID补充dimension
-			userDimensionMeasure.setDimension(userDimensionService.get(userDimensionMeasure.getDimension().getId()));
-			userDimensionMeasure.setName(userDimensionMeasure.getDimension().getName());
+		if(userDimensionMeasure.getId() == null) {//对于新添加记录默认放到根节点下
+			if(userDimensionMeasure.getDimension()!=null && userDimensionMeasure.getDimension().getId()!=null)//从标签页开始添加不带有dimension信息，只有从维度操作列添加带有该信息
+				userDimensionMeasure.setDimension(userDimensionService.get(userDimensionMeasure.getDimension().getId()));
+			if(userDimensionMeasure.getDimension()!=null && userDimensionMeasure.getDimension().getId()!=null)//从标签页开始添加不带有dimension信息，只有从维度操作列添加带有该信息
+				userDimensionMeasure.setName(userDimensionMeasure.getDimension().getName());
+			else
+				userDimensionMeasure.setName("-");
 		}		
 		model.addAttribute("userDimensionMeasure", userDimensionMeasure);
 		return "modules/mod/userDimensionMeasureForm";
@@ -81,7 +86,7 @@ public class UserDimensionMeasureController extends BaseController {
 		}
 		userDimensionMeasureService.save(userDimensionMeasure);
 		addMessage(redirectAttributes, "保存用户客观评价-属性成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/userDimensionMeasure/?dimension.id="+userDimensionMeasure.getDimension().getId()+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/userDimension/?dimension.id="+userDimensionMeasure.getDimension().getId()+"&repage";
 	}
 	
 	@RequiresPermissions("mod:userDimensionMeasure:edit")
@@ -89,7 +94,7 @@ public class UserDimensionMeasureController extends BaseController {
 	public String delete(UserDimensionMeasure userDimensionMeasure, RedirectAttributes redirectAttributes) {
 		userDimensionMeasureService.delete(userDimensionMeasure);
 		addMessage(redirectAttributes, "删除用户客观评价-属性成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/userDimensionMeasure/?dimension.id="+userDimensionMeasure.getDimension().getId()+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/userDimension/?dimension.id="+userDimensionMeasure.getDimension().getId()+"&repage";
 	}
 
 }
