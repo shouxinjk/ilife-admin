@@ -5,7 +5,7 @@
 	<title>用户分群管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
-		var sxdebug = true;
+		var sxdebug = false;
 		var ratio = 1000;
 		var colors = ['#8b0000', '#dc143c', '#ff4500', '#ff6347', '#1e90ff','#00ffff','#40e0d0','#9acd32','#32cd32','#228b22'];
 		$(document).ready(function() {
@@ -74,8 +74,8 @@
 				<th>默认头像</th>
 				<th>画像名称</th>
 				<th>基本信息</th>
-				<th colspan="2" align="center">VALS模型</th>
-				<th colspan="2" align="center">能力模型</th>
+				<th align="center">VALS需要模型</th>
+				<th align="center">能力模型</th>
 				<th>偏好标签</th>
 				<th>识别规则</th>
 				<shiro:hasPermission name="mod:persona:edit"><th>操作</th></shiro:hasPermission>
@@ -97,32 +97,13 @@
 					阶段：${persona.phase.name}<br/>
 					阶层：${persona.hierarchy.name}(${persona.hierarchy.displayName})<br/>
 					分群：${persona.parent.name}
-				</td>
-				<td align="right" width="40px">
-					生存：<br/>
-					安全：<br/>
-					情感：<br/>
-					尊重：<br/>
-					价值：<br/>
-				</td>				
+				</td>			
 				<td align="center" width="150px">
 					<div id="slider-alpha-${persona.id}" data-slider-value="${persona.alpha}" style="width:90%;margin:10px;"></div>
 					<div id="slider-beta-${persona.id}" data-slider-value="${persona.beta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-gamma-${persona.id}" data-slider-value="${persona.gamma}" style="width:90%;margin:10px;"></div>
 					<div id="slider-delte-${persona.id}" data-slider-value="${persona.delte}" style="width:90%;margin:10px;"></div>
 					<div id="slider-epsilon-${persona.id}" data-slider-value="${persona.epsilon}" style="width:90%;margin:10px;"></div>
-				</td>
-				<!--td>
-					${persona.alpha}<br/>
-					${persona.beta}<br/>
-					${persona.gamma}<br/>
-					${persona.delte}<br/>
-					${persona.epsilon}<br/>
-				</td-->					
-				<td width="40px">
-					经济：<br/>
-					社会：<br/>
-					文化：<br/>
 				</td>
 				<td align="center" width="150px;">
 					<div id="slider-zeta-${persona.id}" data-slider-value="${persona.zeta}" style="width:90%;margin:10px;"></div>

@@ -5,7 +5,7 @@
 	<title>用户分群管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
-		var sxdebug = true;
+		var sxdebug = false;
 		var sxData = {};//存储vals和cost值，结构为：key:value，key为alpha/beta/gamma...
 		var ratio = 1000;
 		var colors = ['#8b0000', '#dc143c', '#ff4500', '#ff6347', '#1e90ff','#00ffff','#40e0d0','#9acd32','#32cd32','#228b22'];
