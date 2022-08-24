@@ -75,9 +75,19 @@
     			$("#"+item).val(sxData[item]);
     			//更新slider：注意当前不做更新，否则导致死循环
     		});  
-    	}else if(costFactors.indexOf(targetFactor)>-1){
-    		//如果是capability则直接填充到input
-    		$("#"+targetFactor).val(sxData[targetFactor]);
+    	}else if(costFactors.indexOf(targetFactor)>-1){//需要计算后重新赋值
+    		//计算总和
+    		var total = 0;
+    		costFactors.forEach(function(item){
+    			total += sxData[item];
+    		});
+    		//重新计算归一化数值
+    		costFactors.forEach(function(item){
+    			sxData[item] = sxData[item]/total;
+    			//设置到input框
+    			$("#"+item).val(sxData[item]);
+    			//更新slider：注意当前不做更新，否则导致死循环
+    		}); 
     	}else{
     		//do nothing
     	}
@@ -116,7 +126,7 @@
 					<label class="control-label">属性：</label>
 					<div class="controls">
 						 <sys:treeselect id="measure" name="measure.id" value="${personaMeasure.measure.id}" labelName="measure.name" labelValue="${personaMeasure.measure.name}"
-							title="属性列表" url="/mod/personaMeasure/treeData"  notAllowSelectRoot="true" cssClass="required"/>
+							title="属性" url="/mod/userMeasure/treeData"  notAllowSelectRoot="true" cssClass="required"/>
 						<span class="help-inline"><font color="red">*</font> </span>
 					</div>
 				</div>		
@@ -167,7 +177,7 @@
 			<div id="slider-delte" data-slider-value="${personaMeasure.delte}" style="width:90%;margin:10px;"></div>
 			<div id="slider-epsilon" data-slider-value="${personaMeasure.epsilon}" style="width:90%;margin:10px;"></div>
 
-			<label class="formLabel" style="line-height: 30px;margin:5px 0; padding:5px 0;background-color:#f2f3d9;width:100%;">能力分布</label>
+			<label class="formLabel" style="line-height: 30px;margin:5px 0; padding:5px 0;background-color:#f2f3d9;width:100%;">能力分布（总和为1）</label>
 			<div id="slider-zeta" data-slider-value="${personaMeasure.zeta}" style="width:90%;margin:10px;"></div>
 			<div id="slider-eta" data-slider-value="${personaMeasure.eta}" style="width:90%;margin:10px;"></div>
 			<div id="slider-theta" data-slider-value="${personaMeasure.theta}" style="width:90%;margin:10px;"></div>
