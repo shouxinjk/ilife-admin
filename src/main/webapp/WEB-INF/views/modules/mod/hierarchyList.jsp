@@ -41,9 +41,8 @@
 			<tr>
 				<th>名称</th>
 				<th>昵称</th>
-				<th>经济资本</th>
-				<th>文化资本</th>
-				<th>社会资本</th>
+				<th>构成</th>
+				<th>描述</th>
 				<th>识别规则</th>
 				<th>matrix曲线</th>
 				<shiro:hasPermission name="mod:hierarchy:edit"><th>操作</th></shiro:hasPermission>
@@ -59,14 +58,13 @@
 					${hierarchy.displayName}
 				</td>				
 				<td>
-					${hierarchy.economyLevel}(${hierarchy.economyScoreMin } - ${hierarchy.economyScoreMax })
+					经济资本：${hierarchy.economyLevel}(${hierarchy.economyScoreMin } - ${hierarchy.economyScoreMax }) <br/>
+					文化资本：${hierarchy.cultureLevel}(${hierarchy.cultureScoreMin } - ${hierarchy.cultureScoreMax })<br/>
+					社会资本：${hierarchy.societyLevel}(${hierarchy.societyScoreMin } - ${hierarchy.societyScoreMax })<br/>
 				</td>
 				<td>
-					${hierarchy.cultureLevel}(${hierarchy.cultureScoreMin } - ${hierarchy.cultureScoreMax })
-				</td>
-				<td>
-					${hierarchy.societyLevel}(${hierarchy.societyScoreMin } - ${hierarchy.societyScoreMax })
-				</td>
+					${hierarchy.description}
+				</td>				
 				<td>
 					${hierarchy.expression}
 				</td>
