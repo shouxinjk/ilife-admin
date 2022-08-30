@@ -111,14 +111,14 @@
 				<!--td>
 					${userMeasure.defaultRank}
 				</td-->		
-				<td align="center" width="150px">
+				<td align="center" width="250px">
 					<div id="slider-alpha-${userMeasure.id}" data-slider-value="${userMeasure.alpha}" style="width:90%;margin:10px;"></div>
 					<div id="slider-beta-${userMeasure.id}" data-slider-value="${userMeasure.beta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-gamma-${userMeasure.id}" data-slider-value="${userMeasure.gamma}" style="width:90%;margin:10px;"></div>
 					<div id="slider-delte-${userMeasure.id}" data-slider-value="${userMeasure.delte}" style="width:90%;margin:10px;"></div>
 					<div id="slider-epsilon-${userMeasure.id}" data-slider-value="${userMeasure.epsilon}" style="width:90%;margin:10px;"></div>
 				</td>
-				<td align="center" width="150px;">
+				<td align="center" width="250px;">
 					<div id="slider-zeta-${userMeasure.id}" data-slider-value="${userMeasure.zeta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-eta-${userMeasure.id}" data-slider-value="${userMeasure.eta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-theta-${userMeasure.id}" data-slider-value="${userMeasure.theta}" style="width:90%;margin:10px;"></div>

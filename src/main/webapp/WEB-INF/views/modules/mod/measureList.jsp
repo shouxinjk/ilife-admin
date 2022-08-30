@@ -147,14 +147,14 @@
 					${measure.lambda}
 				</td-->				
 	
-				<td align="center" width="150px">
+				<td align="center" width="250px">
 					<div id="slider-alpha-${measure.id}" data-slider-value="${measure.alpha}" style="width:90%;margin:10px;"></div>
 					<div id="slider-beta-${measure.id}" data-slider-value="${measure.beta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-gamma-${measure.id}" data-slider-value="${measure.gamma}" style="width:90%;margin:10px;"></div>
 					<div id="slider-delte-${measure.id}" data-slider-value="${measure.delte}" style="width:90%;margin:10px;"></div>
 					<div id="slider-epsilon-${measure.id}" data-slider-value="${measure.epsilon}" style="width:90%;margin:10px;"></div>
 				</td>
-				<td align="center" width="150px;">
+				<td align="center" width="250px;">
 					<div id="slider-zeta-${measure.id}" data-slider-value="${measure.zeta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-eta-${measure.id}" data-slider-value="${measure.eta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-theta-${measure.id}" data-slider-value="${measure.theta}" style="width:90%;margin:10px;"></div>

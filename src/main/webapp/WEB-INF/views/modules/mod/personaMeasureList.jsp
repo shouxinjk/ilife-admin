@@ -79,14 +79,14 @@
 				<td>
 					${personaMeasure.weight}
 				</td>
-				<td align="center" width="150px">
+				<td align="center" width="250px">
 					<div id="slider-alpha-${personaMeasure.id}" data-slider-value="${personaMeasure.alpha}" style="width:90%;margin:10px;"></div>
 					<div id="slider-beta-${personaMeasure.id}" data-slider-value="${personaMeasure.beta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-gamma-${personaMeasure.id}" data-slider-value="${personaMeasure.gamma}" style="width:90%;margin:10px;"></div>
 					<div id="slider-delte-${personaMeasure.id}" data-slider-value="${personaMeasure.delte}" style="width:90%;margin:10px;"></div>
 					<div id="slider-epsilon-${personaMeasure.id}" data-slider-value="${personaMeasure.epsilon}" style="width:90%;margin:10px;"></div>
 				</td>
-				<td align="center" width="150px;">
+				<td align="center" width="250px;">
 					<div id="slider-zeta-${personaMeasure.id}" data-slider-value="${personaMeasure.zeta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-eta-${personaMeasure.id}" data-slider-value="${personaMeasure.eta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-theta-${personaMeasure.id}" data-slider-value="${personaMeasure.theta}" style="width:90%;margin:10px;"></div>

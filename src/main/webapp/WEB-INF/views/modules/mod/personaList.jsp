@@ -98,14 +98,14 @@
 					阶层：${persona.hierarchy.name}(${persona.hierarchy.displayName})<br/>
 					分群：${persona.parent.name}
 				</td>			
-				<td align="center" width="150px">
+				<td align="center" width="250px">
 					<div id="slider-alpha-${persona.id}" data-slider-value="${persona.alpha}" style="width:90%;margin:10px;"></div>
 					<div id="slider-beta-${persona.id}" data-slider-value="${persona.beta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-gamma-${persona.id}" data-slider-value="${persona.gamma}" style="width:90%;margin:10px;"></div>
 					<div id="slider-delte-${persona.id}" data-slider-value="${persona.delte}" style="width:90%;margin:10px;"></div>
 					<div id="slider-epsilon-${persona.id}" data-slider-value="${persona.epsilon}" style="width:90%;margin:10px;"></div>
 				</td>
-				<td align="center" width="150px;">
+				<td align="center" width="250px;">
 					<div id="slider-zeta-${persona.id}" data-slider-value="${persona.zeta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-eta-${persona.id}" data-slider-value="${persona.eta}" style="width:90%;margin:10px;"></div>
 					<div id="slider-theta-${persona.id}" data-slider-value="${persona.theta}" style="width:90%;margin:10px;"></div>
