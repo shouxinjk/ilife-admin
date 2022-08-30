@@ -6,16 +6,46 @@
 	<meta name="decorator" content="default"/>
 	<%@include file="/WEB-INF/views/include/treetable.jsp" %>
 	<script type="text/javascript">
-		$(document).ready(function() {
-			$("#treeTable").treeTable({expandLevel : 3});
-		});
+	var sxdebug = false;
+	var ratio = 1000;
+	var colors = ['#8b0000', '#dc143c', '#ff4500', '#ff6347', '#1e90ff','#00ffff','#40e0d0','#9acd32','#32cd32','#228b22'];
+	$(document).ready(function() {
+        //将vals slider实例化
+        $("div[id^='slider-']").each((index, item) => {
+        	var sliderId = $(item).attr("id");
+        	var sliderVal = Number($('#'+sliderId).attr("data-slider-value"))*ratio;
+        	$( "#"+sliderId ).slider({
+        	      orientation: "horizontal",
+        	      range: "min",
+        	      min: 0,
+        	      max: ratio,
+        	      value: sliderVal,
+        	      slide: changeSlide,
+        	      change: changeSlide
+        	    });
+        	
+        	//设置颜色
+        	if(sxdebug)console.log("got silder val:",$('#'+sliderId).val(), Math.floor(sliderVal/ratio*10));
+        	$( '#'+sliderId +" .ui-slider-range" ).css( "background", colors[Math.floor(sliderVal/ratio*10)] );
+        	$( '#'+sliderId +" .ui-slider-handle" ).css( "border-color", colors[Math.floor(sliderVal/ratio*10)] );
+          });
+	});
 	
-		
-		function updateSort() {
-			loading('正在提交，请稍等...');
-	    	$("#listForm").attr("action", "${ctx}/mod/phase/updateSort");
-	    	$("#listForm").submit();
-    	}
+	function page(n,s){
+		$("#pageNo").val(n);
+		$("#pageSize").val(s);
+		$("#searchForm").submit();
+    	return false;
+    }
+	
+	function changeSlide(event, ui) {
+		var sliderId = event.target.id;
+		var sliderVal = ui.value;
+		if(sxdebug)console.log("slider changed...", sliderId, sliderVal );
+    	$( '#'+sliderId +" .ui-slider-range" ).css( "background", colors[Math.floor(sliderVal/ratio*10)] );
+    	$( '#'+sliderId +" .ui-slider-handle" ).css( "border-color", colors[Math.floor(sliderVal/ratio*10)] );
+	}
+	
 	</script>
 </head>
 <body>
@@ -26,28 +56,38 @@
 	<sys:message content="${message}"/>
 	<form id="listForm" method="post">
 		<table id="treeTable" class="table table-striped table-bordered table-condensed">
-			<tr><th>名称</th><th>判定条件</th><th>生理</th><th>安全</th><th>社交</th><th>尊重</th><th>价值</th><th style="text-align:center;">排序</th><th>匹配用户</th><th>操作</th></tr>
+			<tr>
+				<th>名称</th>
+				<th>判定条件</th>
+				<th colspan="2">VALS需要构成</th>
+				<th>描述</th>
+				<th style="text-align:center;">排序</th>
+				<th>匹配用户</th>
+				<th>操作</th>
+			</tr>
 			<c:forEach items="${list}" var="tpl">
 				<tr id="${tpl.id}" pId="${tpl.parent.id ne '1'?tpl.parent.id:'0'}">
 					<td><a href="${ctx}/mod/phase/form?id=${tpl.id}">${tpl.name}</a></td>
 				<td>
  					${tpl.expression}
  				</td>
+				<td align="center" width="250px">
+					<div id="slider-alpha-${tpl.id}" data-slider-value="${tpl.alpha}" style="width:90%;margin:10px;"></div>
+					<div id="slider-beta-${tpl.id}" data-slider-value="${tpl.beta}" style="width:90%;margin:10px;"></div>
+					<div id="slider-gamma-${tpl.id}" data-slider-value="${tpl.gamma}" style="width:90%;margin:10px;"></div>
+					<div id="slider-delte-${tpl.id}" data-slider-value="${tpl.delte}" style="width:90%;margin:10px;"></div>
+					<div id="slider-epsilon-${tpl.id}" data-slider-value="${tpl.epsilon}" style="width:90%;margin:10px;"></div>
+				</td> 				
 				<td>
-					${tpl.alpha}
+					生存需要：${tpl.alpha}<br/>
+					安全需要：${tpl.beta}<br/>
+					情感需要：${tpl.gamma}<br/>
+					尊重需要：${tpl.delte}<br/>
+					价值需要：${tpl.epsilon}
 				</td>
 				<td>
-					${tpl.beta}
-				</td>
-				<td>
-					${tpl.gamma}
-				</td>
-				<td>
-					${tpl.delte}
-				</td>
-				<td>
-					${tpl.epsilon}
-				</td>
+ 					${tpl.description}
+ 				</td>				
 				<td style="text-align:center;">
 					<shiro:hasPermission name="mod:phase:edit">
 						<input type="hidden" name="ids" value="${tpl.id}"/>
@@ -71,59 +111,5 @@
 			<input id="btnSubmit" class="btn btn-primary" type="button" value="保存排序" onclick="updateSort();"/>
 		</div></shiro:hasPermission>
 	</form>
-<!-- 	<table id="contentTable" class="table table-striped table-bordered table-condensed"> -->
-<!-- 		<thead> -->
-<!-- 			<tr> -->
-<!-- 				<th>name</th> -->
-<!-- 				<th>expression</th> -->
-<!-- 				<th>alpha</th> -->
-<!-- 				<th>beta</th> -->
-<!-- 				<th>gamma</th> -->
-<!-- 				<th>delte</th> -->
-<!-- 				<th>epsilon</th> -->
-<!-- 				<th>更新者</th> -->
-<!-- 				<th>更新时间</th> -->
-<%-- 				<shiro:hasPermission name="mod:phase:edit"><th>操作</th></shiro:hasPermission> --%>
-<!-- 			</tr> -->
-<!-- 		</thead> -->
-<!-- 		<tbody> -->
-<%-- 		<c:forEach items="${page.list}" var="phase"> --%>
-<!-- 			<tr> -->
-<%-- 				<td><a href="${ctx}/mod/phase/form?id=${phase.id}"> --%>
-<%-- 					${phase.name} --%>
-<!-- 				</a></td> -->
-<!-- 				<td> -->
-<%-- 					${phase.expression} --%>
-<!-- 				</td> -->
-<!-- 				<td> -->
-<%-- 					${phase.alpha} --%>
-<!-- 				</td> -->
-<!-- 				<td> -->
-<%-- 					${phase.beta} --%>
-<!-- 				</td> -->
-<!-- 				<td> -->
-<%-- 					${phase.gamma} --%>
-<!-- 				</td> -->
-<!-- 				<td> -->
-<%-- 					${phase.delte} --%>
-<!-- 				</td> -->
-<!-- 				<td> -->
-<%-- 					${phase.epsilon} --%>
-<!-- 				</td> -->
-<!-- 				<td> -->
-<%-- 					${phase.updateBy.id} --%>
-<!-- 				</td> -->
-<!-- 				<td> -->
-<%-- 					<fmt:formatDate value="${phase.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/> --%>
-<!-- 				</td> -->
-<%-- 				<shiro:hasPermission name="mod:phase:edit"><td> --%>
-<%--     				<a href="${ctx}/mod/phase/form?id=${phase.id}">修改</a> --%>
-<%-- 					<a href="${ctx}/mod/phase/delete?id=${phase.id}" onclick="return confirmx('确认要删除该人生阶段吗？', this.href)">删除</a> --%>
-<%-- 				</td></shiro:hasPermission> --%>
-<!-- 			</tr> -->
-<%-- 		</c:forEach> --%>
-<!-- 		</tbody> -->
-<!-- 	</table> -->
-<%-- 	<div class="pagination">${page}</div> --%>
 </body>
 </html>

@@ -25,6 +25,7 @@ public class Phase extends TreeEntity<Phase> {
 	private Double gamma;		// gamma
 	private Double delte;		// delte
 	private Double epsilon;		// epsilon
+	private String description;		// description
 	
 	public Phase() {
 		super();
@@ -104,6 +105,14 @@ public class Phase extends TreeEntity<Phase> {
 		
 	}
 	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public static void sortList(List<Phase> list, List<Phase> sourcelist, String parentId,boolean cascade){
 		for (int i=0; i<sourcelist.size(); i++){
 			Phase e = sourcelist.get(i);
