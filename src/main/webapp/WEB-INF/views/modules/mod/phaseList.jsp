@@ -66,9 +66,9 @@
 				<th>操作</th>
 			</tr>
 			<c:forEach items="${list}" var="tpl">
-				<tr id="${tpl.id}" pId="${tpl.parent.id ne '1'?tpl.parent.id:'0'}">
+				<tr id="${tpl.id}" pId="${tpl.parent.id ne '1'?tpl.parent.id:'0'}" width="80px">
 					<td><a href="${ctx}/mod/phase/form?id=${tpl.id}">${tpl.name}</a></td>
-				<td>
+				<td width="120px">
  					${tpl.expression}
  				</td>
 				<td align="center" width="250px">
@@ -78,14 +78,14 @@
 					<div id="slider-delte-${tpl.id}" data-slider-value="${tpl.delte}" style="width:90%;margin:10px;"></div>
 					<div id="slider-epsilon-${tpl.id}" data-slider-value="${tpl.epsilon}" style="width:90%;margin:10px;"></div>
 				</td> 				
-				<td width="300px">
+				<td width="250px">
 					生存需要：${tpl.alpha}<br/>
 					安全需要：${tpl.beta}<br/>
 					情感需要：${tpl.gamma}<br/>
 					尊重需要：${tpl.delte}<br/>
 					价值需要：${tpl.epsilon}
 				</td>
-				<td>
+				<td width="400px">
  					${tpl.description}
  				</td>				
 				<td style="text-align:center;">
