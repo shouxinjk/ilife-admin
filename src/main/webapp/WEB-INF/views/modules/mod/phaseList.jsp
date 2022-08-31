@@ -78,7 +78,7 @@
 					<div id="slider-delte-${tpl.id}" data-slider-value="${tpl.delte}" style="width:90%;margin:10px;"></div>
 					<div id="slider-epsilon-${tpl.id}" data-slider-value="${tpl.epsilon}" style="width:90%;margin:10px;"></div>
 				</td> 				
-				<td>
+				<td width="300px">
 					生存需要：${tpl.alpha}<br/>
 					安全需要：${tpl.beta}<br/>
 					情感需要：${tpl.gamma}<br/>
