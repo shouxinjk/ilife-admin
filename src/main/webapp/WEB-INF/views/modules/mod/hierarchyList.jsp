@@ -93,7 +93,7 @@
 					<div id="slider-cultureLevel-${hierarchy.id}" data-slider-value="${hierarchy.cultureLevel}" style="width:90%;margin:10px;"></div>
 					<div id="slider-societyLevel-${hierarchy.id}" data-slider-value="${hierarchy.societyLevel}" style="width:90%;margin:10px;"></div>
 				</td>			
-				<td>
+				<td width="250px">
 					经济资本：${hierarchy.economyLevel}(${hierarchy.economyScoreMin } - ${hierarchy.economyScoreMax }) <br/>
 					文化资本：${hierarchy.cultureLevel}(${hierarchy.cultureScoreMin } - ${hierarchy.cultureScoreMax })<br/>
 					社会资本：${hierarchy.societyLevel}(${hierarchy.societyScoreMin } - ${hierarchy.societyScoreMax })<br/>
