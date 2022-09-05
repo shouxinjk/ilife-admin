@@ -143,19 +143,6 @@ public class JdHelper {
 	//获取当前时间端的订单列表
 	public OrderRowResp[] getOrder() throws Exception {
 		Calendar cal = Calendar.getInstance();
-		
-		//手动补全缺失订单：注意需要在执行后消除
-		if(cal.get(Calendar.YEAR)==2022 &&
-			cal.get(Calendar.MONTH)==5 &&
-			cal.get(Calendar.DATE)==13 
-		) {
-			cal.set(Calendar.YEAR, 2022);
-			cal.set(Calendar.MONTH, 4);//月份，开始为0
-			cal.set(Calendar.DATE, 27);//日期，开始为1
-			cal.set(Calendar.HOUR, 8);
-			cal.set(Calendar.MINUTE, 0);
-		}
-		
 		return getOrder(cal);
 	}
 	

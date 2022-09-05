@@ -1,6 +1,7 @@
 package com.pcitech.iLife.task;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,8 +59,8 @@ public class JdOrderSync {
     }
     
     private void syncOrder(OrderRowResp item) {
-    	//itemKey是受控的，自动生成一个
-		String itemKey = Util.md5("jd"+item.getOrderId());
+    	//itemKey是受控的，自动生成一个:根据父订单号ID+子订单号ID+SkuId生成
+		String itemKey = Util.md5("jd"+item.getOrderId()+item.getParentId()+item.getSkuId());
 		
 		//管他三七二十一，全部存储
 		Map<String,Object> props = JSONObject.parseObject(JSON.toJSONString(item),new TypeReference<Map<String,Object>>(){});
@@ -72,7 +73,11 @@ public class JdOrderSync {
 		doc.getProperties().put("source", "jd");//标记来源
 		
 		//写入 arangodb
-		arangoClient.insert("order", doc);    
+		try {
+			arangoClient.insert("order", doc);    
+		}catch(Exception ex) {
+			logger.error("failed insert order info.",ex);
+		}
 		
 		//先查看是否已经入库：仅对未入库订单操作
 		Order order = orderService.get(itemKey);
@@ -81,6 +86,7 @@ public class JdOrderSync {
 			order = new Order();
 			order.setStatus("pending");//等待清分
 			order.setId(itemKey);//与NoSQL保持一致
+			order.setIsNewRecord(true);
 			order.setPlatform("jd");
 			order.setOrderNo(""+item.getOrderId());
 			order.setTraceCode(item.getExt1());
@@ -94,7 +100,7 @@ public class JdOrderSync {
 			Broker broker = brokerService.get(item.getExt1());//跟踪码就是达人ID
 			if(broker==null)broker=brokerService.get("system");//如果找不到，则直接使用平台默认账户
 			order.setBroker(broker);
-			order.setNotification("pending");//不用管通知状态，后续通知任务会自动更新
+			order.setNotification("0");//不用管通知状态，后续通知任务会自动更新
 			order.setStatus("pending");
 			
 			orderService.save(order);
@@ -116,7 +122,17 @@ public class JdOrderSync {
     	//先来头盘，如果调用失败就自己锤自己
     	OrderRowResp[] orders = null;
     	try {
-    		orders = jdHelper.getOrder();
+			//获取指定时间段前30分钟的订单：用于手动修复数据时
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.YEAR, 2022);
+			cal.set(Calendar.MONTH, 8);//月份，开始为0
+			cal.set(Calendar.DATE, 3);//日期，开始为1
+			cal.set(Calendar.HOUR, 11);//24小时时间
+			cal.set(Calendar.MINUTE, 0);
+			orders = jdHelper.getOrder(cal);
+			
+			//获取当前时间段前30分钟订单
+//    		orders = jdHelper.getOrder();
 		} catch (Exception ex) {//搞毛线啊，这个是接口调用错误，直接退出，等着挨捶吧
 			logger.error("failed query order.",ex);	
 			return;

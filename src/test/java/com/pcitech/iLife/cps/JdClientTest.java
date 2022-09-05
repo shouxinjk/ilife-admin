@@ -159,13 +159,14 @@ public class JdClientTest {
 			//获取指定时间段前30分钟的订单
 			Calendar cal = Calendar.getInstance();
 			cal.set(Calendar.YEAR, 2022);
-			cal.set(Calendar.MONTH, 4);//月份，开始为0
-			cal.set(Calendar.DATE, 27);//日期，开始为1
-			cal.set(Calendar.HOUR, 8);//24小时时间
+			cal.set(Calendar.MONTH, 8);//月份，开始为0
+			cal.set(Calendar.DATE, 3);//日期，开始为1
+			cal.set(Calendar.HOUR, 11);//24小时时间
 			cal.set(Calendar.MINUTE, 0);
 			
 			//获取当前时间段前30分钟订单
 			OrderRowResp[] orders = jdHelper.getOrder(cal);
+//			OrderRowResp[] orders = jdHelper.getOrder();
 			if(orders == null) {//还没有订单，要努力哦
 				System.err.println("一个订单都没有，还不赶紧去推广");
 			}else {//有订单，我们看看挣了多少银子吧
