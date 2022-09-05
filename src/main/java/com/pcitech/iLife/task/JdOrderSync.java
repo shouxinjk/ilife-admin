@@ -123,16 +123,16 @@ public class JdOrderSync {
     	OrderRowResp[] orders = null;
     	try {
 			//获取指定时间段前30分钟的订单：用于手动修复数据时
-			Calendar cal = Calendar.getInstance();
-			cal.set(Calendar.YEAR, 2022);
-			cal.set(Calendar.MONTH, 8);//月份，开始为0
-			cal.set(Calendar.DATE, 3);//日期，开始为1
-			cal.set(Calendar.HOUR, 11);//24小时时间
-			cal.set(Calendar.MINUTE, 0);
-			orders = jdHelper.getOrder(cal);
+//			Calendar cal = Calendar.getInstance();
+//			cal.set(Calendar.YEAR, 2022);
+//			cal.set(Calendar.MONTH, 8);//月份，开始为0
+//			cal.set(Calendar.DATE, 3);//日期，开始为1
+//			cal.set(Calendar.HOUR, 11);//24小时时间
+//			cal.set(Calendar.MINUTE, 5);
+//			orders = jdHelper.getOrder(cal);
 			
 			//获取当前时间段前30分钟订单
-//    		orders = jdHelper.getOrder();
+    		orders = jdHelper.getOrder();
 		} catch (Exception ex) {//搞毛线啊，这个是接口调用错误，直接退出，等着挨捶吧
 			logger.error("failed query order.",ex);	
 			return;
