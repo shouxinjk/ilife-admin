@@ -522,11 +522,12 @@
 		  var q = "insert into ilife.features values ('"+eventId+"','"+brokerId+"','"+groupType+"','"+groupId+"','"+groupName+"','"+itemType+"','"+itemKey+"','"+jsonStr.replace(/'/g, "’")+"','"+status+"',now())";
 		  console.log("try to save featured item.",q);
 		  jQuery.ajax({
-		    url:app.config.analyze_api+"?query="+encodeURIComponent(q),
+		    url:app.config.analyze_api+"?query=",//+encodeURIComponent(q),
 		    type:"post",
-		    //data:{},
+		    data:q,
 		    headers:{
-		      "Authorization":"Basic ZGVmYXVsdDohQG1AbjA1"
+		    	"content-type": "text/plain; charset=utf-8", // 直接提交raw数据
+		      	"Authorization":"Basic ZGVmYXVsdDohQG1AbjA1"
 		    },         
 		    success:function(json){
 		      console.log("===featured item saved.===\n",json);
