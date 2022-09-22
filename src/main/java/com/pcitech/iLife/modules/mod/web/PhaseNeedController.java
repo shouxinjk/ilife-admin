@@ -16,11 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.github.binarywang.wx.util.MD5Util;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -35,6 +40,9 @@ import com.pcitech.iLife.modules.mod.service.MotivationCategoryService;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.PhaseNeedService;
 import com.pcitech.iLife.modules.mod.service.PhaseService;
+import com.pcitech.iLife.util.Util;
+
+import oracle.net.aso.MD5;
 
 /**
  * 阶段需要构成Controller
@@ -110,6 +118,74 @@ public class PhaseNeedController extends BaseController {
 		return "modules/mod/phaseNeedList";
 	}
 
+	/**
+	 * 显示所有待添加Need
+	 * 
+	 * 查询所有Need，排除已添加Need后返回
+	 */
+	@RequiresPermissions("mod:phaseNeed:edit")
+	@RequestMapping(value = {"list2"})
+	public String listPendingNeeds(String pid, HttpServletRequest request, HttpServletResponse response, Model model) {
+		//根据阶段过滤
+		Phase phase = phaseService.get(pid);
+		List<Motivation> needs =Lists.newArrayList();
+		if(phase==null) {
+			logger.error("cannot get phase by id."+pid);
+		}else {
+			Map<String,String> params = Maps.newHashMap();
+			params.put("phaseId", pid);
+			params.put("name", "");//TODO 添加需要名称，能够根据名称过滤
+			
+			needs = motivationService.findPendingListForPhase(params);
+		}
+		model.addAttribute("needs", needs);
+		model.addAttribute("pid", pid);
+		return "modules/mod/phaseNeedList2";
+	}
+	
+	/**
+	 * 批量保存需要到阶段下
+	 * @param phaseNeeds {phaseId:xxx, needs:[xx,xx]}
+	 * @return
+	 */
+	@ResponseBody
+	@RequiresPermissions("mod:phaseNeed:edit")
+	@RequestMapping(value = "rest/batch", method = RequestMethod.POST)
+	public JSONObject bacthAddNeeds(@RequestBody JSONObject json, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		String phaseId = json.getString("phaseId");
+		JSONArray needIds = json.getJSONArray("needIds");
+		logger.debug("got params.[phaseId]"+phaseId+" [needIds]"+needIds);
+		for(int i=0;i<needIds.size();i++) {
+			String needId = needIds.getString(i);
+			logger.debug("add need.[phaseId]"+phaseId+" [needId]"+needId);
+			PhaseNeed phaseNeed = new PhaseNeed();
+//			String uuid = Util.md5(phaseId+needId);//phaseId与needId唯一
+//			phaseNeed.setId(uuid);
+//			phaseNeed.setIsNewRecord(true);
+			phaseNeed.setPhase(phaseService.get(phaseId));
+			phaseNeed.setNeed(motivationService.get(needId));
+			phaseNeed.setWeight(7.5);//默认为0.75，采用1-10打分
+			phaseNeed.setCreateDate(new Date());
+			phaseNeed.setUpdateDate(new Date());
+			phaseNeed.setDescription("batch added");
+			try {
+				phaseNeedService.save(phaseNeed);
+			}catch(Exception ex) {
+				//just ignore. do nothing
+				logger.error("add need failed.[phaseId]"+phaseId+" [needId]"+needId, ex);
+			}
+		}
+		logger.debug("done. now return result json");
+		JSONObject result = new JSONObject();
+		result.put("success", true);
+		result.put("phaseId", phaseId);
+		return result;
+//		addMessage(redirectAttributes, "需要已添加");
+//		return "redirect:"+Global.getAdminPath()+"/mod/phaseNeed/?treeId="+phaseId+"&pid="+phaseId+"&repage";
+	}
+
+	
 	@RequiresPermissions("mod:phaseNeed:view")
 	@RequestMapping(value = "form")
 	public String form(PhaseNeed phaseNeed,String pid,String pType,  Model model) {
@@ -118,7 +194,7 @@ public class PhaseNeedController extends BaseController {
 		phaseNeed.setPhase(phase);
 		
 		model.addAttribute("phaseNeed", phaseNeed);
-		model.addAttribute("pid", pid);
+		model.addAttribute("pid", phase.getId());
 		model.addAttribute("pType", pType);
 		return "modules/mod/phaseNeedForm";
 	}
@@ -131,7 +207,7 @@ public class PhaseNeedController extends BaseController {
 		}
 		phaseNeedService.save(phaseNeed);
 		addMessage(redirectAttributes, "保存阶段需要构成成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/phaseNeed/?treeId="+pid+"&treeModule="+pType+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/phaseNeed/?treeId="+phaseNeed.getPhase().getId()+"&pid="+pid+"&treeModule="+pType+"&repage";
 	}
 	
 	@RequiresPermissions("mod:phaseNeed:edit")
@@ -139,7 +215,7 @@ public class PhaseNeedController extends BaseController {
 	public String delete(PhaseNeed phaseNeed,String pid,String pType, RedirectAttributes redirectAttributes) {
 		phaseNeedService.delete(phaseNeed);
 		addMessage(redirectAttributes, "删除阶段需要构成成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/phaseNeed/?treeId="+pid+"&treeModule="+pType+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/phaseNeed/?treeId="+phaseNeed.getPhase().getId()+"&pid="+pid+"&treeModule="+pType+"&repage";
 	}
 
 

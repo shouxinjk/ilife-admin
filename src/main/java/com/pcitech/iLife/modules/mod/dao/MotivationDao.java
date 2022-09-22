@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.mod.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
@@ -20,5 +21,8 @@ public interface MotivationDao extends CrudDao<Motivation> {
 	public String getMotivationNames(String motivationIds);
 	
 	public List<Motivation> findByOccasionId(String id);
+	
+	//参数phaseId, name
+	public List<Motivation> findPendingListForPhase(Map<String,String> params);
 	
 }

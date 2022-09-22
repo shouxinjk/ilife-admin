@@ -27,8 +27,9 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/phaseNeed/?treeId=${pid}&treeModule=${pType}">阶段需要构成列表</a></li>
-		<li class="active"><a href="${ctx}/mod/phaseNeed/form?id=${phaseNeed.id}">阶段需要构成<shiro:hasPermission name="mod:phaseNeed:edit">${not empty phaseNeed.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:phaseNeed:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/mod/phaseNeed/?treeId=${pid}&treeModule=${pType}">阶段需要构成</a></li>
+		<li class="active"><a href="${ctx}/mod/phaseNeed/form?id=${pid}">阶段需要<shiro:hasPermission name="mod:phaseNeed:edit">${not empty phaseNeed.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:phaseNeed:edit">查看</shiro:lacksPermission></a></li>
+		<shiro:hasPermission name="mod:phaseNeed:edit"><li><a href="${ctx}/mod/phaseNeed/list2?pid=${pid}&pType=${pType}">阶段需要添加</a></li></shiro:hasPermission>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="phaseNeed" action="${ctx}/mod/phaseNeed/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>

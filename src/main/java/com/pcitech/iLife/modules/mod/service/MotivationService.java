@@ -5,6 +5,7 @@ package com.pcitech.iLife.modules.mod.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,11 @@ public class MotivationService extends CrudService<MotivationDao, Motivation> {
 	
 	@Autowired
 	private PhaseDao phaseDao;
+	
+	//参数phaseId, name
+	public List<Motivation> findPendingListForPhase(Map<String,String> params){
+		return dao.findPendingListForPhase(params);
+	}
 	
 	public List<Motivation> findByOccasionId(String id){
 		return dao.findByOccasionId(id);

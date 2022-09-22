@@ -52,8 +52,11 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/mod/phaseNeed/">阶段需要构成列表</a></li>
-		<shiro:hasPermission name="mod:phaseNeed:edit"><li><a href="${ctx}/mod/phaseNeed/form?id=${phaseNeed.id}&pid=${pid}&pType=${pType}">阶段需要构成添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/mod/phaseNeed/">阶段需要构成</a></li>
+		<!--
+			<shiro:hasPermission name="mod:phaseNeed:edit"><li><a href="${ctx}/mod/phaseNeed/form?id=${phaseNeed.id}&pid=${pid}&pType=${pType}">阶段需要添加</a></li></shiro:hasPermission>
+		-->
+		<shiro:hasPermission name="mod:phaseNeed:edit"><li><a href="${ctx}/mod/phaseNeed/list2?pid=${pid}&pType=${pType}">阶段需要添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="phaseNeed" action="${ctx}/mod/phaseNeed/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
