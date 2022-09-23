@@ -34,10 +34,14 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.MotivationCategory;
+import com.pcitech.iLife.modules.mod.entity.Persona;
+import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
 import com.pcitech.iLife.modules.mod.entity.Phase;
 import com.pcitech.iLife.modules.mod.entity.PhaseNeed;
 import com.pcitech.iLife.modules.mod.service.MotivationCategoryService;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
+import com.pcitech.iLife.modules.mod.service.PersonaNeedService;
+import com.pcitech.iLife.modules.mod.service.PersonaService;
 import com.pcitech.iLife.modules.mod.service.PhaseNeedService;
 import com.pcitech.iLife.modules.mod.service.PhaseService;
 import com.pcitech.iLife.util.Util;
@@ -63,6 +67,10 @@ public class PhaseNeedController extends BaseController {
 	private MotivationCategoryService motivationCategoryService;
 	@Autowired
 	private MotivationService motivationService;
+	@Autowired
+	private PersonaService personaService;
+	@Autowired
+	private PersonaNeedService personaNeedService;
 	
 	@ModelAttribute
 	public PhaseNeed get(@RequestParam(required=false) String id) {
@@ -171,6 +179,23 @@ public class PhaseNeedController extends BaseController {
 				//just ignore. do nothing
 				logger.error("add need failed.[phaseId]"+phaseId+" [needId]"+needId, ex);
 			}
+			
+			//同步添加到该阶段所有画像下
+			List<Persona> personas = personaService.findByPhaseId(phaseNeed.getPhase().getId());
+			for(Persona persona:personas) {
+				//注意效率较低：是逐条查找
+				PersonaNeed query = new PersonaNeed();
+				query.setPersona(persona);
+				query.setNeed(phaseNeed.getNeed());
+				List<PersonaNeed> personaNeeds = personaNeedService.findList(query);
+				if(personaNeeds.size()==0) {//仅在没有的情况下添加
+					query.setWeight(7.5);
+					query.setCreateDate(new Date());
+					query.setUpdateDate(new Date());
+					personaNeedService.save(query);
+				}
+			}
+			
 		}
 		JSONObject result = new JSONObject();
 		result.put("success", true);
@@ -207,6 +232,20 @@ public class PhaseNeedController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(PhaseNeed phaseNeed,String pid,String pType, RedirectAttributes redirectAttributes) {
 		phaseNeedService.delete(phaseNeed);
+		
+		//同步将need从该阶段下的所有画像中移除
+		List<Persona> personas = personaService.findByPhaseId(phaseNeed.getPhase().getId());
+		for(Persona persona:personas) {
+			//注意效率较低：是逐个删除
+			PersonaNeed query = new PersonaNeed();
+			query.setPersona(persona);
+			query.setNeed(phaseNeed.getNeed());
+			List<PersonaNeed> personaNeeds = personaNeedService.findList(query);
+			for(PersonaNeed personaNeed:personaNeeds) {
+				personaNeedService.delete(personaNeed);
+			}
+		}
+		
 		addMessage(redirectAttributes, "删除阶段需要构成成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/phaseNeed/?treeId="+phaseNeed.getPhase().getId()+"&pid="+pid+"&treeModule="+pType+"&repage";
 	}

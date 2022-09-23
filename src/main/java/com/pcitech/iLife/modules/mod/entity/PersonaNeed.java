@@ -22,7 +22,7 @@ public class PersonaNeed extends DataEntity<PersonaNeed> {
 	private Motivation need;		// 关联的动机
 	private Phase phase;	//所属阶段
 	private String expression;		// 满足度表达式
-	private String sort="10";		// sort
+	private int sort=10;		// sort
 	private String needCategory=""; //需要的分类目录。注意：不能直接查询得到，需要前端组织
 	
 	public PersonaNeed() {
@@ -84,12 +84,11 @@ public class PersonaNeed extends DataEntity<PersonaNeed> {
 		this.expression = expression;
 	}
 	
-	@Length(min=0, max=11, message="sort长度必须介于 0 和 11 之间")
-	public String getSort() {
+	public int getSort() {
 		return sort;
 	}
 
-	public void setSort(String sort) {
+	public void setSort(int sort) {
 		this.sort = sort;
 	}
 
