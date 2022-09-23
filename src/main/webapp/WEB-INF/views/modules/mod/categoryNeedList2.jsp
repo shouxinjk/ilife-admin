@@ -2,11 +2,11 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>用户需要构成管理</title>
+	<title>品类需要满足管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+
 			//点击添加全部时提交
 			$("#btnAddSelected").click(function(){
 				// 获取所有已选中条目，如果没有则提示
@@ -23,13 +23,13 @@
 				}
 		        // 提交所有选中条目
 		        var data = {
-                    		personaId:"${pid}",
+                    		categoryId:"${pid}",
                     		needIds:selectedNeeds
                     };
 		        console.log("try to sending request.",data);
 		        $.ajax({
 		            type: "POST",
-		            url: "${ctx}/mod/personaNeed/rest/batch",
+		            url: "${ctx}/mod/categoryNeed/rest/batch",
 		            dataType:"json",
 		            data:JSON.stringify(data),
 		            headers:{
@@ -41,7 +41,7 @@
 		                	siiimpleToast.message('添加成功',{
 				                  position: 'bottom|center'
 				                });
-		                	window.location = "${ctx}/mod/personaNeed/?treeId=${pid}&treeModule=${pType}";
+		                	window.location = "${ctx}/mod/categoryNeed/?treeId=${pid}&treeModule=${pType}";
 		                }else{
 		                	siiimpleToast.message('添加需要出错',{
 				                  position: 'bottom|center'
@@ -60,6 +60,7 @@
 		        $("input[type='checkbox'].needBox").removeAttr("checked"); 
 		    });
 			
+			
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -71,8 +72,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/personaNeed/?treeId=${treeId}&treeModule=${pType}">需要列表</a></li>
-		<shiro:hasPermission name="mod:personaNeed:edit"><li class="active"><a href="${ctx}/mod/personaNeed/list2?treeId=${treeId}&treeModule=${pType}">需要添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/mod/categoryNeed/?treeId=${pid}&treeModule=${pType}">需要列表</a></li>
+		<shiro:hasPermission name="mod:categoryNeed:edit"><li class="active"><a href="${ctx}/mod/categoryNeed/list2?treeId=${pid}&treeModule=${pType}">需要添加</a></li></shiro:hasPermission>
 	</ul>
 	<div class="breadcrumb form-search">
 		<ul class="ul-form">

@@ -16,11 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -29,6 +33,9 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.CategoryNeed;
 import com.pcitech.iLife.modules.mod.entity.Motivation;
+import com.pcitech.iLife.modules.mod.entity.Occasion;
+import com.pcitech.iLife.modules.mod.entity.OccasionNeed;
+import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.CategoryNeed;
 import com.pcitech.iLife.modules.mod.service.CategoryNeedService;
@@ -80,6 +87,69 @@ public class CategoryNeedController extends BaseController {
 		model.addAttribute("pType", treeModule);
 		return "modules/mod/categoryNeedList";
 	}
+	
+
+	/**
+	 * 显示所有待添加Need
+	 * 
+	 * 查询所有Need，排除已添加Need后返回
+	 */
+	@RequiresPermissions("mod:categoryNeed:edit")
+	@RequestMapping(value = {"list2"})
+	public String listPendingNeeds(CategoryNeed categoryNeed,String treeId ,String treeModule,String topType,HttpServletRequest request, HttpServletResponse response, Model model) {
+		//根据诱因过滤
+		ItemCategory itemCategory = itemCategoryService.get(treeId);
+		List<Motivation> needs =Lists.newArrayList();
+		if(itemCategory==null) {
+			logger.warn("cannot get itemCategory by id."+treeId);
+		}else {
+			Map<String,String> params = Maps.newHashMap();
+			params.put("categoryId", treeId);
+			params.put("name", "");//TODO 添加需要名称，能够根据名称过滤
+			
+			needs = motivationService.findPendingListForItemCategory(params);
+		}
+		model.addAttribute("needs", needs);
+		model.addAttribute("pid", treeId);
+		model.addAttribute("pType", treeModule);
+		return "modules/mod/categoryNeedList2";
+	}
+	
+	/**
+	 * 批量保存需要
+	 * @param personaNeeds {categoryId:xxx, needs:[xx,xx]}
+	 * @return
+	 */
+	@ResponseBody
+	@RequiresPermissions("mod:categoryNeed:edit")
+	@RequestMapping(value = "rest/batch", method = RequestMethod.POST)
+	public JSONObject bacthAddNeeds(@RequestBody JSONObject json, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		String itemCategoryId = json.getString("categoryId");
+		JSONArray needIds = json.getJSONArray("needIds");
+		logger.debug("got params.[itemCategoryId]"+itemCategoryId+" [needIds]"+needIds);
+		for(int i=0;i<needIds.size();i++) {
+			String needId = needIds.getString(i);
+			CategoryNeed categoryNeed = new CategoryNeed();
+			categoryNeed.setCategory(itemCategoryService.get(itemCategoryId));
+			categoryNeed.setNeed(motivationService.get(needId));
+			categoryNeed.setWeight(7.5);//默认为0.75，采用1-10打分
+			categoryNeed.setCreateDate(new Date());
+			categoryNeed.setUpdateDate(new Date());
+			categoryNeed.setDescription("batch added");
+			try {
+				categoryNeedService.save(categoryNeed);
+			}catch(Exception ex) {
+				//just ignore. do nothing
+				logger.error("add need failed.[personaId]"+itemCategoryId+" [needId]"+needId, ex);
+			}
+		}
+		JSONObject result = new JSONObject();
+		result.put("success", true);
+		result.put("categoryId", itemCategoryId);
+		return result;
+	}
+	
 
 	@RequiresPermissions("mod:categoryNeed:view")
 	@RequestMapping(value = "form")

@@ -29,6 +29,7 @@
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/mod/occasionNeed/?treeId=${pid}&treeModule=${pType}">需要列表</a></li>
 		<li class="active"><a href="${ctx}/mod/occasionNeed/form?id=${occasionNeed.id}&pid=${pid}&pType=${pType}">需要<shiro:hasPermission name="mod:occasionNeed:edit">${not empty occasion.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:occasionNeed:edit">查看</shiro:lacksPermission></a></li>
+		<shiro:hasPermission name="mod:occasionNeed:edit"><li><a href="${ctx}/mod/occasionNeed/list2?treeId=${pid}&treeModule=${pType}">需要添加</a></li></shiro:hasPermission>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="occasionNeed" action="${ctx}/mod/occasionNeed/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>

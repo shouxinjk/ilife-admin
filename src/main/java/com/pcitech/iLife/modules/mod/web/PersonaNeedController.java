@@ -141,7 +141,7 @@ public class PersonaNeedController extends BaseController {
 			needs = motivationService.findPendingListForPersona(params);
 		}
 		model.addAttribute("needs", needs);
-		model.addAttribute("treeId", treeId);
+		model.addAttribute("pid", treeId);
 		model.addAttribute("pType", treeModule);
 		return "modules/mod/personaNeedList2";
 	}

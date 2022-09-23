@@ -29,6 +29,8 @@
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/mod/categoryNeed/?treeId=${pid}&treeModule=${pType}">需要列表</a></li>
 		<li class="active"><a href="${ctx}/mod/categoryNeed/form?id=${categoryNeed.id}&pid=${pid}&pType=${pType}">需要<shiro:hasPermission name="mod:categoryNeed:edit">${not empty category.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:categoryNeed:edit">查看</shiro:lacksPermission></a></li>
+		<shiro:hasPermission name="mod:categoryNeed:edit"><li><a href="${ctx}/mod/categoryNeed/list2?treeId=${pid}&treeModule=${pType}">需要添加</a></li></shiro:hasPermission>
+	
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="categoryNeed" action="${ctx}/mod/categoryNeed/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>

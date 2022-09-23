@@ -16,11 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -28,10 +32,14 @@ import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.OccasionNeed;
+import com.pcitech.iLife.modules.mod.entity.Persona;
+import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
+import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.Occasion;
 import com.pcitech.iLife.modules.mod.entity.OccasionCategory;
 import com.pcitech.iLife.modules.mod.entity.OccasionNeed;
+import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.OccasionCategoryService;
 import com.pcitech.iLife.modules.mod.service.OccasionNeedService;
 import com.pcitech.iLife.modules.mod.service.OccasionService;
@@ -50,6 +58,8 @@ public class OccasionNeedController extends BaseController {
 	private OccasionNeedService occasionNeedService;
 	@Autowired
 	private OccasionCategoryService occasionCategoryService;
+	@Autowired
+	private MotivationService motivationService;
 	
 	@ModelAttribute
 	public OccasionNeed get(@RequestParam(required=false) String id) {
@@ -80,6 +90,69 @@ public class OccasionNeedController extends BaseController {
 		return "modules/mod/occasionNeedList";
 	}
 
+
+	/**
+	 * 显示所有待添加Need
+	 * 
+	 * 查询所有Need，排除已添加Need后返回
+	 */
+	@RequiresPermissions("mod:occasionNeed:edit")
+	@RequestMapping(value = {"list2"})
+	public String listPendingNeeds(OccasionNeed occasionNeed,String treeId ,String treeModule,String topType,HttpServletRequest request, HttpServletResponse response, Model model) {
+		//根据诱因过滤
+		Occasion occasion = occasionService.get(treeId);
+		List<Motivation> needs =Lists.newArrayList();
+		if(occasion==null) {
+			logger.warn("cannot get occasion by id."+treeId);
+		}else {
+			Map<String,String> params = Maps.newHashMap();
+			params.put("occasionId", treeId);
+			params.put("name", "");//TODO 添加需要名称，能够根据名称过滤
+			
+			needs = motivationService.findPendingListForOccasion(params);
+		}
+		model.addAttribute("needs", needs);
+		model.addAttribute("pid", treeId);
+		model.addAttribute("pType", treeModule);
+		return "modules/mod/occasionNeedList2";
+	}
+	
+	/**
+	 * 批量保存需要
+	 * @param personaNeeds {occasionId:xxx, needs:[xx,xx]}
+	 * @return
+	 */
+	@ResponseBody
+	@RequiresPermissions("mod:occasionNeed:edit")
+	@RequestMapping(value = "rest/batch", method = RequestMethod.POST)
+	public JSONObject bacthAddNeeds(@RequestBody JSONObject json, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		String occasionId = json.getString("occasionId");
+		JSONArray needIds = json.getJSONArray("needIds");
+		logger.debug("got params.[occasionId]"+occasionId+" [needIds]"+needIds);
+		for(int i=0;i<needIds.size();i++) {
+			String needId = needIds.getString(i);
+			OccasionNeed occasionNeed = new OccasionNeed();
+			occasionNeed.setOccasion(occasionService.get(occasionId));
+			occasionNeed.setNeed(motivationService.get(needId));
+			occasionNeed.setWeight(7.5);//默认为0.75，采用1-10打分
+			occasionNeed.setCreateDate(new Date());
+			occasionNeed.setUpdateDate(new Date());
+			occasionNeed.setDescription("batch added");
+			try {
+				occasionNeedService.save(occasionNeed);
+			}catch(Exception ex) {
+				//just ignore. do nothing
+				logger.error("add need failed.[personaId]"+occasionId+" [needId]"+needId, ex);
+			}
+		}
+		JSONObject result = new JSONObject();
+		result.put("success", true);
+		result.put("occasionId", occasionId);
+		return result;
+	}
+	
+	
 	@RequiresPermissions("mod:occasionNeed:view")
 	@RequestMapping(value = "form")
 	public String form(OccasionNeed occasionNeed,String pid,String pType, Model model) {

@@ -54,7 +54,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/mod/categoryNeed/?treeId=${pid}&treeModule=${pType}">需要列表</a></li>
-		<shiro:hasPermission name="mod:categoryNeed:edit"><li><a href="${ctx}/mod/categoryNeed/form?pid=${pid}&pType=${pType}">需要添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="mod:categoryNeed:edit"><li><a href="${ctx}/mod/categoryNeed/list2?treeId=${pid}&treeModule=${pType}">需要添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="categoryNeed" action="${ctx}/mod/categoryNeed/?treeId=${pid}&treeModule=${pType}" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

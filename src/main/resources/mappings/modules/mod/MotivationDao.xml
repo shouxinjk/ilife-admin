@@ -175,7 +175,7 @@
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
-			<if test="occasionId != null and occasionId != ''">
+			<if test="categoryId != null and categoryId != ''">
 				AND a.id not in ( select need_id from int_category_need WHERE category_id=#{categoryId} and del_flag=0 )
 			</if>
 		</where>
