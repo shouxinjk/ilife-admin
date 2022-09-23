@@ -16,11 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -116,6 +120,67 @@ public class PersonaNeedController extends BaseController {
 		return "modules/mod/personaNeedList";
 	}
 
+	/**
+	 * 显示所有待添加Need
+	 * 
+	 * 查询所有Need，排除已添加Need后返回
+	 */
+	@RequiresPermissions("mod:personaNeed:edit")
+	@RequestMapping(value = {"list2"})
+	public String listPendingNeeds(PersonaNeed personaNeed,String treeId ,String treeModule,String topType,HttpServletRequest request, HttpServletResponse response, Model model) {
+		//根据阶段过滤
+		Persona persona = personaService.get(treeId);
+		List<Motivation> needs =Lists.newArrayList();
+		if(persona==null) {
+			logger.warn("cannot get persona by id."+treeId);
+		}else {
+			Map<String,String> params = Maps.newHashMap();
+			params.put("personaId", treeId);
+			params.put("name", "");//TODO 添加需要名称，能够根据名称过滤
+			
+			needs = motivationService.findPendingListForPersona(params);
+		}
+		model.addAttribute("needs", needs);
+		model.addAttribute("treeId", treeId);
+		model.addAttribute("pType", treeModule);
+		return "modules/mod/personaNeedList2";
+	}
+	
+	/**
+	 * 批量保存需要
+	 * @param personaNeeds {personaId:xxx, needs:[xx,xx]}
+	 * @return
+	 */
+	@ResponseBody
+	@RequiresPermissions("mod:personaNeed:edit")
+	@RequestMapping(value = "rest/batch", method = RequestMethod.POST)
+	public JSONObject bacthAddNeeds(@RequestBody JSONObject json, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		String personaId = json.getString("personaId");
+		JSONArray needIds = json.getJSONArray("needIds");
+		logger.debug("got params.[personaId]"+personaId+" [needIds]"+needIds);
+		for(int i=0;i<needIds.size();i++) {
+			String needId = needIds.getString(i);
+			PersonaNeed personaNeed = new PersonaNeed();
+			personaNeed.setPersona(personaService.get(personaId));
+			personaNeed.setNeed(motivationService.get(needId));
+			personaNeed.setWeight(7.5);//默认为0.75，采用1-10打分
+			personaNeed.setCreateDate(new Date());
+			personaNeed.setUpdateDate(new Date());
+			personaNeed.setDescription("batch added");
+			try {
+				personaNeedService.save(personaNeed);
+			}catch(Exception ex) {
+				//just ignore. do nothing
+				logger.error("add need failed.[personaId]"+personaId+" [needId]"+needId, ex);
+			}
+		}
+		JSONObject result = new JSONObject();
+		result.put("success", true);
+		result.put("personaId", personaId);
+		return result;
+	}
+	
 	@RequiresPermissions("mod:personaNeed:view")
 	@RequestMapping(value = "form")
 	public String form(PersonaNeed personaNeed,String pid,String pType, Model model) {

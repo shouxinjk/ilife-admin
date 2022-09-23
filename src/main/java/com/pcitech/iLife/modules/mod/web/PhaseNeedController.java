@@ -158,11 +158,7 @@ public class PhaseNeedController extends BaseController {
 		logger.debug("got params.[phaseId]"+phaseId+" [needIds]"+needIds);
 		for(int i=0;i<needIds.size();i++) {
 			String needId = needIds.getString(i);
-			logger.debug("add need.[phaseId]"+phaseId+" [needId]"+needId);
 			PhaseNeed phaseNeed = new PhaseNeed();
-//			String uuid = Util.md5(phaseId+needId);//phaseId与needId唯一
-//			phaseNeed.setId(uuid);
-//			phaseNeed.setIsNewRecord(true);
 			phaseNeed.setPhase(phaseService.get(phaseId));
 			phaseNeed.setNeed(motivationService.get(needId));
 			phaseNeed.setWeight(7.5);//默认为0.75，采用1-10打分
@@ -176,13 +172,10 @@ public class PhaseNeedController extends BaseController {
 				logger.error("add need failed.[phaseId]"+phaseId+" [needId]"+needId, ex);
 			}
 		}
-		logger.debug("done. now return result json");
 		JSONObject result = new JSONObject();
 		result.put("success", true);
 		result.put("phaseId", phaseId);
 		return result;
-//		addMessage(redirectAttributes, "需要已添加");
-//		return "redirect:"+Global.getAdminPath()+"/mod/phaseNeed/?treeId="+phaseId+"&pid="+phaseId+"&repage";
 	}
 
 	

@@ -38,6 +38,21 @@ public class MotivationService extends CrudService<MotivationDao, Motivation> {
 		return dao.findPendingListForPhase(params);
 	}
 	
+	//参数personaId, name
+	public List<Motivation> findPendingListForPersona(Map<String,String> params){
+		return dao.findPendingListForPersona(params);
+	}
+	
+	//参数occasionId, name
+	public List<Motivation> findPendingListForOccasion(Map<String,String> params){
+		return dao.findPendingListForOccasion(params);
+	}
+	
+	//参数categoryId, name
+	public List<Motivation> findPendingListForItemCategory(Map<String,String> params){
+		return dao.findPendingListForItemCategory(params);
+	}
+	
 	public List<Motivation> findByOccasionId(String id){
 		return dao.findByOccasionId(id);
 	}

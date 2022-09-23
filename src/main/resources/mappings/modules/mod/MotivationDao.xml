@@ -116,10 +116,70 @@
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
 			<if test="phaseId != null and phaseId != ''">
-				AND a.id not in ( select need_id from int_phase_need WHERE phase_id=#{phaseId} )
+				AND a.id not in ( select need_id from int_phase_need WHERE phase_id=#{phaseId} and del_flag=0 )
 			</if>
 		</where>
 	</select>	
+	
+	<!-- 查询可添加到指定Persona的需要列表。参数：phaseId，name -->
+	<select id="findPendingListForPersona" resultType="Motivation">
+		SELECT 
+			<include refid="motivationColumns"/>
+		FROM mod_motivation a
+		<include refid="motivationJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="personaId != null and personaId != ''">
+				AND a.id not in ( select need_id from int_persona_need WHERE persona_id=#{personaId} and del_flag=0 )
+			</if>
+		</where>
+	</select>	
+	
+	<!-- 查询可添加到指定Occasion的需要列表。参数：occasionId，name -->
+	<select id="findPendingListForOccasion" resultType="Motivation">
+		SELECT 
+			<include refid="motivationColumns"/>
+		FROM mod_motivation a
+		<include refid="motivationJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="occasionId != null and occasionId != ''">
+				AND a.id not in ( select need_id from int_occasion_need WHERE occasion_id=#{occasionId} and del_flag=0 )
+			</if>
+		</where>
+	</select>	
+	
+	<!-- 查询可添加到指定ItemCategory的需要列表。参数：categoryId，name -->
+	<select id="findPendingListForItemCategory" resultType="Motivation">
+		SELECT 
+			<include refid="motivationColumns"/>
+		FROM mod_motivation a
+		<include refid="motivationJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="occasionId != null and occasionId != ''">
+				AND a.id not in ( select need_id from int_category_need WHERE category_id=#{categoryId} and del_flag=0 )
+			</if>
+		</where>
+	</select>		
 	
 	<insert id="insert">
 		INSERT INTO mod_motivation(

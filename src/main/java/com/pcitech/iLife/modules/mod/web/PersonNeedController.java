@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.mod.web;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,12 +17,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
@@ -30,6 +36,8 @@ import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Channel;
 import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.PersonNeed;
+import com.pcitech.iLife.modules.mod.entity.Phase;
+import com.pcitech.iLife.modules.mod.entity.PhaseNeed;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.PersonNeedService;
 import com.pcitech.iLife.modules.ope.entity.Person;
@@ -77,7 +85,7 @@ public class PersonNeedController extends BaseController {
 		model.addAttribute("page", page);
 		return "modules/mod/personNeedList";
 	}
-
+	
 	@RequiresPermissions("mod:personNeed:view")
 	@RequestMapping(value = "form")
 	public String form(PersonNeed personNeed, Model model) {

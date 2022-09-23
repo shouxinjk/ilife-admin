@@ -29,6 +29,7 @@
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/mod/personaNeed/?treeId=${pid}&treeModule=${pType}">需要列表</a></li>
 		<li class="active"><a href="${ctx}/mod/personaNeed/form?id=${personaNeed.id}&pid=${pid}&pType=${pType}">需要<shiro:hasPermission name="mod:personaNeed:edit">${not empty persona.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:personaNeed:edit">查看</shiro:lacksPermission></a></li>
+		<shiro:hasPermission name="mod:personaNeed:edit"><li><a href="${ctx}/mod/personaNeed/list2?treeId=${pid}&treeModule=${pType}">需要添加</a></li></shiro:hasPermission>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="personaNeed" action="${ctx}/mod/personaNeed/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
