@@ -80,6 +80,13 @@
               });
         }
 
+		//从父节点复制评价维度及属性
+        function inherit() {
+            loading('正在提交，请稍等...');
+            $("#listForm").attr("action", "${ctx}/mod/itemDimension/inherit?id=${treeId}");
+            $("#listForm").submit();
+        }
+		
         function updateSort() {
             loading('正在提交，请稍等...');
             $("#listForm").attr("action", "${ctx}/mod/itemDimension/updateSort");
@@ -146,7 +153,8 @@
 
 	</table>
 	<shiro:hasPermission name="mod:itemCategory:edit"><div class="form-actions pagination-left">
-		<input id="btnSubmit" class="btn btn-primary" type="button" value="保存排序" onclick="updateSort();"/>
+		<!--input id="btnSubmit" class="btn btn-primary" type="button" value="保存排序" onclick="updateSort();"/-->
+		<input id="btnSubmit" class="btn btn-primary" type="button" value="从父节点克隆节点及属性" onclick="inherit();"/>
 	</div></shiro:hasPermission>
 	</form>
 </body>

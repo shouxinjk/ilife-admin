@@ -20,7 +20,7 @@ public class ItemDimensionMeasure extends DataEntity<ItemDimensionMeasure> {
 	private String name;		// name
 	private String description;		// description
 	private double weight;		// weight
-	private String sort;		// sort
+	private int sort=10;		// sort
 	private ItemCategory category;		// category
 	
 	public ItemDimensionMeasure() {
@@ -72,12 +72,11 @@ public class ItemDimensionMeasure extends DataEntity<ItemDimensionMeasure> {
 		this.weight = weight;
 	}
 	
-	@Length(min=0, max=11, message="sort长度必须介于 0 和 11 之间")
-	public String getSort() {
+	public int getSort() {
 		return sort;
 	}
 
-	public void setSort(String sort) {
+	public void setSort(int sort) {
 		this.sort = sort;
 	}
 

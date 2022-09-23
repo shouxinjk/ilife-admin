@@ -351,7 +351,7 @@ public class ItemDimensionController extends BaseController {
 				itemDimensionService.save(rootDimension);
 			}catch(Exception ex) {
 				//do nothing
-				logger.debug("failed create root dimension.[category]"+treeId,ex);
+				//logger.debug("failed create root dimension.[category]"+treeId,ex);
 			}
 		}
 //		List<ItemDimension> sourcelist = itemDimensionService.findTree(category);
@@ -569,6 +569,133 @@ public class ItemDimensionController extends BaseController {
 		addMessage(redirectAttributes, "删除维度成功");
 //		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?repage";
 		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?treeId="+itemDimension.getCategory().getId()+"&repage";
+	}
+	
+	/**
+	 * 获取父节点的评价维度及评价属性，并更新到当前节点
+	 * @param id 维度ID，即类目ID
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("mod:itemDimension:edit")
+	@RequestMapping(value = "inherit")
+	public String inheritFromParent(String id, RedirectAttributes redirectAttributes) {
+		logger.error("got dimension by category id. "+id);
+
+		//获取上级节点：直接根据dimension对应的category查找上级category
+		ItemCategory itemCategory = itemCategoryService.get(id);
+		if(itemCategory == null) {
+			addMessage(redirectAttributes, "无法获取父节点及其评价维度，忽略");
+		}else {//尝试获取上级ItemCategory
+			ItemCategory parentItemCategory = itemCategory.getParent();
+			if(parentItemCategory == null) {
+				addMessage(redirectAttributes, "没有父节点，忽略");
+			}else {
+				logger.error("try get current node by category id. "+id);
+				ItemDimension itemDimension = itemDimensionService.get(id);//根据当前类目ID查询维度节点
+				if(itemDimension == null) {//如果根据cagtegory ID查询不存在，则查询该类目下ID为1的记录
+					logger.debug("no root dimension found by category id. try query.[category id]"+id);
+					ItemDimension parent = new ItemDimension();
+					parent.setId("1");
+					ItemDimension q = new ItemDimension();
+					q.setCategory(itemCategory);
+					q.setParent(parent);
+					List<ItemDimension> roots = itemDimensionService.findList(q);
+					if(roots.size()>0) {
+						itemDimension = roots.get(0);
+					}
+				}
+				
+				logger.error("try get parent node by category id. "+parentItemCategory.getId());
+				ItemDimension parentDimension = itemDimensionService.get(parentItemCategory.getId());//根节点ID与category相同
+				if(parentDimension == null) {//如果根据cagtegory ID查询不存在，则查询该类目下ID为1的记录
+					logger.debug("no root dimension found by category id. try query.[category id]"+parentItemCategory.getId());
+					ItemDimension parent = new ItemDimension();
+					parent.setId("1");
+					ItemDimension q = new ItemDimension();
+					q.setCategory(parentItemCategory);
+					q.setParent(parent);
+					List<ItemDimension> roots = itemDimensionService.findList(q);
+					if(roots.size()>0) {
+						parentDimension = roots.get(0);
+					}
+				}
+				
+				if(parentDimension!=null && itemDimension!=null) {
+					copyDimensionAndMeauser(parentDimension, itemDimension);//递归复制所有评价节点及属性
+					addMessage(redirectAttributes, "根据目录复制父节点维度成功");
+				}else {
+					addMessage(redirectAttributes, "不能根据类目ID获取维度节点，忽略");
+				}
+			}
+		}
+		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?treeId="+id+"&repage";
+	}
+	
+	/**
+	 * 层递复制维度及属性
+	 * @param itemDimension 父节点
+	 */
+	private void copyDimensionAndMeauser(ItemDimension fromNode, ItemDimension toNode) {
+		logger.debug("start copy from "+fromNode.getName()+":"+fromNode.getId()+" to "+toNode.getName()+":"+toNode.getId());
+		//复制节点下的属性
+		ItemDimensionMeasure itemDimensionMeasure = new ItemDimensionMeasure();
+		itemDimensionMeasure.setDimension(fromNode);
+		itemDimensionMeasure.setDelFlag("0");
+		List<ItemDimensionMeasure> measures = itemDimensionMeasureService.findList(itemDimensionMeasure);
+		for(ItemDimensionMeasure measure:measures) {//逐条添加到当前节点下，需要判断是否存在，仅在不存在的时候添加
+			ItemDimensionMeasure query = new ItemDimensionMeasure();
+			query.setDimension(toNode);
+			query.setMeasure(measure.getMeasure());
+			List<ItemDimensionMeasure> nodes = itemDimensionMeasureService.findList(query);
+			if(nodes.size()==0) {//仅在没有的时候才添加
+				query.setName(measure.getName().replaceAll("○", "๏"));//继承而来，全部为继承属性
+				query.setDescription(measure.getDescription());
+				query.setWeight(measure.getWeight());
+				query.setCreateDate(new Date());
+				query.setUpdateDate(new Date());
+				itemDimensionMeasureService.save(query);
+			}
+		}
+		
+		//获取下级维度节点
+		ItemDimension query = new ItemDimension();
+//		query.setCategory(parentNode.getCategory());
+		query.setParent(fromNode);
+		query.setDelFlag("0");//仅支持活跃的维度
+		List<ItemDimension> subDimensions = itemDimensionService.findList(query);
+		for(ItemDimension dimension:subDimensions) {//逐个新建子节点
+			//仅在没有同名维度的情况下建立
+			ItemDimension node = new ItemDimension();
+			node.setCategory(toNode.getCategory());
+			node.setParent(toNode);
+			node.setName(dimension.getName());//根据名称查找，如果有重名则不创建
+			List<ItemDimension> nodes = itemDimensionService.findList(node);
+			ItemDimension newNode = null;
+			if(nodes.size()==0) {//新建节点
+				String id = Util.md5(Util.get32UUID()+dimension.getId());//随机生成ID
+				node.setParent(toNode);
+				node.setDescription(dimension.getDescription());
+				node.setFeatured(dimension.isFeatured());
+				node.setPropKey("m"+Util.get6bitCode(dimension.getName()));
+				node.setWeight(dimension.getWeight());
+				node.setCreateDate(new Date());
+				node.setUpdateDate(new Date());
+				node.setId(id);
+				node.setIsNewRecord(true);
+				try {
+					itemDimensionService.save(node);
+				}catch(Exception ex) {
+					logger.warn("error while save item dimension.",ex);
+				}
+				newNode = itemDimensionService.get(id);
+			}else {
+				newNode = nodes.get(0);//否则以找到的节点建立
+			}
+			
+			//递归
+			copyDimensionAndMeauser(dimension, newNode);//递归建立下级节点及属性
+		}
 	}
 
 	@RequiresPermissions("user")
