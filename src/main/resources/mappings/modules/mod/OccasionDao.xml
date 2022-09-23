@@ -102,6 +102,26 @@
 		</choose>
 	</select>
 	
+	<!-- 查询可添加到指定need的诱因列表。参数：needId，name -->
+	<select id="findPendingListForNeed" resultType="Occasion">
+		SELECT 
+			<include refid="occasionColumns"/>
+		FROM mod_occasion a
+		<include refid="occasionJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="needId != null and needId != ''">
+				AND a.id not in ( select occasion_id from int_occasion_need WHERE need_id=#{needId} and del_flag=0 )
+			</if>
+		</where>
+	</select>	
+	
 	<insert id="insert">
 		INSERT INTO mod_occasion(
 			id,

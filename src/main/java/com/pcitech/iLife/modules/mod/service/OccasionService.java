@@ -5,6 +5,7 @@ package com.pcitech.iLife.modules.mod.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.pcitech.iLife.modules.mod.entity.OccasionCategory;
 import com.pcitech.iLife.modules.mod.entity.Persona;
@@ -32,6 +33,11 @@ public class OccasionService extends CrudService<OccasionDao, Occasion> {
 	@Autowired
 	private OccasionDao occasionDao;
 
+	//参数NeedId, name
+	public List<Occasion> findPendingListForNeed(Map<String,String> params){
+		return dao.findPendingListForNeed(params);
+	}
+	
 	public Occasion get(String id) {
 		return super.get(id);
 	}

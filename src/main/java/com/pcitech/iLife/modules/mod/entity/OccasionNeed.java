@@ -21,7 +21,7 @@ public class OccasionNeed extends DataEntity<OccasionNeed> {
 	private Occasion occasion;		// 关联的诱因
 	private Motivation need;		// 关联的动机
 	private String expression;		// 影响表达式
-	private String sort;		// sort
+	private int sort=10;		// sort
 	
 	public OccasionNeed() {
 		super();
@@ -73,13 +73,12 @@ public class OccasionNeed extends DataEntity<OccasionNeed> {
 	public void setExpression(String expression) {
 		this.expression = expression;
 	}
-	
-	@Length(min=0, max=11, message="sort长度必须介于 0 和 11 之间")
-	public String getSort() {
+
+	public int getSort() {
 		return sort;
 	}
 
-	public void setSort(String sort) {
+	public void setSort(int sort) {
 		this.sort = sort;
 	}
 	

@@ -18,8 +18,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/mod/needOccasion/?treeId=${pid}&treeModule=${pType}">需要列表</a></li>
-		<shiro:hasPermission name="mod:needOccasion:edit"><li><a href="${ctx}/mod/needOccasion/form?pid=${pid}&pType=${pType}">需要添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/mod/needOccasion/?treeId=${pid}&treeModule=${pType}">诱因列表</a></li>
+		<shiro:hasPermission name="mod:needOccasion:edit"><li><a href="${ctx}/mod/needOccasion/list2?treeId=${pid}&treeModule=${pType}">诱因添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="needOccasion" action="${ctx}/mod/needOccasion/?treeId=${pid}&treeModule=${pType}" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

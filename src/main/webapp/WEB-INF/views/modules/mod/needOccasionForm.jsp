@@ -27,8 +27,10 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/needOccasion/?treeId=${pid}&treeModule=${pType}">需要列表</a></li>
-		<li class="active"><a href="${ctx}/mod/needOccasion/form?id=${needOccasion.id}&pid=${pid}&pType=${pType}">需要<shiro:hasPermission name="mod:needOccasion:edit">${not empty occasion.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:needOccasion:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/mod/needOccasion/?treeId=${pid}&treeModule=${pType}">诱因列表</a></li>
+		<li class="active"><a href="${ctx}/mod/needOccasion/form?id=${needOccasion.id}&pid=${pid}&pType=${pType}">诱因<shiro:hasPermission name="mod:needOccasion:edit">${not empty occasion.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:needOccasion:edit">查看</shiro:lacksPermission></a></li>
+		<shiro:hasPermission name="mod:needOccasion:edit"><li><a href="${ctx}/mod/needOccasion/list2?treeId=${pid}&treeModule=${pType}">诱因添加</a></li></shiro:hasPermission>
+	
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="needOccasion" action="${ctx}/mod/needOccasion/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
