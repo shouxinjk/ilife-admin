@@ -64,6 +64,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>类型</th>
 				<th>需要</th>
 				<th>满足度</th>
 				<th>表达式</th>
@@ -76,6 +77,30 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="categoryNeed">
 			<tr>
+			<td width="80">
+			      <c:choose>
+			         <c:when test = "${categoryNeed.need.type == 'alpha'}">
+			            <span style="background-color:#A49EE2;padding:2px 5px;color:#fff;">生存需要</span>
+			         </c:when>			
+			         <c:when test = "${categoryNeed.need.type == 'beta'}">
+			            <span style="background-color:#40B4E7;padding:2px 5px;color:#fff;">安全需要</span>
+			         </c:when>	
+			         <c:when test = "${categoryNeed.need.type == 'gamma'}">
+			            <span style="background-color:#8BCE2D;padding:2px 5px;color:#fff;">爱与归属</span>
+			         </c:when>	
+			         <c:when test = "${categoryNeed.need.type == 'delte'}">
+			            <span style="background-color:#F6B100;padding:2px 5px;color:#fff;">尊重需要</span>
+			         </c:when>	
+			         <c:when test = "${categoryNeed.need.type == 'epsilon'}">
+			            <span style="background-color:#E85552;padding:2px 5px;color:#fff;">自我实现</span>
+			         </c:when>	
+			         			         			         			         			         
+			         <c:otherwise>
+			            <span style="background-color:#000;padding:2px 5px;color:#fff;">未知</span>
+			         </c:otherwise>
+			      </c:choose>				
+				</td>						
+							
 				<td>
 					${fns:getDictLabel(categoryNeed.need.type, 'need_type', categoryNeed.need.type)} ${categoryNeed.need.name} (${categoryNeed.need.displayName})
 				</td>				

@@ -88,8 +88,7 @@
 			<tr>
 				<th>#</th><!-- 复选框 -->
 				<th>类别</th>
-				<th>诱因</th>
-				<th>别名</th>			
+				<th>触发规则</th>			
 				<th>更新时间</th>
 			</tr>
 		</thead>
@@ -101,10 +100,7 @@
 				</td>			
 				<td>
 					${occasion.occasionCategory.name}
-				</td>				
-				<td>
-					${occasion.triggerActions}
-				</td>		
+				</td>					
 				<td>
 					${occasion.expression}
 				</td>		
