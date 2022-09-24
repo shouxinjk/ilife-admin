@@ -328,6 +328,7 @@ public class ItemEvaluationController extends BaseController {
 		//查询所有下级节点
 		ItemEvaluation q = new ItemEvaluation();
 		q.setParent(evaluation);
+		q.setCategory(category);
 		List<ItemEvaluation> evaluations = itemEvaluationService.findList(q);
 		for(ItemEvaluation item:evaluations) {
 			//添加本级节点
@@ -545,8 +546,10 @@ public class ItemEvaluationController extends BaseController {
 	    		q.setCategory(category);
 	    		q.setParent(rootParentEvaluation);
         		List<ItemEvaluation> rootDimensions = itemEvaluationService.findList(q);
-        		ItemEvaluation root = rootDimensions.get(0);
-        		itemEvaluation.setParent(root);
+        		if(rootDimensions.size()>0) {
+	        		ItemEvaluation root = rootDimensions.get(0);
+	        		itemEvaluation.setParent(root);
+        		}
         }
 		if (itemEvaluation.getParent()!=null && StringUtils.isNotBlank(itemEvaluation.getParent().getId())){
 			itemEvaluation.setParent(itemEvaluationService.get(itemEvaluation.getParent().getId()));
