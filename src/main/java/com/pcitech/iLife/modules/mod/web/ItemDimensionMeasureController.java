@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -14,23 +15,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.CategoryNeed;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.ItemDimension;
 import com.pcitech.iLife.modules.mod.entity.ItemDimensionMeasure;
+import com.pcitech.iLife.modules.mod.entity.Measure;
+import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.ItemDimensionMeasureService;
 import com.pcitech.iLife.modules.mod.service.ItemDimensionService;
+import com.pcitech.iLife.modules.mod.service.MeasureService;
 
 /**
  * 客观评价明细Controller
@@ -47,6 +56,8 @@ public class ItemDimensionMeasureController extends BaseController {
 	private ItemCategoryService itemCategoryService;
 	@Autowired
 	private ItemDimensionMeasureService itemDimensionMeasureService;
+	@Autowired
+	private MeasureService measureService;
 	
 	@ModelAttribute
 	public ItemDimensionMeasure get(@RequestParam(required=false) String id) {
@@ -76,6 +87,87 @@ public class ItemDimensionMeasureController extends BaseController {
 		return "modules/mod/itemDimensionMeasureList";
 	}
 
+
+	/**
+	 * 显示所有待添加属性，包括当前节点属性，以及可继承属性
+	 * 
+	 * 查询所有Measure并排除已经添加的
+	 */
+	@RequiresPermissions("mod:itemDimensionMeasure:edit")
+	@RequestMapping(value = {"list2"})
+	public String listPendingMeasures(String dimensionId, String categoryId,HttpServletRequest request, HttpServletResponse response, Model model) {
+		//根据Category递归查询获取属性
+		ItemCategory category = itemCategoryService.get(categoryId);
+		List<Measure> pendingMeasures = Lists.newArrayList();
+		
+		//查询已经关联的属性，根据dimension查询获取
+		ItemDimension itemDimension = itemDimensionService.get(dimensionId);//重新加载得到全部信息
+		ItemDimensionMeasure query = new ItemDimensionMeasure();
+		query.setDimension(itemDimension);
+		List<ItemDimensionMeasure> existItemDimensionMeasures = itemDimensionMeasureService.findList(query);
+		List<String> ids = Lists.newArrayList();//记录已经添加的itemDimensionMeasure ID列表
+		for(ItemDimensionMeasure item:existItemDimensionMeasures) {
+			ids.add(item.getMeasure().getId());
+		}
+		
+		//递归查询获取属性
+		//遍历获取所有节点的属性
+		while(category!=null) {
+			List<Measure> measures =measureService.findByCategory(category.getId());
+			for (Measure item:measures){
+				if(ids.indexOf(item.getId())<0)
+					pendingMeasures.add(item);
+			}
+			category = itemCategoryService.get(category.getParent());//逐层获取继承属性
+		}
+				
+		model.addAttribute("measures", pendingMeasures);
+		model.addAttribute("dimensionId", dimensionId);
+		model.addAttribute("categoryId", categoryId);
+		model.addAttribute("treeId", categoryId);
+		return "modules/mod/itemDimensionMeasureList2";
+	}
+	
+	/**
+	 * 批量保存Measure到Dimension上
+	 * @param  {dimensionId:xxx, measures:[xx,xx]}
+	 * @return
+	 */
+	@ResponseBody
+	@RequiresPermissions("mod:itemDimensionMeasure:edit")
+	@RequestMapping(value = "rest/batch", method = RequestMethod.POST)
+	public JSONObject bacthAddMeasures(@RequestBody JSONObject json, HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		String dimensionId = json.getString("dimensionId");
+		JSONArray measureIds = json.getJSONArray("measureIds");
+		logger.debug("got params.[dimensionId]"+dimensionId+" [measureIds]"+measureIds);
+		for(int i=0;i<measureIds.size();i++) {
+			String measureId = measureIds.getString(i);
+			ItemDimensionMeasure dimensionMeasure = new ItemDimensionMeasure();
+			ItemDimension dimension = itemDimensionService.get(dimensionId);
+			Measure measure = measureService.get(measureId);
+			dimensionMeasure.setName(dimension.getName()+"-"+measure.getName());
+			dimensionMeasure.setDimension(dimension);
+			dimensionMeasure.setMeasure(measure);
+			dimensionMeasure.setCategory(dimension.getCategory());
+			dimensionMeasure.setWeight(0.2);//20%
+			dimensionMeasure.setCreateDate(new Date());
+			dimensionMeasure.setUpdateDate(new Date());
+			dimensionMeasure.setDescription("batch added");
+			try {
+				itemDimensionMeasureService.save(dimensionMeasure);
+			}catch(Exception ex) {
+				//just ignore. do nothing
+				logger.error("add need failed.[dimensionId]"+dimensionId+" [measureId]"+measureId);
+			}
+		}
+		JSONObject result = new JSONObject();
+		result.put("success", true);
+		result.put("dimensionId", dimensionId);
+		return result;
+	}
+	
+	
 	@RequiresPermissions("mod:itemDimensionMeasure:view")
 	@RequestMapping(value = "form")
 	public String form(ItemDimensionMeasure itemDimensionMeasure, Model model) {

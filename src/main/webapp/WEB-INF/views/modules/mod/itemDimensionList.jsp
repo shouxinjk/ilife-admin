@@ -98,7 +98,9 @@
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/mod/itemDimension/list?treeId=${treeId}">客观评价列表</a></li>
 		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${treeId}">添加评价节点</a></li></shiro:hasPermission>
-		<shiro:hasPermission name="mod:itemDimensionMeasure:edit"><li><a href="${ctx}/mod/itemDimensionMeasure/form?category.id=${treeId}">添加属性节点</a></li></shiro:hasPermission>
+		<!-- <shiro:hasPermission name="mod:itemDimensionMeasure:edit"><li><a href="${ctx}/mod/itemDimensionMeasure/form?category.id=${treeId}">添加属性节点</a></li></shiro:hasPermission> -->
+		<shiro:hasPermission name="mod:itemDimensionMeasure:edit"><li><a href="${ctx}/mod/itemDimensionMeasure/list2?dimensionId=${treeId}&categoryId=${treeId}">添加属性节点</a></li></shiro:hasPermission>
+
 	</ul>
 	<sys:message content="${message}"/>
 	<form id="listForm" method="post">
@@ -144,7 +146,8 @@
 						<a href="${ctx}/mod/${row.type ne 'dimension'?'itemDimensionMeasure':'itemDimension'}/delete?id=${row.id}" onclick="return confirmx('确认要删除吗？', this.href)">删除</a>
 						<c:if test="${row.type eq 'dimension'}">
 							<a href="${ctx}/mod/itemDimension/form?parent.id=${row.id}&category.id=${row.category.id}">添加节点</a>
-							<a href="${ctx}/mod/itemDimensionMeasure/form?dimension.id=${row.id}&category.id=${row.category.id}">添加属性</a>
+							<!--a href="${ctx}/mod/itemDimensionMeasure/form?dimension.id=${row.id}&category.id=${row.category.id}">添加属性</a-->
+							<a href="${ctx}/mod/itemDimensionMeasure/list2?dimensionId=${row.id}&categoryId=${row.category.id}">添加属性</a>
 						</c:if>
 					</shiro:hasPermission>							
 				</td>			
