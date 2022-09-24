@@ -389,6 +389,7 @@ public class ItemDimensionController extends BaseController {
 			}
 		}
 		//添加本级节点
+		logger.error("find root dimension by category id.[category id]"+category.getId());
 		JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(rootDimension);
 		node.put("type", "dimension");
 		node.put("id", rootDimension.getId());
@@ -411,7 +412,9 @@ public class ItemDimensionController extends BaseController {
 		//查询所有下级节点
 		ItemDimension q = new ItemDimension();
 		q.setParent(dimension);
+		q.setCategory(category);
 		List<ItemDimension> dimensions = itemDimensionService.findList(q);
+		logger.debug("try find sub dimension.[dimension]"+dimension.getId()+"[category]"+category.getId());
 		for(ItemDimension item:dimensions) {
 			//添加本级节点
 			JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(item);
@@ -429,6 +432,7 @@ public class ItemDimensionController extends BaseController {
 			loadDimensionAndMeasureCascade(category,item,nodes);//递归遍历
 		}
 		//查询所有关联属性
+		logger.debug("try find measure.[dimension]"+dimension.getId()+"[category]"+category.getId());
 		ItemDimensionMeasure dimensionMeasure = new ItemDimensionMeasure();
 		dimensionMeasure.setDimension(dimension);
 		List<ItemDimensionMeasure> dimensionMeasures = itemDimensionMeasureService.findList(dimensionMeasure);
@@ -466,8 +470,10 @@ public class ItemDimensionController extends BaseController {
 	    		q.setCategory(category);
 	    		q.setParent(rootParentDimension);
         		List<ItemDimension> rootDimensions = itemDimensionService.findList(q);
-        		ItemDimension root = rootDimensions.get(0);
-            itemDimension.setParent(root);
+        		if(rootDimensions.size()>0) {
+        			ItemDimension root = rootDimensions.get(0);
+        			itemDimension.setParent(root);
+        		}
         }
 		if (itemDimension.getParent()!=null && StringUtils.isNotBlank(itemDimension.getParent().getId())){
 			itemDimension.setParent(itemDimensionService.get(itemDimension.getParent().getId()));
