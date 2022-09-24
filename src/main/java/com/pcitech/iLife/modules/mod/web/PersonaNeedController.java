@@ -167,7 +167,7 @@ public class PersonaNeedController extends BaseController {
 			personaNeed.setWeight(7.5);//默认为0.75，采用1-10打分
 			personaNeed.setCreateDate(new Date());
 			personaNeed.setUpdateDate(new Date());
-			personaNeed.setDescription("batch added");
+			personaNeed.setDescription("");
 			try {
 				personaNeedService.save(personaNeed);
 			}catch(Exception ex) {

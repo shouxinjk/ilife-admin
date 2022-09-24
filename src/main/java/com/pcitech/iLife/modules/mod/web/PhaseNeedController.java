@@ -172,7 +172,7 @@ public class PhaseNeedController extends BaseController {
 			phaseNeed.setWeight(7.5);//默认为0.75，采用1-10打分
 			phaseNeed.setCreateDate(new Date());
 			phaseNeed.setUpdateDate(new Date());
-			phaseNeed.setDescription("batch added");
+			phaseNeed.setDescription("");
 			try {
 				phaseNeedService.save(phaseNeed);
 			}catch(Exception ex) {

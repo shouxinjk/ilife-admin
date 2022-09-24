@@ -150,10 +150,10 @@ public class ItemDimensionMeasureController extends BaseController {
 			dimensionMeasure.setDimension(dimension);
 			dimensionMeasure.setMeasure(measure);
 			dimensionMeasure.setCategory(dimension.getCategory());
-			dimensionMeasure.setWeight(0.2);//20%
+			dimensionMeasure.setWeight(0);//默认占比为0，需要到评价首页调整
 			dimensionMeasure.setCreateDate(new Date());
 			dimensionMeasure.setUpdateDate(new Date());
-			dimensionMeasure.setDescription("batch added");
+			dimensionMeasure.setDescription("");
 			try {
 				itemDimensionMeasureService.save(dimensionMeasure);
 			}catch(Exception ex) {

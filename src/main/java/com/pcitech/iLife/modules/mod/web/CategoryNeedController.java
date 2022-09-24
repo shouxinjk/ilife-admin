@@ -136,7 +136,7 @@ public class CategoryNeedController extends BaseController {
 			categoryNeed.setWeight(7.5);//默认为0.75，采用1-10打分
 			categoryNeed.setCreateDate(new Date());
 			categoryNeed.setUpdateDate(new Date());
-			categoryNeed.setDescription("batch added");
+			categoryNeed.setDescription("");
 			try {
 				categoryNeedService.save(categoryNeed);
 			}catch(Exception ex) {

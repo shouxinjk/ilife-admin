@@ -138,7 +138,7 @@ public class OccasionNeedController extends BaseController {
 			occasionNeed.setWeight(7.5);//默认为0.75，采用1-10打分
 			occasionNeed.setCreateDate(new Date());
 			occasionNeed.setUpdateDate(new Date());
-			occasionNeed.setDescription("batch added");
+			occasionNeed.setDescription("");
 			try {
 				occasionNeedService.save(occasionNeed);
 			}catch(Exception ex) {

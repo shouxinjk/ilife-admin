@@ -144,7 +144,7 @@ public class NeedOccasionController extends BaseController {
 			occasionNeed.setSort(10);
 			occasionNeed.setCreateDate(new Date());
 			occasionNeed.setUpdateDate(new Date());
-			occasionNeed.setDescription("batch added");
+			occasionNeed.setDescription("");
 			try {
 				needOccasionService.save(occasionNeed);
 			}catch(Exception ex) {
