@@ -239,22 +239,41 @@ public class MeasureController extends BaseController {
 		return mapList;
 	}
 	
+	/**
+	 * 获取类目下的属性。支持获取所有继承属性
+	 * 
+	 * @param category
+	 * @param cascade true/false
+	 * @param response
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "measures")
-	public List<Map<String, Object>> listMeasureByCategory(@RequestParam(required=true) String category,HttpServletResponse response) {
+	public List<Map<String, Object>> listMeasureByCategory(@RequestParam(required=true) String category,@RequestParam(required=false) String cascade,HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
+		boolean isCascade = true;//默认为true，获取当前目录的属性
+
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<Measure> list =measureService.findByCategory(category);
-		for (int i=0; i<list.size(); i++){
-			Measure e = list.get(i);
-			Map<String, Object> map = Maps.newHashMap();
-			map.put("id", e.getId());
-			map.put("category", e.getCategory().getId());
-			map.put("name", e.getName());
-			map.put("property", e.getProperty());
-			mapList.add(map);
+		
+		ItemCategory itemCategory = itemCategoryService.get(category);
+		while(isCascade && itemCategory!=null) {
+			List<Measure> list =measureService.findByCategory(itemCategory.getId());
+			for (int i=0; i<list.size(); i++){
+				Measure e = list.get(i);
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("category", e.getCategory().getId());
+				map.put("name", (category.equalsIgnoreCase(e.getCategory().getId())?"๏":"○")+e.getName());
+				map.put("type", category.equalsIgnoreCase(e.getCategory().getId())?"self":"inherit");
+				map.put("property", e.getProperty());
+				mapList.add(map);
+			}
 			
+			itemCategory = itemCategory.getParent();
+			if(!"true".equalsIgnoreCase(cascade))
+				isCascade = false;
 		}
+		
 		return mapList;
 	}
 	
