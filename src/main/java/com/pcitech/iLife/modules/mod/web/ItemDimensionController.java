@@ -388,7 +388,7 @@ public class ItemDimensionController extends BaseController {
 				rootDimension = roots.get(0);
 			}
 		}
-		//添加本级节点，注意不添加根节点
+		//添加本级节点，注意不添加根节点 
 		if(!"1".equalsIgnoreCase(rootDimension.getId())) {
 			logger.debug("find root dimension by category id.[category id]"+category.getId());
 			JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(rootDimension);
@@ -467,19 +467,24 @@ public class ItemDimensionController extends BaseController {
 	public String form(ItemDimension itemDimension, Model model) {
         if (itemDimension.getParent()==null||itemDimension.getParent().getId()==null){
 	    		ItemCategory category = itemCategoryService.get(itemDimension.getCategory().getId());
-	    		ItemDimension rootParentDimension = itemDimensionService.get("1");
-	    		ItemDimension q = new ItemDimension(); 
-	    		q.setCategory(category);
-	    		q.setParent(rootParentDimension);
-        		List<ItemDimension> rootDimensions = itemDimensionService.findList(q);
-        		if(rootDimensions.size()>0) {
-        			ItemDimension root = rootDimensions.get(0);
-        			itemDimension.setParent(root);
-        		}else{//如果是顶级节点，则设置为根维度，即 id=1
-    				ItemDimension root = new ItemDimension();
-    				root.setId("1");
-    				itemDimension.setParent(root);
-    			}
+	    		ItemDimension parentDimension = itemDimensionService.get(itemDimension.getCategory().getId());
+	    		if(parentDimension!=null) { //默认放到与category对应的节点下则直接放到顶级维度下
+	    			itemDimension.setParent(parentDimension);
+	    		}else { //否则根据顶级节点查找 
+	    			ItemDimension rootParentDimension = itemDimensionService.get("1");
+		    		ItemDimension q = new ItemDimension(); 
+		    		q.setCategory(category);
+		    		q.setParent(rootParentDimension);
+	        		List<ItemDimension> rootDimensions = itemDimensionService.findList(q);
+	        		if(rootDimensions.size()>0) {
+	        			ItemDimension root = rootDimensions.get(0);
+	        			itemDimension.setParent(root);
+	        		}else{//如果是顶级节点，则设置为根维度，即 id=1
+	    				ItemDimension root = new ItemDimension();
+	    				root.setId("1");
+	    				itemDimension.setParent(root);
+	    			}
+	    		}
         }
 		if (itemDimension.getParent()!=null && StringUtils.isNotBlank(itemDimension.getParent().getId())) { 
 			itemDimension.setParent(itemDimensionService.get(itemDimension.getParent().getId()));
