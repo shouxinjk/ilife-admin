@@ -269,7 +269,7 @@ public class MeasureController extends BaseController {
 				mapList.add(map);
 			}
 			
-			itemCategory = itemCategory.getParent();
+			itemCategory = itemCategoryService.get(itemCategory.getParent());
 			if(!"true".equalsIgnoreCase(cascade))
 				isCascade = false;
 		}
