@@ -388,20 +388,22 @@ public class ItemDimensionController extends BaseController {
 				rootDimension = roots.get(0);
 			}
 		}
-		//添加本级节点
-		logger.error("find root dimension by category id.[category id]"+category.getId());
-		JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(rootDimension);
-		node.put("type", "dimension");
-		node.put("id", rootDimension.getId());
-		node.put("parent", rootDimension.getParent());
-		node.put("category", category);
-		node.put("name", rootDimension.getName());
-		node.put("weight", rootDimension.getWeight());
-		node.put("description", rootDimension.getDescription());
-		node.put("propKey", rootDimension.getPropKey());
-		node.put("featured", rootDimension.isFeatured());
-		node.put("script", rootDimension.getScript());
-		nodes.add(node);
+		//添加本级节点，注意不添加根节点
+		if(!"1".equalsIgnoreCase(rootDimension.getId())) {
+			logger.debug("find root dimension by category id.[category id]"+category.getId());
+			JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(rootDimension);
+			node.put("type", "dimension");
+			node.put("id", rootDimension.getId());
+			node.put("parent", rootDimension.getParent());
+			node.put("category", category);
+			node.put("name", rootDimension.getName());
+			node.put("weight", rootDimension.getWeight());
+			node.put("description", rootDimension.getDescription());
+			node.put("propKey", rootDimension.getPropKey());
+			node.put("featured", rootDimension.isFeatured());
+			node.put("script", rootDimension.getScript());
+			nodes.add(node);
+		}
 		//递归遍历子节点
 		loadDimensionAndMeasureCascade(category,rootDimension,nodes);
 		return nodes;
@@ -473,9 +475,13 @@ public class ItemDimensionController extends BaseController {
         		if(rootDimensions.size()>0) {
         			ItemDimension root = rootDimensions.get(0);
         			itemDimension.setParent(root);
-        		}
+        		}else{//如果是顶级节点，则设置为根维度，即 id=1
+    				ItemDimension root = new ItemDimension();
+    				root.setId("1");
+    				itemDimension.setParent(root);
+    			}
         }
-		if (itemDimension.getParent()!=null && StringUtils.isNotBlank(itemDimension.getParent().getId())){
+		if (itemDimension.getParent()!=null && StringUtils.isNotBlank(itemDimension.getParent().getId())) { 
 			itemDimension.setParent(itemDimensionService.get(itemDimension.getParent().getId()));
 			// 获取排序号，最末节点排序号+30
 			if (StringUtils.isBlank(itemDimension.getId())){
@@ -666,10 +672,17 @@ public class ItemDimensionController extends BaseController {
 		
 		//获取下级维度节点
 		ItemDimension query = new ItemDimension();
-//		query.setCategory(parentNode.getCategory());
+
+		//注意，需要判定是否是根节点。当前所有类目下的root维度均为根节点（id=1）的子节点，这与根节点自身的维度节点混淆，需要区分
+		if("1".equalsIgnoreCase(fromNode.getId())) {//如果维度节点ID不为1则直接获取其下子节点，额外设置category进行过滤
+			ItemCategory rootCategory = new ItemCategory();
+			rootCategory.setId("1");
+			query.setCategory(rootCategory);
+		}
 		query.setParent(fromNode);
 		query.setDelFlag("0");//仅支持活跃的维度
 		List<ItemDimension> subDimensions = itemDimensionService.findList(query);
+
 		for(ItemDimension dimension:subDimensions) {//逐个新建子节点
 			//仅在没有同名维度的情况下建立
 			ItemDimension node = new ItemDimension();
