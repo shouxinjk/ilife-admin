@@ -32,16 +32,6 @@
 				<sys:treeselect id="platformCategory" name="platformCategory.id" value="${platformProperty.platformCategory.id}" labelName="platformCategory.name" labelValue="${platformProperty.platformCategory.name}"
 					title="原始类目" url="/mod/platformCategory/treeData" notAllowSelectRoot="false"/>	
 			</li>
-			<!--li><label>来源平台：</label>
-				<form:select path="platform" class="input-medium">
-					<form:option value="" label="不限"/>
-					<form:options items="${fns:getDictList('platform')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-				</form:select>	
-			</li-->
-			<!--li><label>标准类目：</label>
-				<sys:treeselect id="category" name="category.id" value="${platformProperty.category.id}" labelName="category.name" labelValue="${platformProperty.category.name}"
-					title="商品分类" url="/mod/itemCategory/treeData" notAllowSelectRoot="true" cssClass="required"/>				
-			</li-->
 			<li><label>标准属性：</label>
 				<sys:treeselect id="measure" name="measure.id" value="${platformProperty.measure.id}" labelName="measure.name" labelValue="${platformProperty.measure.name}"
 					title="关键属性" url="/mod/measure/treeData"/>
@@ -71,7 +61,6 @@
 				</a></td>
 				<td>${fns:getDictLabel(platformProperty.platform, 'platform', '-')}</td>
 				<td>${platformProperty.platformCategory.name}</td>
-				<!--td>${platformProperty.category.name}</td-->
 				<td>${platformProperty.measure.name}</td>
 				<td>
 					<fmt:formatDate value="${platformProperty.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

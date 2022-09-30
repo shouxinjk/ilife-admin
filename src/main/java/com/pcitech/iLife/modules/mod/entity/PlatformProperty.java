@@ -16,6 +16,7 @@ public class PlatformProperty extends DataEntity<PlatformProperty> {
 	
 	private static final long serialVersionUID = 1L;
 	private PlatformCategory platformCategory;		// 原始类目
+	private String cname;		// 原始类目名称
 	private String name;		// 名称
 	private String platform;		// 所属平台
 	private ItemCategory category;		// 标准类目ID
@@ -38,6 +39,14 @@ public class PlatformProperty extends DataEntity<PlatformProperty> {
 		this.name = name;
 	}
 	
+	public String getCname() {
+		return cname;
+	}
+
+	public void setCname(String cname) {
+		this.cname = cname;
+	}
+
 	@Length(min=1, max=100, message="所属平台长度必须介于 1 和 100 之间")
 	public String getPlatform() {
 		return platform;

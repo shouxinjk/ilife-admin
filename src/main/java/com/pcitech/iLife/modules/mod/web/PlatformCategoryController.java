@@ -133,9 +133,11 @@ public class PlatformCategoryController extends BaseController {
 	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "treeData")
-	public List<Map<String, Object>> treeData(@RequestParam(required=false) String extId, HttpServletResponse response) {
+	public List<Map<String, Object>> treeData(@RequestParam(required=false) String extId,@RequestParam(required=false) String platform, HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<PlatformCategory> list = platformCategoryService.findList(new PlatformCategory());
+		PlatformCategory q = new PlatformCategory();
+		q.setPlatform(platform);	
+		List<PlatformCategory> list = platformCategoryService.findList(q);
 		for (int i=0; i<list.size(); i++){
 			PlatformCategory e = list.get(i);
 			if (StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
