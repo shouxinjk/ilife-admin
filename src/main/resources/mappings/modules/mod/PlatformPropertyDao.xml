@@ -69,6 +69,9 @@
 				<when test="measure != null and measure.id != null and measure.id == 'null'">
 					AND a.measure_id is null
 				</when>
+				<when test="measure != null and measure.id != null and measure.id == 'notnull'">
+					AND a.measure_id is not null
+				</when>				
 				<when test="measure != null and measure.id != null and measure.id != ''">
 					AND a.measure_id = #{measure.id}
 				</when>

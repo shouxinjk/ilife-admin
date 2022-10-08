@@ -66,6 +66,9 @@
 				<when test="category != null and category.id != null and category.id == 'null'">
 					AND a.category_id is null
 				</when>
+				<when test="category != null and category.id != null and category.id == 'notnull'">
+					AND a.category_id is not null
+				</when>
 				<when test="category != null and category.id != null and category.id != ''">
 					AND a.category_id = #{category.id}
 				</when>

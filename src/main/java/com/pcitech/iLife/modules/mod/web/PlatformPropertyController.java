@@ -90,7 +90,12 @@ public class PlatformPropertyController extends BaseController {
 	@RequiresPermissions("mod:platformProperty:view")
 	@RequestMapping(value = {"list"})
 	public String list(PlatformProperty platformProperty,String treeId,  HttpServletRequest request, HttpServletResponse response, Model model) {
-		platformProperty.setPlatform(treeId);
+		if(treeId!=null && treeId.trim().length()>0) //从首页直接进入时不会带有treeId
+			platformProperty.setPlatform(treeId);
+		Measure measure = new Measure();
+		measure.setId("notnull");//设置id为null过滤所有待标注记录
+//		measure.setName("null");//设置name为null过滤待标注props.xxx记录
+		platformProperty.setMeasure(measure);
 		Page<PlatformProperty> page = platformPropertyService.findPage(new Page<PlatformProperty>(request, response), platformProperty); 
 		model.addAttribute("page", page);
 		model.addAttribute("treeId", treeId);

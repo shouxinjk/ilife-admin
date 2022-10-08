@@ -50,8 +50,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/ope/performance/listPending?treeId=${treeId}&treeModule=${pType}">待标注</a></li>
-		<li class="active"><a href="${ctx}/ope/performance/list?treeId=${treeId}&treeModule=${pType}">已标注</a></li>
+		<li class="active"><a href="${ctx}/ope/performance/listPending?treeId=${treeId}&treeModule=${pType}">待标注</a></li>
+		<li><a href="${ctx}/ope/performance/list?treeId=${treeId}&treeModule=${pType}">已标注</a></li>
 		<shiro:hasPermission name="ope:performance:edit"><li><a href="${ctx}/ope/performance/form?treeId=${treeId}&pId=${pId}&pType=${pType}">标注添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="performance" action="${ctx}/ope/performance/?treeId=${treeId}&pId=${pId}&treeModule=${pType}" method="post" class="breadcrumb form-search">

@@ -156,21 +156,37 @@ public class PerformanceController extends BaseController {
 	}
 	
 	@RequiresPermissions("ope:performance:view")
-	@RequestMapping(value = {"list", ""})
+	@RequestMapping(value = {"list"})
 	public String list(Performance performance,String treeId,String pId,String treeModule,String topType,  HttpServletRequest request, HttpServletResponse response, Model model) {
+		//如果指定属性则根据属性过滤，否则直接查询所有待标注记录
 		if(treeModule.equals("measure")){
 			performance.setMeasure(new Measure(treeId));
 			performance.setCategory(new ItemCategory(pId));//增加类目过滤。注意：仅在选中节点为Measure时，其pId是CategoryId
-		}else{//否则提示选择属性
-			model.addAttribute("message","选择属性查看标注。");
-			return "treeData/none";
 		}
+		performance.setIsMarked(1);//显示已标注记录
 		Page<Performance> page = performanceService.findPage(new Page<Performance>(request, response), performance);
 		model.addAttribute("page", page);
 		model.addAttribute("treeId", treeId);//记录当前选中的measureId
 		model.addAttribute("pId", pId);//记录当前选中的categoryId
 		model.addAttribute("pType", treeModule);
 		return "modules/ope/performanceList";
+	}
+	
+	@RequiresPermissions("ope:performance:view")
+	@RequestMapping(value = {"listPending", ""})
+	public String listPending(Performance performance,String treeId,String pId,String treeModule,String topType,  HttpServletRequest request, HttpServletResponse response, Model model) {
+		//如果指定属性则根据属性过滤，否则直接查询所有待标注记录
+		if(treeModule.equals("measure")){
+			performance.setMeasure(new Measure(treeId));
+			performance.setCategory(new ItemCategory(pId));//增加类目过滤。注意：仅在选中节点为Measure时，其pId是CategoryId
+		}
+		performance.setIsMarked(0);//显示待标注记录
+		Page<Performance> page = performanceService.findPage(new Page<Performance>(request, response), performance);
+		model.addAttribute("page", page);
+		model.addAttribute("treeId", treeId);//记录当前选中的measureId
+		model.addAttribute("pId", pId);//记录当前选中的categoryId
+		model.addAttribute("pType", treeModule);
+		return "modules/ope/performanceListPending";
 	}
 
 	@RequiresPermissions("ope:performance:view")
@@ -280,9 +296,13 @@ public class PerformanceController extends BaseController {
 	
 	@RequiresPermissions("ope:performance:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
-		model.addAttribute("message","请选择属性节点。");
-		return "treeData/none";
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
+		//默认直接查询所有待标注记录
+		Performance performance = new Performance();
+		performance.setIsMarked(0);//显示待标注记录
+		Page<Performance> page = performanceService.findPage(new Page<Performance>(request, response), performance);
+		model.addAttribute("page", page);
+		return "modules/ope/performanceListPending";
 	}
 	
 

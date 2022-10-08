@@ -26,6 +26,7 @@ public class Performance extends DataEntity<Performance> {
 	private Integer level;		// 等级
 	private String dimension;		// 所属维度
 	private Integer isReady; //是否已经同步：1-已同步 0-待同步
+	private Integer isMarked=0; //是否已经手动标注：1-已手动标注 0-待手动标注
 	
 	public Performance() {
 		super();
@@ -106,6 +107,14 @@ public class Performance extends DataEntity<Performance> {
 
 	public void setIsReady(Integer isReady) {
 		this.isReady = isReady;
+	}
+
+	public Integer getIsMarked() {
+		return isMarked;
+	}
+
+	public void setIsMarked(Integer isMarked) {
+		this.isMarked = isMarked;
 	}
 	
 }

@@ -75,6 +75,9 @@ public class PlatformCategoryController extends BaseController {
 	public String list(PlatformCategory platformCategory,String treeId, HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeId!=null && treeId.trim().length()>0)
 			platformCategory.setPlatform(treeId);
+		ItemCategory itemCategory = new ItemCategory();
+		itemCategory.setId("notnull");//设置id为null，将过滤已标注记录
+		platformCategory.setCategory(itemCategory);
 		Page<PlatformCategory> page = platformCategoryService.findPage(new Page<PlatformCategory>(request, response), platformCategory); 
 		model.addAttribute("page", page);
 		model.addAttribute("treeId", treeId);

@@ -110,11 +110,9 @@ public class UserPerformanceController extends BaseController {
 	@RequiresPermissions("ope:userPerformance:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(UserPerformance userPerformance,String treeId,String treeModule,String topType,  HttpServletRequest request, HttpServletResponse response, Model model) {
+		//选中指定属性则根据属性过滤，否则显示所有待标注记录
 		if(treeModule.equals("measure")){
 			userPerformance.setMeasure(new UserMeasure(treeId));
-		}else{//否则提示选择属性
-			model.addAttribute("message","选择属性查看标注。");
-			return "treeData/none";
 		}
 		Page<UserPerformance> page = userPerformanceService.findPage(new Page<UserPerformance>(request, response), userPerformance);
 		model.addAttribute("page", page);
@@ -224,9 +222,12 @@ public class UserPerformanceController extends BaseController {
 	
 	@RequiresPermissions("ope:userPerformance:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
-		model.addAttribute("message","请选择属性节点。");
-		return "treeData/none";
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
+		//默认显示所有待标注记录
+		UserPerformance userPerformance = new UserPerformance();
+		Page<UserPerformance> page = userPerformanceService.findPage(new Page<UserPerformance>(request, response), userPerformance);
+		model.addAttribute("page", page);
+		return "modules/ope/userPerformanceList";
 	}
 	
 

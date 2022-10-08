@@ -20,6 +20,7 @@
 		uu.name AS "updateBy.name",
 		a.update_date AS "updateDate",
 		a.isReady AS "isReady",
+		a.isMarked AS "isMarked",
 		a.del_flag AS "delFlag"
 	</sql>
 	
@@ -77,6 +78,7 @@
 		UPDATE ope_performance SET 	
 			marked_value = #{markedValue},
 			isReady = #{isReady},
+			isMarked = 1,
 			level = #{level},
 			update_date = #{updateDate}
 		WHERE id = #{id}
@@ -97,6 +99,9 @@
 		<include refid="performanceJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="isMarked != null">
+				AND a.isMarked = #{isMarked}
+			</if>	
 			<if test="category != null and category.id != ''">
 				AND a.category_id = #{category.id}
 			</if>				
@@ -160,6 +165,7 @@
 			update_by,
 			update_date,
 			isReady,
+			isMarked,
 			del_flag
 		) VALUES (
 			#{id},
@@ -176,6 +182,7 @@
 			#{updateBy.id},
 			#{updateDate},
 			#{isReady},
+			#{isMarked},
 			#{delFlag}
 		)
 	</insert>
@@ -192,6 +199,7 @@
 			dimension = #{dimension},
 			update_by = #{updateBy.id},
 			isReady = #{isReady},
+			isMarked = #{isMarked},
 			update_date = #{updateDate}
 		WHERE id = #{id}
 	</update>
