@@ -130,7 +130,7 @@ public class PlatformPropertyController extends BaseController {
 		}
 		platformPropertyService.save(platformProperty);
 		addMessage(redirectAttributes, "保存电商平台属性映射成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/platformProperty/?treeId="+platformProperty.getPlatform()+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/platformProperty/listProps?treeId="+platformProperty.getPlatform()+"&repage";
 	}
 	
 	@RequiresPermissions("mod:platformProperty:edit")
@@ -138,7 +138,7 @@ public class PlatformPropertyController extends BaseController {
 	public String delete(PlatformProperty platformProperty, RedirectAttributes redirectAttributes) {
 		platformPropertyService.delete(platformProperty);
 		addMessage(redirectAttributes, "删除电商平台属性映射成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/platformProperty/?treeId="+platformProperty.getPlatform()+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/platformProperty/listProps?treeId="+platformProperty.getPlatform()+"&repage";
 	}
 	
 
@@ -286,7 +286,7 @@ public class PlatformPropertyController extends BaseController {
 	@RequiresPermissions("mod:platformProperty:view")
 	@RequestMapping(value = "tree")
 	public String tree(Model model) {
-		model.addAttribute("url","mod/platformProperty");
+		model.addAttribute("url","mod/platformProperty/listProps");
 		model.addAttribute("title","电商平台");
 		model.addAttribute("list", getPlatformTree());
 		return "treeData/tree";

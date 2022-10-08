@@ -314,7 +314,8 @@ public class PerformanceController extends BaseController {
 					Map<String, Object> leafNode = Maps.newHashMap();
 					leafNode.put("id", prop.getId());
 					leafNode.put("pId", e.getId());
-					leafNode.put("name", prop.getName());
+					leafNode.put("name", "๏"+prop.getName());
+					leafNode.put("icon","/${ctx}/static/images/icon/prop.png");//手动设置icon，当前未生效
 					mapList.add(leafNode);
 				}
 			}
