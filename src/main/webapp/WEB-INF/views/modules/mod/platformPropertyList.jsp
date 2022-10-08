@@ -47,7 +47,7 @@
 				<th>名称</th>
 				<th>来源平台</th>
 				<th>原始类目</th>
-				<!--th>标准类目</th-->
+				<th>标准类目</th>
 				<th>标准属性</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:platformProperty:edit"><th>操作</th></shiro:hasPermission>
@@ -59,8 +59,9 @@
 				<td><a href="${ctx}/mod/platformProperty/form?id=${platformProperty.id}">
 					${platformProperty.name}
 				</a></td>
-				<td>${fns:getDictLabel(platformProperty.platform, 'platform', '-')}</td>
-				<td>${platformProperty.platformCategory.name}</td>
+				<td>${fns:getDictLabel(platformProperty.platform, 'platform', platformProperty.platform)}</td>
+				<td>${platformProperty.cname}(${platformProperty.platformCategory.name})</td>
+				<td>${platformProperty.category.name}</td>
 				<td>${platformProperty.measure.name}</td>
 				<td>
 					<fmt:formatDate value="${platformProperty.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
