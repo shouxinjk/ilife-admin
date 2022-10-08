@@ -73,14 +73,43 @@ public class PlatformPropertyController extends BaseController {
 		return entity;
 	}
 	
+	/**
+	 * 显示所有属性列表，用于查看验证
+	 * @param platformProperty
+	 * @param treeId
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
 	@RequiresPermissions("mod:platformProperty:view")
-	@RequestMapping(value = {"list", ""})
+	@RequestMapping(value = {"list"})
 	public String list(PlatformProperty platformProperty,String treeId,  HttpServletRequest request, HttpServletResponse response, Model model) {
 		platformProperty.setPlatform(treeId);
 		Page<PlatformProperty> page = platformPropertyService.findPage(new Page<PlatformProperty>(request, response), platformProperty); 
 		model.addAttribute("page", page);
 		model.addAttribute("treeId", treeId);
 		return "modules/mod/platformPropertyList";
+	}
+	
+	/**
+	 * 仅显示props.xxx属性列表，用于标注
+	 * @param platformProperty
+	 * @param treeId
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions("mod:platformProperty:view")
+	@RequestMapping(value = {"listProps", ""})
+	public String listProps(PlatformProperty platformProperty,String treeId,  HttpServletRequest request, HttpServletResponse response, Model model) {
+		platformProperty.setPlatform(treeId);
+		platformProperty.setPropName("props.");//设置该字段则仅过滤 props.xxx 属性列表。可以为任意非空值
+		Page<PlatformProperty> page = platformPropertyService.findPage(new Page<PlatformProperty>(request, response), platformProperty); 
+		model.addAttribute("page", page);
+		model.addAttribute("treeId", treeId);
+		return "modules/mod/platformPropertyListProps";
 	}
 
 	@RequiresPermissions("mod:platformProperty:view")

@@ -7,6 +7,7 @@
 		a.cid AS "platformCategory.id",
 		pc.name AS "platformCategory.name",
 		a.cname AS "cname",
+		replace(a.name,"props.","") AS "propName",
 		a.name AS "name",
 		a.platform AS "platform",
 		a.category_id AS "category.id",
@@ -67,6 +68,10 @@
 			<if test="measure != null and measure.id != null and measure.id != ''">
 				AND a.measure_id = #{measure.id}
 			</if>
+			<!-- 仅显示props.xxx -->
+			<if test="propName != null and propName != ''">
+				AND a.name REGEXP '^props'
+			</if>			
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
