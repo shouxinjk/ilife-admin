@@ -52,8 +52,8 @@
 			<label class="control-label">原始类目：</label>
 			<div class="controls">
 				 <sys:treeselect id="platformCategory" name="platformCategory.id" value="${platformProperty.platformCategory.id}" labelName="platformCategory.name" labelValue="${platformProperty.platformCategory.name}"
-					title="原始类目" url="/mod/platformCategory/treeData?platform=${platformProperty.platform}" notAllowSelectRoot="true" cssClass="required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+					title="原始类目" url="/mod/platformCategory/treeData?platform=${platformProperty.platform}" notAllowSelectRoot="true" />
+				<span class="help-inline"><font color="red"></font> </span>
 			</div>
 		</div>		
 		<!--div class="control-group">
@@ -68,8 +68,8 @@
 			<label class="control-label">标准属性：</label>
 			<div class="controls">
 				<sys:treeselect id="measure" name="measure.id" value="${platformProperty.measure.id}" labelName="measure.name" labelValue="${platformProperty.measure.name}"
-					title="标准属性" url="/mod/measure/treeData"  cssClass="required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+					title="标准属性" url="/mod/measure/treeData"/>
+				<span class="help-inline"><font color="red"></font> </span>
 			</div>
 		</div>		
 		<div class="form-actions">

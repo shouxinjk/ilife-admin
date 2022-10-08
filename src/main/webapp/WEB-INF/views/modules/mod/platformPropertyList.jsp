@@ -58,10 +58,26 @@
 		<c:forEach items="${page.list}" var="platformProperty">
 			<tr>
 				<td><a href="${ctx}/mod/platformProperty/form?id=${platformProperty.id}">
-					${platformProperty.propName}(${platformProperty.name})
+					<c:choose>
+				         <c:when test = "${platformProperty.propName == platformProperty.name}">
+				            ${platformProperty.propName}
+				         </c:when>				         			         			         			         
+				         <c:otherwise>
+				            ${platformProperty.propName}(${platformProperty.name})
+				         </c:otherwise>		
+			         </c:choose>			
 				</a></td>
 				<td>${fns:getDictLabel(platformProperty.platform, 'platform', platformProperty.platform)}</td>
-				<td>${platformProperty.cname}(${platformProperty.platformCategory.name})</td>
+				<td>
+					<c:choose>
+						<c:when test = "${empty platformProperty.platformCategory.name}">
+				            ${platformProperty.cname}
+				         </c:when>				         			         			         			         
+				         <c:otherwise>
+				            ${platformProperty.cname}(${platformProperty.platformCategory.name})
+				         </c:otherwise>	
+			         </c:choose>
+				</td>
 				<td>${platformProperty.category.name}</td>
 				<td>${platformProperty.measure.name}</td>
 				<td>
