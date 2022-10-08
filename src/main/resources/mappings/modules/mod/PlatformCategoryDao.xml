@@ -59,9 +59,20 @@
 					<if test="dbName == 'mssql'">'%'+#{parentIds}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{parentIds},'%')</if>
 			</if>
-			<if test="category != null and category.id != null and category.id != ''">
+			<!-- if test="category != null and category.id != null and category.id != ''">
 				AND a.category_id = #{category.id}
-			</if>
+			</if -->
+			<choose>
+				<when test="category != null and category.id != null and category.id == 'null'">
+					AND a.category_id is null
+				</when>
+				<when test="category != null and category.id != null and category.id != ''">
+					AND a.category_id = #{category.id}
+				</when>
+				<otherwise>
+					
+				</otherwise>
+			</choose>		
 		</where>
 	</select>
 	

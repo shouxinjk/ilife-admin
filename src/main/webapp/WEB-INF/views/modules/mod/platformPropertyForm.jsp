@@ -27,7 +27,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/platformProperty/listProps">属性映射列表</a></li>
+		<li><a href="${ctx}/mod/platformProperty/listPending">待标注</a></li>
 		<li><a href="${ctx}/mod/platformProperty/list">属性映射列表(全部)</a></li>
 		<li class="active"><a href="${ctx}/mod/platformProperty/form?id=${platformProperty.id}">属性映射<shiro:hasPermission name="mod:platformProperty:edit">${not empty platformProperty.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:platformProperty:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>

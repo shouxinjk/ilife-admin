@@ -65,13 +65,24 @@
 			<if test="category != null and category.id != null and category.id != ''">
 				AND a.category_id = #{category.id}
 			</if>
-			<if test="measure != null and measure.id != null and measure.id != ''">
+			<choose>
+				<when test="measure != null and measure.id != null and measure.id == 'null'">
+					AND a.measure_id is null
+				</when>
+				<when test="measure != null and measure.id != null and measure.id != ''">
+					AND a.measure_id = #{measure.id}
+				</when>
+				<otherwise>
+					
+				</otherwise>
+			</choose>			
+			<!-- if test="measure != null and measure.id != null and measure.id != ''">
 				AND a.measure_id = #{measure.id}
-			</if>
-			<!-- 仅显示props.xxx -->
-			<if test="propName != null and propName != ''">
+			</if -->
+			<!-- 仅显示待标注props.xxx -->
+			<if test="measure != null and measure.name != null and measure.name == 'null'">
 				AND a.name REGEXP '^props'
-			</if>			
+			</if>						
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

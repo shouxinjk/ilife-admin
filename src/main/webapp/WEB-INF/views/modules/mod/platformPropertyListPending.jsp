@@ -68,7 +68,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/mod/platformProperty/listProps">属性映射列表</a></li>
+		<li class="active"><a href="${ctx}/mod/platformProperty/listPending">待标注</a></li>
 		<li><a href="${ctx}/mod/platformProperty/list">属性映射列表(全部)</a></li>
 		<shiro:hasPermission name="mod:platformProperty:edit"><li><a href="${ctx}/mod/platformProperty/form?platform=${treeId}">属性映射添加</a></li></shiro:hasPermission>
 	</ul>

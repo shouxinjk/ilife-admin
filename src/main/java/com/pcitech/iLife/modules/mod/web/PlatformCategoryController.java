@@ -244,9 +244,13 @@ public class PlatformCategoryController extends BaseController {
 	
 	@RequiresPermissions("mod:platformCategory:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
-		model.addAttribute("message","请在左侧选择电商平台。");
-		return "treeData/none";
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
+			PlatformCategory platformCategory = new PlatformCategory();
+			ItemCategory itemCategory = new ItemCategory();
+			itemCategory.setId("null");//使用null作为ID，过滤所有待标注记录
+			Page<PlatformCategory> page = platformCategoryService.findPage(new Page<PlatformCategory>(request, response), platformCategory); 
+			model.addAttribute("page", page);
+			return "modules/mod/platformCategoryList";
 	}
 	
 	

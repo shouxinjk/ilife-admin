@@ -107,14 +107,18 @@ public class PlatformPropertyController extends BaseController {
 	 * @return
 	 */
 	@RequiresPermissions("mod:platformProperty:view")
-	@RequestMapping(value = {"listProps", ""})
-	public String listProps(PlatformProperty platformProperty,String treeId,  HttpServletRequest request, HttpServletResponse response, Model model) {
-		platformProperty.setPlatform(treeId);
-		platformProperty.setPropName("props.");//设置该字段则仅过滤 props.xxx 属性列表。可以为任意非空值
+	@RequestMapping(value = {"listPending", ""})
+	public String listPending(PlatformProperty platformProperty,String treeId,  HttpServletRequest request, HttpServletResponse response, Model model) {
+		if(treeId!=null && treeId.trim().length()>0) //从首页直接进入时不会带有treeId
+			platformProperty.setPlatform(treeId);
+		Measure measure = new Measure();
+		measure.setId("null");//设置id为null过滤所有待标注记录
+//		measure.setName("null");//设置name为null过滤待标注props.xxx记录
+		platformProperty.setMeasure(measure);
 		Page<PlatformProperty> page = platformPropertyService.findPage(new Page<PlatformProperty>(request, response), platformProperty); 
 		model.addAttribute("page", page);
 		model.addAttribute("treeId", treeId);
-		return "modules/mod/platformPropertyListProps";
+		return "modules/mod/platformPropertyListPending";
 	}
 
 	@RequiresPermissions("mod:platformProperty:view")
@@ -135,7 +139,7 @@ public class PlatformPropertyController extends BaseController {
 		}
 		platformPropertyService.save(platformProperty);
 		addMessage(redirectAttributes, "保存电商平台属性映射成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/platformProperty/listProps?treeId="+platformProperty.getPlatform()+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/platformProperty/listPending?treeId="+platformProperty.getPlatform()+"&repage";
 	}
 	
 	@RequiresPermissions("mod:platformProperty:edit")
@@ -143,7 +147,7 @@ public class PlatformPropertyController extends BaseController {
 	public String delete(PlatformProperty platformProperty, RedirectAttributes redirectAttributes) {
 		platformPropertyService.delete(platformProperty);
 		addMessage(redirectAttributes, "删除电商平台属性映射成功");
-		return "redirect:"+Global.getAdminPath()+"/mod/platformProperty/listProps?treeId="+platformProperty.getPlatform()+"&repage";
+		return "redirect:"+Global.getAdminPath()+"/mod/platformProperty/listPending?treeId="+platformProperty.getPlatform()+"&repage";
 	}
 	
 	@ResponseBody
@@ -277,7 +281,7 @@ public class PlatformPropertyController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/mapping", method = RequestMethod.GET)
-	public JSONObject listProps(@RequestParam(required=true) String platform,@RequestParam(required=true) String category,HttpServletRequest request, HttpServletResponse response, Model model) {
+	public JSONObject listPending(@RequestParam(required=true) String platform,@RequestParam(required=true) String category,HttpServletRequest request, HttpServletResponse response, Model model) {
 		JSONObject result = new JSONObject();
 		result.put("success",false);
 		PlatformProperty query = new PlatformProperty();
@@ -325,17 +329,27 @@ public class PlatformPropertyController extends BaseController {
 	@RequiresPermissions("mod:platformProperty:view")
 	@RequestMapping(value = "tree")
 	public String tree(Model model) {
-		model.addAttribute("url","mod/platformProperty/listProps");
+		model.addAttribute("url","mod/platformProperty/listPending");
 		model.addAttribute("title","电商平台");
 		model.addAttribute("list", getPlatformTree());
 		return "treeData/tree";
 	}
 	
+	/**
+	 * 默认显示所有待标注列表
+	 * @param model
+	 * @return
+	 */
 	@RequiresPermissions("mod:platformProperty:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
-		model.addAttribute("message","请在左侧选择电商平台。");
-		return "treeData/none";
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
+		PlatformProperty platformProperty = new PlatformProperty();
+		Measure measure = new Measure();
+		measure.setId("null");//设置id为null过滤所有待标注记录
+		platformProperty.setMeasure(measure);
+		Page<PlatformProperty> page = platformPropertyService.findPage(new Page<PlatformProperty>(request, response), platformProperty); 
+		model.addAttribute("page", page);
+		return "modules/mod/platformPropertyListPending";
 	}
 
 }
