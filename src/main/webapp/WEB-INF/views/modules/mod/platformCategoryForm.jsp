@@ -27,7 +27,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/platformCategory/?treeId=${treeId}">类目映射列表</a></li>
+		<li><a href="${ctx}/mod/platformCategory/listPending?treeId=${treeId}">待标注</a></li>
+		<li><a href="${ctx}/mod/platformCategory/list?treeId=${treeId}">类目映射列表</a></li>
 		<li class="active"><a href="${ctx}/mod/platformCategory/form?id=${platformCategory.id}&parent.id=${platformCategoryparent.id}">类目映射<shiro:hasPermission name="mod:platformCategory:edit">${not empty platformCategory.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:platformCategory:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="platformCategory" action="${ctx}/mod/platformCategory/save" method="post" class="form-horizontal">

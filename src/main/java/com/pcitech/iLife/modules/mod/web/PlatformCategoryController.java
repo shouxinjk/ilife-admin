@@ -69,17 +69,31 @@ public class PlatformCategoryController extends BaseController {
 		return entity;
 	}
 	
+	//显示指定平台下所有记录
 	@RequiresPermissions("mod:platformCategory:view")
-	@RequestMapping(value = {"list", ""})
+	@RequestMapping(value = {"list"})
 	public String list(PlatformCategory platformCategory,String treeId, HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeId!=null && treeId.trim().length()>0)
 			platformCategory.setPlatform(treeId);
-		//List<PlatformCategory> list = platformCategoryService.findList(platformCategory); 
-//		model.addAttribute("list", list);
 		Page<PlatformCategory> page = platformCategoryService.findPage(new Page<PlatformCategory>(request, response), platformCategory); 
 		model.addAttribute("page", page);
 		model.addAttribute("treeId", treeId);
 		return "modules/mod/platformCategoryList";
+	}
+	
+	//显示标准类目id为空的记录，便于标注
+	@RequiresPermissions("mod:platformCategory:view")
+	@RequestMapping(value = {"listPending", ""})
+	public String listPending(PlatformCategory platformCategory,String treeId, HttpServletRequest request, HttpServletResponse response, Model model) {
+		if(treeId!=null && treeId.trim().length()>0)
+			platformCategory.setPlatform(treeId);
+		ItemCategory itemCategory = new ItemCategory();
+		itemCategory.setId("null");//设置id为null，将过滤尚未标注的记录
+		platformCategory.setCategory(itemCategory);
+		Page<PlatformCategory> page = platformCategoryService.findPage(new Page<PlatformCategory>(request, response), platformCategory); 
+		model.addAttribute("page", page);
+		model.addAttribute("treeId", treeId);
+		return "modules/mod/platformCategoryListPending";
 	}
 
 	@RequiresPermissions("mod:platformCategory:view")
@@ -248,6 +262,7 @@ public class PlatformCategoryController extends BaseController {
 			PlatformCategory platformCategory = new PlatformCategory();
 			ItemCategory itemCategory = new ItemCategory();
 			itemCategory.setId("null");//使用null作为ID，过滤所有待标注记录
+			platformCategory.setCategory(itemCategory);
 			Page<PlatformCategory> page = platformCategoryService.findPage(new Page<PlatformCategory>(request, response), platformCategory); 
 			model.addAttribute("page", page);
 			return "modules/mod/platformCategoryList";

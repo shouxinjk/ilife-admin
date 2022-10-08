@@ -18,8 +18,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/platformCategory/listPending?treeId=${treeId}">待标注</a></li>
-		<li class="active"><a href="${ctx}/mod/platformCategory/list?treeId=${treeId}">类目映射列表</a></li>
+		<li class="active"><a href="${ctx}/mod/platformCategory/listPending?treeId=${treeId}">待标注</a></li>
+		<li><a href="${ctx}/mod/platformCategory/list?treeId=${treeId}">类目映射列表</a></li>
 		<shiro:hasPermission name="mod:platformCategory:edit"><li><a href="${ctx}/mod/platformCategory/form?platform=${treeId}">类目映射添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="platformCategory" action="${ctx}/mod/platformCategory/" method="post" class="breadcrumb form-search">
