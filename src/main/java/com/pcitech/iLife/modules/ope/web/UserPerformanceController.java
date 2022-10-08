@@ -108,17 +108,33 @@ public class UserPerformanceController extends BaseController {
 	}
 	
 	@RequiresPermissions("ope:userPerformance:view")
-	@RequestMapping(value = {"list", ""})
+	@RequestMapping(value = {"list"})
 	public String list(UserPerformance userPerformance,String treeId,String treeModule,String topType,  HttpServletRequest request, HttpServletResponse response, Model model) {
 		//选中指定属性则根据属性过滤，否则显示所有待标注记录
 		if(treeModule.equals("measure")){
 			userPerformance.setMeasure(new UserMeasure(treeId));
 		}
+		userPerformance.setIsMarked(1);//过滤已标注记录
 		Page<UserPerformance> page = userPerformanceService.findPage(new Page<UserPerformance>(request, response), userPerformance);
 		model.addAttribute("page", page);
 		model.addAttribute("pid", treeId);
 		model.addAttribute("pType", treeModule);
 		return "modules/ope/userPerformanceList";
+	}
+	
+	@RequiresPermissions("ope:userPerformance:view")
+	@RequestMapping(value = {"listPending", ""})
+	public String listPending(UserPerformance userPerformance,String treeId,String treeModule,String topType,  HttpServletRequest request, HttpServletResponse response, Model model) {
+		//选中指定属性则根据属性过滤，否则显示所有待标注记录
+		if(treeModule.equals("measure")){
+			userPerformance.setMeasure(new UserMeasure(treeId));
+		}
+		userPerformance.setIsMarked(0);//过滤待标注记录
+		Page<UserPerformance> page = userPerformanceService.findPage(new Page<UserPerformance>(request, response), userPerformance);
+		model.addAttribute("page", page);
+		model.addAttribute("pid", treeId);
+		model.addAttribute("pType", treeModule);
+		return "modules/ope/userPerformanceListPending";
 	}
 
 	@RequiresPermissions("ope:userPerformance:view")
@@ -227,7 +243,7 @@ public class UserPerformanceController extends BaseController {
 		UserPerformance userPerformance = new UserPerformance();
 		Page<UserPerformance> page = userPerformanceService.findPage(new Page<UserPerformance>(request, response), userPerformance);
 		model.addAttribute("page", page);
-		return "modules/ope/userPerformanceList";
+		return "modules/ope/userPerformanceListPending";
 	}
 	
 

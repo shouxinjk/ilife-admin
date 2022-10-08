@@ -27,7 +27,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/ope/userPerformance/?treeId=${pid}&treeModule=${pType}">标注列表</a></li>
+		<li><a href="${ctx}/ope/userPerformance/listPending?treeId=${pid}&treeModule=${pType}">待标注</a></li>
+		<li><a href="${ctx}/ope/userPerformance/list?treeId=${pid}&treeModule=${pType}">已标注</a></li>
 		<li class="active"><a href="${ctx}/ope/userPerformance/form?id=${userPerformance.id}&pid=${pid}&pType=${pType}">标注<shiro:hasPermission name="ope:userPerformance:edit">${not empty userPerformance.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="ope:userPerformance:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="userPerformance" action="${ctx}/ope/userPerformance/save" method="post" class="form-horizontal">

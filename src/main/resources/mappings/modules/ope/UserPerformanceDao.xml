@@ -18,6 +18,7 @@
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
 		a.isReady AS "isReady",
+		a.isMarked AS "isMarked",
 		a.del_flag AS "delFlag"
 	</sql>
 	
@@ -52,6 +53,7 @@
 		UPDATE ope_user_performance SET 	
 			marked_value = #{markedValue},
 			isReady = #{isReady},
+			isMarked = 1,
 			level = #{level},
 			update_date = #{updateDate}
 		WHERE id = #{id}
@@ -72,6 +74,9 @@
 		<include refid="userPerformanceJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}	
+			<if test="isMarked != null">
+				AND a.isMarked = #{isMarked}
+			</if>	
 			<if test="measure != null and measure.id != ''">
 				AND a.measure_id = #{measure.id}
 			</if>	
@@ -128,6 +133,7 @@
 			update_by,
 			update_date,
 			isReady,
+			isMarked,
 			del_flag
 		) VALUES (
 			#{id},
@@ -143,6 +149,7 @@
 			#{updateBy.id},
 			#{updateDate},
 			#{isReady},
+			#{isMarked},
 			#{delFlag}
 		)
 	</insert>
@@ -152,6 +159,7 @@
 			measure_id = #{measure.id},
 			marked_value = #{markedValue},
 			isReady = #{isReady},
+			isMarked = #{isMarked},
 			original_value = #{originalValue},
 			normalized_value = #{normalizedValue},
 			control_value = #{controlValue},
