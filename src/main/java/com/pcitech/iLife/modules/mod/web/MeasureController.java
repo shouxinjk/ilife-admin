@@ -331,7 +331,7 @@ public class MeasureController extends BaseController {
 					Map<String, Object> leafNode = Maps.newHashMap();
 					leafNode.put("id", prop.getId());
 					leafNode.put("pId", e.getId());
-					leafNode.put("name", prop.getName());
+					leafNode.put("name", "๏"+prop.getName());
 					mapList.add(leafNode);
 				}
 			}

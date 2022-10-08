@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,9 +34,11 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
+import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
 import com.pcitech.iLife.modules.mod.entity.PlatformProperty;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
+import com.pcitech.iLife.modules.mod.service.MeasureService;
 import com.pcitech.iLife.modules.mod.service.PlatformCategoryService;
 import com.pcitech.iLife.modules.mod.service.PlatformPropertyService;
 import com.pcitech.iLife.modules.sys.entity.Dict;
@@ -57,6 +60,8 @@ public class PlatformPropertyController extends BaseController {
 	private ItemCategoryService itemCategoryService;
 	@Autowired
 	private PlatformCategoryService platformCategoryService;
+	@Autowired
+	private MeasureService measureService;
 	
 	@Autowired
 	private DictService dictService;
@@ -141,7 +146,41 @@ public class PlatformPropertyController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/mod/platformProperty/listProps?treeId="+platformProperty.getPlatform()+"&repage";
 	}
 	
-
+	@ResponseBody
+	@RequestMapping(value = "rest/mapping", method = RequestMethod.PATCH)
+	//更新第三方属性与标准属性的映射关系
+	public Map<String,Object> updateMapping( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) String measureId, 
+			HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,Object> result = Maps.newHashMap();
+		result.put("success", false);
+		PlatformProperty platformProperty = platformPropertyService.get(id);
+		if(platformProperty==null) {
+			result.put("msg", "platform property record not found.[id]="+id);
+			return result;
+		}
+		
+		Measure measure = measureService.get(measureId);
+		if(measure==null) {
+			result.put("msg", "cannot find measure by id.[id]="+measureId);
+			return result;
+		}
+		
+		platformProperty.setMeasure(measure);
+		try {
+			platformPropertyService.save(platformProperty);
+		}catch(Exception ex) {
+			result.put("msg", "failed save platform property.[id]="+id);
+			result.put("error", ex.getMessage());
+			return result;
+		}
+		
+		result.put("success", true);
+		result.put("msg", "mapping updated.");
+		return result;
+	}
+	
 	//组织显示左侧电商平台列表
 	private List<JSONObject> getPlatformTree(){
 		//列表

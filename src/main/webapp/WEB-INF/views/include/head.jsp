@@ -28,6 +28,8 @@
 <script src="${ctxStatic}/siiimple-toast-master/siiimple-toast.min.js" type="text/javascript"></script>
 <!-- link href="${ctxStatic}/bootstrap-slider/css/bootstrap-slider.min.css" type="text/css" rel="stylesheet" />
 <script src="${ctxStatic}/bootstrap-slider/bootstrap-slider.min.js" type="text/javascript"></script-->
+<link href="${ctxStatic}/chosen/chosen.min.css" type="text/css" rel="stylesheet" />
+<script src="${ctxStatic}/chosen/chosen.jquery.min.js" type="text/javascript"></script>
 <link href="${ctxStatic}/common/iLife.css" type="text/css" rel="stylesheet" />
 <script src="${ctxStatic}/common/iLife.js" type="text/javascript"></script>
 <script src="${ctxStatic}/common/md5.js" type="text/javascript"></script>

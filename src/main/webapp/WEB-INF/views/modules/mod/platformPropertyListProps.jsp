@@ -7,6 +7,56 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			
+			//遍历所有标准属性下拉组件，初始化，并注册打分事件
+			$("select[id^=measure]").each(function(index){
+				var itemId = $(this).data("id");
+				var categoryId = $(this).data("categoryid");
+				console.log("now walk through all items.",itemId,categoryId);
+				
+				//根据categoryId查询属性及继承属性，并添加到对应的select下
+				console.log("try to load props by categoryId.",categoryId);
+		        $.ajax({
+		            type: "GET",
+		            url: "${ctx}/mod/measure/measures?category="+categoryId+"&cascade=true",
+		            headers:{
+		                "Content-Type":"application/json",
+		                "Accept":"application/json"
+		            },        
+		            success:function(result){
+		                console.log("got measure list.",result);
+		                result.forEach(item =>{
+		    		        $("#measure"+itemId).append('<option value="'+item.id+'">'+item.name+'</option>');
+		    		    });
+		            }                
+		        }); 
+				
+				//注册change事件：提交修改
+				$(this).on('change', function(evt, params) {
+					console.log("now change measure...",evt, params);
+			        $.ajax({
+			            type: "PATCH",
+			            url: "${ctx}/mod/platformProperty/rest/mapping?id="+itemId+"&measureId="+evt.val,
+			            headers:{
+			                "Content-Type":"application/json",
+			                "Accept":"application/json"
+			            },        
+			            success:function(result){
+			                console.log("got measure list.",result);
+			                if(result.success){
+			                	siiimpleToast.message('已更新',{
+					                  position: 'bottom|center'
+					                });
+			                }else{
+			                	siiimpleToast.message('啊哦，好像出错了',{
+					                  position: 'bottom|center'
+					                });
+			                }
+			                
+			            }                
+			        }); 
+				});
+			});
+			
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -79,7 +129,21 @@
 			         </c:choose>
 				</td>
 				<td>${platformProperty.category.name}</td>
-				<td>${platformProperty.measure.name}</td>
+				<td>
+					<c:choose>
+						<c:when test = "${not empty platformProperty.measure.name}">
+							<select data-placeholder="${platformProperty.measure.name}" class="select" tabindex="1" id="measure${platformProperty.id}" data-id="${platformProperty.id}" data-categoryid="${platformProperty.category.id}">
+					            <option value=""></option>
+					            <option value="${platformProperty.measure.id}">${platformProperty.measure.name}</option>
+				            </select>	
+			             </c:when>				         			         			         			         
+				         <c:otherwise>	
+							<select data-placeholder="请选择" class="select" tabindex="1" id="measure${platformProperty.id}" data-id="${platformProperty.id}" data-categoryId="${platformProperty.category.id}">
+					            <option value=""></option>
+				            </select>				         	
+				         </c:otherwise>	
+			         </c:choose>	
+				</td>
 				<td>
 					<fmt:formatDate value="${platformProperty.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
