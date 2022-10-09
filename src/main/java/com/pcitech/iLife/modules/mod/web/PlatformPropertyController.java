@@ -79,7 +79,7 @@ public class PlatformPropertyController extends BaseController {
 	}
 	
 	/**
-	 * 显示所有属性列表，用于查看验证
+	 * 显示已标注属性列表，用于查看验证。默认只显示props.xxx
 	 * @param platformProperty
 	 * @param treeId
 	 * @param request
@@ -89,12 +89,14 @@ public class PlatformPropertyController extends BaseController {
 	 */
 	@RequiresPermissions("mod:platformProperty:view")
 	@RequestMapping(value = {"list"})
-	public String list(PlatformProperty platformProperty,String treeId, String filterProps, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String list(PlatformProperty platformProperty,String treeId, String filterAll, HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeId!=null && treeId.trim().length()>0) //从首页直接进入时不会带有treeId
 			platformProperty.setPlatform(treeId);
 		Measure measure = platformProperty.getMeasure();
 		if(measure ==null)measure = new Measure();
-		if(filterProps!=null && filterProps.trim().length()>0) {
+		if(filterAll!=null && filterAll.trim().length()>0) {
+			//显示所有属性
+		}else {
 			measure.setName("null");//设置name为null过滤待标注props.xxx记录
 		}
 		measure.setId("notnull");//设置id为null过滤所有待标注记录
@@ -106,7 +108,7 @@ public class PlatformPropertyController extends BaseController {
 	}
 	
 	/**
-	 * 仅显示props.xxx属性列表，用于标注
+	 * 显示待标注列表，即measure为空的数据。默认仅显示props.xxx，便于标注
 	 * @param platformProperty
 	 * @param treeId
 	 * @param request
@@ -116,12 +118,14 @@ public class PlatformPropertyController extends BaseController {
 	 */
 	@RequiresPermissions("mod:platformProperty:view")
 	@RequestMapping(value = {"listPending", ""})
-	public String listPending(PlatformProperty platformProperty,String treeId, String filterProps, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String listPending(PlatformProperty platformProperty,String treeId, String filterAll, HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeId!=null && treeId.trim().length()>0) //从首页直接进入时不会带有treeId
 			platformProperty.setPlatform(treeId);
 		Measure measure = platformProperty.getMeasure();
 		if(measure ==null)measure = new Measure();
-		if(filterProps!=null && filterProps.trim().length()>0) {
+		if(filterAll!=null && filterAll.trim().length()>0) {
+			//显示所有属性
+		}else {
 			measure.setName("null");//设置name为null过滤待标注props.xxx记录
 		}
 		measure.setId("null");//设置id为null过滤所有待标注记录
@@ -340,7 +344,7 @@ public class PlatformPropertyController extends BaseController {
 	@RequiresPermissions("mod:platformProperty:view")
 	@RequestMapping(value = "tree")
 	public String tree(Model model) {
-		model.addAttribute("url","mod/platformProperty/listPending");
+		model.addAttribute("url","mod/platformProperty/listPending");//默认显示所有props
 		model.addAttribute("title","电商平台");
 		model.addAttribute("list", getPlatformTree());
 		return "treeData/tree";
@@ -357,6 +361,7 @@ public class PlatformPropertyController extends BaseController {
 		PlatformProperty platformProperty = new PlatformProperty();
 		Measure measure = new Measure();
 		measure.setId("null");//设置id为null过滤所有待标注记录
+		measure.setName("null");//设置name为null过滤所有props.xxx
 		platformProperty.setMeasure(measure);
 		Page<PlatformProperty> page = platformPropertyService.findPage(new Page<PlatformProperty>(request, response), platformProperty); 
 		model.addAttribute("page", page);

@@ -64,18 +64,18 @@
 			$("#searchForm").submit();
         	return false;
         }
-		//过滤props属性
+		//显示所有属性，而不只是props.xxx
         function filterProps() {
             loading('正在提交，请稍等...');
-            $("#searchForm").attr("action", "${ctx}/mod/platformProperty/listPending?filterProps=true");
+            $("#searchForm").attr("action", "${ctx}/mod/platformProperty/list?filterAll=true");
             $("#searchForm").submit();
-        }		
+        }	
 	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/mod/platformProperty/listPending">待标注</a></li>
-		<li><a href="${ctx}/mod/platformProperty/list">属性映射列表(全部)</a></li>
+		<li><a href="${ctx}/mod/platformProperty/list">已标注</a></li>
 		<shiro:hasPermission name="mod:platformProperty:edit"><li><a href="${ctx}/mod/platformProperty/form?platform=${treeId}">属性映射添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="platformProperty" action="${ctx}/mod/platformProperty/listPending" method="post" class="breadcrumb form-search">
@@ -104,7 +104,7 @@
 			</li>
 			<li class="btns">
 				<input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/>				
-				<input id="FilterProps" class="btn btn-primary" type="button" value="查询Props属性" onclick="filterProps();"/>
+				<input id="FilterProps" class="btn btn-primary" type="button" value="查询非Props属性" onclick="filterProps();"/>
 			</li>
 			<li class="clearfix"></li>
 		</ul>
