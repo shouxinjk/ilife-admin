@@ -89,12 +89,15 @@ public class PlatformPropertyController extends BaseController {
 	 */
 	@RequiresPermissions("mod:platformProperty:view")
 	@RequestMapping(value = {"list"})
-	public String list(PlatformProperty platformProperty,String treeId,  HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String list(PlatformProperty platformProperty,String treeId, String filterProps, HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeId!=null && treeId.trim().length()>0) //从首页直接进入时不会带有treeId
 			platformProperty.setPlatform(treeId);
-		Measure measure = new Measure();
+		Measure measure = platformProperty.getMeasure();
+		if(measure ==null)measure = new Measure();
+		if(filterProps!=null && filterProps.trim().length()>0) {
+			measure.setName("null");//设置name为null过滤待标注props.xxx记录
+		}
 		measure.setId("notnull");//设置id为null过滤所有待标注记录
-//		measure.setName("null");//设置name为null过滤待标注props.xxx记录
 		platformProperty.setMeasure(measure);
 		Page<PlatformProperty> page = platformPropertyService.findPage(new Page<PlatformProperty>(request, response), platformProperty); 
 		model.addAttribute("page", page);
@@ -113,12 +116,15 @@ public class PlatformPropertyController extends BaseController {
 	 */
 	@RequiresPermissions("mod:platformProperty:view")
 	@RequestMapping(value = {"listPending", ""})
-	public String listPending(PlatformProperty platformProperty,String treeId,  HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String listPending(PlatformProperty platformProperty,String treeId, String filterProps, HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeId!=null && treeId.trim().length()>0) //从首页直接进入时不会带有treeId
 			platformProperty.setPlatform(treeId);
-		Measure measure = new Measure();
+		Measure measure = platformProperty.getMeasure();
+		if(measure ==null)measure = new Measure();
+		if(filterProps!=null && filterProps.trim().length()>0) {
+			measure.setName("null");//设置name为null过滤待标注props.xxx记录
+		}
 		measure.setId("null");//设置id为null过滤所有待标注记录
-//		measure.setName("null");//设置name为null过滤待标注props.xxx记录
 		platformProperty.setMeasure(measure);
 		Page<PlatformProperty> page = platformPropertyService.findPage(new Page<PlatformProperty>(request, response), platformProperty); 
 		model.addAttribute("page", page);

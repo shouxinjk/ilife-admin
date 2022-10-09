@@ -67,6 +67,12 @@
 			$("#searchForm").submit();
         	return false;
         }
+		//过滤props属性
+        function filterProps() {
+            loading('正在提交，请稍等...');
+            $("#searchForm").attr("action", "${ctx}/mod/platformProperty/list?filterProps=true");
+            $("#searchForm").submit();
+        }		
 	</script>
 </head>
 <body>
@@ -75,22 +81,34 @@
 		<li class="active"><a href="${ctx}/mod/platformProperty/list">属性映射列表(全部)</a></li>
 		<shiro:hasPermission name="mod:platformProperty:edit"><li><a href="${ctx}/mod/platformProperty/form?platform=${treeId}">属性映射添加</a></li></shiro:hasPermission>
 	</ul>
-	<form:form id="searchForm" modelAttribute="platformProperty" action="${ctx}/mod/platformProperty/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="platformProperty" action="${ctx}/mod/platformProperty/list" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>名称：</label>
-				<form:input path="name" htmlEscape="false" maxlength="100" class="input-medium"/>
-			</li>			
-			<li><label>原始类目：</label>
+				<form:input path="name" htmlEscape="false" maxlength="100" class="input-small"/>
+			</li>
+			<li><label>类目：</label>
+				<form:input path="cname" htmlEscape="false" maxlength="100" class="input-small"/>
+			</li>
+			<li><label>平台：</label>
+				<form:select path="platform" class="input-small">
+					<form:option value="" label="不限"/>
+					<form:options items="${fns:getDictList('platform')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>	
+			</li>							
+			<!--li><label>原始类目：</label>
 				<sys:treeselect id="platformCategory" name="platformCategory.id" value="${platformProperty.platformCategory.id}" labelName="platformCategory.name" labelValue="${platformProperty.platformCategory.name}"
 					title="原始类目" url="/mod/platformCategory/treeData" notAllowSelectRoot="false"/>	
-			</li>
-			<li><label>标准属性：</label>
+			</li-->
+			<li><label>属性：</label>
 				<sys:treeselect id="measure" name="measure.id" value="${platformProperty.measure.id}" labelName="measure.name" labelValue="${platformProperty.measure.name}"
 					title="关键属性" url="/mod/measure/treeData"/>
 			</li>
-			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="btns">
+				<input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/>				
+				<input id="FilterProps" class="btn btn-primary" type="button" value="查询Props属性" onclick="filterProps();"/>
+			</li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>

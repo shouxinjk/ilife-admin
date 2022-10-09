@@ -59,6 +59,12 @@
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
+			<if test="cname != null and cname != ''">
+				AND a.cname LIKE 
+					<if test="dbName == 'oracle'">'%'||#{cname}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{cname}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{cname},'%')</if>
+			</if>			
 			<if test="platform != null and platform != ''">
 				AND a.platform = #{platform}
 			</if>
