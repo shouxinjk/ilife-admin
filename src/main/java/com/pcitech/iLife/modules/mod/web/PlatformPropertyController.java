@@ -179,9 +179,8 @@ public class PlatformPropertyController extends BaseController {
 			result.put("msg", "platform property record not found.[id]="+id);
 			return result;
 		}
-		platformProperty.setDelFlag("1");//直接标记为删除即可
 		try {
-			platformPropertyService.save(platformProperty);
+			platformPropertyService.delete(platformProperty);//直接删除该条目
 		}catch(Exception ex) {
 			result.put("msg", "failed save platform property.[id]="+id);
 			result.put("error", ex.getMessage());
