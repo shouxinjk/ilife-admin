@@ -42,6 +42,14 @@
 			});
 			
 		});
+		
+		//从父节点复制需要列表
+        function inherit() {
+            loading('正在提交，请稍等...');
+            $("#searchForm").attr("action", "${ctx}/mod/phaseNeed/inherit?id=${pid}");
+            $("#searchForm").submit();
+        }
+		
 		function page(n,s){
 			$("#pageNo").val(n);
 			$("#pageSize").val(s);
@@ -62,13 +70,24 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>阶段：</label>
-				<form:input path="phase.id" htmlEscape="false" maxlength="64" class="input-medium"/>
-			</li>
+			<form:hidden path="phase.id" htmlEscape="false" maxlength="100" class="input-small"/>
 			<li><label>需要：</label>
-				<form:input path="need.id" htmlEscape="false" maxlength="32" class="input-medium"/>
+				<form:input path="need.name" htmlEscape="false" maxlength="100" class="input-small"/>
+			</li>	
+			<li><label>类型：</label>
+				<form:select path="need.type" class="input-small">
+					<form:option value="" label="不限"/>
+					<form:options items="${fns:getDictList('need_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>	
+			</li>												
+			<li class="btns">
+				<input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/>				
 			</li>
-			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<shiro:hasPermission name="mod:phaseNeed:edit">
+				<li class="btns">
+					<input id="btnCloneFromParent" class="btn btn-primary" type="button" value="从父节点克隆需要" onclick="inherit();"/>
+				</li>
+			</shiro:hasPermission>		
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>

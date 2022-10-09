@@ -32,6 +32,8 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.CategoryNeed;
+import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.MotivationCategory;
 import com.pcitech.iLife.modules.mod.entity.Persona;
@@ -82,6 +84,72 @@ public class PhaseNeedController extends BaseController {
 			entity = new PhaseNeed();
 		}
 		return entity;
+	}
+	
+
+	/**
+	 * 继承上级节点的需要：层级追溯到根节点
+	 * @param id 阶段ID
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("mod:phaseNeed:edit")
+	@RequestMapping(value = "inherit")
+	public String inheritFromParent(String id, RedirectAttributes redirectAttributes) {
+		logger.error("got phase id. "+id);
+
+		//获取上级节点：
+		Phase phase = phaseService.get(id);
+		if(phase == null) {
+			addMessage(redirectAttributes, "无法获取父节点，忽略");
+		}else {//尝试获取上级
+			Phase parent = phase.getParent();
+			if(parent == null) {
+				addMessage(redirectAttributes, "没有父节点，忽略");
+			}else {
+				logger.error("try get parent node by id. "+id);
+				parent = phaseService.get(parent);
+
+				if(parent!=null) {
+					copyNeeds(parent, phase);//递归复制所有节点下的需要
+					addMessage(redirectAttributes, "复制父节点需要成功");
+				}else {
+					addMessage(redirectAttributes, "不能获取父节点，忽略");
+				}
+			}
+		}
+		return "redirect:"+Global.getAdminPath()+"/mod/phaseNeed/?treeId="+id+"&repage";
+	}
+	
+	/**
+	 * 层递复制目录需要
+	 * @param fromNode 父节点 toNode当前节点
+	 */
+	private void copyNeeds(Phase fromNode, Phase toNode) {
+		logger.debug("start copy from "+fromNode.getName()+":"+fromNode.getId()+" to "+toNode.getName()+":"+toNode.getId());
+		//复制节点下的需要
+		PhaseNeed phaseNeed = new PhaseNeed();
+		phaseNeed.setPhase(fromNode);
+		phaseNeed.setDelFlag("0");
+		List<PhaseNeed> needs = phaseNeedService.findList(phaseNeed);
+		for(PhaseNeed need:needs) {//逐条添加到当前节点下，需要判断是否存在，仅在不存在的时候添加
+			PhaseNeed query = new PhaseNeed();
+			query.setPhase(toNode);
+			query.setNeed(need.getNeed());
+			List<PhaseNeed> nodes = phaseNeedService.findList(query);
+			if(nodes.size()==0) {//仅在没有的时候才添加
+				query.setDescription(need.getDescription());
+				query.setWeight(need.getWeight());
+				query.setCreateDate(new Date());
+				query.setUpdateDate(new Date());
+				phaseNeedService.save(query);
+			}
+		}
+		
+		//获取父级目录
+		Phase parent = fromNode.getParent();
+		if(parent!=null && parent.getId()!=null && parent.getId().trim().length()>0 && !"0".equalsIgnoreCase(parent.getId()))
+			copyNeeds(parent, toNode);//递归复制上级目录需要
 	}
 	
 	@RequiresPermissions("mod:phaseNeed:view")
