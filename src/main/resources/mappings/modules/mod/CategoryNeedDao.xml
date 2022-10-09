@@ -54,9 +54,18 @@
 			<if test="category != null and category.id != ''">
 				AND a.category_id = #{category.id}
 			</if>	
-			<if test="need != null and need.id != ''">
+			<if test="need != null and need.id != null and need.id != ''">
 				AND a.need_id = #{need.id}
-			</if>						
+			</if>	
+			<if test="need != null and need.type != null and need.type != ''">
+				AND m.type = #{need.type}
+			</if>	
+			<if test="need != null and need.name != null and need.name != ''">
+				AND m.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{need.name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{need.name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{need.name},'%')</if>
+			</if>							
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

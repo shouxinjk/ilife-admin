@@ -37,11 +37,14 @@ import com.pcitech.iLife.modules.mod.entity.Occasion;
 import com.pcitech.iLife.modules.mod.entity.OccasionNeed;
 import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
+import com.pcitech.iLife.modules.mod.entity.ItemDimension;
+import com.pcitech.iLife.modules.mod.entity.ItemDimensionMeasure;
 import com.pcitech.iLife.modules.mod.entity.CategoryNeed;
 import com.pcitech.iLife.modules.mod.service.CategoryNeedService;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.PhaseService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 品类需要满足Controller
@@ -150,7 +153,72 @@ public class CategoryNeedController extends BaseController {
 		return result;
 	}
 	
+	
+	/**
+	 * 继承上级节点的需要：层级追溯到根目录
+	 * @param id 类目ID
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("mod:categoryNeed:edit")
+	@RequestMapping(value = "inherit")
+	public String inheritFromParent(String id, RedirectAttributes redirectAttributes) {
+		logger.error("got category id. "+id);
 
+		//获取上级节点：直接根据dimension对应的category查找上级category
+		ItemCategory itemCategory = itemCategoryService.get(id);
+		if(itemCategory == null) {
+			addMessage(redirectAttributes, "无法获取父节点，忽略");
+		}else {//尝试获取上级ItemCategory
+			ItemCategory parentItemCategory = itemCategory.getParent();
+			if(parentItemCategory == null) {
+				addMessage(redirectAttributes, "没有父节点，忽略");
+			}else {
+				logger.error("try get parent node by category id. "+id);
+				ItemCategory parent = itemCategoryService.get(parentItemCategory);
+
+				if(parent!=null) {
+					copyNeeds(parent, itemCategory);//递归复制所有节点下的需要
+					addMessage(redirectAttributes, "根据目录复制父节点需要成功");
+				}else {
+					addMessage(redirectAttributes, "不能获取父目录节点，忽略");
+				}
+			}
+		}
+		return "redirect:"+Global.getAdminPath()+"/mod/categoryNeed/?treeId="+id+"&repage";
+	}
+	
+	/**
+	 * 层递复制目录需要
+	 * @param fromNode 父节点 toNode当前节点
+	 */
+	private void copyNeeds(ItemCategory fromNode, ItemCategory toNode) {
+		logger.debug("start copy from "+fromNode.getName()+":"+fromNode.getId()+" to "+toNode.getName()+":"+toNode.getId());
+		//复制节点下的需要
+		CategoryNeed categoryNeed = new CategoryNeed();
+		categoryNeed.setCategory(fromNode);
+		categoryNeed.setDelFlag("0");
+		List<CategoryNeed> needs = categoryNeedService.findList(categoryNeed);
+		for(CategoryNeed need:needs) {//逐条添加到当前节点下，需要判断是否存在，仅在不存在的时候添加
+			CategoryNeed query = new CategoryNeed();
+			query.setCategory(toNode);
+			query.setNeed(need.getNeed());
+			List<CategoryNeed> nodes = categoryNeedService.findList(query);
+			if(nodes.size()==0) {//仅在没有的时候才添加
+				query.setDescription(need.getDescription());
+				query.setWeight(need.getWeight());
+				query.setCreateDate(new Date());
+				query.setUpdateDate(new Date());
+				categoryNeedService.save(query);
+			}
+		}
+		
+		//获取父级目录
+		ItemCategory parent = fromNode.getParent();
+		if(parent!=null && parent.getId()!=null && parent.getId().trim().length()>0 && !"0".equalsIgnoreCase(parent.getId()))
+			copyNeeds(parent, toNode);//递归复制上级目录需要
+	}
+	
 	@RequiresPermissions("mod:categoryNeed:view")
 	@RequestMapping(value = "form")
 	public String form(CategoryNeed categoryNeed,String pid,String pType, Model model) {
