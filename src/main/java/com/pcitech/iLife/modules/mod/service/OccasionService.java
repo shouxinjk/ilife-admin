@@ -92,7 +92,7 @@ public class OccasionService extends CrudService<OccasionDao, Occasion> {
 				TreeNode leafNode=new TreeNode();
 				leafNode.setId(occasion.getId());
 				leafNode.setBusinessId(occasion.getId());
-				leafNode.setName(occasion.getName());
+				leafNode.setName("๏"+occasion.getName());
 				leafNode.setParent(new TreeNode(category.getId()));//直接放在当前OccasionCategory下
 //				leafNode.setParentIds(persona.getParentIds());
 //				leafNode.setSort(occasion.getSort());

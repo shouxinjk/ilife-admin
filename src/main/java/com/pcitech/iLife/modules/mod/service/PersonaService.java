@@ -102,9 +102,9 @@ public class PersonaService extends TreeService<PersonaDao, Persona> {
 			treeNode.setId(persona.getId());
 			treeNode.setBusinessId(persona.getId());
 			if(persona.getParent()!=null && persona.getParent().getId()!=null && persona.getParent().getName()!=null) {
-				treeNode.setName(persona.getName()+" ("+persona.getParent().getName()+")");
+				treeNode.setName("๏"+persona.getName()+" ("+persona.getParent().getName()+")");
 			}else {
-				treeNode.setName(persona.getName());
+				treeNode.setName("๏"+persona.getName());
 			}
 			treeNode.setParent(new TreeNode(persona.getPhase().getId()));
 //			treeNode.setParentIds(persona.getParentIds());

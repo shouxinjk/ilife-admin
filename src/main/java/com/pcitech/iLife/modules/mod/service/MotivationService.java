@@ -164,7 +164,7 @@ public class MotivationService extends CrudService<MotivationDao, Motivation> {
 							TreeNode leafNode=new TreeNode();
 							leafNode.setId(motivation.getId());
 							leafNode.setBusinessId(motivation.getId());
-							leafNode.setName(motivation.getName());
+							leafNode.setName("๏"+motivation.getName());
 							leafNode.setParent(new TreeNode(motivationCategory.getId()+phase.getId()));//放到当前category下，注意需要结合phase进行差异化
 //							leafNode.setParentIds(persona.getParentIds());
 //							leafNode.setSort(occasion.getSort());
