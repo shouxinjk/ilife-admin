@@ -41,6 +41,7 @@ import com.pcitech.iLife.modules.mod.service.MotivationCategoryService;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.PersonaNeedService;
 import com.pcitech.iLife.modules.mod.service.PersonaService;
+import com.pcitech.iLife.modules.mod.service.PhaseNeedService;
 import com.pcitech.iLife.modules.mod.service.PhaseService;
 
 /**
@@ -55,6 +56,8 @@ public class PersonaNeedController extends BaseController {
 	private PersonaService personaService;
 	@Autowired
 	private PhaseService phaseService;
+	@Autowired
+	private PhaseNeedService phaseNeedService;
 	@Autowired
 	private PersonaNeedService personaNeedService;
 	@Autowired
@@ -145,6 +148,104 @@ public class PersonaNeedController extends BaseController {
 		model.addAttribute("pType", treeModule);
 		return "modules/mod/personaNeedList2";
 	}
+	
+
+	/**
+	 * 继承上级节点的需要：层级追溯到根节点
+	 * @param id 阶段ID
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("mod:personaNeed:edit")
+	@RequestMapping(value = "inherit")
+	public String inheritFromParent(String id, RedirectAttributes redirectAttributes) {
+		logger.error("got persona id. "+id);
+
+		//获取当前节点：
+		Persona persona = personaService.get(id);
+		if(persona == null) {
+			addMessage(redirectAttributes, "非画像节点，忽略");
+		}else {
+			//尝试从persona克隆需要
+			Persona parent = persona.getParent();
+			//尝试从phase克隆需要
+			Phase phase = persona.getPhase();
+			
+			if(parent!=null && parent.getId()!=null && parent.getId().trim().length()>0 && !"0".equalsIgnoreCase(parent.getId()))
+				copyNeeds(parent, persona);//递归复制上级画像下的需要
+			if(phase!=null && phase.getId()!=null && phase.getId().trim().length()>0 && !"0".equalsIgnoreCase(phase.getId()))
+				copyNeeds(phase, persona);//递归复制阶段下的需要
+			
+			addMessage(redirectAttributes, "从父节点克隆需要成功");
+		}
+		return "redirect:"+Global.getAdminPath()+"/mod/personaNeed/?treeModule=persona&treeId="+id+"&repage";
+	}
+	
+	/**
+	 * 从上级persona复制需要
+	 * @param fromNode 父节点 toNode当前节点
+	 */
+	private void copyNeeds(Persona fromNode, Persona toNode) {
+		logger.debug("start copy from "+fromNode.getName()+":"+fromNode.getId()+" to "+toNode.getName()+":"+toNode.getId());
+		//复制节点下的需要
+		PersonaNeed personaNeed = new PersonaNeed();
+		personaNeed.setPersona(fromNode);
+		personaNeed.setDelFlag("0");
+		List<PersonaNeed> needs = personaNeedService.findList(personaNeed);
+		for(PersonaNeed need:needs) {//逐条添加到当前节点下，需要判断是否存在，仅在不存在的时候添加
+			PersonaNeed query = new PersonaNeed();
+			query.setPersona(toNode);
+			query.setNeed(need.getNeed());
+			List<PersonaNeed> nodes = personaNeedService.findList(query);
+			if(nodes.size()==0) {//仅在没有的时候才添加
+				query.setDescription(need.getDescription());
+				query.setWeight(need.getWeight());
+				query.setCreateDate(new Date());
+				query.setUpdateDate(new Date());
+				personaNeedService.save(query);
+			}
+		}
+		
+		//获取父级目录
+		Persona parent = fromNode.getParent();
+		Phase phase = fromNode.getPhase();
+		if(parent!=null && parent.getId()!=null && parent.getId().trim().length()>0 && !"0".equalsIgnoreCase(parent.getId()))
+			copyNeeds(parent, toNode);//递归复制上级画像下的需要
+		if(phase!=null && phase.getId()!=null && phase.getId().trim().length()>0 && !"0".equalsIgnoreCase(phase.getId()))
+			copyNeeds(phase, toNode);//递归复制阶段下的需要
+	}
+	
+	/**
+	 * 从上级phase复制需要
+	 * @param fromNode 父节点 toNode当前节点
+	 */
+	private void copyNeeds(Phase fromNode, Persona toNode) {
+		logger.debug("start copy from "+fromNode.getName()+":"+fromNode.getId()+" to "+toNode.getName()+":"+toNode.getId());
+		//复制节点下的需要
+		PhaseNeed phaseNeed = new PhaseNeed();
+		phaseNeed.setPhase(fromNode);
+		phaseNeed.setDelFlag("0");
+		List<PhaseNeed> needs = phaseNeedService.findList(phaseNeed);
+		for(PhaseNeed need:needs) {//逐条添加到当前节点下，需要判断是否存在，仅在不存在的时候添加
+			PersonaNeed query = new PersonaNeed();
+			query.setPersona(toNode);
+			query.setNeed(need.getNeed());
+			List<PersonaNeed> nodes = personaNeedService.findList(query);
+			if(nodes.size()==0) {//仅在没有的时候才添加
+				query.setDescription(need.getDescription());
+				query.setWeight(need.getWeight());
+				query.setCreateDate(new Date());
+				query.setUpdateDate(new Date());
+				personaNeedService.save(query);
+			}
+		}
+		
+		//获取父级目录
+		Phase parent = fromNode.getParent();
+		if(parent!=null && parent.getId()!=null && parent.getId().trim().length()>0 && !"0".equalsIgnoreCase(parent.getId()))
+			copyNeeds(parent, toNode);//递归复制上级目录需要
+	}
+	
 	
 	/**
 	 * 批量保存需要

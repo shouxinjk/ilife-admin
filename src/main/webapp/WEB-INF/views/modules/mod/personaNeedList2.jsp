@@ -61,6 +61,14 @@
 		    });
 			
 		});
+		
+		//从父节点复制需要列表
+        function inherit() {
+            loading('正在提交，请稍等...');
+            $("#searchForm").attr("action", "${ctx}/mod/personaNeed/inherit?id=${treeId}");
+            $("#searchForm").submit();
+        }
+		
 		function page(n,s){
 			$("#pageNo").val(n);
 			$("#pageSize").val(s);
@@ -74,11 +82,18 @@
 		<li><a href="${ctx}/mod/personaNeed/?treeId=${treeId}&treeModule=${pType}">需要列表</a></li>
 		<shiro:hasPermission name="mod:personaNeed:edit"><li class="active"><a href="${ctx}/mod/personaNeed/list2?treeId=${treeId}&treeModule=${pType}">需要添加</a></li></shiro:hasPermission>
 	</ul>
+	<form:form id="searchForm" modelAttribute="personaNeed" action="${ctx}/mod/personaNeed/?treeId=${pid}&treeModule=${pType}" method="post" class="breadcrumb form-search">
+		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+	</form:form>	
 	<div class="breadcrumb form-search">
 		<ul class="ul-form">
 			<li class="btns"><input id="btnCheckAll" class="btn btn-primary" type="button" value="选中全部"/></li>
 			<li class="btns"><input id="btnUncheckAll" class="btn btn-primary" type="button" value="取消选中"/></li>
 			<li class="btns"><input id="btnAddSelected" class="btn btn-primary" type="button" value="添加选中的需要"/></li>
+			<!-- 
+			<li class="btns"><input id="btnCloneFromParent" class="btn btn-primary" type="button" value="从父节点克隆需要" onclick="inherit();"/></li>
+			 -->
 		</ul>
 	</div>
 	<sys:message content="${message}"/>
