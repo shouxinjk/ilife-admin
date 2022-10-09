@@ -67,7 +67,7 @@
 		//显示所有属性，而不只是props.xxx
         function filterProps() {
             loading('正在提交，请稍等...');
-            $("#searchForm").attr("action", "${ctx}/mod/platformProperty/list?filterAll=true");
+            $("#searchForm").attr("action", "${ctx}/mod/platformProperty/listPending?filterAll=true");
             $("#searchForm").submit();
         }	
 	</script>

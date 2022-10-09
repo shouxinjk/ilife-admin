@@ -95,7 +95,7 @@ public class PlatformPropertyController extends BaseController {
 		Measure measure = platformProperty.getMeasure();
 		if(measure ==null)measure = new Measure();
 		if(filterAll!=null && filterAll.trim().length()>0) {
-			//显示所有属性
+			measure.setName(null);//显示所有属性
 		}else {
 			measure.setName("null");//设置name为null过滤待标注props.xxx记录
 		}
@@ -124,7 +124,7 @@ public class PlatformPropertyController extends BaseController {
 		Measure measure = platformProperty.getMeasure();
 		if(measure ==null)measure = new Measure();
 		if(filterAll!=null && filterAll.trim().length()>0) {
-			//显示所有属性
+			measure.setName(null);//显示所有属性
 		}else {
 			measure.setName("null");//设置name为null过滤待标注props.xxx记录
 		}
