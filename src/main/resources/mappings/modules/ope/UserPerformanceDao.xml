@@ -82,7 +82,13 @@
 			</if>	
 			<if test="dimension != null and dimension.id != ''">
 				AND a.dimension_id = #{dimension.id}
-			</if>					
+			</if>		
+			<if test="originalValue != null and originalValue != ''">
+				AND a.original_value LIKE 
+					<if test="dbName == 'oracle'">'%'||#{originalValue}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{originalValue}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{originalValue},'%')</if>
+			</if>						
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

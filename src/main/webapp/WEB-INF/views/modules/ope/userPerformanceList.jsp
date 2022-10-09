@@ -24,7 +24,7 @@
 				        console.log("dude, now try update rating.[old]"+itemValue,itemId,currentRating);
 				        $.ajax({
 				            type: "GET",
-				            url: $("#sxContextPath").val()+"/ope/userPerformance/rest/updateMarkedValue?id="+itemId+"&level="+currentRating+"&markedValue="+currentRating,
+				            url: "${ctx}/ope/userPerformance/rest/updateMarkedValue?id="+itemId+"&level="+currentRating+"&markedValue="+currentRating,
 				            headers:{
 				                "Content-Type":"application/json",
 				                "Accept":"application/json"
@@ -56,10 +56,22 @@
 		<li class="active"><a href="${ctx}/ope/userPerformance/list?treeId=${pid}&treeModule=${pType}">已标注</a></li>
 		<shiro:hasPermission name="ope:userPerformance:edit"><li><a href="${ctx}/ope/userPerformance/form?pid=${pid}&pType=${pType}">标注添加</a></li></shiro:hasPermission>
 	</ul>
-	<form:form id="searchForm" modelAttribute="userPerformance" action="${ctx}/ope/userPerformance/?treeId=${pid}&treeModule=${pType}" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="userPerformance" action="${ctx}/ope/userPerformance/list?treeId=${pid}&treeModule=${pType}" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<input id="sxContextPath" name="sxContextPath" type="hidden" value="${ctx}"/>
+		<ul class="ul-form">
+			<li><label>原始值：</label>
+				<form:input path="originalValue" htmlEscape="false" maxlength="100" class="input-small"/>
+			</li>
+			<li><label>属性：</label>
+				<sys:treeselect id="measure" name="measure.id" value="${userPerformance.measure.id}" labelName="measure.name" labelValue="${userPerformance.measure.name}"
+					title="关键属性" url="/mod/userMeasure/treeData"/>
+			</li>										
+			<li class="btns">
+				<input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/>				
+			</li>
+			<li class="clearfix"></li>
+		</ul>
 	</form:form>
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
