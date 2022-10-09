@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -75,8 +76,11 @@ public class PlatformCategoryController extends BaseController {
 	public String list(PlatformCategory platformCategory,String treeId, HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeId!=null && treeId.trim().length()>0)
 			platformCategory.setPlatform(treeId);
-		ItemCategory itemCategory = new ItemCategory();
-		itemCategory.setId("notnull");//设置id为null，将过滤已标注记录
+		ItemCategory itemCategory = platformCategory.getCategory();
+		if(itemCategory==null)
+			itemCategory = new ItemCategory();
+		if(itemCategory.getId()==null||itemCategory.getId().trim().length()==0)
+			itemCategory.setId("notnull");//设置id为notnull，将过滤已标注记录
 		platformCategory.setCategory(itemCategory);
 		Page<PlatformCategory> page = platformCategoryService.findPage(new Page<PlatformCategory>(request, response), platformCategory); 
 		model.addAttribute("page", page);
@@ -90,8 +94,11 @@ public class PlatformCategoryController extends BaseController {
 	public String listPending(PlatformCategory platformCategory,String treeId, HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeId!=null && treeId.trim().length()>0)
 			platformCategory.setPlatform(treeId);
-		ItemCategory itemCategory = new ItemCategory();
-		itemCategory.setId("null");//设置id为null，将过滤尚未标注的记录
+		ItemCategory itemCategory = platformCategory.getCategory();
+		if(itemCategory==null)
+			itemCategory = new ItemCategory();
+		if(itemCategory.getId()==null||itemCategory.getId().trim().length()==0)
+			itemCategory.setId("null");//设置id为null，将过滤尚未标注的记录
 		platformCategory.setCategory(itemCategory);
 		Page<PlatformCategory> page = platformCategoryService.findPage(new Page<PlatformCategory>(request, response), platformCategory); 
 		model.addAttribute("page", page);
@@ -215,6 +222,61 @@ public class PlatformCategoryController extends BaseController {
 		result.put("success",success);
 		return result;
 	}
+	 
+	/**
+	 * 用于admin管理界面批量映射
+	 * 提交映射：提交原始类目ID、标准类目ID，完成批量映射。数据结构：
+	 * @param json {ids:[],targetId:xxx}
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	@ResponseBody
+	@RequestMapping(value = "rest/mapping", method = RequestMethod.PATCH)
+	public JSONObject batchMapping(@RequestBody JSONObject json) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		JSONArray ids = json.getJSONArray("ids");
+		if(ids==null||ids.size()==0) {
+			result.put("msg", "ids is mandatory");
+			return result;
+		}
+		String targetId = json.getString("targetId");
+		if(targetId==null||targetId.trim().length()==0) {
+			result.put("msg", "targetId is mandatory");
+			return result;
+		}
+		//获取目标itemCategory
+		ItemCategory itemCategory = itemCategoryService.get(targetId);
+		if(itemCategory==null) {
+			result.put("msg", "cannot find item category by id."+targetId);
+			return result;
+		}
+		//逐条更新platformCategory
+		PlatformCategory platformCategory = null;
+		int failedCount = 0;
+		for(int i=0;i<ids.size();i++) {
+			String id = ids.getString(i);
+			platformCategory = platformCategoryService.get(id);
+			if(platformCategory==null) {//如果没有则直接跳过
+				failedCount ++;
+				continue;
+			}
+			platformCategory.setCategory(itemCategory);
+			platformCategory.setUpdateDate(new Date());
+			try {
+				platformCategoryService.save(platformCategory);
+			}catch(Exception ex) {
+				failedCount ++;
+			}
+		}
+		if(failedCount>0)
+			result.put("msg", "some items mapping failed.");
+		result.put("success",true);
+		return result;
+	}
 	
 	//组织显示左侧电商平台列表
 	private List<JSONObject> getPlatformTree(){
@@ -268,7 +330,7 @@ public class PlatformCategoryController extends BaseController {
 			platformCategory.setCategory(itemCategory);
 			Page<PlatformCategory> page = platformCategoryService.findPage(new Page<PlatformCategory>(request, response), platformCategory); 
 			model.addAttribute("page", page);
-			return "modules/mod/platformCategoryList";
+			return "modules/mod/platformCategoryListPending";
 	}
 	
 	
