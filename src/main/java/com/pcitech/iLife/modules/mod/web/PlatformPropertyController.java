@@ -165,6 +165,34 @@ public class PlatformPropertyController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/mod/platformProperty/listPending?treeId="+platformProperty.getPlatform()+"&repage";
 	}
 	
+	//忽略一个属性：对于与评价无关的属性可以直接忽略掉。
+	//等同于删除操作，直接标记删除
+	@ResponseBody
+	@RequestMapping(value = "rest/mapping", method = RequestMethod.DELETE)
+	public Map<String,Object> ignoreMapping( @RequestParam(required=true) String id, 
+			HttpServletResponse response) {
+		response.setContentType("application/json; charset=UTF-8");
+		Map<String,Object> result = Maps.newHashMap();
+		result.put("success", false);
+		PlatformProperty platformProperty = platformPropertyService.get(id);
+		if(platformProperty==null) {
+			result.put("msg", "platform property record not found.[id]="+id);
+			return result;
+		}
+		platformProperty.setDelFlag("1");//直接标记为删除即可
+		try {
+			platformPropertyService.save(platformProperty);
+		}catch(Exception ex) {
+			result.put("msg", "failed save platform property.[id]="+id);
+			result.put("error", ex.getMessage());
+			return result;
+		}
+		
+		result.put("success", true);
+		result.put("msg", "mapping ignored.");
+		return result;
+	}
+	
 	@ResponseBody
 	@RequestMapping(value = "rest/mapping", method = RequestMethod.PATCH)
 	//更新第三方属性与标准属性的映射关系

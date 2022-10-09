@@ -59,6 +59,34 @@
 				});
 			});
 			
+			 //注册忽略事件：点击后提交忽略请求，并从列表中移除
+		    $("a[id^=btnIgnore]").click(function(){
+		    	var id = $(this).data("id");
+	            console.log("ignore mapping.",id);
+			    $.ajax({
+			        url:"${ctx}/mod/platformProperty/rest/mapping?id="+id,
+			        type:"DELETE",     
+			        data:JSON.stringify({id:id}),
+			        headers:{
+			            "Content-Type":"application/json"
+			        },  
+			        success:function(ret){
+			            console.log("===got mapping result===\n",ret);
+			            if(ret.success){
+				            siiimpleToast.message('哦耶，该属性已忽略',{
+					              position: 'bottom|center'
+					            });   
+				            //隐藏该条目所在行
+				            $("#tr"+id).css("display","none");
+			            }else{
+				            siiimpleToast.message('糟糕，出错了，请重新尝试',{
+					              position: 'bottom|center'
+					            });   
+			            }
+			        }
+			    });
+		               
+		    });	
 			
 		});
 		function page(n,s){
@@ -127,7 +155,7 @@
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="platformProperty">
-			<tr>
+			<tr id="tr${platformProperty.id}">
 				<td><a href="${ctx}/mod/platformProperty/form?id=${platformProperty.id}">
 					<c:choose>
 				         <c:when test = "${platformProperty.propName == platformProperty.name}">
@@ -153,13 +181,13 @@
 				<td>
 					<c:choose>
 						<c:when test = "${not empty platformProperty.measure.name}">
-							<select data-placeholder="${platformProperty.measure.name}" class="select" tabindex="1" id="measure${platformProperty.id}" data-id="${platformProperty.id}" data-categoryid="${platformProperty.category.id}">
+							<select data-placeholder="${platformProperty.measure.name}" class="select" tabindex="1" id="measure${platformProperty.id}" data-id="${platformProperty.id}" data-categoryid="${platformProperty.category.id}" style="width:160px;">
 					            <option value=""></option>
 					            <option value="${platformProperty.measure.id}">${platformProperty.measure.name}</option>
 				            </select>	
 			             </c:when>				         			         			         			         
 				         <c:otherwise>	
-							<select data-placeholder="请选择" class="select" tabindex="1" id="measure${platformProperty.id}" data-id="${platformProperty.id}" data-categoryId="${platformProperty.category.id}">
+							<select data-placeholder="请选择" class="select" tabindex="1" id="measure${platformProperty.id}" data-id="${platformProperty.id}" data-categoryId="${platformProperty.category.id}" style="width:160px;">
 					            <option value=""></option>
 				            </select>				         	
 				         </c:otherwise>	
@@ -171,6 +199,7 @@
 				<shiro:hasPermission name="mod:platformProperty:edit"><td>
     				<a href="${ctx}/mod/platformProperty/form?id=${platformProperty.id}">修改</a>
 					<a href="${ctx}/mod/platformProperty/delete?id=${platformProperty.id}" onclick="return confirmx('确认要删除该电商平台属性映射吗？', this.href)">删除</a>
+					<a href="#" id="btnIgnore${platformProperty.id}" data-id="${platformProperty.id}">忽略</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
