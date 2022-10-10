@@ -17,6 +17,7 @@ import com.pcitech.iLife.common.utils.KafkaUtils;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.Occasion;
+import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
 import com.pcitech.iLife.modules.mod.entity.PlatformProperty;
 import com.pcitech.iLife.modules.mod.entity.UserMeasure;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
@@ -44,6 +45,27 @@ public class Transfer {
 	ItemCategoryService itemCategoryService;
 	
 	/**
+	 * 在新增及修改类目映射时更新stuff数据
+	 * 推送数据包括：platform、category、categoryId、categoryName
+	 * @param 
+	 */
+    @Before("execution(* com.pcitech.iLife.modules.mod.service.PlatformCategoryService.save(..)) && args(platformCategory)")
+    public void savePlatformCategory(PlatformCategory platformCategory) {
+        Gson gson = new Gson();
+		Map<String,Object> map = Maps.newHashMap();
+		//根据设置标准类目category
+		ItemCategory category = itemCategoryService.get(platformCategory.getCategory());//需要重新获取得到name信息
+		if(category!=null && platformCategory.getName()!=null && platformCategory.getName().trim().length()>0
+				 && platformCategory.getPlatform()!=null && platformCategory.getPlatform().trim().length()>0) {//仅在非空时推送
+			map.put("categoryId", category.getId());//映射的标准类目ID
+			map.put("categoryName", category.getName());//映射的标准类目名称
+			map.put("category", platformCategory.getName());
+			map.put("platform", platformCategory.getPlatform());
+			platformCategoryLogger.info(gson.toJson(map));
+		}
+    }
+	
+	/**
 	 * 在新增及修改属性映射时推送到分析系统
 	 * 推送数据包括：categoryId、property、propertyId、propertyKey、vals分布、标注类型、计算类型
 	 * @param 
@@ -58,10 +80,10 @@ public class Transfer {
 		if(measure!=null && category!=null) {//仅在非空时推送
 			map.put("categoryId", category.getId());
 			map.put("categoryName", category.getName());//冗余发送，实际不会用到。可删除
-			map.put("property", platformProperty.getName());
+			map.put("property", platformProperty.getName()==null?"":platformProperty.getName());
 			map.put("platform", platformProperty.getPlatform());
 			map.put("propertyId", measure.getId());
-			map.put("propertyKey", measure.getProperty());
+			map.put("propertyKey", measure.getProperty()==null?"":measure.getProperty());
 			map.put("labelType", measure.getAutoLabelType());
 			map.put("labelDict", measure.getAutoLabelDict());
 			map.put("labelCategory", measure.getAutoLabelCategory()==null?"":measure.getAutoLabelCategory().getId());
@@ -76,10 +98,9 @@ public class Transfer {
 			map.put("zeta", measure.getZeta());
 			map.put("eta", measure.getEta());
 			map.put("theta", measure.getTheta());
-			map.put("lambda", measure.getLambda());
+			map.put("lambda", measure.getLambda()==null?"":measure.getLambda());
 			platformPropertyLogger.info(gson.toJson(map));
 		}
-        
     }
 	
 	/**
