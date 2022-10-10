@@ -11,12 +11,17 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.pcitech.iLife.common.utils.KafkaUtils;
+import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.Occasion;
+import com.pcitech.iLife.modules.mod.entity.PlatformProperty;
 import com.pcitech.iLife.modules.mod.entity.UserMeasure;
+import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
+import com.pcitech.iLife.modules.mod.service.PlatformPropertyService;
 import com.pcitech.iLife.modules.mod.service.UserMeasureService;
 import com.pcitech.iLife.modules.ope.entity.Performance;
 import com.pcitech.iLife.modules.ope.entity.UserPerformance;
@@ -24,6 +29,8 @@ import com.pcitech.iLife.modules.ope.entity.UserPerformance;
 @Component
 @Aspect
 public class Transfer {
+	private Logger platformCategoryLogger = LoggerFactory.getLogger("kafkaLoggerPlatformCategory");//kafka output
+	private Logger platformPropertyLogger = LoggerFactory.getLogger("kafkaLoggerPlatformProperty");//kafka output
 	private Logger occasionKafkaLogger = LoggerFactory.getLogger("kafkaLoggerOccasion");//kafka output
 	private Logger valueKafkaLogger = LoggerFactory.getLogger("kafkaLoggerMarkedValue");//kafka output
 //	private Logger logger = LoggerFactory.getLogger(Transfer.class); //file output
@@ -31,6 +38,49 @@ public class Transfer {
 	MeasureService measureService;
 	@Autowired
 	UserMeasureService userMeasureService;
+	@Autowired
+	PlatformPropertyService platformPropertyService;
+	@Autowired
+	ItemCategoryService itemCategoryService;
+	
+	/**
+	 * 在新增及修改属性映射时推送到分析系统
+	 * 推送数据包括：categoryId、property、propertyId、propertyKey、vals分布、标注类型、计算类型
+	 * @param 
+	 */
+    @Before("execution(* com.pcitech.iLife.modules.mod.service.PlatformPropertyService.save(..)) && args(platformProperty)")
+    public void savePlatformProperty(PlatformProperty platformProperty) {
+        Gson gson = new Gson();
+		Map<String,Object> map = Maps.newHashMap();
+		//根据设置分别获取measure及category
+		Measure measure = measureService.get(platformProperty.getMeasure());//需要重新获取，得到propertyKey、vals分布、计算定义等信息
+		ItemCategory category = itemCategoryService.get(platformProperty.getCategory());//需要重新获取得到name信息
+		if(measure!=null && category!=null) {//仅在非空时推送
+			map.put("categoryId", category.getId());
+			map.put("categoryName", category.getName());//冗余发送，实际不会用到。可删除
+			map.put("property", platformProperty.getName());
+			map.put("platform", platformProperty.getPlatform());
+			map.put("propertyId", measure.getId());
+			map.put("proertyKey", measure.getProperty());
+			map.put("labelType", measure.getAutoLabelType());
+			map.put("labelDict", measure.getAutoLabelDict());
+			map.put("labelCategory", measure.getAutoLabelCategory()==null?"":measure.getAutoLabelCategory().getId());
+			map.put("labelTagCategory", measure.getAutoLabelTagCategory()==null?"":measure.getAutoLabelTagCategory().getId());
+			map.put("normalizeType", measure.getNormalizeType());
+			map.put("multiValueFunc", measure.getMultiValueFunc());
+			map.put("alpha", measure.getAlpha());
+			map.put("beta", measure.getBeta());
+			map.put("gamma", measure.getGamma());
+			map.put("delte", measure.getDelte());
+			map.put("epsilon", measure.getEpsilon());
+			map.put("zeta", measure.getZeta());
+			map.put("eta", measure.getEta());
+			map.put("theta", measure.getTheta());
+			map.put("lambda", measure.getLambda());
+			platformPropertyLogger.info(gson.toJson(map));
+		}
+        
+    }
 	
 	/**
 	 * 在保存Occasion时推送消息
@@ -60,10 +110,10 @@ public class Transfer {
     }
     
     /**
+     * @deprecated 待删除。直接通过ope_performance监听数据表
      * 在保存商品标注值时推送到分析库。 
      * @param performance
      */
-    
     //Qingchun:注意，同时存在两个数据同步器，分别是创建和更新。本同步器是创建同步器，在ope_performance初次建立时即同步到分 库。后续在修改标注值时直接通过canal监听更新 。
     @Before("execution(* com.pcitech.iLife.modules.ope.service.PerformanceService.save(..)) && args(performance)")
     public void savePerformance(Performance performance) {
@@ -90,6 +140,7 @@ public class Transfer {
     
 
     /**
+     * @deprecated 待删除。直接通过canal监听ope_user_performance表
      * 在用户商品标注值时推送到分析库。 
      * @param performance
      */
