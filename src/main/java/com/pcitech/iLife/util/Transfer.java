@@ -61,13 +61,13 @@ public class Transfer {
 			map.put("property", platformProperty.getName());
 			map.put("platform", platformProperty.getPlatform());
 			map.put("propertyId", measure.getId());
-			map.put("proertyKey", measure.getProperty());
+			map.put("propertyKey", measure.getProperty());
 			map.put("labelType", measure.getAutoLabelType());
 			map.put("labelDict", measure.getAutoLabelDict());
 			map.put("labelCategory", measure.getAutoLabelCategory()==null?"":measure.getAutoLabelCategory().getId());
 			map.put("labelTagCategory", measure.getAutoLabelTagCategory()==null?"":measure.getAutoLabelTagCategory().getId());
-			map.put("normalizeType", measure.getNormalizeType());
-			map.put("multiValueFunc", measure.getMultiValueFunc());
+			map.put("normalizeType", measure.getNormalizeType()==null?"min-max":measure.getNormalizeType());
+			map.put("multiValueFunc", measure.getMultiValueFunc()==null?"":measure.getMultiValueFunc());
 			map.put("alpha", measure.getAlpha());
 			map.put("beta", measure.getBeta());
 			map.put("gamma", measure.getGamma());
