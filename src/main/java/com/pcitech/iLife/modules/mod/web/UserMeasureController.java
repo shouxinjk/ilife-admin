@@ -195,9 +195,14 @@ public class UserMeasureController extends BaseController {
 	
 	@RequiresPermissions("mod:userMeasure:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
+	public String none(HttpServletRequest request, HttpServletResponse response,Model model) {
 		model.addAttribute("message","请在左侧选择一个类型。");
-		return "treeData/none";
+		//默认直接查询所有记录
+		UserMeasure measure = new UserMeasure();
+		Page<UserMeasure> page = userMeasureService.findPage(new Page<UserMeasure>(request, response), measure);
+		model.addAttribute("page", page);
+//		return "treeData/none";
+		return "modules/mod/userMeasureList";
 	}
 	
 	/**

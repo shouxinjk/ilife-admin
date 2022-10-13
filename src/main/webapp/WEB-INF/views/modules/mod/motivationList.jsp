@@ -39,34 +39,54 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>名称</th>
-				<th>别名</th>
 				<th>类型</th>
-				<th>分类</th>
+				<th>名称</th>
+				<th>别名</th>				
+				<!--th>分类</th-->
 				<!--th>阶段</th>
 				<th>比重</th-->
 				<th>触发条件</th>
 				<th>触发条件量化</th>
 				<!--th>持续时间</th-->
-				<th>商品类目</th>
+				<!--th>商品类目</th-->
 				<shiro:hasPermission name="mod:motivation:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="motivation">
-			<tr>
-				<td><a href="${ctx}/mod/motivation/form?id=${motivation.id}&pid=${pid}&pType=${pType}&topId=${topId }">
+			<tr>		
+				<td width="80">
+			      <c:choose>
+			         <c:when test = "${motivation.type == 'alpha'}">
+			            <span style="background-color:#A49EE2;padding:2px 5px;color:#fff;">生存需要</span>
+			         </c:when>			
+			         <c:when test = "${motivation.type == 'beta'}">
+			            <span style="background-color:#40B4E7;padding:2px 5px;color:#fff;">安全需要</span>
+			         </c:when>	
+			         <c:when test = "${motivation.type == 'gamma'}">
+			            <span style="background-color:#8BCE2D;padding:2px 5px;color:#fff;">爱与归属</span>
+			         </c:when>	
+			         <c:when test = "${motivation.type == 'delte'}">
+			            <span style="background-color:#F6B100;padding:2px 5px;color:#fff;">尊重需要</span>
+			         </c:when>	
+			         <c:when test = "${motivation.type == 'epsilon'}">
+			            <span style="background-color:#E85552;padding:2px 5px;color:#fff;">自我实现</span>
+			         </c:when>	
+			         			         			         			         			         
+			         <c:otherwise>
+			            <span style="background-color:#000;padding:2px 5px;color:#fff;">未知</span>
+			         </c:otherwise>
+			      </c:choose>					
+				</td>	
+				<td>
 					${motivation.name}
-				</a></td>
+				</td>
 				<td>
 					${motivation.displayName}
-				</td>		
-				<td>
-					${fns:getDictLabel(motivation.type, 'need_type', motivation.type)}
-				</td>		
-				<td>
+				</td>					
+				<!--td>
 					${motivation.motivationCategory.name}
-				</td>
+				</td-->
 				<!--td>
 					${motivation.phase.name}
 				</td>
@@ -82,9 +102,9 @@
 				<!--td>
 					${motivation.exprDuration}
 				</td-->
-				<td>
+				<!--td>
 					${motivation.exprItem}
-				</td>
+				</td-->
 				<shiro:hasPermission name="mod:motivation:edit"><td>
     				<a href="${ctx}/mod/motivation/form?id=${motivation.id}&pid=${pid}&pType=${pType}&topId=${topId }">修改</a>
 					<a href="${ctx}/mod/motivation/delete?id=${motivation.id}&pid=${pid}&pType=${pType}&topId=${topId }" onclick="return confirmx('确认要删除该内部动机吗？', this.href)">删除</a>

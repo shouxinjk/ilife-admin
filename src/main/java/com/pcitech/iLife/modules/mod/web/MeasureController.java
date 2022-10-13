@@ -29,6 +29,7 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.DictValue;
 import com.pcitech.iLife.modules.mod.entity.Hierarchy;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
@@ -297,9 +298,14 @@ public class MeasureController extends BaseController {
 	
 	@RequiresPermissions("mod:measure:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
-		model.addAttribute("message","请在左侧选择一个类型。");
-		return "treeData/none";
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
+//		model.addAttribute("message","请在左侧选择一个类型。");
+		//默认直接查询所有记录
+		Measure measure = new Measure();
+		Page<Measure> page = measureService.findPage(new Page<Measure>(request, response), measure);
+		model.addAttribute("page", page);
+//		return "treeData/none";
+		return "modules/mod/measureList";
 	}
 	
 
