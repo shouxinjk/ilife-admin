@@ -92,7 +92,7 @@ public class PlatformPropertyController extends BaseController {
 	public String list(PlatformProperty platformProperty,String treeId, String filterAll, HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeId!=null && treeId.trim().length()>0) //从首页直接进入时不会带有treeId
 			platformProperty.setPlatform(treeId);
-		Measure measure = platformProperty.getMeasure();
+		Measure measure = platformProperty.getMeasure(); 
 		if(measure ==null)measure = new Measure();
 		if(filterAll!=null && filterAll.trim().length()>0) {
 			measure.setName(null);//显示所有属性
