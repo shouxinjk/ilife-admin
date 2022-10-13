@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.DictValueDao">
+    
+	<sql id="dictValueColumns">
+		a.id AS "id",
+		a.dict_id AS "dictMeta.id",
+		d.dict_key AS "dictMeta.dictKey",
+		d.type AS "dictMeta.type",
+		d.name AS "dictMeta.name",
+		d.control_value AS "dictMeta.controlValue",
+		d.control_desc AS "dictMeta.controlDesc",
+		a.category_id AS "category.id",
+		c.name AS "category.name",
+		a.original_value AS "originalValue",
+		a.marked_value AS "markedValue",
+		a.isMarked AS "isMarked",
+		a.score AS "score",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dictValueJoins">
+		LEFT JOIN mod_dict_meta d ON d.id = a.dict_id
+		LEFT JOIN mod_item_category c ON c.id = a.category_id
+	</sql>
+    
+	<select id="get" resultType="DictValue">
+		SELECT 
+			<include refid="dictValueColumns"/>
+		FROM mod_dict_value a
+		<include refid="dictValueJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DictValue">
+		SELECT 
+			<include refid="dictValueColumns"/>
+		FROM mod_dict_value a
+		<include refid="dictValueJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="dictMeta != null and dictMeta.id != null and dictMeta.id != ''">
+				AND a.dict_id = #{dictMeta.id}
+			</if>
+			<if test="category != null and category.id != null and category.id != ''">
+				AND a.category_id = #{category.id}
+			</if>
+			<if test="originalValue != null and originalValue != ''">
+				AND a.original_value = #{originalValue}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DictValue">
+		SELECT 
+			<include refid="dictValueColumns"/>
+		FROM mod_dict_value a
+		<include refid="dictValueJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_dict_value(
+			id,
+			dict_id,
+			dict_key,
+			category_id,
+			original_value,
+			marked_value,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			isMarked,
+			del_flag
+		) VALUES (
+			#{id},
+			#{dictMeta.id},
+			#{dictMeta.dictKey},
+			#{category.id},
+			#{originalValue},
+			#{markedValue},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{isMarked},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_dict_value SET 	
+			dict_id = #{dictMeta.id},
+			dict_key = #{dictMeta.dictKey},
+			category_id = #{category.id},
+			original_value = #{originalValue},
+			marked_value = #{markedValue},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			isMarked = 1
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_dict_value SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

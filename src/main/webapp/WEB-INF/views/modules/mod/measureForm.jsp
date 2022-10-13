@@ -203,7 +203,13 @@
 				<div class="control-group">
 					<label class="control-label">字典引用：</label>
 					<div class="controls">
+						<!--
 						<form:select path="autoLabelDict" items="${fns:getDictList('autoLabelDictItem')}" itemLabel="label" itemValue="value" htmlEscape="false" class="input-xlarge"/>
+						-->
+						<form:select path="autoLabelDict" class="input-xlarge required">
+							<form:option value="" label=""/>
+							<form:options items="${fns:getDictMetaList('item')}" itemLabel="name" itemValue="dictKey" htmlEscape="false"/>
+						</form:select>						
 					</div>
 				</div>		
 				<div class="control-group">

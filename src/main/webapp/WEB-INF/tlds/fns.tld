@@ -11,6 +11,64 @@
   <short-name>fns</short-name>
   <uri>http://java.sun.com/jsp/jstl/functionss</uri>
 
+  <!-- ilife函数管理 -->
+  <function>
+    <description>获取业务字典列表</description>
+    <name>getDictMetaList</name>
+    <function-class>com.pcitech.iLife.util.DataUtils</function-class>
+    <function-signature>java.util.List getDictMetaList(java.lang.String)</function-signature>
+    <example>${fns:getDictMetaList(type)}</example>  
+  </function>  
+  
+  <function>
+    <description>获取字典标签-名称</description>
+    <name>getDictMetaLabelName</name>
+    <function-class>com.pcitech.iLife.util.DataUtils</function-class>
+    <function-signature>java.lang.String getDictMetaLabelName(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+    <example>${fns:getDictMetaLabelName(value, type, defaultValue)}</example>  
+  </function>
+  
+  <function>
+    <description>获取字典标签-名称(多个)</description>
+    <name>getDictMetaLabelNames</name>
+    <function-class>com.pcitech.iLife.util.DataUtils</function-class>
+    <function-signature>java.lang.String getDictMetaLabelNames(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+    <example>${fns:getDictMetaLabelNames(values, type, defaultValue)}</example>  
+  </function>
+
+  <function>
+    <description>获取字典标签-Key</description>
+    <name>getDictMetaLabelKey</name>
+    <function-class>com.pcitech.iLife.util.DataUtils</function-class>
+    <function-signature>java.lang.String getDictMetaLabelKey(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+    <example>${fns:getDictMetaLabelKey(value, type, defaultValue)}</example>  
+  </function>
+  
+  <function>
+    <description>获取字典标签-Key(多个)</description>
+    <name>getDictMetaLabelKeys</name>
+    <function-class>com.pcitech.iLife.util.DataUtils</function-class>
+    <function-signature>java.lang.String getDictMetaLabelKeys(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+    <example>${fns:getDictMetaLabelKeys(values, type, defaultValue)}</example>  
+  </function>
+  
+  <function>
+    <description>获取字典ID</description>
+    <name>getDictMetaId</name>
+    <function-class>com.pcitech.iLife.util.DataUtils</function-class>
+    <function-signature>java.lang.String getDictMetaId(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+    <example>${fns:getDictMetaId(label, type, defaultValue)}</example>  
+  </function>
+  
+  <function>
+    <description>获取字典对象列表</description>
+    <name>getDictMetaListJson</name>
+    <function-class>com.pcitech.iLife.util.DataUtils</function-class>
+    <function-signature>java.lang.String getDictMetaListJson(java.lang.String)</function-signature>
+    <example>${fns:getDictMetaListJson(type)}</example>  
+  </function>
+
+
   <function>
     <description>获取管理路径</description>
     <name>getAdminPath</name>

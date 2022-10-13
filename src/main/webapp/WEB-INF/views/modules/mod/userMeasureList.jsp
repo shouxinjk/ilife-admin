@@ -127,7 +127,7 @@
 				归一化类型：${fns:getDictLabel(userMeasure.normalizeType, 'normalizeType', userMeasure.normalizeType)}<br/>
 				多值策略：${fns:getDictLabel(userMeasure.multiValueFunc, 'multiValueFunc', userMeasure.multiValueFunc)}<br/>
 				自动标注：${fns:getDictLabel(userMeasure.autoLabelType, 'autoLabelType', userMeasure.autoLabelType)}<br/>
-				Dict字典：${fns:getDictLabel(userMeasure.autoLabelDict, 'autoLabelDictUser', userMeasure.autoLabelDict)}<br/>
+				Dict字典：${fns:getDictMetaLabelName(userMeasure.autoLabelDict, 'user', userMeasure.autoLabelDict)} ${userMeasure.autoLabelDict} <br/>
 				Refer类目：${userMeasure.autoLabelCategory.name}</td>	
 				<td>${userMeasure.autoLabelTagCategory.name}</td>	
 				<td>
