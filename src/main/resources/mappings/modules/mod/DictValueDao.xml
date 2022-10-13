@@ -5,7 +5,6 @@
 	<sql id="dictValueColumns">
 		a.id AS "id",
 		a.dict_id AS "dictMeta.id",
-		d.dict_key AS "dictMeta.dictKey",
 		d.type AS "dictMeta.type",
 		d.name AS "dictMeta.name",
 		d.control_value AS "dictMeta.controlValue",
@@ -88,7 +87,6 @@
 		INSERT INTO mod_dict_value(
 			id,
 			dict_id,
-			dict_key,
 			category_id,
 			original_value,
 			marked_value,
@@ -101,7 +99,6 @@
 		) VALUES (
 			#{id},
 			#{dictMeta.id},
-			#{dictMeta.dictKey},
 			#{category.id},
 			#{originalValue},
 			#{markedValue},
@@ -117,7 +114,6 @@
 	<update id="update">
 		UPDATE mod_dict_value SET 	
 			dict_id = #{dictMeta.id},
-			dict_key = #{dictMeta.dictKey},
 			category_id = #{category.id},
 			original_value = #{originalValue},
 			marked_value = #{markedValue},

@@ -106,12 +106,6 @@ public class DictValueController extends BaseController {
 	@RequiresPermissions("mod:dictValue:edit")
 	@RequestMapping(value = "save")
 	public String save(DictValue dictValue, Model model, RedirectAttributes redirectAttributes) {
-		//冗余设置dictKey。便于分析系统
-		DictMeta dictMeta = dictMetaService.get(dictValue.getDictMeta());
-		if(dictMeta!=null) {
-			dictValue.setDictKey(dictMeta.getDictKey());
-			dictValue.setDictMeta(dictMeta);
-		}
 		if (!beanValidator(model, dictValue)){
 			return form(dictValue, model);
 		}

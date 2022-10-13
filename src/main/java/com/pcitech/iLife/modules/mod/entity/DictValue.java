@@ -16,12 +16,11 @@ public class DictValue extends DataEntity<DictValue> {
 	
 	private static final long serialVersionUID = 1L;
 	private DictMeta dictMeta;		// 字典
-	private String dictKey="";		// 键值
 	private ItemCategory category;		// 应用类目
 	private String originalValue;		// 原始数值
 	private Double markedValue;		// 标注值
 	private Double score;		// 预留，标注得分，实际是1-10分级值
-	private int isMarked = 0; //是否已标注：0待标注，1已标注
+	private int isMarked = 1; //是否已标注：0待标注，1已标注；默认为已标注。通过管理系统建立或修改均认为已标注。直接通过SQL操作认为未标注
 	
 	public DictValue() {
 		super();
@@ -37,14 +36,6 @@ public class DictValue extends DataEntity<DictValue> {
 
 	public void setDictMeta(DictMeta dictMeta) {
 		this.dictMeta = dictMeta;
-	}
-	
-	public String getDictKey() {
-		return dictKey;
-	}
-
-	public void setDictKey(String dictKey) {
-		this.dictKey = dictKey;
 	}
 	
 	public ItemCategory getCategory() {
