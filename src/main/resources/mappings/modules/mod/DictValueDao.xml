@@ -52,6 +52,9 @@
 			<if test="originalValue != null and originalValue != ''">
 				AND a.original_value = #{originalValue}
 			</if>
+			<if test="isMarked != null and isMarked != ''">
+				AND a.isMarked = #{isMarked}
+			</if>					
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

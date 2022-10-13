@@ -7,6 +7,40 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			
+			//遍历所有rate组件，初始化，并注册打分事件
+			$(".rating").each(function(index){
+				var itemId = $(this).data("id");
+				var itemValue = $(this).data("markedvalue");
+				console.log("now walk through all pending items.",itemId,itemValue);
+				//初始化
+				$("#rate-"+itemId).starRating({
+					totalStars: 10,
+					starSize:20,
+				    useFullStars:true,
+				    initialRating: itemValue,
+				    ratedColors:['#8b0000', '#dc143c', '#ff4500', '#ff6347', '#1e90ff','#00ffff','#40e0d0','#9acd32','#32cd32','#228b22'],
+				    callback: function(currentRating, $el){
+				        // make a server call here
+				        console.log("dude, now try update rating.[old]"+itemValue,itemId,currentRating);
+				        $.ajax({
+				            type: "GET",
+				            url: "${ctx}/mod/dictValue/rest/updateMarkedValue?id="+itemId+"&level="+currentRating+"&markedValue="+currentRating,
+				            headers:{
+				                "Content-Type":"application/json",
+				                "Accept":"application/json"
+				            },        
+				            success:function(result){
+				                if(result.result=="error"){
+				                   console.log("update markedvalue failed.",result);   
+				                }else{
+				                	console.log("update markedvalue succeed.",result);                   
+				                }
+				            }                
+				        }); 
+				    }
+				});
+			});			
+			
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -18,8 +52,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/dictValue/listPending?treeId=${treeId}&treeModule=${treeModule}">待标注</a></li>
-		<li class="active"><a href="${ctx}/mod/dictValue/list?treeId=${treeId}&treeModule=${treeModule}">已标注</a></li>
+		<li><a href="${ctx}/mod/dictValue/listPending?treeId=${treeId}&pId=${pId}">待标注</a></li>
+		<li class="active"><a href="${ctx}/mod/dictValue/list?treeId=${treeId}&pId=${pId}">已标注</a></li>
 		<shiro:hasPermission name="mod:dictValue:edit"><li><a href="${ctx}/mod/dictValue/form?dictMeta.id=${treeId}">字典添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="dictValue" action="${ctx}/mod/dictValue/" method="post" class="breadcrumb form-search">
@@ -76,7 +110,7 @@
 					${dictValue.originalValue}
 				</td>	
 				<td>
-					
+					<div class="rating" id="rate-${dictValue.id}" data-id="${dictValue.id}" data-markedValue="${dictValue.markedValue}"></div>					
 				</td>
 				<td><a href="${ctx}/mod/dictValue/form?id=${dictValue.id}">
 					<fmt:formatDate value="${dictValue.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

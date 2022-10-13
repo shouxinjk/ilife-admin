@@ -3,10 +3,13 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Result;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +18,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
@@ -63,31 +68,31 @@ public class DictValueController extends BaseController {
 	
 	@RequiresPermissions("mod:dictValue:view")
 	@RequestMapping(value = {"list"})
-	public String list(DictValue dictValue,String treeId,String treeModule, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String list(DictValue dictValue,String treeId,String pId, HttpServletRequest request, HttpServletResponse response, Model model) {
 		//如果指定字典类型则根据类型过滤，否则直接查询所有待标注记录
-		if("dictMeta".equals(treeModule)){
+		if("user".equals(pId) || "item".equals(pId)){
 			dictValue.setDictMeta(new DictMeta(treeId));
 		}
-		dictValue.setIsMarked(1);//显示已标注记录
+		dictValue.setIsMarked(1);//显示待标注记录
 		Page<DictValue> page = dictValueService.findPage(new Page<DictValue>(request, response), dictValue); 
 		model.addAttribute("page", page);
 		model.addAttribute("treeId", treeId);//记录当前选中的dictMetaId
-		model.addAttribute("treeModule", treeModule);
+		model.addAttribute("pId", pId);
 		return "modules/mod/dictValueList";
 	}
 	
 	@RequiresPermissions("mod:dictValue:view")
 	@RequestMapping(value = {"listPending", ""})
-	public String listPending(DictValue dictValue,String treeId,String treeModule, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String listPending(DictValue dictValue,String treeId,String pId, HttpServletRequest request, HttpServletResponse response, Model model) {
 		//如果指定字典类型则根据类型过滤，否则直接查询所有待标注记录
-		if("dictMeta".equals(treeModule)){
+		if("user".equals(pId) || "item".equals(pId)){
 			dictValue.setDictMeta(new DictMeta(treeId));
 		}
-		dictValue.setIsMarked(0);//显示已标注记录
+		dictValue.setIsMarked(0);//显示待标注记录
 		Page<DictValue> page = dictValueService.findPage(new Page<DictValue>(request, response), dictValue); 
 		model.addAttribute("page", page);
 		model.addAttribute("treeId", treeId);//记录当前选中的dictMetaId
-		model.addAttribute("treeModule", treeModule);
+		model.addAttribute("pId", pId);
 		return "modules/mod/dictValueListPending";
 	}
 
@@ -123,6 +128,33 @@ public class DictValueController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/mod/dictValue/?repage";
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "rest/updateMarkedValue")
+	//更新属性值标注，包括level、markedvalue。自动添加更新日期
+	public Map<String,Object> updateMarkedValue( @RequestParam(required=true) String id, 
+			@RequestParam(required=true) double markedValue, 
+			@RequestParam(required=true) int level, 
+			HttpServletResponse response) {
+		Map<String,Object> result = Maps.newHashMap();
+		response.setContentType("application/json; charset=UTF-8");
+		result.put("success",false);
+		
+		DictValue dictValue = dictValueService.get(id);
+		dictValue.setIsMarked(1);
+		dictValue.setMarkedValue(markedValue);
+		dictValue.setUpdateDate(new Date());
+		try {
+			dictValueService.save(dictValue);
+		}catch(Exception ex) {
+			result.put("msg", "error occured while update item.[msg]"+ex.getMessage());
+		}
+		
+		result.put("success",true);
+		
+		result.put("result", "marked value updated.");
+		return result;
+	}
+	
 	//组织显示左侧字典定义树，包含user字典及item字典
 	private List<JSONObject> getDictTree(){
 		//列表
