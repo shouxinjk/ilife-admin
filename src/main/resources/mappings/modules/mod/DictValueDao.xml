@@ -52,7 +52,7 @@
 			<if test="originalValue != null and originalValue != ''">
 				AND a.original_value = #{originalValue}
 			</if>
-			<if test="isMarked != null and isMarked != ''">
+			<if test="isMarked != null">
 				AND a.isMarked = #{isMarked}
 			</if>					
 		</where>
