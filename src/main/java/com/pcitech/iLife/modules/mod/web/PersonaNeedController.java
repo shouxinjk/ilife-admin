@@ -33,6 +33,7 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.MotivationCategory;
+import com.pcitech.iLife.modules.mod.entity.OccasionNeed;
 import com.pcitech.iLife.modules.mod.entity.Persona;
 import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
 import com.pcitech.iLife.modules.mod.entity.Phase;
@@ -360,9 +361,14 @@ public class PersonaNeedController extends BaseController {
 	
 	@RequiresPermissions("mod:personaNeed:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
 		model.addAttribute("message","请在左侧选择一个画像。");
-		return "treeData/none";
+		//默认直接查询所有记录
+		PersonaNeed query = new PersonaNeed();
+		Page<PersonaNeed> page = personaNeedService.findPage(new Page<PersonaNeed>(request, response), query);
+		model.addAttribute("page", page);
+//		return "treeData/none";
+		return "modules/mod/personaNeedList";
 	}
 	
 	@RequiresUser

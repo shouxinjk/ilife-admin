@@ -93,8 +93,8 @@
 		<thead>
 			<tr>
 				<!--th>阶段</th-->
+				<th>画像</th>
 				<th>类型</th>
-				<th>需要类别</th>
 				<th>需要</th>
 				<th>权重</th>
 				<th>表达式</th>
@@ -110,6 +110,9 @@
 				<!--td>
 					${personaNeed.phase.name}
 				</td-->
+				<td>
+					${personaNeed.persona.name}
+				</td>				
 				<td width="80">
 			      <c:choose>
 			         <c:when test = "${personaNeed.need.type == 'alpha'}">
@@ -132,10 +135,7 @@
 			            <span style="background-color:#000;padding:2px 5px;color:#fff;">未知</span>
 			         </c:otherwise>
 			      </c:choose>				
-				</td>					
-				<td>
-					${personaNeed.needCategory}
-				</td>				
+				</td>									
 				<td>
 					${fns:getDictLabel(personaNeed.need.type, 'need_type', personaNeed.need.type)} ${personaNeed.need.name} (${personaNeed.need.displayName})
 				</td>

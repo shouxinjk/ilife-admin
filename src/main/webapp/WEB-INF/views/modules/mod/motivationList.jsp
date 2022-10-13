@@ -39,10 +39,10 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>类别</th>
 				<th>类型</th>
 				<th>名称</th>
 				<th>别名</th>				
-				<!--th>分类</th-->
 				<!--th>阶段</th>
 				<th>比重</th-->
 				<th>触发条件</th>
@@ -55,6 +55,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="motivation">
 			<tr>		
+				<td width="120">
+					${motivation.motivationCategory.name}
+				</td>			
 				<td width="80">
 			      <c:choose>
 			         <c:when test = "${motivation.type == 'alpha'}">
@@ -84,9 +87,6 @@
 				<td>
 					${motivation.displayName}
 				</td>					
-				<!--td>
-					${motivation.motivationCategory.name}
-				</td-->
 				<!--td>
 					${motivation.phase.name}
 				</td>

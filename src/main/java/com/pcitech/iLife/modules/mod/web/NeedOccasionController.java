@@ -219,9 +219,14 @@ public class NeedOccasionController extends BaseController {
 	
 	@RequiresPermissions("mod:needOccasion:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
 		model.addAttribute("message","请在左侧选择一个动机。");
-		return "treeData/none";
+		//默认直接查询所有记录
+		OccasionNeed query = new OccasionNeed();
+		Page<OccasionNeed> page = needOccasionService.findPage(new Page<OccasionNeed>(request, response), query);
+		model.addAttribute("page", page);
+//		return "treeData/none";
+		return "modules/mod/needOccasionList";
 	}
 	
 	@RequiresUser

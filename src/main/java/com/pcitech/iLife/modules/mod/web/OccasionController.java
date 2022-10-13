@@ -32,6 +32,7 @@ import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.Occasion;
 import com.pcitech.iLife.modules.mod.entity.OccasionCategory;
+import com.pcitech.iLife.modules.mod.entity.OccasionNeed;
 import com.pcitech.iLife.modules.mod.service.OccasionCategoryService;
 import com.pcitech.iLife.modules.mod.service.OccasionService;
 
@@ -133,9 +134,14 @@ public class OccasionController extends BaseController {
 	
 	@RequiresPermissions("mod:occasion:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
 		model.addAttribute("message","请在左侧选择一个分类。");
-		return "treeData/none";
+		//默认直接查询所有记录
+		Occasion query = new Occasion();
+		Page<Occasion> page = occasionService.findPage(new Page<Occasion>(request, response), query);
+		model.addAttribute("page", page);
+//		return "treeData/none";
+		return "modules/mod/occasionList";
 	}
 	
 	@ResponseBody

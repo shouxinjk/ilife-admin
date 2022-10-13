@@ -357,9 +357,14 @@ public class PhaseNeedController extends BaseController {
 	
 	@RequiresPermissions("mod:phaseNeed:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
 		model.addAttribute("message","请在左侧选择一个阶段。");
-		return "treeData/none";
+		//默认直接查询所有记录
+		PhaseNeed query = new PhaseNeed();
+		Page<PhaseNeed> page = phaseNeedService.findPage(new Page<PhaseNeed>(request, response), query);
+		model.addAttribute("page", page);
+//		return "treeData/none";
+		return "modules/mod/phaseNeedList";
 	}
 	
 	@RequiresUser

@@ -92,6 +92,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>商品类目</th>
 				<th>类型</th>
 				<th>需要</th>
 				<th>满足度</th>
@@ -105,6 +106,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="categoryNeed">
 			<tr>
+			<td>
+				${categoryNeed.category.name}
+			</td>			
 			<td width="80">
 			      <c:choose>
 			         <c:when test = "${categoryNeed.need.type == 'alpha'}">

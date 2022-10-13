@@ -32,6 +32,7 @@ import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.CategoryNeed;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
+import com.pcitech.iLife.modules.mod.entity.Occasion;
 import com.pcitech.iLife.modules.mod.entity.Persona;
 import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
 import com.pcitech.iLife.modules.mod.entity.Phase;
@@ -322,9 +323,14 @@ public class PersonaController extends BaseController {
 	
 	@RequiresPermissions("mod:persona:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
 		model.addAttribute("message","请在左侧选择一个项目。");
-		return "treeData/none";
+		//默认直接查询所有记录
+		Persona query = new Persona();
+		Page<Persona> page = personaService.findPage(new Page<Persona>(request, response), query);
+		model.addAttribute("page", page);
+//		return "treeData/none";
+		return "modules/mod/personaList";
 	}
 	
 	@RequiresUser

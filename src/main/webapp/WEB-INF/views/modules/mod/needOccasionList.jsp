@@ -29,6 +29,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>需要</th>
 				<th>诱因</th>
 				<th>权重</th>
 				<th>表达式</th>
@@ -41,6 +42,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="needOccasion">
 			<tr>
+				<td>
+					${needOccasion.need.name} ${needOccasion.need.displayName}
+				</td>
 				<td>
 					${needOccasion.occasion.name}
 				</td>

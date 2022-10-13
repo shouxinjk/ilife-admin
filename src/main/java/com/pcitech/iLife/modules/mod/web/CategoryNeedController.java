@@ -36,6 +36,7 @@ import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.Occasion;
 import com.pcitech.iLife.modules.mod.entity.OccasionNeed;
 import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
+import com.pcitech.iLife.modules.mod.entity.PhaseNeed;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.ItemDimension;
 import com.pcitech.iLife.modules.mod.entity.ItemDimensionMeasure;
@@ -296,9 +297,14 @@ public class CategoryNeedController extends BaseController {
 	
 	@RequiresPermissions("mod:categoryNeed:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
 		model.addAttribute("message","请在左侧选择一个类目。");
-		return "treeData/none";
+		//默认直接查询所有记录
+		CategoryNeed query = new CategoryNeed();
+		Page<CategoryNeed> page = categoryNeedService.findPage(new Page<CategoryNeed>(request, response), query);
+		model.addAttribute("page", page);
+//		return "treeData/none";
+		return "modules/mod/categoryNeedList";
 	}
 	
 	@RequiresUser
