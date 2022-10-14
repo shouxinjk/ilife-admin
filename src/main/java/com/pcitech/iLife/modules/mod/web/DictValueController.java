@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -37,6 +38,7 @@ import com.pcitech.iLife.modules.mod.service.DictValueService;
 import com.pcitech.iLife.modules.ope.entity.Performance;
 import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.service.DictService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 业务字典Controller
@@ -109,6 +111,26 @@ public class DictValueController extends BaseController {
 		if (!beanValidator(model, dictValue)){
 			return form(dictValue, model);
 		}
+		
+		//需要根据dictMeta是否类目相关进行处理：如果是类目无关则去掉category信息，否则保留category
+		DictMeta dictMeta = dictMetaService.get(dictValue.getDictMeta());
+		if("1".equals(dictMeta.getIgnoreCategory())) {
+			dictValue.setCategory(null);//如果是类目无关则取消类目设置
+		}
+		
+		//对于新建记录采用categoryId、dict_id、originavalue进行唯一识别
+		if(dictValue.getId()==null || dictValue.getId().trim().length()==0) {
+			
+			StringBuffer sb = new StringBuffer();
+			if(dictValue.getCategory()!=null&&dictValue.getCategory().getId()!=null&&dictValue.getCategory().getId().trim().length()>0)
+				sb.append(dictValue.getCategory().getId());
+			sb.append(dictValue.getDictMeta().getId());
+			sb.append(dictValue.getOriginalValue());
+			dictValue.setId(Util.md5(sb.toString()));
+			dictValue.setIsNewRecord(true);
+			
+		}
+		
 		dictValueService.save(dictValue);
 		addMessage(redirectAttributes, "保存业务字典成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/dictValue/?repage";
@@ -120,6 +142,91 @@ public class DictValueController extends BaseController {
 		dictValueService.delete(dictValue);
 		addMessage(redirectAttributes, "删除业务字典成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/dictValue/?repage";
+	}
+	
+	/**
+	 * 字典数据是否与类目相关联。
+	 * @param id 字典值ID
+	 * @param type 取消目录关联或启用目录关联，可选值：0-ignore、1-restore
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/category",method = RequestMethod.DELETE)
+	//批量更新是否目录无关
+	public Map<String,Object> updateCategoryInfo( @RequestParam(required=true) String id,  
+			@RequestParam String type,  
+			HttpServletResponse response) {
+		Map<String,Object> result = Maps.newHashMap();
+		response.setContentType("application/json; charset=UTF-8");
+		result.put("success",false);
+		DictValue dictValue = dictValueService.get(id);
+		
+		//根据类型处理DictMeta
+		DictMeta dictMeta = dictMetaService.get(dictValue.getDictMeta());
+		if(dictMeta.getIgnoreCategory().equalsIgnoreCase(type)) {
+			//do nothing
+			//如果dictMeta的类目无关设置与参数相同则忽略
+		}else if("0".equalsIgnoreCase(type) || "1".equalsIgnoreCase(type)) {//否则更新dictMeta并修改
+			dictMeta.setIgnoreCategory(type);
+			dictMetaService.save(dictMeta);//同步修改dictMeta
+			dictValue.setDictMeta(dictMeta);
+		}else {
+			//参数无法识别，直接忽略
+		}
+		
+		batchUpdateCategoryInfo(dictValue.getDictMeta());
+		
+		result.put("success",true);
+		result.put("result", "category info updated.");
+		return result;
+	}
+	
+	//批量修改是否目录相关
+	private void batchUpdateCategoryInfo(DictMeta dictMeta) {
+		//对于更新需要根据是否目录相关处理数据
+		if(dictMeta.getId()!=null && dictMeta.getId().trim().length()>0) {
+			Map<String,Object> params = Maps.newHashMap();
+			params.put("dictId", dictMeta.getId());
+			if("0".equals(dictMeta.getIgnoreCategory())) {//目录相关
+				//目录相关：则禁用所有无目录数据条目，并启用有目录数据条目
+				//先禁用目录无关数据记录
+				params.put("filter", "noCategory");
+				params.put("delFlag", "1");
+				dictValueService.batchUpdateCategoryInfo(params);
+				//然后启用目录相关数据记录
+				params.put("filter", "hasCategory");
+				params.put("delFlag", "0");
+				dictValueService.batchUpdateCategoryInfo(params);
+			}else {
+				//目录无关：禁用所有目录相关条目，并启用目录无关条目，同时需要根据唯一值补充目录无关条目
+				//先禁用目录相关数据记录
+				params.put("filter", "hasCategory");
+				params.put("delFlag", "1");
+				dictValueService.batchUpdateCategoryInfo(params);
+				//然后启用目录无关数据记录
+				params.put("filter", "noCategory");
+				params.put("delFlag", "0");
+				dictValueService.batchUpdateCategoryInfo(params);
+				//加载补充目录无关数值
+				List<Map<String,Object>> values = dictValueService.findDistinctValuesByDict(dictMeta.getId());
+				for(Map<String,Object> value:values) {//逐条建立目录无关数值
+					DictValue node = new DictValue();
+					node.setOriginalValue(""+value.get("originalValue"));
+					node.setDictMeta(dictMeta);
+					node.setCategory(null);//无目录设置
+					List<DictValue> nodes = dictValueService.getByCategoryCheck(node);
+					if(nodes==null || nodes.size()==0) {//仅在没有数据时新建，否则不予处理
+						node.setIsNewRecord(true);
+						node.setId(Util.md5(dictMeta.getId()+value.get("originalValue")));
+						try {node.setIsMarked(Integer.parseInt(""+value.get("isMarked")));}catch(Exception ex) {node.setIsMarked(0);}
+						try {node.setMarkedValue(Double.parseDouble(""+value.get("markedValue")));}catch(Exception ex) {node.setMarkedValue(5.0);}
+						try {node.setScore(Double.parseDouble(""+value.get("score")));}catch(Exception ex) {node.setScore(5.0);}
+						try {dictValueService.save(node);}catch(Exception ex) {}
+					}
+				}
+			}
+		}
 	}
 
 	@ResponseBody

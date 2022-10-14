@@ -45,10 +45,13 @@
 				<th>类型</th>
 				<th>名称</th>
 				<th>键值</th>
+				<th>类目无关?</th>
 				<th>描述</th>
+				<!--
 				<th>默认数值</th>
 				<th>控制数值</th>
 				<th>控制值描述</th>
+				-->
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:dictMeta:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -66,8 +69,12 @@
 					${dictMeta.dictKey}
 				</td>
 				<td>
+					${fns:getDictLabel(dictMeta.ignoreCategory, 'yes_no', dictMeta.ignoreCategory)}
+				</td>				
+				<td>
 					${dictMeta.description}
 				</td>
+				<!--
 				<td>
 					${dictMeta.defaultValue}
 				</td>
@@ -77,6 +84,7 @@
 				<td>
 					${dictMeta.controlDesc}
 				</td>
+				-->
 				<td>
 					<fmt:formatDate value="${dictMeta.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>

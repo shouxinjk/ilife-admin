@@ -41,6 +41,35 @@
 				});
 			});			
 			
+			 //注册忽略类目事件：点击后提交忽略请求，将根据dict_id将所有带有category的记录删除，同时增加一条不带category的记录
+		    $("a[id^=btnIgnore]").click(function(){
+		    	var id = $(this).data("id");
+		    	var type = $(this).data("type");
+	            console.log("ignore category.",id,type);
+			    $.ajax({
+			        url:"${ctx}/mod/dictValue/rest/category?id="+id+"&type="+type,
+			        type:"DELETE",     
+			        data:JSON.stringify({id:id}),
+			        headers:{
+			            "Content-Type":"application/json"
+			        },  
+			        success:function(ret){
+			            console.log("===got ignore result===\n",ret);
+			            if(ret.success){
+				            siiimpleToast.message('哦耶，已忽略目录',{
+					              position: 'bottom|center'
+					            });  
+				            location.reload();//刷新当前页面
+			            }else{
+				            siiimpleToast.message('糟糕，出错了，请重新尝试',{
+					              position: 'bottom|center'
+					            });   
+			            }
+			        }
+			    });   
+		    });	
+			
+			
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -64,14 +93,14 @@
 				<form:input path="originalValue" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>		
 			<li><label>字典：</label>
-				<form:select path="dictMeta.id" class="input-xlarge required">
+				<form:select path="dictMeta.id" class="input-medium required">
 					<form:option value="" label=""/>
 					<form:options items="${fns:getDictMetaList('_all')}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 				</form:select>
 			</li>
 			<li><label>类目：</label>
 				<sys:treeselect id="category" name="category.id" value="${dictValue.category.id}" labelName="category.name" labelValue="${dictValue.category.name}"
-					title="应用类目" url="/mod/itemCategory/treeData" notAllowSelectRoot="false"/>	
+					title="应用类目" url="/mod/itemCategory/treeData" notAllowSelectRoot="false" allowClear="true" allowInput="true"/>	
 			</li>			
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -84,7 +113,7 @@
 				<th>字典类别</th>
 				<th>字典名称</th>
 				<th>类目</th>
-				<th>控制值</th>
+				<th>描述</th>
 				<th>原始值/Label</th>
 				<th>标注值/mvalue</th>
 				<th>更新时间</th>
@@ -104,7 +133,7 @@
 					${dictValue.category.name}
 				</td>
 				<td>
-					${dictValue.dictMeta.controlValue} (${dictValue.dictMeta.controlDesc})
+					${dictValue.dictMeta.description} ${dictValue.dictMeta.controlDesc}
 				</td>
 				<td>
 					${dictValue.originalValue}
@@ -118,6 +147,8 @@
 				<shiro:hasPermission name="mod:dictValue:edit"><td>
     				<a href="${ctx}/mod/dictValue/form?id=${dictValue.id}">修改</a>
 					<a href="${ctx}/mod/dictValue/delete?id=${dictValue.id}" onclick="return confirmx('确认要删除该业务字典吗？', this.href)">删除</a>
+					<a href="#" id="btnIgnore${dictValue.id}1" data-id="${dictValue.id}" data-type="1">忽略类目相关</a>
+					<a href="#" id="btnIgnore${dictValue.id}0" data-id="${dictValue.id}" data-type="0">恢复类目相关</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

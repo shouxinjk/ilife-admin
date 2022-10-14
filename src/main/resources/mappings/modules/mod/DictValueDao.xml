@@ -129,4 +129,63 @@
 		WHERE id = #{id}
 	</update>
 	
+	<!-- 根据category、dict_id、original_value检查记录是否存在，避免重复创建 -->
+	<select id="getByCategoryCheck" resultType="DictValue">
+		SELECT 
+			<include refid="dictValueColumns"/>
+		FROM mod_dict_value a
+		<include refid="dictValueJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="dictMeta != null and dictMeta.id != null and dictMeta.id != ''">
+				AND a.dict_id = #{dictMeta.id}
+			</if>
+			<if test="originalValue != null and originalValue != ''">
+				AND a.original_value = #{originalValue}
+			</if>	
+			<choose>
+				<when test="category != null and category.id != null and category.id != ''">
+					AND a.category_id = #{category.id}
+				</when>		
+				<otherwise>
+					AND a.category_id is null
+				</otherwise>
+			</choose>						
+		</where>
+	</select>	
+	<!-- 根据dict_id筛选所有字典值，忽略category，用于类目无关的字典标注 -->
+	<select id="findDistinctValuesByDict" resultType="java.util.Map">
+		SELECT 
+			distinct a.original_value AS "originalValue",
+			a.dict_id AS "dictId",
+			a.category_id AS "categoryId",
+			a.marked_value AS "markedValue",
+			a.isMarked AS "isMarked",
+			a.score AS "score"
+		FROM mod_dict_value a
+		<where>
+			a.dict_id = #{dictId}			
+		</where>
+	</select>
+	<!-- 根据dict_id及category_id 将数据禁用或启用 -->
+	<!-- 忽略类目：filter=hasCategory, def_flag=1, dictId=xxx; filter=noCategory, def_flag=0, dictId=xxx -->
+	<!-- 启用类目：filter=noCategory, def_flag=1, dictId=xxx; filter=hasCategory, def_flag=0, dictId=xxx-->
+	<update id="batchUpdateCategoryInfo">
+		UPDATE mod_dict_value SET 	
+			update_date = now(),
+			del_flag = #{delFlag}
+		WHERE dict_id = #{dictId}
+		<choose>
+			<when test="filter != null and filter == 'hasCategory'">
+				AND category_id is not null
+			</when>
+			<when test="filter != null and filter == 'noCategory'">
+				AND category_id is null
+			</when>			
+			<otherwise>
+				1=0
+			</otherwise>
+		</choose>				
+	</update>	
+	
 </mapper>

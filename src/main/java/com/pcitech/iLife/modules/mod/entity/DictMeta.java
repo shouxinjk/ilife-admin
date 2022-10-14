@@ -23,6 +23,7 @@ public class DictMeta extends DataEntity<DictMeta> {
 	private Integer defaultLevel;		// 默认等级
 	private Double controlValue;		// 控制数值
 	private String controlDesc;		// 控制值描述
+	private String ignoreCategory;	//是否类目无关
 	
 	public DictMeta() {
 		super();
@@ -99,6 +100,14 @@ public class DictMeta extends DataEntity<DictMeta> {
 
 	public void setControlDesc(String controlDesc) {
 		this.controlDesc = controlDesc;
+	}
+
+	public String getIgnoreCategory() {
+		return ignoreCategory;
+	}
+
+	public void setIgnoreCategory(String ignoreCategory) {
+		this.ignoreCategory = ignoreCategory;
 	}
 	
 }

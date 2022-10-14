@@ -11,6 +11,7 @@
 		a.default_value AS "defaultValue",
 		a.default_level AS "defaultLevel",
 		a.control_value AS "controlValue",
+		a.ignore_category AS "ignoreCategory",
 		a.control_desc AS "controlDesc",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
@@ -86,6 +87,7 @@
 			default_level,
 			control_value,
 			control_desc,
+			ignore_category,
 			create_by,
 			create_date,
 			update_by,
@@ -101,6 +103,7 @@
 			#{defaultLevel},
 			#{controlValue},
 			#{controlDesc},
+			#{ignoreCategory},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -119,6 +122,7 @@
 			default_level = #{defaultLevel},
 			control_value = #{controlValue},
 			control_desc = #{controlDesc},
+			ignore_category = #{ignoreCategory},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}

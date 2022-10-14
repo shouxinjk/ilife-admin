@@ -26,10 +26,13 @@ import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.DictMeta;
+import com.pcitech.iLife.modules.mod.entity.DictValue;
 import com.pcitech.iLife.modules.mod.entity.UserMeasure;
 import com.pcitech.iLife.modules.mod.service.DictMetaService;
+import com.pcitech.iLife.modules.mod.service.DictValueService;
 import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.service.DictService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 业务字典定义Controller
@@ -44,6 +47,8 @@ public class DictMetaController extends BaseController {
 	private DictMetaService dictMetaService;
 	@Autowired
 	private DictService dictService;
+	@Autowired
+	private DictValueService dictValueService;
 	
 	@ModelAttribute
 	public DictMeta get(@RequestParam(required=false) String id) {
@@ -79,6 +84,51 @@ public class DictMetaController extends BaseController {
 			return form(dictMeta, model);
 		}
 		dictMetaService.save(dictMeta);
+		
+		//对于更新需要根据是否目录相关处理数据
+		if(dictMeta.getId()!=null && dictMeta.getId().trim().length()>0) {
+			Map<String,Object> params = Maps.newHashMap();
+			params.put("dictId", dictMeta.getId());
+			if("0".equals(dictMeta.getIgnoreCategory())) {//目录相关
+				//目录相关：则禁用所有无目录数据条目，并启用有目录数据条目
+				//先禁用目录无关数据记录
+				params.put("filter", "noCategory");
+				params.put("delFlag", "1");
+				dictValueService.batchUpdateCategoryInfo(params);
+				//然后启用目录相关数据记录
+				params.put("filter", "hasCategory");
+				params.put("delFlag", "0");
+				dictValueService.batchUpdateCategoryInfo(params);
+			}else {
+				//目录无关：禁用所有目录相关条目，并启用目录无关条目，同时需要根据唯一值补充目录无关条目
+				//先禁用目录相关数据记录
+				params.put("filter", "hasCategory");
+				params.put("delFlag", "1");
+				dictValueService.batchUpdateCategoryInfo(params);
+				//然后启用目录无关数据记录
+				params.put("filter", "noCategory");
+				params.put("delFlag", "0");
+				dictValueService.batchUpdateCategoryInfo(params);
+				//加载补充目录无关数值
+				List<Map<String,Object>> values = dictValueService.findDistinctValuesByDict(dictMeta.getId());
+				for(Map<String,Object> value:values) {//逐条建立目录无关数值
+					DictValue node = new DictValue();
+					node.setOriginalValue(""+value.get("originalValue"));
+					node.setDictMeta(dictMeta);
+					node.setCategory(null);//无目录设置
+					List<DictValue> nodes = dictValueService.getByCategoryCheck(node);
+					if(nodes==null || nodes.size()==0) {//仅在没有数据时新建，否则不予处理
+						node.setIsNewRecord(true);
+						node.setId(Util.md5(dictMeta.getId()+value.get("originalValue")));
+						try {node.setIsMarked(Integer.parseInt(""+value.get("isMarked")));}catch(Exception ex) {node.setIsMarked(0);}
+						try {node.setMarkedValue(Double.parseDouble(""+value.get("markedValue")));}catch(Exception ex) {node.setMarkedValue(5.0);}
+						try {node.setScore(Double.parseDouble(""+value.get("score")));}catch(Exception ex) {node.setScore(5.0);}
+						try {dictValueService.save(node);}catch(Exception ex) {}
+					}
+				}
+			}
+		}
+		
 		addMessage(redirectAttributes, "保存业务字典定义成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/dictMeta/?repage";
 	}
