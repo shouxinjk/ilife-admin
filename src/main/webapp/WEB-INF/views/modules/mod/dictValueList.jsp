@@ -124,7 +124,17 @@
 		<c:forEach items="${page.list}" var="dictValue">
 			<tr>
 				<td>
-					${fns:getDictLabel(dictValue.dictMeta.type, 'dict_type', '')}
+			      <c:choose>
+			         <c:when test = "${dictValue.dictMeta.type == 'user'}">
+			            <span style="background-color:#E85552;padding:2px 5px;color:#fff;">用户字典</span>
+			         </c:when>	
+			         <c:when test = "${dictValue.dictMeta.type == 'item'}">
+			            <span style="background-color:#8BCE2D;padding:2px 5px;color:#fff;">商品字典</span>
+			         </c:when>		         			         			         			         
+			         <c:otherwise>
+			            <span style="background-color:#000;padding:2px 5px;color:#fff;">未知</span>
+			         </c:otherwise>
+			      </c:choose>						
 				</td>
 				<td>
 					${dictValue.dictMeta.name}
