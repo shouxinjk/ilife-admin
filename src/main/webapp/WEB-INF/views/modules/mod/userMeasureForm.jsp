@@ -193,7 +193,7 @@
 					<!--
 					<form:select path="autoLabelDict" items="${fns:getDictList('autoLabelDictUser')}" itemLabel="label" itemValue="value" htmlEscape="false" class="input-xlarge"/>
 					-->
-					<form:select path="autoLabelDict" class="input-xlarge required">
+					<form:select path="autoLabelDict" class="input-xlarge">
 						<form:option value="" label=""/>
 						<form:options items="${fns:getDictMetaList('user')}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 					</form:select>						
