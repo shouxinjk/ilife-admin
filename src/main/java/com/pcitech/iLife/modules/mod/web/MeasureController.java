@@ -245,12 +245,13 @@ public class MeasureController extends BaseController {
 	 * 
 	 * @param category
 	 * @param cascade true/false
+	 * @param noPrefix true/false 默认会带有是否继承前缀，传入该参数则忽略
 	 * @param response
 	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping(value = "measures")
-	public List<Map<String, Object>> listMeasureByCategory(@RequestParam(required=true) String category,@RequestParam(required=false) String cascade,HttpServletResponse response) {
+	public List<Map<String, Object>> listMeasureByCategory(@RequestParam(required=true) String category,@RequestParam(required=false) String cascade,@RequestParam(required=false) String noPrefix,HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
 		boolean isCascade = true;//默认为true，获取当前目录的属性
 
@@ -264,7 +265,10 @@ public class MeasureController extends BaseController {
 				Map<String, Object> map = Maps.newHashMap();
 				map.put("id", e.getId());
 				map.put("category", e.getCategory().getId());
-				map.put("name", (category.equalsIgnoreCase(e.getCategory().getId())?"๏":"○")+e.getName());
+				if("true".equalsIgnoreCase(noPrefix))
+					map.put("name", e.getName());
+				else
+					map.put("name", (category.equalsIgnoreCase(e.getCategory().getId())?"๏":"○")+e.getName());
 				map.put("type", category.equalsIgnoreCase(e.getCategory().getId())?"self":"inherit");
 				map.put("property", e.getProperty());
 				mapList.add(map);
