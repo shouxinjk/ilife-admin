@@ -163,7 +163,7 @@
 				归一化类型：${fns:getDictLabel(measure.normalizeType, 'normalizeType', measure.normalizeType)}<br/>
 				多值策略：${fns:getDictLabel(measure.multiValueFunc, 'multiValueFunc', measure.multiValueFunc)}<br/>
 				自动标注：${fns:getDictLabel(measure.autoLabelType, 'autoLabelType', measure.autoLabelType)}<br/>
-				Dict字典：${fns:getDictMetaLabelName(measure.autoLabelDict, 'item', measure.autoLabelDict)} ${measure.autoLabelDict}<br/>
+				Dict字典：${fns:getDictMetaLabelName(measure.autoLabelDict, 'item', measure.autoLabelDict)} ${fns:getDictMetaLabelKey(measure.autoLabelDict, 'item', measure.autoLabelDict)}<br/>
 				Refer类目：${measure.autoLabelCategory.name}</td>									
 				<td>${measure.autoLabelTagCategory.name}</td>	
 				<td>

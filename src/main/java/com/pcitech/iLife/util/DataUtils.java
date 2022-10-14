@@ -61,10 +61,11 @@ public class DataUtils {
 		return dictList;
 	}
 	
+	//get name by id
 	public static String getDictMetaLabelName(String value, String type, String defaultValue){
 		if (StringUtils.isNotBlank(type) && StringUtils.isNotBlank(value)){
 			for (DictMeta dict : getDictMetaList(type)){
-				if (type.equals(dict.getType()) && value.equals(dict.getDictKey())){
+				if (type.equals(dict.getType()) && value.equals(dict.getId())){
 					return dict.getName();
 				}
 			}
@@ -83,10 +84,11 @@ public class DataUtils {
 		return defaultValue;
 	}
 
+	//get key by id
 	public static String getDictMetaLabelKey(String value, String type, String defaultValue){
 		if (StringUtils.isNotBlank(type) && StringUtils.isNotBlank(value)){
 			for (DictMeta dict : getDictMetaList(type)){
-				if (type.equals(dict.getType()) && value.equals(dict.getDictKey())){
+				if (type.equals(dict.getType()) && value.equals(dict.getId())){
 					return dict.getDictKey();
 				}
 			}
@@ -105,6 +107,7 @@ public class DataUtils {
 		return defaultValue;
 	}
 
+	//get id by key
 	public static String getDictMetaId(String label, String type, String defaultLabel){
 		if (StringUtils.isNotBlank(type) && StringUtils.isNotBlank(label)){
 			for (DictMeta dict : getDictMetaList(type)){
@@ -116,10 +119,11 @@ public class DataUtils {
 		return defaultLabel;
 	}
 	
+	//get key by id
 	public static String getDictMetaKey(String label, String type, String defaultLabel){
 		if (StringUtils.isNotBlank(type) && StringUtils.isNotBlank(label)){
 			for (DictMeta dict : getDictMetaList(type)){
-				if (type.equals(dict.getType()) && label.equals(dict.getDictKey())){
+				if (type.equals(dict.getType()) && label.equals(dict.getId())){
 					return dict.getDictKey();
 				}
 			}
