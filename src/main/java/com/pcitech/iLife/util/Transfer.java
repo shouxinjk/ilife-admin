@@ -80,7 +80,7 @@ public class Transfer {
 		if(measure!=null && category!=null) {//仅在非空时推送
 			map.put("categoryId", category.getId());
 			map.put("categoryName", category.getName());//冗余发送，实际不会用到。可删除
-			map.put("property", platformProperty.getName()==null?"":platformProperty.getName());
+			map.put("property", platformProperty.getName()==null?"":platformProperty.getName().replace("๏", "").replace("○", ""));
 			map.put("platform", platformProperty.getPlatform());
 			map.put("propertyId", measure.getId());
 			map.put("propertyKey", measure.getProperty()==null?"":measure.getProperty());
