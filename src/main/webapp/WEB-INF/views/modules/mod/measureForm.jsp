@@ -208,7 +208,7 @@
 						-->
 						<form:select path="autoLabelDict" class="input-xlarge required">
 							<form:option value="" label=""/>
-							<form:options items="${fns:getDictMetaList('item')}" itemLabel="name" itemValue="dictKey" htmlEscape="false"/>
+							<form:options items="${fns:getDictMetaList('item')}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 						</form:select>						
 					</div>
 				</div>		
