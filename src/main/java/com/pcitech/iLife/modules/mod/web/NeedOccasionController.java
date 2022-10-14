@@ -83,11 +83,13 @@ public class NeedOccasionController extends BaseController {
 	public String list(OccasionNeed needOccasion,String treeId ,String treeModule,String topType,HttpServletRequest request, HttpServletResponse response, Model model) {
 		if("motivation".equalsIgnoreCase(treeModule)){
 			needOccasion.setNeed(new Motivation(treeId));
-		}else{//否则提示选择动机
+		}
+		/**
+		else{//否则提示选择动机
 			model.addAttribute("message","选择动机查看可能影响的诱因。");
 			return "treeData/none";
 		}
-			
+		//**/
 		Page<OccasionNeed> page = needOccasionService.findPage(new Page<OccasionNeed>(request, response), needOccasion); 
 		model.addAttribute("page", page);
 		model.addAttribute("pid", treeId);
@@ -166,10 +168,13 @@ public class NeedOccasionController extends BaseController {
 		if("motivation".equalsIgnoreCase(pType)){
 			parent = motivationService.get(pid);
 			needOccasion.setNeed(parent);
-		}else {//否则提示选择诱因
+		}
+		/**
+		else {//否则提示选择诱因
 			model.addAttribute("message","选择动机查看影响的诱因。");
 			return "treeData/none";
 		}
+		//**/
 		model.addAttribute("pid", pid);
 		model.addAttribute("pType", pType);
 		model.addAttribute("needOccasion", needOccasion);

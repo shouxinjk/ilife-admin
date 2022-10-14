@@ -83,11 +83,13 @@ public class PersonaNeedController extends BaseController {
 	public String list(PersonaNeed personaNeed,String treeId ,String treeModule,String topType,HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeModule.equals("persona")){
 			personaNeed.setPersona(new Persona(treeId));
-		}else{//否则提示选择用户画像
+		}
+		/**
+		else{//否则提示选择用户画像
 			model.addAttribute("message","选择画像查看其需要构成。");
 			return "treeData/none";
 		}
-			
+		//**/	
 		Page<PersonaNeed> page = personaNeedService.findPage(new Page<PersonaNeed>(request, response), personaNeed); 
 		
 		//增加需要所在的类目。注意：需要逐个填补。效率低下
@@ -290,11 +292,21 @@ public class PersonaNeedController extends BaseController {
 		if(pType.equals("persona")){
 			parent = personaService.get(pid);
 			personaNeed.setPersona(parent);
-			personaNeed.setPhase(parent.getPhase());//默认设置阶段与persona一致
-		}else {//否则提示选择用户画像
+			if(parent.getPhase()!=null)
+				personaNeed.setPhase(parent.getPhase());//默认设置阶段与persona一致
+		}
+		//如果Phase为空，默认直接用persona的phase填充
+		if(personaNeed.getPhase()==null) {
+			Persona persona = personaService.get(personaNeed.getPersona());
+			if(persona != null && persona.getPhase() != null)
+				personaNeed.setPhase(persona.getPhase());
+		}
+		/**
+		else {//否则提示选择用户画像
 			model.addAttribute("message","选择画像查看其需要构成。");
 			return "treeData/none";
 		}
+		//**/
 		model.addAttribute("pid", pid);
 		model.addAttribute("pType", pType);
 		model.addAttribute("personaNeed", personaNeed);

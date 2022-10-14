@@ -79,7 +79,7 @@
 		<ul class="ul-form">
 			<li class="btns"><input id="btnCheckAll" class="btn btn-primary" type="button" value="选中全部"/></li>
 			<li class="btns"><input id="btnUncheckAll" class="btn btn-primary" type="button" value="取消选中"/></li>
-			<li class="btns"><input id="btnAddSelected" class="btn btn-primary" type="button" value="添加选中的需要"/></li>
+			<li class="btns"><input id="btnAddSelected" class="btn btn-primary" type="button" value="添加选中的诱因"/></li>
 		</ul>
 	</div>
 	<sys:message content="${message}"/>

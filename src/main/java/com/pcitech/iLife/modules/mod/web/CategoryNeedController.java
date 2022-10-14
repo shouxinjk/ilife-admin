@@ -80,11 +80,13 @@ public class CategoryNeedController extends BaseController {
 	public String list(CategoryNeed categoryNeed,String treeId ,String treeModule,String topType,HttpServletRequest request, HttpServletResponse response, Model model) {
 		if(treeId!=null&&treeId.trim().length()>0){
 			categoryNeed.setCategory(new ItemCategory(treeId));
-		}else{//否则提示选择用户画像
+		}
+		/**
+		else{//否则提示选择用户画像
 			model.addAttribute("message","选择类目查看其需要构成。");
 			return "treeData/none";
 		}
-			
+		//**/
 		Page<CategoryNeed> page = categoryNeedService.findPage(new Page<CategoryNeed>(request, response), categoryNeed); 
 		model.addAttribute("page", page);
 		model.addAttribute("pid", treeId);
@@ -227,10 +229,13 @@ public class CategoryNeedController extends BaseController {
 		if(pid!=null&&pid.trim().length()>0){
 			parent = itemCategoryService.get(pid);
 			categoryNeed.setCategory(parent);
-		}else {//否则提示选择用户画像
+		}
+		/**
+		else {//否则提示选择用户画像
 			model.addAttribute("message","选择类目查看其需要满足。");
 			return "treeData/none";
 		}
+		//**/
 		model.addAttribute("pid", pid);
 		model.addAttribute("pType", pType);
 		model.addAttribute("categoryNeed", categoryNeed);
