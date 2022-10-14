@@ -192,6 +192,8 @@
 				            </select>				         	
 				         </c:otherwise>	
 			         </c:choose>	
+			         <a href="${ctx}/mod/measure/form?category.id=${platformProperty.category.id}&name=${platformProperty.name}">新增</a>
+			         
 				</td>
 				<td>
 					<fmt:formatDate value="${platformProperty.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
