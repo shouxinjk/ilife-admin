@@ -27,6 +27,7 @@ public class UserEvaluation extends TreeEntity<UserEvaluation> {
 	private double weight;		// weight
 	private String type;		// type
 	private String script;		// script
+	private String scriptMemo;		// 可读脚本
 	private boolean featured;		// featured
 	private String sort;		// sort
 	private String category;		// category
@@ -101,6 +102,14 @@ public class UserEvaluation extends TreeEntity<UserEvaluation> {
 		this.script = script;
 	}
 	
+	public String getScriptMemo() {
+		return scriptMemo;
+	}
+
+	public void setScriptMemo(String scriptMemo) {
+		this.scriptMemo = scriptMemo;
+	}
+
 	public boolean isFeatured() {
 		return featured;
 	}

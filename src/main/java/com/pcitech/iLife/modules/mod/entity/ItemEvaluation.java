@@ -25,6 +25,7 @@ public class ItemEvaluation extends TreeEntity<ItemEvaluation> {
 	private double weight;		// weight
 	private String type;		// type
 	private String script;		// script：评价脚本
+	private String scriptMemo;		// 可读脚本
 	private boolean featured;		// featured
 	private ItemCategory category;		// category
 	private String propKey;		// 键名，用于计算引用
@@ -94,6 +95,14 @@ public class ItemEvaluation extends TreeEntity<ItemEvaluation> {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getScriptMemo() {
+		return scriptMemo;
+	}
+
+	public void setScriptMemo(String scriptMemo) {
+		this.scriptMemo = scriptMemo;
 	}
 
 	public String getScript() {

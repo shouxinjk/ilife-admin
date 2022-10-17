@@ -162,15 +162,14 @@ public class ItemEvaluationController extends BaseController {
 	private void saveWithScript(ItemEvaluation itemEvaluation) {
 		logger.error("try to save with script.[itemEvaluation.id]"+itemEvaluation.getId(),itemEvaluation);
 		//预生成脚本：对于weighted-sum脚本，自动查询下级节点，并生成
-		if(!itemEvaluation.getIsNewRecord() && itemEvaluation.getId()!=null && itemEvaluation.getId().trim().length()>0 //对于已经存在的节点进行。新节点无需处理
-				&& itemEvaluation.getScript()!=null && itemEvaluation.getScript().trim().length()>0 && itemEvaluation.getScript().indexOf("weighted-sum")>=0) {
+//		if(!itemEvaluation.getIsNewRecord() && itemEvaluation.getId()!=null && itemEvaluation.getId().trim().length()>0 ) {
 			//先获取关联的客观维度列表
 			ItemEvaluationDimension itemEvaluationDimension = new ItemEvaluationDimension();
 			itemEvaluationDimension.setEvaluation(itemEvaluation);
 			itemEvaluationDimension.setDelFlag("0");
 			List<ItemEvaluationDimension> measures = itemEvaluationDimensionService.findList(itemEvaluationDimension);
 			String script = "";
-			String scriptMemo = "//weighted-sum ";
+			String scriptMemo = "";
 			int index = 0;
 			for(ItemEvaluationDimension measure:measures) {
 				if(measure.getDimension().getPropKey()==null||measure.getDimension().getPropKey().trim().length()==0)
@@ -204,8 +203,9 @@ public class ItemEvaluationController extends BaseController {
 				scriptMemo += dimension.getName()+ "*" + weight;
 				index++;
 			}
-			itemEvaluation.setScript(script+"\n"+scriptMemo);
-		}
+			itemEvaluation.setScript(script);
+			itemEvaluation.setScriptMemo(scriptMemo);
+//		}
 		itemEvaluationService.save(itemEvaluation);
 	}
 	
@@ -239,6 +239,7 @@ public class ItemEvaluationController extends BaseController {
 			rootDimension.setPropKey("e"+Util.get6bitCode(category.getName()));
 			rootDimension.setType("ignore");
 			rootDimension.setScript("no-script");
+			rootDimension.setScriptMemo("加权汇总");
 			itemEvaluationService.save(rootDimension);
 			root = itemEvaluationService.findList(q).get(0);
 			//ROOT下建立默认顶级节点：
@@ -343,6 +344,7 @@ public class ItemEvaluationController extends BaseController {
 			node.put("propKey", item.getPropKey());
 			node.put("featured", item.isFeatured());
 			node.put("script", item.getScript());
+			node.put("scriptMemo", item.getScriptMemo());
 			nodes.add(node);
 			loadEvaluationAndDimensionCascade(category,item,nodes);//递归遍历
 		}
@@ -418,6 +420,7 @@ public class ItemEvaluationController extends BaseController {
 		parentNode.setType("ignore");
 		parentNode.setPropKey("e"+Util.get6bitCode(parent));
 		parentNode.setScript("no-script");
+		parentNode.setScriptMemo("");
 		itemEvaluationService.save(parentNode);
 		//query node
 		ItemEvaluation queryNode = new ItemEvaluation();
@@ -449,6 +452,7 @@ public class ItemEvaluationController extends BaseController {
 			evalNode.setFeatured(true);
 			evalNode.setType(types[k]);
 			evalNode.setScript(nodeScript[k]);
+			evalNode.setScriptMemo(nodeScript[k]);//默认节点与script相同
 			itemEvaluationService.save(evalNode);
 			i += 10;
 			k++;
@@ -584,6 +588,9 @@ public class ItemEvaluationController extends BaseController {
 			return form(itemEvaluation, model);
 		}
 		itemEvaluationService.save(itemEvaluation);
+		//递归更新父节点
+		if(itemEvaluation.getParent()!=null && itemEvaluation.getParent().getId()!=null)
+			saveWithScript(itemEvaluation.getParent());
 		addMessage(redirectAttributes, "保存主观评价成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/itemEvaluation/?treeId="+itemEvaluation.getCategory().getId()+"&repage";
 	}

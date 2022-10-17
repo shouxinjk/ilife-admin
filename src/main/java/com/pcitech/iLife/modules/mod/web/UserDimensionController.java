@@ -105,6 +105,9 @@ public class UserDimensionController extends BaseController {
 			return form(userDimension, model);
 		}
 		userDimensionService.save(userDimension);
+		//递归更新父节点
+		if(userDimension.getParent()!=null && userDimension.getParent().getId()!=null)
+			saveWithScript(userDimension.getParent());
 		addMessage(redirectAttributes, "保存用户客观评价成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/userDimension/?repage";
 	}
@@ -328,15 +331,14 @@ public class UserDimensionController extends BaseController {
 	private void saveWithScript(UserDimension userDimension) {
 		logger.error("try to save with script.[userDimension.id]"+userDimension.getId(),userDimension);
 		//预生成脚本：对于weighted-sum脚本，自动查询下级节点，并生成
-		if(!userDimension.getIsNewRecord() && userDimension.getId()!=null && userDimension.getId().trim().length()>0 //对于已经存在的节点进行。新节点无需处理
-				&& userDimension.getScript()!=null && userDimension.getScript().trim().length()>0 && userDimension.getScript().indexOf("weighted-sum")>=0) {
+//		if(!userDimension.getIsNewRecord() && userDimension.getId()!=null && userDimension.getId().trim().length()>0 ) {
 			//先获取属性列表
 			UserDimensionMeasure userDimensionMeasure = new UserDimensionMeasure();
 			userDimensionMeasure.setDimension(userDimension);
 			userDimensionMeasure.setDelFlag("0");
 			List<UserDimensionMeasure> measures = userDimensionMeasureService.findList(userDimensionMeasure);
 			String script = "";
-			String scriptMemo = "//weighted-sum ";
+			String scriptMemo = "";
 			int index = 0;
 			for(UserDimensionMeasure measure:measures) {
 				if(measure.getMeasure().getProperty()==null||measure.getMeasure().getProperty().trim().length()==0)
@@ -370,8 +372,9 @@ public class UserDimensionController extends BaseController {
 				scriptMemo += dimension.getName()+ "*" + weight;
 				index++;
 			}
-			userDimension.setScript(script+"\n"+scriptMemo);
-		}
+			userDimension.setScript(script);
+			userDimension.setScriptMemo(scriptMemo);
+//		}
 		userDimensionService.save(userDimension);
 	}
 	
@@ -409,6 +412,7 @@ public class UserDimensionController extends BaseController {
 			node.put("propKey", rootDimension.getPropKey());
 			node.put("featured", rootDimension.isFeatured());
 			node.put("script", rootDimension.getScript());
+			node.put("scriptMemo", rootDimension.getScriptMemo());
 			nodes.add(node);
 			//递归遍历子节点
 			loadDimensionAndMeasureCascade(rootDimension,nodes);
@@ -435,6 +439,7 @@ public class UserDimensionController extends BaseController {
 			node.put("propKey", item.getPropKey());
 			node.put("featured", item.isFeatured());
 			node.put("script", item.getScript());
+			node.put("scriptMemo", item.getScriptMemo());
 			nodes.add(node);
 			loadDimensionAndMeasureCascade(item,nodes);//递归遍历
 		}

@@ -341,6 +341,7 @@ public class ItemDimensionController extends BaseController {
 			rootDimension.setName(category.getName());
 			rootDimension.setDescription("root dimension");
 			rootDimension.setScript("weighted-sum");
+			rootDimension.setScriptMemo("加权汇总");
 			rootDimension.setCategory(category);
 			rootDimension.setId(treeId);//默认顶级节点ID与category保持一致
 			rootDimension.setIsNewRecord(true);
@@ -402,6 +403,7 @@ public class ItemDimensionController extends BaseController {
 			node.put("propKey", rootDimension.getPropKey());
 			node.put("featured", rootDimension.isFeatured());
 			node.put("script", rootDimension.getScript());
+			node.put("scriptMemo", rootDimension.getScriptMemo());
 			nodes.add(node);
 		}
 		//递归遍历子节点
@@ -430,6 +432,7 @@ public class ItemDimensionController extends BaseController {
 			node.put("propKey", item.getPropKey());
 			node.put("featured", item.isFeatured());
 			node.put("script", item.getScript());
+			node.put("scriptMemo", item.getScriptMemo());
 			nodes.add(node);
 			loadDimensionAndMeasureCascade(category,item,nodes);//递归遍历
 		}
@@ -505,8 +508,10 @@ public class ItemDimensionController extends BaseController {
 		if (itemDimension.getSort() == null){
 			itemDimension.setSort(30);
 		}
-		if(itemDimension.getScript()==null||itemDimension.getScript().trim().length()==0)
+		if(itemDimension.getScript()==null||itemDimension.getScript().trim().length()==0) {
 			itemDimension.setScript("weighted-sum");
+			itemDimension.setScriptMemo("加权汇总");
+		}
 		//itemDimension.setFeatured(false);
 		//检查默认key值，如果没有则随机设置
 		if(itemDimension.getPropKey()==null || itemDimension.getPropKey().trim().length()==0)
@@ -523,6 +528,9 @@ public class ItemDimensionController extends BaseController {
 		}
 		//itemDimension.setCategory(itemDimension.getParent().getCategory());//使用父目录的分类
 		saveWithScript(itemDimension);
+		//递归更新父节点
+		if(itemDimension.getParent()!=null && itemDimension.getParent().getId()!=null)
+			saveWithScript(itemDimension.getParent());
 		addMessage(redirectAttributes, "保存维度成功");
 //		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?repage";
 		return "redirect:"+Global.getAdminPath()+"/mod/itemDimension/?treeId="+itemDimension.getCategory().getId()+"&repage";
@@ -532,15 +540,14 @@ public class ItemDimensionController extends BaseController {
 	private void saveWithScript(ItemDimension itemDimension) {
 		logger.error("try to save with script.[itemDimension.id]"+itemDimension.getId(),itemDimension);
 		//预生成脚本：对于weighted-sum脚本，自动查询下级节点，并生成
-		if(!itemDimension.getIsNewRecord() && itemDimension.getId()!=null && itemDimension.getId().trim().length()>0 //对于已经存在的节点进行。新节点无需处理
-				&& itemDimension.getScript()!=null && itemDimension.getScript().trim().length()>0 && itemDimension.getScript().indexOf("weighted-sum")>=0) {
+//		if(!itemDimension.getIsNewRecord() && itemDimension.getId()!=null && itemDimension.getId().trim().length()>0 ) {
 			//先获取属性列表
 			ItemDimensionMeasure itemDimensionMeasure = new ItemDimensionMeasure();
 			itemDimensionMeasure.setDimension(itemDimension);
 			itemDimensionMeasure.setDelFlag("0");
 			List<ItemDimensionMeasure> measures = itemDimensionMeasureService.findList(itemDimensionMeasure);
 			String script = "";
-			String scriptMemo = "//weighted-sum ";
+			String scriptMemo = "";
 			int index = 0;
 			for(ItemDimensionMeasure measure:measures) {
 				if(measure.getMeasure().getProperty()==null||measure.getMeasure().getProperty().trim().length()==0)
@@ -574,8 +581,9 @@ public class ItemDimensionController extends BaseController {
 				scriptMemo += dimension.getName()+ "*" + weight;
 				index++;
 			}
-			itemDimension.setScript(script+"\n"+scriptMemo);
-		}
+			itemDimension.setScript(script);
+			itemDimension.setScriptMemo(scriptMemo);
+//		}
 		itemDimensionService.save(itemDimension);
 	}
 	

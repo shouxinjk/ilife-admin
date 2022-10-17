@@ -24,6 +24,7 @@ public class ItemDimension extends TreeEntity<ItemDimension> {
 	private String description;		// 描述
 	private double weight;		// 占比
 	private String script;		// script：评价脚本
+	private String scriptMemo;		// 可读脚本
 	private boolean featured;		// featured
 	private String propKey;		// 键名，用于计算引用
 	
@@ -33,6 +34,14 @@ public class ItemDimension extends TreeEntity<ItemDimension> {
 
 	public void setScript(String script) {
 		this.script = script;
+	}
+
+	public String getScriptMemo() {
+		return scriptMemo;
+	}
+
+	public void setScriptMemo(String scriptMemo) {
+		this.scriptMemo = scriptMemo;
 	}
 
 	public boolean isFeatured() {

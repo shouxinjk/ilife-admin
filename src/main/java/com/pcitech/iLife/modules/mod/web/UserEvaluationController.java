@@ -163,15 +163,14 @@ public class UserEvaluationController extends BaseController {
 	private void saveWithScript(UserEvaluation userEvaluation) {
 		logger.error("try to save with script.[userEvaluation.id]"+userEvaluation.getId(),userEvaluation);
 		//预生成脚本：对于weighted-sum脚本，自动查询下级节点，并生成
-		if(!userEvaluation.getIsNewRecord() && userEvaluation.getId()!=null && userEvaluation.getId().trim().length()>0 //对于已经存在的节点进行。新节点无需处理
-				&& userEvaluation.getScript()!=null && userEvaluation.getScript().trim().length()>0 && userEvaluation.getScript().indexOf("weighted-sum")>=0) {
+//		if(!userEvaluation.getIsNewRecord() && userEvaluation.getId()!=null && userEvaluation.getId().trim().length()>0 ) {
 			//先获取关联的客观维度列表
 			UserEvaluationDimension userEvaluationDimension = new UserEvaluationDimension();
 			userEvaluationDimension.setEvaluation(userEvaluation);
 			userEvaluationDimension.setDelFlag("0");
 			List<UserEvaluationDimension> measures = userEvaluationDimensionService.findList(userEvaluationDimension);
 			String script = "";
-			String scriptMemo = "//weighted-sum ";
+			String scriptMemo = "";
 			int index = 0;
 			for(UserEvaluationDimension measure:measures) {
 				if(measure.getDimension().getPropKey()==null||measure.getDimension().getPropKey().trim().length()==0)
@@ -205,8 +204,9 @@ public class UserEvaluationController extends BaseController {
 				scriptMemo += dimension.getName()+ "*" + weight;
 				index++;
 			}
-			userEvaluation.setScript(script+"\n"+scriptMemo);
-		}
+			userEvaluation.setScript(script);
+			userEvaluation.setScriptMemo(scriptMemo);
+//		}
 		userEvaluationService.save(userEvaluation);
 	}
 	
@@ -258,6 +258,7 @@ public class UserEvaluationController extends BaseController {
 			node.put("propKey", rootEvaluation.getPropKey());
 			node.put("featured", rootEvaluation.isFeatured());
 			node.put("script", rootEvaluation.getScript());
+			node.put("scriptMemo", rootEvaluation.getScriptMemo());
 			nodes.add(node);
 			//递归遍历子节点
 			loadEvaluationAndDimensionCascade(rootEvaluation,nodes);
@@ -284,6 +285,7 @@ public class UserEvaluationController extends BaseController {
 			node.put("propKey", item.getPropKey());
 			node.put("featured", item.isFeatured());
 			node.put("script", item.getScript());
+			node.put("scriptMemo", item.getScriptMemo());
 			nodes.add(node);
 			loadEvaluationAndDimensionCascade(item,nodes);//递归遍历
 		}
@@ -455,6 +457,9 @@ public class UserEvaluationController extends BaseController {
 			return form(userEvaluation, model);
 		}
 		userEvaluationService.save(userEvaluation);
+		//递归更新父节点
+		if(userEvaluation.getParent()!=null && userEvaluation.getParent().getId()!=null)
+			saveWithScript(userEvaluation.getParent());
 		addMessage(redirectAttributes, "保存用户主观评价成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/userEvaluation/?repage";
 	}

@@ -77,9 +77,15 @@
 		<div class="control-group">
 			<label class="control-label">脚本：</label>
 			<div class="controls">
-				<form:input path="script" htmlEscape="false" class="input-xlarge "/>
+				<form:textarea path="script" htmlEscape="false" rows="3" class="input-xxlarge "/>
 			</div>
-		</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">可读脚本：</label>
+			<div class="controls">
+				<form:textarea path="scriptMemo" htmlEscape="false" rows="3" class="input-xxlarge "/>
+			</div>
+		</div>	
 		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">

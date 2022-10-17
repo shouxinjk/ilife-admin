@@ -134,7 +134,7 @@
 					${row.description}
 				</td>	
 				<td>
-					${fn:replace(row.script, "//", "<br/>//")}
+					${row.scriptMemo}
 				</td>				
 				<td>
 					<input type="text" value="${row.weight}" id="${row.type ne 'dimension'?'prop-':'dim-'}${row.id}" data-section="sec-${row.parent.id}" data-entry="sec-${row.parent.id}-${row.id}" style="width:60px;margin:0 auto;padding:0;height:20px;font-size:12px;"/>
