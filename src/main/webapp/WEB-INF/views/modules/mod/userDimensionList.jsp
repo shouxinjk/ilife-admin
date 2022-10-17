@@ -124,7 +124,7 @@
 				</td>	
 				<td>
 					<c:choose>
-					    <c:when test = "${row.featured == 'yes'}">
+					    <c:when test = "${row.featured == 'true'}">
 					       <span style="background-color:#8BCE2D;padding:2px 5px;color:#fff;">是</span>
 					    </c:when>		         			         			         			         
 					    <c:otherwise>
