@@ -319,6 +319,8 @@ public class ItemEvaluationController extends BaseController {
 		node.put("propKey", rootEvaluation.getPropKey());
 		node.put("featured", rootEvaluation.isFeatured());
 		node.put("script", rootEvaluation.getScript());
+		node.put("scriptType", rootEvaluation.getScriptType());
+		node.put("scriptMemo", rootEvaluation.getScriptMemo());
 		nodes.add(node);
 		//递归遍历子节点
 		loadEvaluationAndDimensionCascade(category,rootEvaluation,nodes);
@@ -422,6 +424,7 @@ public class ItemEvaluationController extends BaseController {
 		parentNode.setType("ignore");
 		parentNode.setPropKey("e"+Util.get6bitCode(parent));
 		parentNode.setScript("no-script");
+		parentNode.setScriptType("auto");
 		parentNode.setScriptMemo("");
 		itemEvaluationService.save(parentNode);
 		//query node
@@ -454,6 +457,7 @@ public class ItemEvaluationController extends BaseController {
 			evalNode.setFeatured(true);
 			evalNode.setType(types[k]);
 			evalNode.setScript(nodeScript[k]);
+			evalNode.setScriptType("auto");//默认为自动汇总
 			evalNode.setScriptMemo(nodeScript[k]);//默认节点与script相同
 			itemEvaluationService.save(evalNode);
 			i += 10;

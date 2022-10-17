@@ -405,6 +405,7 @@ public class ItemDimensionController extends BaseController {
 			node.put("propKey", rootDimension.getPropKey());
 			node.put("featured", rootDimension.isFeatured());
 			node.put("script", rootDimension.getScript());
+			node.put("scriptType", rootDimension.getScriptType());
 			node.put("scriptMemo", rootDimension.getScriptMemo());
 			nodes.add(node);
 		}
