@@ -105,6 +105,9 @@ public class UserDimensionController extends BaseController {
 			return form(userDimension, model);
 		}
 		userDimensionService.save(userDimension);
+		//更新脚本
+		if(userDimension.getId() != null && userDimension.getId().trim().length()>0)
+			saveWithScript(userDimension);
 		//递归更新父节点
 		if(userDimension.getParent()!=null && userDimension.getParent().getId()!=null)
 			saveWithScript(userDimension.getParent());
@@ -331,7 +334,7 @@ public class UserDimensionController extends BaseController {
 	private void saveWithScript(UserDimension userDimension) {
 		logger.error("try to save with script.[userDimension.id]"+userDimension.getId(),userDimension);
 		//预生成脚本：对于weighted-sum脚本，自动查询下级节点，并生成
-//		if(!userDimension.getIsNewRecord() && userDimension.getId()!=null && userDimension.getId().trim().length()>0 ) {
+		if( "auto".equalsIgnoreCase(userDimension.getScriptType()) ) {
 			//先获取属性列表
 			UserDimensionMeasure userDimensionMeasure = new UserDimensionMeasure();
 			userDimensionMeasure.setDimension(userDimension);
@@ -374,7 +377,7 @@ public class UserDimensionController extends BaseController {
 			}
 			userDimension.setScript(script);
 			userDimension.setScriptMemo(scriptMemo);
-//		}
+		}
 		userDimensionService.save(userDimension);
 	}
 	
@@ -412,6 +415,7 @@ public class UserDimensionController extends BaseController {
 			node.put("propKey", rootDimension.getPropKey());
 			node.put("featured", rootDimension.isFeatured());
 			node.put("script", rootDimension.getScript());
+			node.put("scriptType", rootDimension.getScriptType());
 			node.put("scriptMemo", rootDimension.getScriptMemo());
 			nodes.add(node);
 			//递归遍历子节点
@@ -439,6 +443,7 @@ public class UserDimensionController extends BaseController {
 			node.put("propKey", item.getPropKey());
 			node.put("featured", item.isFeatured());
 			node.put("script", item.getScript());
+			node.put("scriptType", item.getScriptType());
 			node.put("scriptMemo", item.getScriptMemo());
 			nodes.add(node);
 			loadDimensionAndMeasureCascade(item,nodes);//递归遍历

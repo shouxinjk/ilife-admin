@@ -107,7 +107,8 @@
 				<th>Key</th>
 				<th>特征</th>
 				<th>类型</th>
-				<th>脚本</th>
+				<th width="60">计算类型</th>
+				<th>计算脚本</th>
 				<th>占比%</th>
 				<th>描述</th>			
                 <!--th style="text-align:center;">排序</th-->
@@ -124,11 +125,31 @@
 					${row.propKey}
 				</td>				
 				<td>
-					${fns:getDictLabel(row.featured, 'yes_no', row.featured)}
+					<c:choose>
+					    <c:when test = "${row.featured == 'yes'}">
+					       <span style="background-color:#8BCE2D;padding:2px 5px;color:#fff;">是</span>
+					    </c:when>		         			         			         			         
+					    <c:otherwise>
+					    	<!-- ${fns:getDictLabel(row.featured, 'yes_no', row.featured)} -->
+					    </c:otherwise>
+					 </c:choose>	
 				</td>
 				<td>
 					${fns:getDictLabel(row.type, 'evaluation_type', row.type)}
 				</td>
+				<td>
+					<c:choose>
+					    <c:when test = "${row.scriptType == 'manual'}">
+					       <span style="background-color:#E85552;padding:2px 5px;color:#fff;">手动</span>
+					    </c:when>	
+					    <c:when test = "${row.scriptType == 'auto'}">
+					       <span style="background-color:#8BCE2D;padding:2px 5px;color:#fff;">自动</span>
+					    </c:when>		         			         			         			         
+					    <c:otherwise>
+					       <span style="background-color:#000;padding:2px 5px;color:#fff;">NA ${row.scriptType}</span>
+					    </c:otherwise>
+					 </c:choose>				
+				</td>				
 				<td>
 					${row.scriptMemo}
 				</td>				

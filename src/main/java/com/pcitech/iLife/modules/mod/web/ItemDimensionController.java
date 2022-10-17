@@ -340,7 +340,9 @@ public class ItemDimensionController extends BaseController {
 			rootDimension.setParent(rootParentDimension);
 			rootDimension.setName(category.getName());
 			rootDimension.setDescription("root dimension");
+			rootDimension.setPropKey("e"+Util.get6bitCode(category.getName()));
 			rootDimension.setScript("weighted-sum");
+			rootDimension.setScriptType("auto");
 			rootDimension.setScriptMemo("加权汇总");
 			rootDimension.setCategory(category);
 			rootDimension.setId(treeId);//默认顶级节点ID与category保持一致
@@ -432,6 +434,7 @@ public class ItemDimensionController extends BaseController {
 			node.put("propKey", item.getPropKey());
 			node.put("featured", item.isFeatured());
 			node.put("script", item.getScript());
+			node.put("scriptType", item.getScriptType());
 			node.put("scriptMemo", item.getScriptMemo());
 			nodes.add(node);
 			loadDimensionAndMeasureCascade(category,item,nodes);//递归遍历
@@ -510,6 +513,7 @@ public class ItemDimensionController extends BaseController {
 		}
 		if(itemDimension.getScript()==null||itemDimension.getScript().trim().length()==0) {
 			itemDimension.setScript("weighted-sum");
+			itemDimension.setScriptType("auto");
 			itemDimension.setScriptMemo("加权汇总");
 		}
 		//itemDimension.setFeatured(false);
@@ -526,8 +530,10 @@ public class ItemDimensionController extends BaseController {
 		if (!beanValidator(model, itemDimension)){
 			return form(itemDimension, model);
 		}
-		//itemDimension.setCategory(itemDimension.getParent().getCategory());//使用父目录的分类
-		saveWithScript(itemDimension);
+		itemDimensionService.save(itemDimension);
+		//更新脚本
+		if(itemDimension.getId() != null && itemDimension.getId().trim().length()>0)
+			saveWithScript(itemDimension);
 		//递归更新父节点
 		if(itemDimension.getParent()!=null && itemDimension.getParent().getId()!=null)
 			saveWithScript(itemDimension.getParent());
@@ -540,7 +546,7 @@ public class ItemDimensionController extends BaseController {
 	private void saveWithScript(ItemDimension itemDimension) {
 		logger.error("try to save with script.[itemDimension.id]"+itemDimension.getId(),itemDimension);
 		//预生成脚本：对于weighted-sum脚本，自动查询下级节点，并生成
-//		if(!itemDimension.getIsNewRecord() && itemDimension.getId()!=null && itemDimension.getId().trim().length()>0 ) {
+		if( "auto".equalsIgnoreCase(itemDimension.getScriptType()) ) {
 			//先获取属性列表
 			ItemDimensionMeasure itemDimensionMeasure = new ItemDimensionMeasure();
 			itemDimensionMeasure.setDimension(itemDimension);
@@ -583,7 +589,7 @@ public class ItemDimensionController extends BaseController {
 			}
 			itemDimension.setScript(script);
 			itemDimension.setScriptMemo(scriptMemo);
-//		}
+		}
 		itemDimensionService.save(itemDimension);
 	}
 	

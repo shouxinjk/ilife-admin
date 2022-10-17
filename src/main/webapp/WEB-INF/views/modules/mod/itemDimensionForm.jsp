@@ -62,9 +62,17 @@
 				</form:select>
 				<span class="help-inline"><font color="red">*</font> “是”代表特征评价</span>
 			</div>
-		</div>		
+		</div>	
 		<div class="control-group">
-			<label class="control-label">脚本：</label>
+			<label class="control-label">脚本类型:</label>
+			<div class="controls">
+				<form:select path="scriptType">
+					<form:options items="${fns:getDictList('script_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+			</div>
+		</div>				
+		<div class="control-group">
+			<label class="control-label">计算脚本：</label>
 			<div class="controls">
 				<form:textarea path="script" htmlEscape="false" rows="3" class="input-xxlarge "/>
 			</div>

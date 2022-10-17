@@ -162,7 +162,7 @@ public class ItemEvaluationController extends BaseController {
 	private void saveWithScript(ItemEvaluation itemEvaluation) {
 		logger.error("try to save with script.[itemEvaluation.id]"+itemEvaluation.getId(),itemEvaluation);
 		//预生成脚本：对于weighted-sum脚本，自动查询下级节点，并生成
-//		if(!itemEvaluation.getIsNewRecord() && itemEvaluation.getId()!=null && itemEvaluation.getId().trim().length()>0 ) {
+		if( "auto".equalsIgnoreCase(itemEvaluation.getScriptType()) ) {
 			//先获取关联的客观维度列表
 			ItemEvaluationDimension itemEvaluationDimension = new ItemEvaluationDimension();
 			itemEvaluationDimension.setEvaluation(itemEvaluation);
@@ -205,7 +205,7 @@ public class ItemEvaluationController extends BaseController {
 			}
 			itemEvaluation.setScript(script);
 			itemEvaluation.setScriptMemo(scriptMemo);
-//		}
+		}
 		itemEvaluationService.save(itemEvaluation);
 	}
 	
@@ -239,6 +239,7 @@ public class ItemEvaluationController extends BaseController {
 			rootDimension.setPropKey("e"+Util.get6bitCode(category.getName()));
 			rootDimension.setType("ignore");
 			rootDimension.setScript("no-script");
+			rootDimension.setScriptType("auto");
 			rootDimension.setScriptMemo("加权汇总");
 			itemEvaluationService.save(rootDimension);
 			root = itemEvaluationService.findList(q).get(0);
@@ -344,6 +345,7 @@ public class ItemEvaluationController extends BaseController {
 			node.put("propKey", item.getPropKey());
 			node.put("featured", item.isFeatured());
 			node.put("script", item.getScript());
+			node.put("scriptType", item.getScriptType());
 			node.put("scriptMemo", item.getScriptMemo());
 			nodes.add(node);
 			loadEvaluationAndDimensionCascade(category,item,nodes);//递归遍历
@@ -588,6 +590,9 @@ public class ItemEvaluationController extends BaseController {
 			return form(itemEvaluation, model);
 		}
 		itemEvaluationService.save(itemEvaluation);
+		//更新脚本
+		if(itemEvaluation.getId() != null && itemEvaluation.getId().trim().length()>0)
+			saveWithScript(itemEvaluation);
 		//递归更新父节点
 		if(itemEvaluation.getParent()!=null && itemEvaluation.getParent().getId()!=null)
 			saveWithScript(itemEvaluation.getParent());

@@ -27,6 +27,7 @@ public class UserDimension extends TreeEntity<UserDimension> {
 	private double weight;		// weight
 	private String type;		// type
 	private String script;		// script
+	private String scriptType="auto";		// 脚本类型：auto manual
 	private String scriptMemo;		// 可读脚本
 	private boolean featured;		// featured
 	private String sort;		// sort
@@ -102,6 +103,14 @@ public class UserDimension extends TreeEntity<UserDimension> {
 		this.script = script;
 	}
 	
+	public String getScriptType() {
+		return scriptType;
+	}
+
+	public void setScriptType(String scriptType) {
+		this.scriptType = scriptType;
+	}
+
 	public String getScriptMemo() {
 		return scriptMemo;
 	}

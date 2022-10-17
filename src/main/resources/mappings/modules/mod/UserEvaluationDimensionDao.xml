@@ -8,6 +8,7 @@
 		e.name AS "evaluation.name",
 		a.dimension_id AS "dimension.id",
 		d.name AS "dimension.name",
+		d.propKey AS "dimension.propKey",
 		a.name AS "name",
 		a.description AS "description",
 		a.weight AS "weight",

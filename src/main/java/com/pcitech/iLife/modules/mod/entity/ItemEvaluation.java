@@ -25,6 +25,7 @@ public class ItemEvaluation extends TreeEntity<ItemEvaluation> {
 	private double weight;		// weight
 	private String type;		// type
 	private String script;		// script：评价脚本
+	private String scriptType="auto";		// 脚本类型：auto manual
 	private String scriptMemo;		// 可读脚本
 	private boolean featured;		// featured
 	private ItemCategory category;		// category
@@ -111,6 +112,14 @@ public class ItemEvaluation extends TreeEntity<ItemEvaluation> {
 
 	public void setScript(String script) {
 		this.script = script;
+	}
+
+	public String getScriptType() {
+		return scriptType;
+	}
+
+	public void setScriptType(String scriptType) {
+		this.scriptType = scriptType;
 	}
 
 	public boolean isFeatured() {
