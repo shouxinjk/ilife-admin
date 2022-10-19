@@ -108,8 +108,10 @@ public class TagsController extends BaseController {
 	
 	@RequiresPermissions("mod:tags:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
-		model.addAttribute("message","请在左侧选择一个分类。");
-		return "treeData/none";
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
+		Tags tags = new Tags();
+		Page<Tags> page = tagsService.findPage(new Page<Tags>(request, response), tags); 
+		model.addAttribute("page", page);
+		return "modules/mod/tagsList";
 	}
 }

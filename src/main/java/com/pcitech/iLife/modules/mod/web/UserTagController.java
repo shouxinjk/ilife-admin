@@ -167,8 +167,10 @@ public class UserTagController extends BaseController {
 	
 	@RequiresPermissions("mod:userTag:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
-		model.addAttribute("message","请在左侧选择一个分类。");
-		return "treeData/none";
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
+		UserTag userTag = new UserTag();
+		Page<UserTag> page = userTagService.findPage(new Page<UserTag>(request, response), userTag); 
+		model.addAttribute("page", page);
+		return "modules/mod/userTagList";
 	}
 }

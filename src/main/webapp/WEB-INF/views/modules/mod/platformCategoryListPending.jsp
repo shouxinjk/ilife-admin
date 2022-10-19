@@ -146,13 +146,13 @@
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li>
-				<div><a id='btnCheckAll' href='#' style='color:blue;margin-left:10px;'>选中全部</a></div>
+				<div><a id='btnCheckAll' href='#' style='margin-left:10px;'>选中全部</a></div>
 			</li>
 			<li>
-	   			<div><a id='btnUncheckAll' href='#' style='color:blue;margin-left:10px;'>取消选择</a></div>  
+	   			<div><a id='btnUncheckAll' href='#' style='margin-left:10px;'>取消选择</a></div>  
 	   		</li>
 	   		<li>
-	    		<div><a id='btnBatchMapping' href='#' style='color:blue;margin-left:10px;'>批量类目映射</a></div>      
+	    		<div><a id='btnBatchMapping' href='#' style='margin-left:10px;'>批量类目映射</a></div>      
 			</li>
 			<li class="clearfix"></li>
 		</ul>
@@ -179,7 +179,7 @@
 					${platformCategory.name}
 				</a></td>
 				<td>${fns:getDictLabel(platformCategory.platform, 'platform', '-')}</td>
-				<td>${platformCategory.category.name} &nbsp;&nbsp;<a id='btnMapping${platformCategory.id}' data-id="${platformCategory.id}" href='#' style='color:blue;'>映射为选中类目</a></td>
+				<td>${platformCategory.category.name} &nbsp;&nbsp;<a id='btnMapping${platformCategory.id}' data-id="${platformCategory.id}" href='#' style=''>映射为选中类目</a></td>
 				<td>
 					<fmt:formatDate value="${platformCategory.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
