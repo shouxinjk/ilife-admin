@@ -67,7 +67,7 @@ public class Transfer {
 	
 	/**
 	 * 在新增及修改属性映射时推送到分析系统
-	 * 推送数据包括：categoryId、property、propertyId、propertyKey、vals分布、标注类型、计算类型
+	 * 推送数据包括：categoryId、property、propertyId、propertyKey、vals分布、标注类型、计算类型。操作类型 save
 	 * @param 
 	 */
     @Before("execution(* com.pcitech.iLife.modules.mod.service.PlatformPropertyService.save(..)) && args(platformProperty)")
@@ -78,6 +78,7 @@ public class Transfer {
 		Measure measure = measureService.get(platformProperty.getMeasure());//需要重新获取，得到propertyKey、vals分布、计算定义等信息
 		ItemCategory category = itemCategoryService.get(platformProperty.getCategory());//需要重新获取得到name信息
 		if(measure!=null && category!=null) {//仅在非空时推送
+			map.put("action", "save");//常量，表示更新属性设置
 			map.put("categoryId", category.getId());
 			map.put("categoryName", category.getName());//冗余发送，实际不会用到。可删除
 			map.put("property", platformProperty.getName()==null?"":platformProperty.getName().replace("๏", "").replace("○", ""));
@@ -103,6 +104,26 @@ public class Transfer {
 		}
     }
 	
+    /**
+	 * 在忽略属性时推送到分析系统：直接从fact中删除相应条目。并且不根据categoryId进行区分
+	 * 推送数据包括：categoryId、property、propertyId、propertyKey、操作类型delete
+	 * @param 
+	 */
+    @Before("execution(* com.pcitech.iLife.modules.mod.service.PlatformPropertyService.delete(..)) && args(platformProperty)")
+    public void deletePlatformProperty(PlatformProperty platformProperty) {
+        Gson gson = new Gson();
+		Map<String,Object> map = Maps.newHashMap();
+		//根据设置获取category
+		ItemCategory category = itemCategoryService.get(platformProperty.getCategory());//需要重新获取得到name信息
+		if(category!=null) {//仅在非空时推送
+			map.put("action", "delete");//常量，表示忽略属性设置
+			map.put("categoryId", category.getId());
+			map.put("categoryName", category.getName());//冗余发送，实际不会用到。可删除
+			map.put("property", platformProperty.getName()==null?"":platformProperty.getName().replace("๏", "").replace("○", ""));
+			map.put("platform", platformProperty.getPlatform());
+			platformPropertyLogger.info(gson.toJson(map));
+		}
+    }
 	/**
 	 * 在保存Occasion时推送消息
 	 * @param occasion
