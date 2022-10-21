@@ -46,7 +46,7 @@
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			<if test="category != null and category.id != null and category.id != ''">
-				AND a.category = #{category.id}
+				AND a.category = #{category.id} 
 			</if>
 			<if test="featured">
 				AND a.featured = 1

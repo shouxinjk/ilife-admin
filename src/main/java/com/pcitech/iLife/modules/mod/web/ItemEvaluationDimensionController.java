@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.adobe.xmp.impl.Utils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
@@ -38,6 +39,7 @@ import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.ItemDimensionService;
 import com.pcitech.iLife.modules.mod.service.ItemEvaluationDimensionService;
 import com.pcitech.iLife.modules.mod.service.ItemEvaluationService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 主观评价-维度Controller
@@ -115,7 +117,7 @@ public class ItemEvaluationDimensionController extends BaseController {
 		//获取该类目下所有客观评价节点
 		if(category!=null) {
 			ItemDimension q = new ItemDimension();
-			query.setCategory(category);
+			q.setCategory(category);
 			List<ItemDimension> dimensions =itemDimensionService.findList(q);
 			for (ItemDimension item:dimensions){
 				if(ids.indexOf(item.getId())<0)
@@ -156,6 +158,9 @@ public class ItemEvaluationDimensionController extends BaseController {
 			evaluationDimension.setCreateDate(new Date());
 			evaluationDimension.setUpdateDate(new Date());
 			evaluationDimension.setDescription("");
+			//evaluation和dimension唯一
+			evaluationDimension.setId(Util.md5(evaluationId+dimension.getId()));
+			evaluationDimension.setIsNewRecord(true);
 			try {
 				itemEvaluationDimensionService.save(evaluationDimension);
 			}catch(Exception ex) {
