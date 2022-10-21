@@ -2,11 +2,11 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>主观评价-维度管理</title>
+	<title>用户主观评价-维度管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+
 
 			//点击添加全部时提交
 			$("#btnAddSelected").click(function(){
@@ -30,7 +30,7 @@
 		        console.log("try to sending request.",data);
 		        $.ajax({
 		            type: "POST",
-		            url: "${ctx}/mod/itemEvaluationDimension/rest/batch",
+		            url: "${ctx}/mod/userEvaluationDimension/rest/batch",
 		            dataType:"json",
 		            data:JSON.stringify(data),
 		            headers:{
@@ -42,7 +42,7 @@
 		                	siiimpleToast.message('添加成功',{
 				                  position: 'bottom|center'
 				                });
-		                	window.location = "${ctx}/mod/itemEvaluation/?treeId=${categoryId}";
+		                	window.location = "${ctx}/mod/userEvaluation/?treeId=${categoryId}";
 		                }else{
 		                	siiimpleToast.message('添加客观评价出错',{
 				                  position: 'bottom|center'
@@ -61,6 +61,7 @@
 		        $("input[type='checkbox'].checkBox").removeAttr("checked"); 
 		    });			
 			
+			
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -72,9 +73,9 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/itemEvaluation/list?treeId=${categoryId}">主观评价列表</a></li>
-		<shiro:hasPermission name="mod:itemEvaluation:edit"><li><a href="${ctx}/mod/itemEvaluation/form?category.id=${categoryId}">主观评价添加</a></li></shiro:hasPermission>
-		<shiro:hasPermission name="mod:itemEvaluationDimension:edit"><li class="active"><a href="${ctx}/mod/itemEvaluationDimension/list2?evaluation.id=${evaluationId}&category.id=${categoryId}&categoryId=${categoryId}">添加客观评价节点</a></li></shiro:hasPermission>
+		<li><a href="${ctx}/mod/userEvaluation/list">主观评价列表</a></li>
+		<shiro:hasPermission name="mod:userEvaluation:edit"><li><a href="${ctx}/mod/userEvaluation/form">主观评价添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="mod:userEvaluationDimension:edit"><li class="active"><a href="${ctx}/mod/userEvaluationDimension/list2?evaluation.id=${evaluationId}">添加客观评价节点</a></li></shiro:hasPermission>		
 	</ul>
 	<div class="breadcrumb form-search">
 		<ul class="ul-form">
@@ -88,7 +89,6 @@
 		<thead>
 			<tr>
 				<th style="text-align:center" width="20">#</th><!-- 复选框 -->
-				<th>类目</th>
 				<th>名称</th>	
 				<th>KEY</th>	
 				<th>更新时间</th>
@@ -99,10 +99,7 @@
 			<tr>
 				<td>
 					<input type="checkbox" id="${dimension.id}" value="${dimension.id}" class="checkBox"/>
-				</td>											
-				<td>
-					${dimension.category.name}
-				</td>		
+				</td>													
 				<td>
 					${dimension.parent.name} ${dimension.name}
 				</td>	
