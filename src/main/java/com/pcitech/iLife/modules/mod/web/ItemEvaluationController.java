@@ -309,7 +309,7 @@ public class ItemEvaluationController extends BaseController {
 		}
 		//添加本级节点
 		JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(rootDimension);
-		node.put("type", "dimension");
+		node.put("type", rootEvaluation.getType());
 		node.put("id", rootEvaluation.getId());
 		node.put("parent", rootEvaluation.getParent());
 		node.put("category", category);
@@ -337,7 +337,7 @@ public class ItemEvaluationController extends BaseController {
 		for(ItemEvaluation item:evaluations) {
 			//添加本级节点
 			JSONObject node = new JSONObject();//(JSONObject)JSONObject.toJSON(item);
-			node.put("type", "evaluation");
+			node.put("type", item.getType());
 			node.put("id", item.getId());
 			node.put("parent", item.getParent());
 			node.put("category", category);

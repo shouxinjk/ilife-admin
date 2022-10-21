@@ -5,6 +5,7 @@
 	<sql id="userMeasureColumns">
 		a.id AS "id",
 		a.category AS "category.id",
+		c.name AS "category.name",
 		a.dimension AS "dimension",
 		a.property AS "property",
 		a.name AS "name",

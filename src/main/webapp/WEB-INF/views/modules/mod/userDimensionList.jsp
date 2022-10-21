@@ -91,8 +91,10 @@
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/mod/userDimension/list">客观评价列表</a></li>
 		<shiro:hasPermission name="mod:userDimension:edit"><li><a href="${ctx}/mod/userDimension/form">添加评价节点</a></li></shiro:hasPermission>
-		<shiro:hasPermission name="mod:userDimensionMeasure:edit"><li><a href="${ctx}/mod/userDimensionMeasure/form">添加属性节点</a></li></shiro:hasPermission>
-	</ul>
+		<!-- 
+		<shiro:hasPermission name="mod:userDimensionMeasure:edit"><li><a href="${ctx}/mod/userDimensionMeasure/list2?dimensionId=${dimensionId}&categoryId=${categoryId}">添加属性节点</a></li></shiro:hasPermission>
+	 	-->
+	</ul><br/>
 	<sys:message content="${message}"/>
 	<form id="listForm" method="post">
 	<input id="sxContextPath" name="sxContextPath" type="hidden" value="${ctx}"/>
@@ -166,7 +168,7 @@
 						<a href="${ctx}/mod/${row.type ne 'dimension'?'userDimensionMeasure':'userDimension'}/delete?id=${row.id}" onclick="return confirmx('确认要删除吗？', this.href)">删除</a>
 						<c:if test="${row.type eq 'dimension'}">
 							<a href="${ctx}/mod/userDimension/form?parent.id=${row.id}">添加节点</a>
-							<a href="${ctx}/mod/userDimensionMeasure/form?dimension.id=${row.id}">添加属性</a>
+							<a href="${ctx}/mod/userDimensionMeasure/list2?dimensionId=${row.id}">添加属性</a>
 						</c:if>
 					</shiro:hasPermission>							
 				</td>			

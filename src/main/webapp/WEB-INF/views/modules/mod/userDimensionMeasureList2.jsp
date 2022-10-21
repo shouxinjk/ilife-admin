@@ -2,11 +2,11 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>客观评价明细</title>
+	<title>用户客观评价-属性管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-
+			
 			//点击添加全部时提交
 			$("#btnAddSelected").click(function(){
 				// 获取所有已选中条目，如果没有则提示
@@ -29,7 +29,7 @@
 		        console.log("try to sending request.",data);
 		        $.ajax({
 		            type: "POST",
-		            url: "${ctx}/mod/itemDimensionMeasure/rest/batch",
+		            url: "${ctx}/mod/userDimensionMeasure/rest/batch",
 		            dataType:"json",
 		            data:JSON.stringify(data),
 		            headers:{
@@ -41,7 +41,7 @@
 		                	siiimpleToast.message('添加成功',{
 				                  position: 'bottom|center'
 				                });
-		                	window.location = "${ctx}/mod/itemDimension/?treeId=${categoryId}";
+		                	window.location = "${ctx}/mod/userDimension/?treeId=${categoryId}";
 		                }else{
 		                	siiimpleToast.message('添加属性出错',{
 				                  position: 'bottom|center'
@@ -58,8 +58,8 @@
 		    //取消选中
 		    $("#btnUncheckAll").click(function(){
 		        $("input[type='checkbox'].checkBox").removeAttr("checked"); 
-		    });
-						
+		    });			
+			
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -71,11 +71,9 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/itemDimension/list?treeId=${categoryId}">客观评价列表</a></li>
-		<shiro:hasPermission name="mod:itemDimension:edit"><li><a href="${ctx}/mod/itemDimension/form?category.id=${categoryId}">添加评价节点</a></li></shiro:hasPermission>
-		<!-- <shiro:hasPermission name="mod:itemDimensionMeasure:edit"><li><a href="${ctx}/mod/itemDimensionMeasure/form?category.id=${treeId}">添加属性节点</a></li></shiro:hasPermission> -->
-		<shiro:hasPermission name="mod:itemDimensionMeasure:edit"><li class="active"><a href="${ctx}/mod/itemDimensionMeasure/list2?dimensionId=${dimensionId}&categoryId=${categoryId}">添加属性节点</a></li></shiro:hasPermission>
-
+		<li><a href="${ctx}/mod/userDimension/list">客观评价列表</a></li>
+		<shiro:hasPermission name="mod:userDimension:edit"><li><a href="${ctx}/mod/userDimension/form">添加评价节点</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="mod:userDimensionMeasure:edit"><li class="active"><a href="${ctx}/mod/userDimensionMeasure/list2?dimensionId=${dimensionId}&categoryId=${categoryId}">添加属性节点</a></li></shiro:hasPermission>
 	</ul>
 	<div class="breadcrumb form-search">
 		<ul class="ul-form">
@@ -87,9 +85,8 @@
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
-			<tr>
+			<tr>				
 				<th style="text-align:center" width="20">#</th><!-- 复选框 -->
-				<th style="text-align:center" width="20">是否继承</th>
 				<th>类目</th>
 				<th>名称</th>	
 				<th>KEY</th>	
@@ -101,18 +98,7 @@
 			<tr>
 				<td>
 					<input type="checkbox" id="${measure.id}" value="${measure.id}" class="checkBox"/>
-				</td>					
-				<td width="80" style="text-align:center">
-			      <c:choose>
-			         <c:when test = "${measure.category.id == categoryId}">
-			            <span style="background-color:#E85552;padding:2px 5px;color:#fff;">๏</span>
-			         </c:when>			
-			         			         			         			         			         
-			         <c:otherwise>
-			            <span style="background-color:#8BCE2D;padding:2px 5px;color:#fff;">○</span>
-			         </c:otherwise>
-			      </c:choose>				
-				</td>						
+				</td>											
 				<td>
 					${measure.category.name}
 				</td>				
