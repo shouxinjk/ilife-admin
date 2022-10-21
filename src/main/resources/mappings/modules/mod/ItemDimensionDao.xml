@@ -5,6 +5,7 @@
 	<sql id="itemDimensionColumns">
 		a.id AS "id",
 		a.category AS "category.id",
+		c.name AS "category.name",
 		a.parent_id AS "parent.id",
 		p.name AS "parent.name",
 		a.parent_ids AS "parentIds",
@@ -26,6 +27,7 @@
 	
 	<sql id="itemDimensionJoins">
 		LEFT JOIN mod_item_dimension p ON p.id = a.parent_id
+		LEFT JOIN mod_item_category c ON c.id = a.category
 	</sql>
     
 	<select id="get" resultType="ItemDimension">

@@ -22,11 +22,13 @@
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
 		a.del_flag AS "delFlag",
-		a.category AS "category.id"
+		a.category AS "category.id",
+		c.name AS "category.name"
 	</sql>
 	
 	<sql id="itemEvaluationJoins">
 		LEFT JOIN mod_item_evaluation p ON p.id = a.parent_id	
+		LEFT JOIN mod_item_category c ON c.id = a.category
 	</sql>
     
 	<select id="get" resultType="ItemEvaluation">

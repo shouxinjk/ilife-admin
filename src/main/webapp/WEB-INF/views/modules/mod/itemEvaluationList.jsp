@@ -173,7 +173,7 @@
 						<a href="${ctx}/mod/${row.type eq 'dimension'?'itemEvaluationDimension':'itemEvaluation'}/delete?id=${row.id}" onclick="return confirmx('确认要删除吗？', this.href)">删除</a>
 						<c:if test="${row.type ne 'dimension'}">
 							<a href="${ctx}/mod/itemEvaluation/form?parent.id=${row.id}&category.id=${row.category.id}">添加下级</a>
-							<a href="${ctx}/mod/itemEvaluationDimension/form?evaluation.id=${row.id}&category.id=${row.category.id}">添加客观节点</a>
+							<a href="${ctx}/mod/itemEvaluationDimension/list2?evaluation.id=${row.id}&category.id=${row.category.id}&categoryId=${row.category.id}">添加客观评价节点</a>
 						</c:if>
 					</shiro:hasPermission>							
 				</td>			
