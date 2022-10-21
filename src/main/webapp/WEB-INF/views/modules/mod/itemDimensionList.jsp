@@ -123,9 +123,8 @@
 			<tr id="${row.id}" pId="${row.parent.id ne '1'?row.parent.id:'0'}">
 				<td>
 				<input type="hidden" name="ids" value="${row.id}"/>
-				<a href="${ctx}/mod/itemDimensionMeasure/list?dimensionId=${row.id}&categoryId=${treeId}&dimension.id=${row.id}&category.id=${treeId}">
 					${row.name}
-				</a></td>
+				</td>
 				<td>
 					${row.propKey}
 				</td>	

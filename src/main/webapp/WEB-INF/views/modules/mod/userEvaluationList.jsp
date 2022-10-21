@@ -158,7 +158,7 @@
 					${row.scriptMemo}
 				</td>				
 				<td>
-					<input type="text" value="${row.weight}" id="${row.type ne 'evaluation'?'dim-':'eval-'}${row.id}" data-section="sec-${row.parent.id}" data-entry="sec-${row.parent.id}-${row.id}" style="width:60px;margin:0 auto;padding:0;height:20px;font-size:12px;"/>
+					<input type="text" value="${row.weight}" id="${row.type eq 'dimension'?'dim-':'eval-'}${row.id}" data-section="sec-${row.parent.id}" data-entry="sec-${row.parent.id}-${row.id}" style="width:60px;margin:0 auto;padding:0;height:20px;font-size:12px;"/>
 				</td>
 				<td>
 					${row.description}
@@ -173,9 +173,9 @@
 				</td-->
 				<td>
 					<shiro:hasPermission name="mod:userEvaluation:edit">
-						<a href="${ctx}/mod/${row.type ne 'evaluation'?'userEvaluationDimension':'userEvaluation'}/form?id=${row.id}">修改</a>
-						<a href="${ctx}/mod/${row.type ne 'evaluation'?'userEvaluationDimension':'userEvaluation'}/delete?id=${row.id}" onclick="return confirmx('确认要删除吗？', this.href)">删除</a>
-						<c:if test="${row.type eq 'evaluation'}">
+						<a href="${ctx}/mod/${row.type eq 'dimension'?'userEvaluationDimension':'userEvaluation'}/form?id=${row.id}">修改</a>
+						<a href="${ctx}/mod/${row.type eq 'dimension'?'userEvaluationDimension':'userEvaluation'}/delete?id=${row.id}" onclick="return confirmx('确认要删除吗？', this.href)">删除</a>
+						<c:if test="${row.type ne 'dimension'}">
 							<a href="${ctx}/mod/userEvaluation/form?parent.id=${row.id}">添加下级</a>
 							<a href="${ctx}/mod/userEvaluationDimension/list2?evaluation.id=${row.id}&evaluationId=${row.id}">添加客观评价节点</a>
 						</c:if>

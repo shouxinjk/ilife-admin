@@ -130,7 +130,8 @@ public class ItemEvaluationController extends BaseController {
 			map.put("weight", itemEvaluation.getWeight());
 		}else if(id.startsWith("dim-")) {//对客观评价占比进行更新
 			ItemEvaluationDimension itemEvaluationDimension = itemEvaluationDimensionService.get(id.replace("dim-", ""));
-			parentEvaluation = itemEvaluationService.get(itemEvaluationDimension.getEvaluation().getId());//重要：需要重新获取，通过getParent获取的仅包含ID及name
+//			logger.error("load evalution-dimension by id.[id]"+id+" [itemEvaluationDimension]"+itemEvaluationDimension);
+//			parentEvaluation = itemEvaluationService.get(itemEvaluationDimension.getEvaluation());//重要：需要重新获取
 			itemEvaluationDimension.setWeight(weight);
 			itemEvaluationDimensionService.save(itemEvaluationDimension);
 			itemEvaluationDimension = itemEvaluationDimensionService.get(id.replace("dim-", ""));

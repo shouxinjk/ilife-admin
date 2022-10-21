@@ -118,9 +118,9 @@
 
 		<c:forEach items="${list}" var="row">
 			<tr id="${row.id}" pId="${row.parent.id ne '1'?row.parent.id:'0'}">
-				<td><a href="${ctx}/mod/itemEvaluationDimension/list?evaluationId=${row.id}&categoryId=${treeId}&evaluation.id=${row.id}&category.id=${treeId}">
+				<td>
 					${row.name}
-				</a></td>
+				</td>
 				<td>
 					${row.propKey}
 				</td>				
@@ -154,7 +154,7 @@
 					${row.scriptMemo}
 				</td>				
 				<td>
-					<input type="text" value="${row.weight}" id="${row.type ne 'evaluation'?'dim-':'eval-'}${row.id}" data-section="sec-${row.parent.id}" data-entry="sec-${row.parent.id}-${row.id}" style="width:60px;margin:0 auto;padding:0;height:20px;font-size:12px;"/>
+					<input type="text" value="${row.weight}" id="${row.type eq 'dimension'?'dim-':'eval-'}${row.id}" data-section="sec-${row.parent.id}" data-entry="sec-${row.parent.id}-${row.id}" style="width:60px;margin:0 auto;padding:0;height:20px;font-size:12px;"/>
 				</td>
 				<td>
 					${row.description}
