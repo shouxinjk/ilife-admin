@@ -116,7 +116,7 @@ public class BrokerSeedNotifyTask {
             			}
             		}
             		//**/
-            		if( stuff.get("url")!=null && stuff.get("url").toString().trim().length()>0 ) { //只要已经入库就直接发送
+            		if( stuff.get("itemKey")!=null && stuff.get("itemKey").toString().trim().length()>0 ) { //只要已经入库就直接发送
             			if(sendSuccessNotification(stuff)) {
                 			updateBrokerSeed(item.getKey());//更新broker-seed状态
                 		}
