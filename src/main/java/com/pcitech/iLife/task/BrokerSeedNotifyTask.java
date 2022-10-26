@@ -74,7 +74,7 @@ public class BrokerSeedNotifyTask {
         		//+ "doc.url != null "
         		//+ "and doc.status!=null and doc.status.parse==true and doc.status.`collect`==true and doc.status.cps==true and doc.status.profit==true and doc.status.notify==false "
         		+ "doc.status!=null and doc.status.notify==false "//直接查询所有未发送通知的内容，如果超过时间则直接发送失败信息
-        		+ "limit 10 "//限定为10条
+        		+ "limit 50 "//限定为10条
         		+ "return {itemKey:doc._key,url:doc.url,openid:doc.openid,createdOn:doc.timestamp.create,text:doc.text}";
 
         try {
@@ -99,6 +99,7 @@ public class BrokerSeedNotifyTask {
             		Date createdOn = sdf.parse(item.getProperties().get("createdOn").toString());//获取seed创建时间
             		long duration = System.currentTimeMillis() - createdOn.getTime();//得到时间间隔
             		String token = "";//判断是否已经生成token，并且优先使用达人自己的token
+            		/**
             		if(stuff.get("tokenBroker") !=null && stuff.get("tokenBroker").toString().trim().length()>2 ) {//已经生成达人token，立即发送通知
             			token = stuff.get("tokenBroker").toString().trim();
             			stuff.put("token", token);
@@ -108,12 +109,18 @@ public class BrokerSeedNotifyTask {
             		}else if(stuff.get("tokenSystem") !=null && stuff.get("tokenSystem").toString().trim().length()>2 ) {//达人口令尚未生成，但系统口令已经生成。最多等待3分钟
             			token = stuff.get("tokenSystem").toString().trim();
             			stuff.put("token", token);
-            			if(duration>1*60*1000) {//如果已经过了1分钟还是未生成达人token，则直接发送系统token
+            			if(duration>15*60*1000) {//如果已经过了1分钟还是未生成达人token，则直接发送系统token
                     		if(sendSuccessNotification(stuff)) {
                     			updateBrokerSeed(item.getProperties().get("itemKey").toString());//5，更新broker-seed状态
                     		}
             			}
-            		}else if(duration > 3*60*1000) {//如果超过3分钟，则告诉达人，找不到对应的商品。同时发送服务器通知信息给管理员
+            		}
+            		//**/
+            		if( stuff.get("url")!=null && stuff.get("url").toString().trim().length()>0 ) { //只要已经入库就直接发送
+            			if(sendSuccessNotification(stuff)) {
+                			updateBrokerSeed(item.getKey());//更新broker-seed状态
+                		}
+            		}else if(duration > 30*60*1000) {//如果超过3分钟，则告诉达人，找不到对应的商品。同时发送服务器通知信息给管理员
                 		if(sendFailNotification(seed)) {//注意参数是broker_seed
                 			updateBrokerSeed(seed.get("itemKey").toString());//5，更新broker-seed状态：出错后也会更新状态，直接跳过
                 		}

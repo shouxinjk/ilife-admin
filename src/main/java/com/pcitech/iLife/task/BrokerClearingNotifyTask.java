@@ -61,6 +61,13 @@ public class BrokerClearingNotifyTask {
     		for(Map<String,Object> item:items) {
     			if(item.get("broker_openid")==null || item.get("broker_openid").toString().length()==0) {
     				logger.error("Cannot send clearing notification to broker without openid.[json]"+item);
+    				
+    				//直接更新通知状态，更新清分记录的通知状态，避免重复发送
+    				Clearing clearing = clearingService.get(item.get("id").toString());
+    				clearing.setStatusNotify("done");
+    				clearing.setUpdateDate(new Date());
+    				clearingService.save(clearing);
+    				
     				continue;
     			}
     			//Date orderTime = new Date(Long.parseLong(item.get("order_time").toString()));

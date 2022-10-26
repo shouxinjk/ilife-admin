@@ -108,11 +108,13 @@ public class CpsLinkHelper {
 				}else {//用system达人的推广位计算链接
 					map.put("status", true);
 					map.put("broker", "system");
+					map.put("traceCode",traceCode.getCode());
 					map.put("description", "use system trace code.");
 				}
 			}else {//有则使用对应达人的推广位计算链接
 				map.put("status", true);
 				map.put("broker", brokerId);
+				map.put("traceCode",traceCode.getCode());
 				map.put("description", "use broker specified trace code.");
 			}
 			
@@ -137,7 +139,7 @@ public class CpsLinkHelper {
 					return map;
 				case "jd":
 					try {
-						PromotionCodeResp ret = jdHelper.getCpsLink(url,brokerId);//直接用brokerId作为ext1跟踪参数
+						PromotionCodeResp ret = jdHelper.getCpsLink(url,map.get("traceCode").toString());//使用traceCode作为跟踪参数
 						map.put("link", ret.getClickURL());
 						map.put("status", true);
 					}catch(Exception ex) {
