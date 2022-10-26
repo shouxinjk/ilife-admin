@@ -86,7 +86,8 @@ public class ItemDimensionController extends BaseController {
 		if(nodes !=null && nodes.size()>0)
 			return listDiemensionTreeForSunburstChart(categoryId,nodes.get(0).getId());
 		else {//否则尝试查询root.id=categoryId的记录
-			return listDiemensionTreeForSunburstChart(categoryId,categoryId);
+			//return listDiemensionTreeForSunburstChart(categoryId,categoryId);
+			return Lists.newArrayList();
 		}
 	}
 
