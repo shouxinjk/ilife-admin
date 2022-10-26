@@ -74,6 +74,8 @@ public class ItemDimensionController extends BaseController {
 	@RequestMapping(value = "rest/dim-tree-by-category", method = RequestMethod.GET)
 	public List<Map<String, Object>> listDiemensionTreeForSunburstChartByCategory(String categoryId) {
 		ItemCategory category = itemCategoryService.get(categoryId);
+		if(category == null || category.getId() == null || category.getId().trim().length()==0) //必须有category，否则返回空白列表
+			return Lists.newArrayList();
 		ItemDimension root = new ItemDimension(); 
 		root.setId("1");//指定该目录下ID为1的记录为根节点
 		ItemDimension q = new ItemDimension(); 
