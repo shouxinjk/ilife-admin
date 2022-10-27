@@ -57,6 +57,7 @@
 				<th>描述</th>
 				<th>入口URL</th>
 				<th>UserScript脚本</th>
+				<th>URL识别规则</th>
 				<th>排序</th>
 				<th>状态</th>
 				<th>更新时间</th>
@@ -84,6 +85,9 @@
 				<td>
 					${platformSource.userscript}
 				</td>
+				<td>
+					${platformSource.matchExpr}
+				</td>				
 				<td>
 					${platformSource.sort}
 				</td>

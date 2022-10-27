@@ -139,7 +139,8 @@ public class CpsLinkHelper {
 					return map;
 				case "jd":
 					try {
-						PromotionCodeResp ret = jdHelper.getCpsLink(url,map.get("traceCode").toString());//使用traceCode作为跟踪参数
+//						PromotionCodeResp ret = jdHelper.getCpsLink(url,map.get("traceCode").toString());//使用traceCode作为跟踪参数
+						PromotionCodeResp ret = jdHelper.getCpsLink(url,brokerId);//直接用brokerId作为ext1跟踪参数：注意：jdHelper方法内未传递traceCode，仅通过brokerId识别
 						map.put("link", ret.getClickURL());
 						map.put("status", true);
 					}catch(Exception ex) {

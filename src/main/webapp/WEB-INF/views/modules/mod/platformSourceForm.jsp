@@ -62,21 +62,27 @@
 		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">
-				<form:textarea path="description" htmlEscape="false" rows="4" maxlength="100" class="input-xxlarge "/>
+				<form:textarea path="description" htmlEscape="false" rows="4" maxlength="100" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">入口URL地址：</label>
 			<div class="controls">
-				<form:textarea path="url" htmlEscape="false" rows="4" maxlength="512" class="input-xxlarge "/>
+				<form:textarea path="url" htmlEscape="false" rows="4" maxlength="512" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">UserScript脚本地址：</label>
 			<div class="controls">
-				<form:textarea path="userscript" htmlEscape="false" rows="4" maxlength="512" class="input-xxlarge "/>
+				<form:textarea path="userscript" htmlEscape="false" rows="4" maxlength="512" class="input-xlarge "/>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">URL识别规则：</label>
+			<div class="controls">
+				<form:textarea path="matchExpr" htmlEscape="false" rows="4" maxlength="512" class="input-xlarge "/>
+			</div>
+		</div>		
 		<div class="control-group">
 			<label class="control-label">排序：</label>
 			<div class="controls">

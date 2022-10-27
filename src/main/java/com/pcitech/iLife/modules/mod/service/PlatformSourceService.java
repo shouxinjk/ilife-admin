@@ -5,6 +5,8 @@ package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +49,24 @@ public class PlatformSourceService extends CrudService<PlatformSourceDao, Platfo
 	@Transactional(readOnly = false)
 	public void delete(PlatformSource platformSource) {
 		super.delete(platformSource);
+	}
+	
+	public String getPlatformByUrl(String url) {
+		PlatformSource q = new PlatformSource();
+		List<PlatformSource> platformSources = dao.findList(q);
+		for(PlatformSource platformSource:platformSources) {
+			if(platformSource.getMatchExpr()==null || platformSource.getMatchExpr().trim().length()==0)
+				continue;
+			String[] urlExprs = platformSource.getMatchExpr().split(" ");
+			for(String expr: urlExprs) {
+				Pattern p=Pattern.compile(expr); 
+				Matcher m=p.matcher(url); 
+				while(m.find()) { //仅处理第一个即可
+					return platformSource.getPlatform();
+				}
+			}
+		}
+		return "notsupport";
 	}
 	
 }

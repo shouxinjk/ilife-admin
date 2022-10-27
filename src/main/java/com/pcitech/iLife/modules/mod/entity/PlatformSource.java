@@ -22,6 +22,7 @@ public class PlatformSource extends DataEntity<PlatformSource> {
 	private String description;		// 描述
 	private String url;		// 入口URL地址
 	private String userscript;		// UserScript脚本地址
+	private String matchExpr;		// 支持的URL规则
 	private String sort;		// 排序
 	private String status;		// 状态
 	
@@ -95,6 +96,14 @@ public class PlatformSource extends DataEntity<PlatformSource> {
 		this.userscript = userscript;
 	}
 	
+	public String getMatchExpr() {
+		return matchExpr;
+	}
+
+	public void setMatchExpr(String matchExpr) {
+		this.matchExpr = matchExpr;
+	}
+
 	public String getSort() {
 		return sort;
 	}
