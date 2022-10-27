@@ -54,6 +54,7 @@ public class Jd extends CrawlerBase {
 			}
 		}
 		
+		String tipMsg = "";//即时返回通知的描述文字: 店返:xxx 团返:xxx 
 		String brokerId = "system";//默认达人为system
 	
 		//准备doc
@@ -122,8 +123,14 @@ public class Jd extends CrawlerBase {
 					profit.put("rate", good.getCommisionRatioWl());//是百分比
 					//直接计算佣金分配：根据佣金分配scheme TODO 注意：当前未考虑类目
 					Map<String, Object> profit3party = calcProfit2Party.getProfit2Party("pdd", good.getCid3Name(), good.getWlUnitPrice(), amount);
-					if(profit3party.get("order")!=null&&profit3party.get("order").toString().trim().length()>0)profit.put("order", Double.parseDouble(profit3party.get("order").toString()));
-					if(profit3party.get("team")!=null&&profit3party.get("team").toString().trim().length()>0)profit.put("team", Double.parseDouble(profit3party.get("team").toString()));
+					if(profit3party.get("order")!=null&&profit3party.get("order").toString().trim().length()>0) {
+						tipMsg +="店返 ￥"+profit3party.get("order");
+						profit.put("order", Double.parseDouble(profit3party.get("order").toString()));
+					}
+					if(profit3party.get("team")!=null&&profit3party.get("team").toString().trim().length()>0) {
+						tipMsg +="团返 ￥"+profit3party.get("team");
+						profit.put("team", Double.parseDouble(profit3party.get("team").toString()));
+					}
 					if(profit3party.get("credit")!=null&&profit3party.get("credit").toString().trim().length()>0)profit.put("credit", Double.parseDouble(profit3party.get("credit").toString()));
 					profit.put("type", "3-party");//计算完成后直接设置为3-party
 					
@@ -178,6 +185,9 @@ public class Jd extends CrawlerBase {
 		    		//完成后关闭arangoDbClient
 		    		arangoClient.close();
 
+		    		//临时修改返回数据，将佣金信息作为摘要提示
+		    		tipMsg += " 点击查看详情";
+		    		doc.getProperties().put("summary", tipMsg);
 		    		result.put("success", true);
 		    		Map<String,Object> data = doc.getProperties();
 		    		data.put("itemKey", itemKey);

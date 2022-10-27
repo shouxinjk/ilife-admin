@@ -209,6 +209,12 @@ public class PlatformCategoryController extends BaseController {
 	@RequestMapping(value = "rest/mapping", method = RequestMethod.POST)
 	public JSONObject mapping(@RequestBody JSONObject json,HttpServletRequest request, HttpServletResponse response, Model model) {
 		JSONObject result = new JSONObject();
+		result.put("success", false);
+		 if(json.getString("platform")==null) {
+			 result.put("msg", "platform is mandatory");
+			 return result;
+		 }
+
 		PlatformCategory query = new PlatformCategory();
 		query.setId(Util.md5(json.getString("platform")+json.getString("name")));//采用platform+name唯一识别
 		query.setName(json.getString("name"));
