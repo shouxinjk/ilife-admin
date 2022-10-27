@@ -62,9 +62,14 @@ public class Pdd extends CrawlerBase {
 		try {
 			GoodsZsUnitGenerateResponse response = pddHelper.generateCpsLinksByUrl(brokerId, url);
 			cpsUrl = response.getMobileUrl();
+			if(cpsUrl == null) {
+				result.put("msg", "failed parse url.");
+				return result;
+			}
 		} catch (Exception e) {
 			logger.error("failed get cps link by url.[url]"+url,e);
 			result.put("msg", "failed parse url.");
+			return result;
 		}//默认为system
 		
 		//step 2: 根据goods_sign获取商品详情并入库
@@ -239,6 +244,7 @@ public class Pdd extends CrawlerBase {
 	    		data.put("itemKey", itemKey);
 	    		result.put("data",data );//将properties返回
 			}else {
+				result.put("type", "nocps");
 				logger.warn("cannot get item detail.");
 			}
 		}catch(Exception ex) {

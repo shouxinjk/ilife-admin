@@ -33,10 +33,7 @@ public class CrawlerUtil {
 	private String getType(String url) {
 		String type = platformSourceService.getPlatformByUrl(url);
 		logger.debug("got url type.[type]"+type,url);
-		if("notsupport".equalsIgnoreCase(type))
-			return "jd";
-		else
-			return type;
+		return type;
 	}
 	
 }

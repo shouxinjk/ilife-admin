@@ -50,6 +50,7 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.cps.PddHelper;
+import com.pcitech.iLife.cps.crawler.Crawler;
 import com.pcitech.iLife.cps.crawler.CrawlerUtil;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Board;
@@ -159,9 +160,24 @@ public class CpsRestApiController extends BaseController {
 			result.put("msg", "url is mandatory");
 			return result;
 		}
-		return crawlerUtil
-				.getCrawler(json.getString("url"))
-				.enhouse(json.getString("url"), json.getString("openid"));
+		Crawler crawler = crawlerUtil.getCrawler(json.getString("url"));
+		if(crawler == null) {
+			//存入达人链接数据库，等待手动处理
+			insertBrokerSeed(json.getString("openid"),"url",json.getString("url"),json.getString("url"),false);
+			//推送通知消息
+			sendWeworkMsg("达人商品未能自动上架", "发送后未能自动采集，请前往查看", "https://www.biglistoflittlethings.com/static/logo/distributor/ilife.png", json.getString("url"));
+			result.put("msg", "not support yet.");
+			return result;
+		}
+		result = crawler.enhouse(json.getString("url"), json.getString("openid"));
+		if("nocps".equalsIgnoreCase(result.getString("type"))) {
+			//存入达人链接数据库，等待手动处理
+			insertBrokerSeed(json.getString("openid"),"url",json.getString("url"),json.getString("url"),false);
+			//推送通知消息
+			sendWeworkMsg("非CPS商品上架", "非导购商品信息未能自动采集，请前往查看", "https://www.biglistoflittlethings.com/static/logo/distributor/ilife.png", json.getString("url"));
+			
+		}
+		return result;
 	}
 	
 	
@@ -181,6 +197,8 @@ public class CpsRestApiController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "pdd", method = RequestMethod.POST)
 	public JSONObject getPddItem(@RequestBody JSONObject json) {
+		return autoEnhouse(json);
+		/**
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		
@@ -376,6 +394,7 @@ public class CpsRestApiController extends BaseController {
 		}
 		
 		return result;
+		//**/
 	}
 	
 
@@ -471,6 +490,65 @@ public class CpsRestApiController extends BaseController {
 		}catch(Exception ex) {
 			return d;
 		}
-}	
-	
+    }	
+    
+	//存储提交的URL到种子库，便于手动入库处理
+	public void insertBrokerSeed(String openid,String type, String data, String text, boolean notifyStatus) {
+		//更新到arangodb
+		arangoClient = new ArangoDbClient(host,port,username,password,database);
+
+	  //组织默认broker-seed文档
+		BaseDocument doc = new BaseDocument();
+		Map<String,Object> statusNode = new HashMap<String,Object>();
+		statusNode.put("parse", false);
+		statusNode.put("collect", false);
+		statusNode.put("cps", false);
+		statusNode.put("profit", false);
+		statusNode.put("notify", notifyStatus);
+		Map<String,Object> timestampNode = new HashMap<String,Object>();
+		timestampNode.put("create", new Date());	
+		
+		//doc.setKey(Util.md5(text));
+		doc.getProperties().put("openid", openid);
+		doc.getProperties().put("type", type);
+		doc.getProperties().put("data", data);
+		doc.getProperties().put("status", statusNode);
+		doc.getProperties().put("timestamp", timestampNode);
+		doc.getProperties().put("text", text);
+		
+		//更新doc
+		logger.debug("try to upsert seed item.[url]"+data,JSON.toJSONString(doc));
+		arangoClient.insert("my_stuff", doc); 
+		//完成后关闭arangoDbClient
+		arangoClient.close();
+  }
+	  //发送企业微信通知消息
+	  //直接用卡片方式组织
+	  public void sendWeworkMsg(String title,String description,String picUrl,String url) {
+			//组装模板消息
+			JSONObject json = new JSONObject();
+			json.put("msgtype", "news");
+			JSONObject jsonArticle = new JSONObject();
+			jsonArticle.put("title" , title);
+			jsonArticle.put("description" , description);
+			jsonArticle.put("url" , url);
+			jsonArticle.put("picurl" , picUrl);
+
+			JSONArray jsonArticles = new JSONArray();
+			jsonArticles.add(jsonArticle);
+			JSONObject jsonNews = new JSONObject();
+			jsonNews.put("articles", jsonArticles);
+			json.put("news", jsonNews);
+			
+			logger.debug("try to send cp msg. ",json);
+			
+	   	    //准备发起HTTP请求：设置data server Authorization
+		    Map<String,String> header = new HashMap<String,String>();
+		    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
+		    
+			//发送到企业微信
+			HttpClientHelper.getInstance().post(
+					Global.getConfig("wework.templateMessenge")+"/notify-cp-company-broker", 
+					json,header);
+	  }
 }

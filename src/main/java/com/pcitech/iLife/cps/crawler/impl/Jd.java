@@ -194,6 +194,7 @@ public class Jd extends CrawlerBase {
 		    		result.put("data",data );//将properties返回
 				}else {
 					logger.warn("查询详情失败。【SKU】"+skuId+"【URL】"+url);
+					result.put("type", "nocps");
 				}
 				break;
 			} 
