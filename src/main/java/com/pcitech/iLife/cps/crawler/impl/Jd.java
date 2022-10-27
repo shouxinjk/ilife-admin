@@ -39,6 +39,7 @@ public class Jd extends CrawlerBase {
     
 	@Override
 	public JSONObject enhouse(String url, String openid) {
+		logger.debug("try crawl item by url.",url);
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		
@@ -156,13 +157,13 @@ public class Jd extends CrawlerBase {
 							meta.put("categoryName", platformCategoryMapping.getCategory().getName());
 							doc.getProperties().put("meta", meta);	
 						}
-					}else {
+					}/**else {
 						//检查是否支持无类目映射入库
 						if(!"true".equalsIgnoreCase(Global.getConfig("sx.enhouseWithoutCategoryMapping"))) {
 							result.put("msg", "no category mapping");
 							return result;
 						}
-					}
+					}//**/
 					
 					//时间戳更新
 					Map<String,Object> timestamp = new HashMap<String,Object>();

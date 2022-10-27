@@ -50,6 +50,7 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.cps.PddHelper;
+import com.pcitech.iLife.cps.crawler.CrawlerUtil;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.Broker;
@@ -67,6 +68,7 @@ import com.pcitech.iLife.modules.mod.service.MeasureService;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.OccasionService;
 import com.pcitech.iLife.modules.mod.service.PlatformCategoryService;
+import com.pcitech.iLife.modules.mod.service.PlatformSourceService;
 import com.pcitech.iLife.modules.mod.service.ViewTemplateService;
 import com.pcitech.iLife.modules.ope.entity.Performance;
 import com.pcitech.iLife.modules.ope.service.PerformanceService;
@@ -114,6 +116,54 @@ public class CpsRestApiController extends BaseController {
     
     @Autowired
     PddHelper pddHelper;
+    @Autowired
+    PlatformSourceService platformSourceService;
+    @Autowired
+    CrawlerUtil crawlerUtil;
+	
+    /**
+     * 检查URL是否支持自动采集入库
+     * @param json
+     * @return
+     */
+	@ResponseBody
+	@RequestMapping(value = "support", method = RequestMethod.POST)
+	public JSONObject checkUrlSupport(@RequestBody JSONObject json) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(json.getString("url")==null || json.getString("url").trim().length()==0) {
+			result.put("msg", "url is mandatory");
+			return result;
+		}
+		String platform = platformSourceService.getPlatformByUrl(json.getString("url"));
+		if("unsupport".equalsIgnoreCase(platform)) {
+			result.put("platform", platform);
+		}else {
+			result.put("success", true);
+			result.put("platform", platform);
+		}
+		return result;
+	}
+	
+	/**
+	 * 根据URL自动采集商品信息入库。对于不能采集或采集失败的情况返回success=false
+	 * @param json
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "enhouse", method = RequestMethod.POST)
+	public JSONObject autoEnhouse(@RequestBody JSONObject json) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(json.getString("url")==null || json.getString("url").trim().length()==0) {
+			result.put("msg", "url is mandatory");
+			return result;
+		}
+		return crawlerUtil
+				.getCrawler(json.getString("url"))
+				.enhouse(json.getString("url"), json.getString("openid"));
+	}
+	
 	
 	/**
 	 * 拼多多商品上架
@@ -127,6 +177,7 @@ public class CpsRestApiController extends BaseController {
 	 * 2，根据goods_sign获取商品详情，并入库
 	 * 3，如果为非推广商品，则根据openid查询达人信息并返回
 	 */
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "pdd", method = RequestMethod.POST)
 	public JSONObject getPddItem(@RequestBody JSONObject json) {
@@ -339,6 +390,7 @@ public class CpsRestApiController extends BaseController {
 	 * TODO 通过API检查商品。当前无API权限。
 	 * 直接返回达人信息完事
 	 */
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "taobao", method = RequestMethod.POST)
 	public JSONObject getTaobaoItem(@RequestBody JSONObject json) {
@@ -379,6 +431,7 @@ public class CpsRestApiController extends BaseController {
 	 * TODO 通过API检查商品。当前无API权限。
 	 * 直接返回达人信息完事
 	 */
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "manual", method = RequestMethod.POST)
 	public JSONObject enhouseItem(@RequestBody JSONObject json) {

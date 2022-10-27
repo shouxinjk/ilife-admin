@@ -1,5 +1,7 @@
 package com.pcitech.iLife.cps.crawler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +10,9 @@ import com.pcitech.iLife.cps.crawler.impl.Pdd;
 import com.pcitech.iLife.modules.mod.service.PlatformSourceService;
 
 @Service
-public class CrawlerFactory {
+public class CrawlerUtil {
+	private static Logger logger = LoggerFactory.getLogger(CrawlerUtil.class);
+	
     @Autowired  PlatformSourceService platformSourceService;
     
 	@Autowired Pdd pdd;
@@ -28,6 +32,7 @@ public class CrawlerFactory {
 	//根据url判定类型
 	private String getType(String url) {
 		String type = platformSourceService.getPlatformByUrl(url);
+		logger.debug("got url type.[type]"+type,url);
 		if("notsupport".equalsIgnoreCase(type))
 			return "jd";
 		else
