@@ -93,9 +93,11 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="userPerformance">
 			<tr>
-				<td><a href="${ctx}/ope/userPerformance/form?id=${userPerformance.id}">
-					${userPerformance.measure.name}
-				</a></td>
+				<td>
+					<a href="${ctx}/mod/userMeasure/form?id=${userPerformance.measure.id}">
+						${userPerformance.measure.name}
+					</a>				
+				</td>
 				<td>
 					${userPerformance.originalValue}
 				</td>

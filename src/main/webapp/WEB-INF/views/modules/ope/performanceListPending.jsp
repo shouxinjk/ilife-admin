@@ -101,7 +101,9 @@
 					${performance.category.name}
 				</td>			
 				<td>
-					${performance.measure.name}
+					<a href="${ctx}/mod/measure/form?id=${performance.measure.id}&category.id=${performance.category.id}">
+						${performance.measure.name}
+					</a>
 				</td>
 				<td>
 					${performance.originalValue}
