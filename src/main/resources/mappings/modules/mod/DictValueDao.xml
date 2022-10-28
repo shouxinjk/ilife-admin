@@ -60,7 +60,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.update_date DESC
+				ORDER BY a.category_id,a.dict_id,a.update_date DESC
 			</otherwise>
 		</choose>
 	</select>
@@ -78,7 +78,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.update_date DESC
+				ORDER BY a.category_id,a.dict_id,a.update_date DESC
 			</otherwise>
 		</choose>
 	</select>

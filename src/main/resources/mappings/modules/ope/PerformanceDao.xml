@@ -123,7 +123,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.update_date DESC
+				ORDER BY a.category_id,a.measure_id,a.update_date desc
 			</otherwise>
 		</choose>
 	</select>
@@ -150,7 +150,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.update_date DESC
+				ORDER BY a.category_id,a.measure_id,a.update_date desc
 			</otherwise>
 		</choose>
 	</select>

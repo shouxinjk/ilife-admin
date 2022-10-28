@@ -77,6 +77,14 @@
 				</otherwise>
 			</choose>		
 		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.platform,a.update_date DESC
+			</otherwise>
+		</choose>		
 	</select>
 	
 	<select id="findAllList" resultType="PlatformCategory">
@@ -87,6 +95,14 @@
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.platform,a.update_date DESC
+			</otherwise>
+		</choose>		
 	</select>
 	
 	<select id="findByParentIdsLike" resultType="PlatformCategory">
