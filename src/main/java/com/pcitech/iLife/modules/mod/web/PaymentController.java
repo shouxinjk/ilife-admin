@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
@@ -31,6 +32,7 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.entity.Payment;
+import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.mod.service.PaymentService;
 import com.pcitech.iLife.util.Util;
 
@@ -45,6 +47,8 @@ public class PaymentController extends BaseController {
 
 	@Autowired
 	private PaymentService paymentService;
+	@Autowired
+	private BrokerService brokerService;
 	
 	@ModelAttribute
 	public Payment get(@RequestParam(required=false) String id) {
@@ -123,8 +127,10 @@ public class PaymentController extends BaseController {
 	@RequestMapping(value = "rest/payments/byBroker/{brokerId}", method = RequestMethod.GET)
 	public List<Payment> listPaymentsByBrokerId(@PathVariable String brokerId) {
 		Payment payment = new Payment();
-		Broker broker = new Broker();
-		broker.setId(brokerId);
+		Broker broker = brokerService.get(brokerId);
+		if(broker==null||broker.getId()==null||broker.getId().trim().length()==0)
+			return Lists.newArrayList();
+		payment.setBroker(broker);
 		return paymentService.findList(payment);
 	}
 
