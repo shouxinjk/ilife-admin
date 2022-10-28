@@ -52,7 +52,7 @@ public class PublisherPerformanceNotifyTask{
     		
     		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		
-    		int days = 365;//查询当天的效益。执行时间减去24小时。由于活跃度不高，调整为当月数据
+    		int days = 7;//查询当天的效益。执行时间减去24小时。由于活跃度不高，调整为当月数据
     		List<String> pendingPublisherIds = brokerService.findNotifyCandidatePublisherIdList(days);
     		
     		//查询得到排行数据
@@ -61,7 +61,7 @@ public class PublisherPerformanceNotifyTask{
     		countParams.put("total", 100);//TODO 注意这里是固定设置。设置返回条数：默认取100条，需要同时完成额外奖励
     		List<Map<String,Object>> rankList = brokerService.countPublisherReads(countParams);
     		
-    		boolean test=false;
+    		boolean test=true;
     		//先完成奖励：注意此处不严谨，仅根据排行前100进行奖励
     		Map<String,Integer> rewardMap = new HashMap<String,Integer>();//记录当前接收通知达人是否有奖励
     		if(!test) {
