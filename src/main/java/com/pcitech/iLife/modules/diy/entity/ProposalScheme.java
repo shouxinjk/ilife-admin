@@ -33,7 +33,6 @@ public class ProposalScheme extends DataEntity<ProposalScheme> {
 		super(id);
 	}
 
-	@Length(min=1, max=50, message="名称长度必须介于 1 和 50 之间")
 	public String getName() {
 		return name;
 	}
@@ -42,7 +41,6 @@ public class ProposalScheme extends DataEntity<ProposalScheme> {
 		this.name = name;
 	}
 	
-	@Length(min=0, max=512, message="描述长度必须介于 0 和 512 之间")
 	public String getDescription() {
 		return description;
 	}
@@ -51,7 +49,6 @@ public class ProposalScheme extends DataEntity<ProposalScheme> {
 		this.description = description;
 	}
 	
-	@Length(min=1, max=20, message="类型长度必须介于 1 和 20 之间")
 	public String getType() {
 		return type;
 	}
@@ -68,7 +65,6 @@ public class ProposalScheme extends DataEntity<ProposalScheme> {
 		this.form = form;
 	}
 	
-	@Length(min=0, max=50, message="类别长度必须介于 0 和 50 之间")
 	public String getCategory() {
 		return category;
 	}
@@ -85,7 +81,6 @@ public class ProposalScheme extends DataEntity<ProposalScheme> {
 		this.broker = broker;
 	}
 	
-	@Length(min=1, max=1, message="状态长度必须介于 1 和 1 之间")
 	public String getStatus() {
 		return status;
 	}
