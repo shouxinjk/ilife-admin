@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.diy.dao.GuideBookDao">
+    
+	<sql id="guideBookColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.alias AS "alias",
+		a.origin AS "origin",
+		a.revision AS "revision",
+		a.tags AS "tags",
+		a.description AS "description",
+		a.type AS "type",
+		a.url AS "url",
+		a.status AS "status",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="guideBookJoins">
+	</sql>
+    
+	<select id="get" resultType="GuideBook">
+		SELECT 
+			<include refid="guideBookColumns"/>
+		FROM mod_guide_book a
+		<include refid="guideBookJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="GuideBook">
+		SELECT 
+			<include refid="guideBookColumns"/>
+		FROM mod_guide_book a
+		<include refid="guideBookJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="GuideBook">
+		SELECT 
+			<include refid="guideBookColumns"/>
+		FROM mod_guide_book a
+		<include refid="guideBookJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_guide_book(
+			id,
+			name,
+			alias,
+			origin,
+			revision,
+			tags,
+			description,
+			type,
+			url,
+			status,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{alias},
+			#{origin},
+			#{revision},
+			#{tags},
+			#{description},
+			#{type},
+			#{url},
+			#{status},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_guide_book SET 	
+			name = #{name},
+			alias = #{alias},
+			origin = #{origin},
+			revision = #{revision},
+			tags = #{tags},
+			description = #{description},
+			type = #{type},
+			url = #{url},
+			status = #{status},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_guide_book SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 查询可添加到指定ProposalScheme的指南列表。参数：schemeId -->
+	<select id="findPendingListForProposal" resultType="GuideBook">
+		SELECT 
+			<include refid="guideBookColumns"/>
+		FROM mod_guide_book a
+		<include refid="guideBookJoins"/>
+		<where>
+			a.del_flag = 0
+			AND a.id not in ( select guide_id from int_guide_book_proposal WHERE proposal_id=#{schemeId} and del_flag=0 )
+		</where>
+	</select>	
+	
+</mapper>

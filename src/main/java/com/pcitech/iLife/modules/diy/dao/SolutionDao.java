@@ -1,20 +1,18 @@
 /**
  * Copyright &copy; 2012-2016 <a href="https://github.com/thinkgem/iLife">iLife</a> All rights reserved.
  */
-package com.pcitech.iLife.modules.ope.dao;
-
-import java.util.List;
+package com.pcitech.iLife.modules.diy.dao;
 
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
-import com.pcitech.iLife.modules.ope.entity.Item;
+import com.pcitech.iLife.modules.diy.entity.Solution;
 
 /**
- * 商品DAO接口
+ * 个性定制方案DAO接口
  * @author chenci
- * @version 2017-09-28
+ * @version 2022-10-29
  */
 @MyBatisDao
-public interface ItemDao extends CrudDao<Item> {
-	public List<Item> findPendingListForGuideTerm(String termId);
+public interface SolutionDao extends CrudDao<Solution> {
+	
 }

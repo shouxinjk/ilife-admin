@@ -22,6 +22,10 @@ import com.pcitech.iLife.modules.ope.dao.ItemDao;
 @Transactional(readOnly = true)
 public class ItemService extends CrudService<ItemDao, Item> {
 
+	public List<Item> findPendingListForGuideTerm(String termId){
+		return dao.findPendingListForGuideTerm(termId);
+	}
+	
 	public Item get(String id) {
 		return super.get(id);
 	}

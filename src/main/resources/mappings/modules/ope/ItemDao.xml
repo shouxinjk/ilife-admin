@@ -171,4 +171,16 @@
 		WHERE id = #{id}
 	</update>
 	
+	<!-- 查询可添加到指定GuideTerm的条目列表。参数：termId -->
+	<select id="findPendingListForGuideTerm" resultType="Item">
+		SELECT 
+			<include refid="itemColumns"/>
+		FROM ope_item a
+		<include refid="itemJoins"/>
+		<where>
+			a.del_flag = 0
+			AND a.id not in ( select item_id from int_guide_term_item WHERE term_id=#{termId} and del_flag=0 )
+		</where>
+	</select>	
+	
 </mapper>

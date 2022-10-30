@@ -86,6 +86,15 @@ public class ItemController extends BaseController {
 		}
 		return "redirect:http://www.shouxinjk.net/list-admin/index.html?classify="+treeId+categoryName+brokerId;//直接跳转到商品标注界面，需要保留header显示，提供搜索及排序功能
 	}
+	
+	@RequiresPermissions("ope:item:view")
+	@RequestMapping(value = {"list2"})
+	public String listPendingItemsForGuideTerm(String termId,HttpServletRequest request, HttpServletResponse response, Model model) {
+		List<Item> items = itemService.findPendingListForGuideTerm(termId);
+		model.addAttribute("items", items);
+		model.addAttribute("termId", termId);
+		return "modules/ope/itemList2";
+	}
 
 	@RequiresPermissions("ope:item:view")
 	@RequestMapping(value = "form")
