@@ -37,14 +37,15 @@
 			<label class="control-label">所属主题：</label>
 			<div class="controls">
 				 <sys:treeselect id="scheme" name="scheme.id" value="${solution.scheme.id}" labelName="scheme.name" labelValue="${solution.scheme.name}"
-					title="定制主题" url="/diy/proposalScheme/listData"  cssClass="required"/>					
+					title="定制主题" url="/diy/proposalScheme/listData" />	
+				 <span class="help-inline"><font color="red">*</font> </span>				
 			</div>			
 		</div>
 		<div class="control-group">
 			<label class="control-label">引用方案：</label>
 			<div class="controls">
 				 <sys:treeselect id="refer" name="refer.id" value="${solution.refer.id}" labelName="refer.name" labelValue="${solution.refer.name}"
-					title="个性化方案" url="/diy/solution/listData"  cssClass="required"/>					
+					title="个性化方案" url="/diy/solution/listData" />					
 			</div>			
 		</div>
 		<div class="control-group">
