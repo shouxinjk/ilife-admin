@@ -60,7 +60,7 @@
 			<label class="control-label">表单：</label>
 			<div class="controls">
 				 <sys:treeselect id="form" name="form.id" value="${proposalScheme.form.id}" labelName="form.name" labelValue="${proposalScheme.form.name}"
-					title="动态表单列表" url="/diy/jsonForm/listData"  cssClass="required"/>					
+					title="动态表单" url="/diy/jsonForm/listData"  cssClass="required"/>					
 			</div>				
 		</div>
 		<div class="control-group">
@@ -69,13 +69,15 @@
 				<form:input path="category" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 			</div>
 		</div>
+		<!-- 
 		<div class="control-group">
-			<label class="control-label">创建达人：</label>
+			<label class="control-label">创建达人【当前不能查询数据，有问题。禁用】：</label>
 			<div class="controls">
 				 <sys:treeselect id="broker" name="broker.id" value="${proposalScheme.broker.id}" labelName="broker.nickname" labelValue="${proposalScheme.broker.nickname}"
-					title="达人列表" url="/mod/broker/treeData"  cssClass="required"/>					
+					title="达人" url="/mod/broker/treeData"  cssClass="required"/>					
 			</div>
 		</div>
+		 -->
 		<div class="control-group">
 			<label class="control-label">激活：</label>
 			<div class="controls">

@@ -158,7 +158,7 @@ public class BrokerController extends BaseController {
 			//if (StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
 				Map<String, Object> map = Maps.newHashMap();
 				map.put("id", e.getId());
-				map.put("pId", e.getParent().getId());
+				map.put("pId", e.getParent()==null?"0":e.getParent().getId());
 				map.put("name", e.getName());
 				mapList.add(map);
 			//}

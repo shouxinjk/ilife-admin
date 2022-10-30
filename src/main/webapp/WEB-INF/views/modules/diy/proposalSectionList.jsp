@@ -18,8 +18,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/diy/proposalSection/">个性化定制章节列表</a></li>
-		<shiro:hasPermission name="diy:proposalSection:edit"><li><a href="${ctx}/diy/proposalSection/form">个性化定制章节添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/diy/proposalSection/">章节列表</a></li>
+		<shiro:hasPermission name="diy:proposalSection:edit"><li><a href="${ctx}/diy/proposalSection/form">章节添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="proposalSection" action="${ctx}/diy/proposalSection/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

@@ -22,7 +22,7 @@ public class ProposalScheme extends DataEntity<ProposalScheme> {
 	private JsonForm form;		// 表单
 	private String category;		// 类别
 	private Broker broker;		// 创建达人
-	private String status="0";		// 状态
+	private String status;		// 状态
 	private Integer priority=100;		// 优先级
 	
 	public ProposalScheme() {

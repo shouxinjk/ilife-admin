@@ -27,8 +27,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/diy/proposalSection/">个性化定制章节列表</a></li>
-		<li class="active"><a href="${ctx}/diy/proposalSection/form?id=${proposalSection.id}">个性化定制章节<shiro:hasPermission name="diy:proposalSection:edit">${not empty proposalSection.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="diy:proposalSection:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/diy/proposalSection/">章节列表</a></li>
+		<li class="active"><a href="${ctx}/diy/proposalSection/form?id=${proposalSection.id}">章节<shiro:hasPermission name="diy:proposalSection:edit">${not empty proposalSection.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="diy:proposalSection:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="proposalSection" action="${ctx}/diy/proposalSection/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
@@ -37,7 +37,7 @@
 			<label class="control-label">主题：</label>
 			<div class="controls">
 				 <sys:treeselect id="scheme" name="scheme.id" value="${proposalSection.scheme.id}" labelName="scheme.name" labelValue="${proposalSection.scheme.name}"
-					title="定制主题列表" url="/diy/proposalScheme/listData"  cssClass="required"/>					
+					title="定制主题" url="/diy/proposalScheme/listData"  cssClass="required"/>					
 			</div>			
 		</div>
 		<div class="control-group">
