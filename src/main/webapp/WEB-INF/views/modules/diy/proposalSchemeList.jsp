@@ -79,7 +79,7 @@
 					${fns:getDictLabel(proposalScheme.type, 'proposal_type', '')}
 				</td>
 				<td>
-					${proposalScheme.form.id}
+					${proposalScheme.form.name}
 				</td>
 				<td>
 					${proposalScheme.category}

@@ -69,7 +69,7 @@
 				<form:input path="category" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 			</div>
 		</div>
-		<!-- 
+
 		<div class="control-group">
 			<label class="control-label">达人：</label>
 			<div class="controls">
@@ -77,7 +77,7 @@
 					title="达人" url="/mod/broker/treeData"/>					
 			</div>
 		</div>
-		 -->
+
 		<div class="control-group">
 			<label class="control-label">激活：</label>
 			<div class="controls">
