@@ -37,11 +37,9 @@
 			<li><label>类别：</label>
 				<form:input path="category" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
-			<!-- 
 			<li><label>达人：</label>
 				<form:input path="broker.id" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
-			 -->
 			<li><label>激活：</label>
 				<form:select path="status" class="input-medium">
 					<form:option value="" label=""/>
@@ -61,9 +59,7 @@
 				<th>类型</th>
 				<th>表单</th>
 				<th>类别</th>
-				<!-- 
-				<th>创建达人</th>
-				 -->
+				<th>达人</th>
 				<th>激活</th>
 				<th>优先级</th>
 				<th>更新时间</th>
@@ -88,11 +84,9 @@
 				<td>
 					${proposalScheme.category}
 				</td>
-				<!-- 
 				<td>
-					${proposalScheme.broker.id}
+					${proposalScheme.broker.nickname}
 				</td>
-				 -->
 				<td>
 					${fns:getDictLabel(proposalScheme.status, 'yes_no', '')}
 				</td>
