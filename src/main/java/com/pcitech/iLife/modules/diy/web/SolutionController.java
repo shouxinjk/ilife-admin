@@ -182,7 +182,7 @@ public class SolutionController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/search", method = RequestMethod.GET)
+	@RequestMapping(value = "rest/search", method = RequestMethod.POST)
 	public JSONObject search(@RequestBody Solution solution) {
 		JSONObject result = new JSONObject();
 		result.put("success", true);

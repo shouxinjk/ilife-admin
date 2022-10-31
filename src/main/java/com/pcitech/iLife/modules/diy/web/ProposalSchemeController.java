@@ -133,7 +133,9 @@ public class ProposalSchemeController extends BaseController {
 	@RequestMapping(value = "rest/byName/{name}", method = RequestMethod.GET)
 	public List<ProposalScheme> listByName(@PathVariable String name) {
 		ProposalScheme proposalScheme = new ProposalScheme();
-		if( name!=null && name.trim().length() > 0 ) {
+		if( name!=null && name.trim().length() > 0 && "*".equalsIgnoreCase(name.trim())) {
+			//直接返回全部
+		}else if( name!=null && name.trim().length() > 0 ) {
 			proposalScheme.setName(name);
 		}
 		proposalScheme.setStatus("1");//仅查询已发布主题
