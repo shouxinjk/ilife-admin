@@ -27,6 +27,7 @@
 				${adminPath}/third-party/** = anon
 				${adminPath}/mod/**/rest/** = anon
 				${adminPath}/wx/**/rest/** = anon
+				${adminPath}/diy/**/rest/** = anon
 				${adminPath}/wxPay/**/rest/** = anon
 				${adminPath}/dict/**/rest/** = anon
 				${adminPath}/sys/**/rest/** = anon

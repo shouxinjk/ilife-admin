@@ -177,6 +177,20 @@ public class SolutionController extends BaseController {
 	}
 	
 	/**
+	 * 根据具体参数查找列表
+	 * @param solution 查询条件
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/search", method = RequestMethod.GET)
+	public JSONObject search(@RequestBody Solution solution) {
+		JSONObject result = new JSONObject();
+		result.put("success", true);
+		result.put("data", solutionService.findList(solution));
+		return result;
+	}
+	
+	/**
 	 * 根据ID克隆定制方案
 	 * @param params {byOpenid:xxx, forOpenid:xxx} 均为可选
 	 * @return
