@@ -130,6 +130,17 @@ public class ProposalSchemeController extends BaseController {
 	}
 	
 	@ResponseBody
+	@RequestMapping(value = "rest/byName/{name}", method = RequestMethod.GET)
+	public List<ProposalScheme> listByName(@PathVariable String name) {
+		ProposalScheme proposalScheme = new ProposalScheme();
+		if( name!=null && name.trim().length() > 0 ) {
+			proposalScheme.setName(name);
+		}
+		proposalScheme.setStatus("1");//仅查询已发布主题
+		return proposalSchemeService.findList(proposalScheme);
+	}
+	
+	@ResponseBody
 	@RequestMapping(value = "rest/status/{schemeId}/{status}", method = RequestMethod.POST)
 	public JSONObject changeStatus(@PathVariable String schemeId, @PathVariable String status) {
 		JSONObject result = new JSONObject();
