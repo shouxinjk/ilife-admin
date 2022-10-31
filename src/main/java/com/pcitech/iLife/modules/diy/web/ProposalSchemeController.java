@@ -14,11 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -27,6 +30,7 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.diy.entity.JsonForm;
 import com.pcitech.iLife.modules.diy.entity.ProposalScheme;
+import com.pcitech.iLife.modules.diy.entity.ProposalSection;
 import com.pcitech.iLife.modules.diy.service.ProposalSchemeService;
 
 /**
@@ -114,4 +118,31 @@ public class ProposalSchemeController extends BaseController {
 		}
 		return mapList;
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/byStatus/{status}", method = RequestMethod.GET)
+	public List<ProposalScheme> listByStatus(@PathVariable String status) {
+		if( status==null || status.trim().length() == 0 )
+			return Lists.newArrayList();
+		ProposalScheme proposalScheme = new ProposalScheme();
+		proposalScheme.setStatus(status);
+		return proposalSchemeService.findList(proposalScheme);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/status/{schemeId}/{status}", method = RequestMethod.POST)
+	public JSONObject changeStatus(@PathVariable String schemeId, @PathVariable String status) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if( schemeId==null || schemeId.trim().length() == 0 || status==null || status.trim().length() == 0 ) {
+			result.put("msg", "Both schemeID and status are required.");
+			return result;
+		}
+		ProposalScheme proposalScheme = proposalSchemeService.get(schemeId);
+		proposalScheme.setStatus(status);
+		proposalSchemeService.save(proposalScheme);
+		result.put("success", true);
+		return result;
+	}
+	
 }

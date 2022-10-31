@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -27,6 +29,8 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.diy.entity.ProposalScheme;
 import com.pcitech.iLife.modules.diy.entity.ProposalSection;
+import com.pcitech.iLife.modules.diy.entity.ProposalSubtype;
+import com.pcitech.iLife.modules.diy.service.ProposalSchemeService;
 import com.pcitech.iLife.modules.diy.service.ProposalSectionService;
 
 /**
@@ -40,6 +44,8 @@ public class ProposalSectionController extends BaseController {
 
 	@Autowired
 	private ProposalSectionService proposalSectionService;
+	@Autowired
+	private ProposalSchemeService proposalSchemeService;
 	
 	@ModelAttribute
 	public ProposalSection get(@RequestParam(required=false) String id) {
@@ -111,6 +117,17 @@ public class ProposalSectionController extends BaseController {
 			
 		}
 		return mapList;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "rest/sections/{schemeId}", method = RequestMethod.GET)
+	public List<ProposalSection> listSectionsByProposalSchemeId(@PathVariable String schemeId) {
+		ProposalScheme proposalScheme = proposalSchemeService.get(schemeId);
+		if( proposalScheme==null )
+			return Lists.newArrayList();
+		ProposalSection proposalSection = new ProposalSection();
+		proposalSection.setScheme(proposalScheme);
+		return proposalSectionService.findList(proposalSection);
 	}
 	
 }
