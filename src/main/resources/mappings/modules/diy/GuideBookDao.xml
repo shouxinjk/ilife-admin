@@ -26,7 +26,7 @@
 	<select id="get" resultType="GuideBook">
 		SELECT 
 			<include refid="guideBookColumns"/>
-		FROM mod_guide_book a
+		FROM diy_guide_book a
 		<include refid="guideBookJoins"/>
 		WHERE a.id = #{id}
 	</select>
@@ -34,7 +34,7 @@
 	<select id="findList" resultType="GuideBook">
 		SELECT 
 			<include refid="guideBookColumns"/>
-		FROM mod_guide_book a
+		FROM diy_guide_book a
 		<include refid="guideBookJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
@@ -58,7 +58,7 @@
 	<select id="findAllList" resultType="GuideBook">
 		SELECT 
 			<include refid="guideBookColumns"/>
-		FROM mod_guide_book a
+		FROM diy_guide_book a
 		<include refid="guideBookJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
@@ -74,7 +74,7 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO mod_guide_book(
+		INSERT INTO diy_guide_book(
 			id,
 			name,
 			alias,
@@ -110,7 +110,7 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE mod_guide_book SET 	
+		UPDATE diy_guide_book SET 	
 			name = #{name},
 			alias = #{alias},
 			origin = #{origin},
@@ -126,7 +126,7 @@
 	</update>
 	
 	<update id="delete">
-		UPDATE mod_guide_book SET 
+		UPDATE diy_guide_book SET 
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
@@ -135,7 +135,7 @@
 	<select id="findPendingListForProposal" resultType="GuideBook">
 		SELECT 
 			<include refid="guideBookColumns"/>
-		FROM mod_guide_book a
+		FROM diy_guide_book a
 		<include refid="guideBookJoins"/>
 		<where>
 			a.del_flag = 0

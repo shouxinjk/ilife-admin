@@ -23,14 +23,14 @@
 	</sql>
 	
 	<sql id="guideTermJoins">
-		LEFT JOIN mod_guide_book gbk ON gbk.id = a.book_id
-		LEFT JOIN mod_proposal_section prs ON prs.id = a.section_id
+		LEFT JOIN diy_guide_book gbk ON gbk.id = a.book_id
+		LEFT JOIN diy_proposal_section prs ON prs.id = a.section_id
 	</sql>
     
 	<select id="get" resultType="GuideTerm">
 		SELECT 
 			<include refid="guideTermColumns"/>
-		FROM mod_guide_term a
+		FROM diy_guide_term a
 		<include refid="guideTermJoins"/>
 		WHERE a.id = #{id}
 	</select>
@@ -38,7 +38,7 @@
 	<select id="findList" resultType="GuideTerm">
 		SELECT 
 			<include refid="guideTermColumns"/>
-		FROM mod_guide_term a
+		FROM diy_guide_term a
 		<include refid="guideTermJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
@@ -68,7 +68,7 @@
 	<select id="findAllList" resultType="GuideTerm">
 		SELECT 
 			<include refid="guideTermColumns"/>
-		FROM mod_guide_term a
+		FROM diy_guide_term a
 		<include refid="guideTermJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
@@ -84,7 +84,7 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO mod_guide_term(
+		INSERT INTO diy_guide_term(
 			id,
 			book_id,
 			section_id,
@@ -120,7 +120,7 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE mod_guide_term SET 	
+		UPDATE diy_guide_term SET 	
 			book_id = #{book.id},
 			section_id = #{section.id},
 			name = #{name},
@@ -136,7 +136,7 @@
 	</update>
 	
 	<update id="delete">
-		UPDATE mod_guide_term SET 
+		UPDATE diy_guide_term SET 
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pcitech.iLife.modules.diy.dao.ProposalSectionDao">
+<mapper namespace="com.pcitech.iLife.modules.diy.dao.ProposalSubtypeDao">
     
-	<sql id="proposalSectionColumns">
+	<sql id="proposalSubtypeColumns">
 		a.id AS "id",
 		a.scheme_id AS "scheme.id",
 		ps.name AS "scheme.name",
 		ps.type AS "scheme.type",
-		ps.category AS "scheme.category",
+		ps.category AS "scheme.category",		
 		a.name AS "name",
 		a.description AS "description",
-		a.priority AS "priority",
+		a.logo AS "logo",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -18,23 +18,23 @@
 		a.del_flag AS "delFlag"
 	</sql>
 	
-	<sql id="proposalSectionJoins">
+	<sql id="proposalSubtypeJoins">
 		LEFT JOIN diy_proposal_scheme ps ON ps.id = a.scheme_id
 	</sql>
     
-	<select id="get" resultType="ProposalSection">
+	<select id="get" resultType="ProposalSubtype">
 		SELECT 
-			<include refid="proposalSectionColumns"/>
-		FROM diy_proposal_section a
-		<include refid="proposalSectionJoins"/>
+			<include refid="proposalSubtypeColumns"/>
+		FROM diy_proposal_subtype a
+		<include refid="proposalSubtypeJoins"/>
 		WHERE a.id = #{id}
 	</select>
 	
-	<select id="findList" resultType="ProposalSection">
+	<select id="findList" resultType="ProposalSubtype">
 		SELECT 
-			<include refid="proposalSectionColumns"/>
-		FROM diy_proposal_section a
-		<include refid="proposalSectionJoins"/>
+			<include refid="proposalSubtypeColumns"/>
+		FROM diy_proposal_subtype a
+		<include refid="proposalSubtypeJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			<if test="scheme != null and scheme.id != null and scheme.id != ''">
@@ -57,11 +57,11 @@
 		</choose>
 	</select>
 	
-	<select id="findAllList" resultType="ProposalSection">
+	<select id="findAllList" resultType="ProposalSubtype">
 		SELECT 
-			<include refid="proposalSectionColumns"/>
-		FROM diy_proposal_section a
-		<include refid="proposalSectionJoins"/>
+			<include refid="proposalSubtypeColumns"/>
+		FROM diy_proposal_subtype a
+		<include refid="proposalSubtypeJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 		</where>		
@@ -76,12 +76,12 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO diy_proposal_section(
+		INSERT INTO diy_proposal_subtype(
 			id,
 			scheme_id,
 			name,
 			description,
-			priority,
+			logo,
 			create_by,
 			create_date,
 			update_by,
@@ -92,7 +92,7 @@
 			#{scheme.id},
 			#{name},
 			#{description},
-			#{priority},
+			#{logo},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -102,18 +102,18 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE diy_proposal_section SET 	
+		UPDATE diy_proposal_subtype SET 	
 			scheme_id = #{scheme.id},
 			name = #{name},
 			description = #{description},
-			priority = #{priority},
+			logo = #{logo},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="delete">
-		UPDATE diy_proposal_section SET 
+		UPDATE diy_proposal_subtype SET 
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

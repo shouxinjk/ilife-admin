@@ -20,7 +20,7 @@
 	<select id="get" resultType="JsonForm">
 		SELECT 
 			<include refid="jsonFormColumns"/>
-		FROM mod_form a
+		FROM diy_form a
 		<include refid="jsonFormJoins"/>
 		WHERE a.id = #{id}
 	</select>
@@ -28,7 +28,7 @@
 	<select id="findList" resultType="JsonForm">
 		SELECT 
 			<include refid="jsonFormColumns"/>
-		FROM mod_form a
+		FROM diy_form a
 		<include refid="jsonFormJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
@@ -52,7 +52,7 @@
 	<select id="findAllList" resultType="JsonForm">
 		SELECT 
 			<include refid="jsonFormColumns"/>
-		FROM mod_form a
+		FROM diy_form a
 		<include refid="jsonFormJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
@@ -68,7 +68,7 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO mod_form(
+		INSERT INTO diy_form(
 			id,
 			name,
 			description,
@@ -92,7 +92,7 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE mod_form SET 	
+		UPDATE diy_form SET 	
 			name = #{name},
 			description = #{description},
 			json = #{json},
@@ -102,7 +102,7 @@
 	</update>
 	
 	<update id="delete">
-		UPDATE mod_form SET 
+		UPDATE diy_form SET 
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

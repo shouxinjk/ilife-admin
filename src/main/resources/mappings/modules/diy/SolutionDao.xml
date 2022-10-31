@@ -21,14 +21,14 @@
 	</sql>
 	
 	<sql id="solutionJoins">
-		LEFT JOIN mod_proposal_scheme ps ON ps.id = a.scheme_id
-		LEFT JOIN mod_solution s ON s.id = a.refer_id			
+		LEFT JOIN diy_proposal_scheme ps ON ps.id = a.scheme_id
+		LEFT JOIN diy_solution s ON s.id = a.refer_id			
 	</sql>
     
 	<select id="get" resultType="Solution">
 		SELECT 
 			<include refid="solutionColumns"/>
-		FROM mod_solution a
+		FROM diy_solution a
 		<include refid="solutionJoins"/>
 		WHERE a.id = #{id}
 	</select>
@@ -36,7 +36,7 @@
 	<select id="findList" resultType="Solution">
 		SELECT 
 			<include refid="solutionColumns"/>
-		FROM mod_solution a
+		FROM diy_solution a
 		<include refid="solutionJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
@@ -75,7 +75,7 @@
 	<select id="findAllList" resultType="Solution">
 		SELECT 
 			<include refid="solutionColumns"/>
-		FROM mod_solution a
+		FROM diy_solution a
 		<include refid="solutionJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
@@ -91,7 +91,7 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO mod_solution(
+		INSERT INTO diy_solution(
 			id,
 			scheme_id,
 			refer_id,
@@ -123,7 +123,7 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE mod_solution SET 	
+		UPDATE diy_solution SET 	
 			scheme_id = #{scheme.id},
 			refer_id = #{refer.id},
 			name = #{name},
@@ -137,7 +137,7 @@
 	</update>
 	
 	<update id="delete">
-		UPDATE mod_solution SET 
+		UPDATE diy_solution SET 
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

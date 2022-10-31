@@ -16,8 +16,8 @@
 	</sql>
 	
 	<sql id="guideBookProposalJoins">
-		LEFT JOIN mod_guide_book gb ON gb.id = a.guide_id
-		LEFT JOIN mod_proposal_scheme ps ON ps.id = a.proposal_id	
+		LEFT JOIN diy_guide_book gb ON gb.id = a.guide_id
+		LEFT JOIN diy_proposal_scheme ps ON ps.id = a.proposal_id	
 	</sql>
     
 	<select id="get" resultType="GuideBookProposal">

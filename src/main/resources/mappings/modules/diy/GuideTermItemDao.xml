@@ -21,7 +21,7 @@
 	</sql>
 	
 	<sql id="guideTermItemJoins">
-		LEFT JOIN mod_guide_term gt ON gt.id = a.term_id
+		LEFT JOIN diy_guide_term gt ON gt.id = a.term_id
 		LEFT JOIN ope_item i ON i.id = a.item_id
 	</sql>
     
