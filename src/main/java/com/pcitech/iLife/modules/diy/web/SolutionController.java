@@ -286,7 +286,7 @@ public class SolutionController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/items/{solutionId}", method = RequestMethod.GET)
-	public JSONObject listItems(@PathVariable String solutionId, @RequestBody JSONObject params) {
+	public JSONObject listItems(@PathVariable String solutionId) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		if( solutionId==null || solutionId.trim().length() == 0) {
