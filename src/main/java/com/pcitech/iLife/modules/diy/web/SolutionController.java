@@ -254,6 +254,30 @@ public class SolutionController extends BaseController {
 		return result;
 	}
 	
+	/**
+	 * 根据Id查询solution详情
+	 * @param solutionId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/solution/{solutionId}", method = RequestMethod.GET)
+	public JSONObject getDetail(@PathVariable String solutionId) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if( solutionId==null || solutionId.trim().length() == 0) {
+			result.put("msg", "solutionId is required.");
+			return result;
+		}
+		//得到原有的方案及条目
+		Solution solution = solutionService.get(solutionId);
+		if( solution==null) {
+			result.put("msg", "Solution not found.[id]"+solutionId);
+			return result;
+		}
+		result.put("success", true);
+		result.put("data", solution);
+		return result;
+	}
 
 	/**
 	 * 根据ID获取所有下级条目
@@ -261,7 +285,7 @@ public class SolutionController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/items", method = RequestMethod.GET)
+	@RequestMapping(value = "rest/items/{solutionId}", method = RequestMethod.GET)
 	public JSONObject listItems(@PathVariable String solutionId, @RequestBody JSONObject params) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
