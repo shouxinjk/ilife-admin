@@ -286,7 +286,7 @@ public class SolutionController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/solutionItem/{solutionItemId}", method = RequestMethod.PATCH)
+	@RequestMapping(value = "rest/solutionItem/ignore/{solutionItemId}", method = RequestMethod.POST)
 	public JSONObject removeItem(@PathVariable String solutionItemId) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
@@ -302,6 +302,45 @@ public class SolutionController extends BaseController {
 		}
 		//直接删除
 		solutionItemService.delete(solutionItem);
+		result.put("success", true);
+		return result;
+	}
+	
+	/**
+	 * 向SolutionItem上添加itemKey。注意是字符串操作
+	 * @param solutionItemId
+	 * @param itemKey
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/solutionItem/stuff/{solutionItemId}/{itemKey}", method = RequestMethod.POST)
+	public JSONObject removeItem(@PathVariable String solutionItemId, @PathVariable String itemKey) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if( solutionItemId==null || solutionItemId.trim().length() == 0) {
+			result.put("msg", "solutionId is required.");
+			return result;
+		}
+		//得到原有的方案及条目
+		SolutionItem solutionItem = solutionItemService.get(solutionItemId);
+		if( solutionItem==null) {
+			result.put("msg", "SolutionItem not found.[id]"+solutionItemId);
+			return result;
+		}
+		//附加itemKey
+		String itemKeys = solutionItem.getItemIds();
+		if(itemKeys == null || itemKeys.trim().length()==0) {
+			solutionItem.setItemIds(itemKey);
+		}else {//认为已经有设置，则附加
+			String[] ids = itemKeys.split(",");
+			String keys = itemKey;
+			for(String id:ids) {
+				if(id.trim().length()>0)
+					keys += ","+id;
+			}
+			solutionItem.setItemIds(keys);
+		}
+		solutionItemService.save(solutionItem);
 		result.put("success", true);
 		return result;
 	}
