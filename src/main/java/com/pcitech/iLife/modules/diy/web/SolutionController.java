@@ -286,7 +286,7 @@ public class SolutionController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/solution/{solutionItemId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "rest/solutionItem/{solutionItemId}", method = RequestMethod.POST)
 	public JSONObject removeItem(@PathVariable String solutionItemId) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
@@ -308,7 +308,7 @@ public class SolutionController extends BaseController {
 	
 	//交换两个条目的priority
 	@ResponseBody
-	@RequestMapping(value = "rest/solution/swap/{solutionItemId1}/{solutionItemId2}", method = RequestMethod.POST)
+	@RequestMapping(value = "rest/swap/{solutionItemId1}/{solutionItemId2}", method = RequestMethod.POST)
 	public JSONObject swap(@PathVariable String solutionItemId1,@PathVariable String solutionItemId2) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
