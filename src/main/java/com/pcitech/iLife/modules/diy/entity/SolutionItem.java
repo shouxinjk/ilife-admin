@@ -21,7 +21,7 @@ public class SolutionItem extends DataEntity<SolutionItem> {
 	private String tags;		// 标签
 	private String type;		// 类型
 	private String itemIds;		// 关联条目
-	private Integer priority=100;		// 排序
+	private double priority=100;		// 排序
 	
 	public SolutionItem() {
 		super();
@@ -82,11 +82,11 @@ public class SolutionItem extends DataEntity<SolutionItem> {
 		this.itemIds = itemIds;
 	}
 	
-	public Integer getPriority() {
+	public double getPriority() {
 		return priority;
 	}
 
-	public void setPriority(Integer priority) {
+	public void setPriority(double priority) {
 		this.priority = priority;
 	}
 	

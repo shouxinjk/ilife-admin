@@ -219,6 +219,7 @@ public class SolutionController extends BaseController {
 		String id = Util.get32UUID();//重新设置ID作为新纪录
 		solution.setRefer(oldSolution);//注意：要首先设置引用条目为原始记录
 		solution.setIsNewRecord(true);
+		solution.setName(solution.getName()+" copy");
 		solution.setId(id);
 		
 		if(params.getString("byOpenid")!=null) {
@@ -425,7 +426,7 @@ public class SolutionController extends BaseController {
 			return result;
 		}
 		solutionItem.setSolution(solution);
-		if(solution.getId()==null || solution.getId().trim().length() == 0) { //新建条目设置id
+		if(solutionItem.getId()==null || solutionItem.getId().trim().length() == 0) { //新建条目设置id
 			solutionItem.setId(Util.get32UUID());
 			solutionItem.setIsNewRecord(true);
 			solutionItem.setCreateDate(new Date());
