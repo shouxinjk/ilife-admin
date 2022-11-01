@@ -286,7 +286,7 @@ public class SolutionController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/solutionItem/{solutionItemId}", method = RequestMethod.POST)
+	@RequestMapping(value = "rest/solutionItem/{solutionItemId}", method = RequestMethod.PATCH)
 	public JSONObject removeItem(@PathVariable String solutionItemId) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
