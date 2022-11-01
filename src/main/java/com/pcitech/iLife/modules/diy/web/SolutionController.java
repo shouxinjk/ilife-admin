@@ -279,6 +279,32 @@ public class SolutionController extends BaseController {
 		result.put("data", solution);
 		return result;
 	}
+	
+	/**
+	 * 根据Id删除solution条目
+	 * @param solutionId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/solution/{solutionId}", method = RequestMethod.DELETE)
+	public JSONObject removeItem(@PathVariable String solutionId) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if( solutionId==null || solutionId.trim().length() == 0) {
+			result.put("msg", "solutionId is required.");
+			return result;
+		}
+		//得到原有的方案及条目
+		Solution solution = solutionService.get(solutionId);
+		if( solution==null) {
+			result.put("msg", "Solution not found.[id]"+solutionId);
+			return result;
+		}
+		//直接删除
+		solutionService.delete(solution);
+		result.put("success", true);
+		return result;
+	}
 
 	/**
 	 * 根据ID获取所有下级条目
