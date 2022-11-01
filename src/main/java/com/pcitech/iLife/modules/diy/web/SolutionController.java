@@ -286,22 +286,55 @@ public class SolutionController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/solution/{solutionId}", method = RequestMethod.DELETE)
-	public JSONObject removeItem(@PathVariable String solutionId) {
+	@RequestMapping(value = "rest/solution/{solutionItemId}", method = RequestMethod.DELETE)
+	public JSONObject removeItem(@PathVariable String solutionItemId) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
-		if( solutionId==null || solutionId.trim().length() == 0) {
+		if( solutionItemId==null || solutionItemId.trim().length() == 0) {
 			result.put("msg", "solutionId is required.");
 			return result;
 		}
 		//得到原有的方案及条目
-		Solution solution = solutionService.get(solutionId);
-		if( solution==null) {
-			result.put("msg", "Solution not found.[id]"+solutionId);
+		SolutionItem solutionItem = solutionItemService.get(solutionItemId);
+		if( solutionItem==null) {
+			result.put("msg", "SolutionItem not found.[id]"+solutionItemId);
 			return result;
 		}
 		//直接删除
-		solutionService.delete(solution);
+		solutionItemService.delete(solutionItem);
+		result.put("success", true);
+		return result;
+	}
+	
+	//交换两个条目的priority
+	@ResponseBody
+	@RequestMapping(value = "rest/solution/swap/{solutionItemId1}/{solutionItemId2}", method = RequestMethod.POST)
+	public JSONObject swap(@PathVariable String solutionItemId1,@PathVariable String solutionItemId2) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if( solutionItemId1==null || solutionItemId1.trim().length() == 0
+				|| solutionItemId2==null || solutionItemId2.trim().length() == 0) {
+			result.put("msg", "Both solutionItemId1 and solutionItemId2 are required.");
+			return result;
+		}
+		//得到原有的方案及条目
+		SolutionItem solutionItem1 = solutionItemService.get(solutionItemId1);
+		if( solutionItem1==null) {
+			result.put("msg", "SolutionItem1 not found.[id]"+solutionItemId1);
+			return result;
+		}
+		SolutionItem solutionItem2 = solutionItemService.get(solutionItemId2);
+		if( solutionItem2==null) {
+			result.put("msg", "SolutionItem2 not found.[id]"+solutionItemId2);
+			return result;
+		}
+		//交换priority
+		double priority1 = solutionItem1.getPriority();
+		double priority2 = solutionItem2.getPriority();
+		solutionItem1.setPriority(priority2);
+		solutionItem2.setPriority(priority1);
+		solutionItemService.save(solutionItem1);
+		solutionItemService.save(solutionItem2);
 		result.put("success", true);
 		return result;
 	}
