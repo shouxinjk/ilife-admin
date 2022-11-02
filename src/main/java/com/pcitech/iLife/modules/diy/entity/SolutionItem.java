@@ -19,7 +19,7 @@ public class SolutionItem extends DataEntity<SolutionItem> {
 	private String name;		// 名称
 	private String description;		// 描述
 	private String tags;		// 标签
-	private String type;		// 类型
+	private ProposalSubtype type;		// 类型
 	private String itemIds;		// 关联条目
 	private double priority=100;		// 排序
 	
@@ -65,12 +65,11 @@ public class SolutionItem extends DataEntity<SolutionItem> {
 		this.tags = tags;
 	}
 	
-	@Length(min=0, max=20, message="类型长度必须介于 0 和 20 之间")
-	public String getType() {
+	public ProposalSubtype getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(ProposalSubtype type) {
 		this.type = type;
 	}
 	

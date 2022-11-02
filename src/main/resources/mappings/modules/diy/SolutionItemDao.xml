@@ -9,7 +9,9 @@
 		a.name AS "name",
 		a.description AS "description",
 		a.tags AS "tags",
-		a.type AS "type",
+		a.type AS "type.id",
+		st.name AS "type.name",
+		st.logo AS "type.logo",
 		a.item_ids AS "itemIds",
 		a.priority AS "priority",
 		a.create_by AS "createBy.id",
@@ -21,6 +23,7 @@
 	
 	<sql id="solutionItemJoins">
 		LEFT JOIN diy_solution s ON s.id = a.solution_id
+		LEFT JOIN diy_proposal_subtype st ON st.id = a.type
 	</sql>
     
 	<select id="get" resultType="SolutionItem">

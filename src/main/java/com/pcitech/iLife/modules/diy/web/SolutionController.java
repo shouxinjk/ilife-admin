@@ -460,7 +460,7 @@ public class SolutionController extends BaseController {
 			item.setName(section.getName());
 			item.setPriority(section.getPriority());
 			item.setDescription(section.getDescription());
-			item.setType("section");//固定为section类型，表示是分隔符
+//			item.setType(null);//固定为section类型，表示是分隔符
 			solutionItemService.save(item);
 		}
 		
