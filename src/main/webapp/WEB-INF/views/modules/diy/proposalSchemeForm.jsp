@@ -57,6 +57,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">LOGO：</label>
+			<div class="controls">
+				<form:input path="logo" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">表单：</label>
 			<div class="controls">
 				 <sys:treeselect id="form" name="form.id" value="${proposalScheme.form.id}" labelName="form.name" labelValue="${proposalScheme.form.name}"

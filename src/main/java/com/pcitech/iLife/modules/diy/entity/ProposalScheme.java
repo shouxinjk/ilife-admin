@@ -19,6 +19,7 @@ public class ProposalScheme extends DataEntity<ProposalScheme> {
 	private String name;		// 名称
 	private String description;		// 描述
 	private String type="free";		// 类型:free手动定制 guide指南生成 默认为free
+	private String logo; //logo
 	private JsonForm form;		// 表单
 	private String category;		// 类别
 	private Broker broker;		// 创建达人
@@ -57,6 +58,14 @@ public class ProposalScheme extends DataEntity<ProposalScheme> {
 		this.type = type;
 	}
 	
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+
 	public JsonForm getForm() {
 		return form;
 	}

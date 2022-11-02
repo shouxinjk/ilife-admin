@@ -57,6 +57,7 @@
 				<th>名称</th>
 				<th>描述</th>
 				<th>类型</th>
+				<th>LOGO</th>
 				<th>表单</th>
 				<th>类别</th>
 				<th>达人</th>
@@ -78,6 +79,9 @@
 				<td>
 					${fns:getDictLabel(proposalScheme.type, 'proposal_type', '')}
 				</td>
+				<td>
+					<img src="${proposalScheme.logo}" width="40" height="40"/>
+				</td>				
 				<td>
 					${proposalScheme.form.name}
 				</td>
