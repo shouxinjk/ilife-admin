@@ -147,6 +147,12 @@
 					</div>
 				</div-->
 				<div class="control-group">
+					<label class="control-label">默认数值：</label>
+					<div class="controls">
+						<form:input path="defaultValue" htmlEscape="false" class="input-xlarge "/>
+					</div>
+				</div>				
+				<div class="control-group">
 					<label class="control-label">默认评分：</label>
 					<div class="controls">
 						<form:input path="defaultScore" htmlEscape="false" class="input-xlarge "/>

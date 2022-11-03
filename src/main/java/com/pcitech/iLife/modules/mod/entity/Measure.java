@@ -21,6 +21,7 @@ public class Measure extends DataEntity<Measure> {
 	private String name;		// 属性名称
 	private Double percentage;		// 属性占比
 	private Double controlValue;		// 归一化参照值
+	private String defaultValue;		// 默认值。作为标注时参照
 	private Double defaultScore=5.0;		// 默认评分
 	private Integer defaultLevel;		// 默认等级
 	private String type;		// 类型
@@ -98,6 +99,14 @@ public class Measure extends DataEntity<Measure> {
 
 	public void setControlValue(Double controlValue) {
 		this.controlValue = controlValue;
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 
 	public Double getDefaultScore() {

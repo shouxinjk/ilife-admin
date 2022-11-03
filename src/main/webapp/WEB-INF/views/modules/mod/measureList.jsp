@@ -117,7 +117,7 @@
 					${measure.controlValue}
 				</td-->
 				<td>
-					${measure.defaultScore}
+					${measure.defaultValue}
 				</td>				
 				<!--td>
 					${measure.alpha}

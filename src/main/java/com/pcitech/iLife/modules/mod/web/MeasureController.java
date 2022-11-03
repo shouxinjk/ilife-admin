@@ -274,7 +274,7 @@ public class MeasureController extends BaseController {
 				map.put("labelType",e.getAutoLabelType());//标注类型：auto,manual,dict,refer
 				map.put("referDict",e.getAutoLabelDict());//标注字典，仅对dict标注有效
 				map.put("referCategory",e.getAutoLabelCategory().getId());//引用标注，仅对refer标注有效
-				map.put("defaultScore",e.getDefaultScore());//返回默认值
+				map.put("defaultValue",e.getDefaultValue()==null?"":e.getDefaultValue());//返回默认值
 				mapList.add(map);
 			}
 			
