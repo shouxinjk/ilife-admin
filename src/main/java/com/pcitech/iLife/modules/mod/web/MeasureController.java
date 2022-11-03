@@ -275,6 +275,7 @@ public class MeasureController extends BaseController {
 				map.put("referDict",e.getAutoLabelDict());//标注字典，仅对dict标注有效
 				map.put("referCategory",e.getAutoLabelCategory().getId());//引用标注，仅对refer标注有效
 				map.put("defaultValue",e.getDefaultValue()==null?"":e.getDefaultValue());//返回默认值
+				map.put("isModifiable", e.getIsModifiable());//是否可手动编辑，用于标注时进行控制
 				mapList.add(map);
 			}
 			

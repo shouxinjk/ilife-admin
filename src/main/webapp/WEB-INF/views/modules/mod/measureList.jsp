@@ -73,11 +73,9 @@
 			<tr>
 				<th>类别</th>
 				<!--th>维度</th-->
-				<th>key</th>
-				<th>名称</th>
+				<th>基本信息</th>
 				<!--th>占比</th>
 				<th>参照值</th-->
-				<th>默认数值</th>
 				<!--th>a</th>
 				<th>b</th>
 				<th>c</th>
@@ -105,20 +103,18 @@
 					${measure.itemDimension.name}
 				</td-->
 				<td>
-					${measure.property}
+					名称：${measure.name}<br/>
+					属性：${measure.property} <br/>
+					默认值：${measure.defaultValue}<br/>
+					可修改：${fns:getDictLabel(measure.isModifiable, 'yes_no', measure.isModifiable)}
+										
 				</td>
-				<td><a href="${ctx}/mod/measure/form?id=${measure.id}">
-					${measure.name}
-				</a></td>
 				<!--td>
 					${measure.percentage}
 				</td>
 				<td>
 					${measure.controlValue}
-				</td-->
-				<td>
-					${measure.defaultValue}
-				</td>				
+				</td-->				
 				<!--td>
 					${measure.alpha}
 				</td>

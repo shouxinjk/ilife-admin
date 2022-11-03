@@ -199,7 +199,13 @@
 					<div class="controls">
 						<form:select path="multiValueFunc" items="${fns:getDictList('multiValueFunc')}" itemLabel="label" itemValue="value" htmlEscape="false" class="input-xlarge"/>
 					</div>
-				</div>				
+				</div>	
+				<div class="control-group">
+					<label class="control-label">是否可修改：</label>
+					<div class="controls">
+						<form:select path="isModifiable" items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false" class="input-xlarge"/>
+					</div>
+				</div>								
 				<div class="control-group">
 					<label class="control-label">标注类型：</label>
 					<div class="controls">

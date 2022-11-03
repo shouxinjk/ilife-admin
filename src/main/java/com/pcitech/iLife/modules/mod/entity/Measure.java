@@ -26,6 +26,7 @@ public class Measure extends DataEntity<Measure> {
 	private Integer defaultLevel;		// 默认等级
 	private String type;		// 类型
 	private String tags;		// 标签
+	private String isModifiable = "1"; //是否可编辑
 	private String expression;		// 脚本表达式
 	private double alpha=0.2;		// 效益：生理
 	private double beta=0.2;		// 效益：安全
@@ -188,6 +189,14 @@ public class Measure extends DataEntity<Measure> {
 
 	public void setTags(String tags) {
 		this.tags = tags;
+	}
+
+	public String getIsModifiable() {
+		return isModifiable;
+	}
+
+	public void setIsModifiable(String isModifiable) {
+		this.isModifiable = isModifiable;
 	}
 
 	public String getExpression() {

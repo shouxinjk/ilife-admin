@@ -35,6 +35,7 @@
 		a.lambda AS "lambda",		
 		a.type AS "type",
 		a.tags AS "tags",
+		a.isModifiable AS "isModifiable",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -155,6 +156,7 @@
 			lambda,			
 			type,
 			tags,
+			isModifiable,
 			create_by,
 			create_date,
 			update_by,
@@ -189,6 +191,7 @@
 			#{lambda},			
 			#{type},
 			#{tags},
+			#{isModifiable},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -226,6 +229,7 @@
 			lambda = #{lambda},			
 			type = #{type},
 			tags = #{tags},
+			isModifiable = #{isModifiable},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}
