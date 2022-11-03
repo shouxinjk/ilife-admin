@@ -345,10 +345,12 @@ public class DictValueController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/search/{dictId}", method = RequestMethod.GET)
+	@RequestMapping(value = "rest/search/{dictId}", method = RequestMethod.POST)
 	public JSONObject searchValues(@PathVariable String dictId, @RequestBody JSONObject json) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
+		List<String> suggestions = Lists.newArrayList();
+		result.put("data", suggestions);
 		
 		DictValue query = new DictValue();
 		
@@ -390,7 +392,6 @@ public class DictValueController extends BaseController {
 		}		
 		//查询得到推荐值
 		List<DictValue> dictValues = dictValueService.findList(query);
-		List<String> suggestions = Lists.newArrayList();
 		int count = 1;
 		for(DictValue dictValue:dictValues) {
 			if(size>0 && count>size)
@@ -398,7 +399,7 @@ public class DictValueController extends BaseController {
 			suggestions.add(dictValue.getOriginalValue());
 			count++;
 		}
-		result.put("success", false);
+		result.put("success", true);
 		result.put("data", suggestions);
 		return result;
 	}

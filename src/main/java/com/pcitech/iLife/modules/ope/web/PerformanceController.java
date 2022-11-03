@@ -354,10 +354,12 @@ public class PerformanceController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/search/{measureId}", method = RequestMethod.GET)
+	@RequestMapping(value = "rest/search/{measureId}", method = RequestMethod.POST)
 	public JSONObject searchValues(@PathVariable String measureId, @RequestBody JSONObject json) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
+		List<String> suggestions = Lists.newArrayList();
+		result.put("data", suggestions);
 		
 		Performance query = new Performance();
 		
@@ -380,7 +382,6 @@ public class PerformanceController extends BaseController {
 		if(json.getString("q")!=null && json.getString("q").trim().length()>0) {
 			query.setOriginalValue(json.getString("q").trim());
 		}
-		List<String> suggestions = Lists.newArrayList();
 		
 		//返回条数：注意数据库查询中直接得到全部，仅控制返回数量
 		int size = -1;
@@ -400,7 +401,7 @@ public class PerformanceController extends BaseController {
 			count++;
 		}
 		
-		result.put("success", false);
+		result.put("success", true);
 		result.put("data", suggestions);
 		return result;
 	}
