@@ -343,4 +343,65 @@ public class PerformanceController extends BaseController {
 		return mapList;
 	}
 	
+	/**
+	 * 根据 measureId查询原始值列表，用于辅助标注
+	 * @param measureId
+	 * @param json{
+	 * 	categoryId:xxx, 类目ID，必选
+	 * 	q:xxx 查询字符串。可选。空白查询全部
+	 *  size: xxx 数量。可选。如果传递则进行限制，否则返回全部
+	 * }
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/search/{measureId}", method = RequestMethod.GET)
+	public JSONObject searchValues(@PathVariable String measureId, @RequestBody JSONObject json) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		
+		Performance query = new Performance();
+		
+		//检查设置关键属性
+		Measure measure = measureService.get(measureId);
+		if(measure == null) {
+			result.put("msg", "measureId is required.");
+			return result;
+		}
+		
+		//检查设置类目
+		ItemCategory itemCategory = itemCategoryService.get(json.getString("categoryId"));
+		if(itemCategory == null) {
+			result.put("msg", "the Dict is category specified.  categoryId is required.");
+			return result;
+		}
+		query.setCategory(itemCategory);
+		
+		//设置搜索字符串
+		if(json.getString("q")!=null && json.getString("q").trim().length()>0) {
+			query.setOriginalValue(json.getString("q").trim());
+		}
+		List<String> suggestions = Lists.newArrayList();
+		
+		//返回条数：注意数据库查询中直接得到全部，仅控制返回数量
+		int size = -1;
+		try {
+			size = Integer.parseInt(json.getString("size"));
+		}catch(Exception ex) {
+			//do nothing
+		}
+		
+		//查询
+		List<Performance> performances = performanceService.findList(query);
+		int count = 1;
+		for(Performance performance:performances) {
+			if(size>0 && count>size)
+				break;
+			suggestions.add(performance.getOriginalValue());
+			count++;
+		}
+		
+		result.put("success", false);
+		result.put("data", suggestions);
+		return result;
+	}
 }

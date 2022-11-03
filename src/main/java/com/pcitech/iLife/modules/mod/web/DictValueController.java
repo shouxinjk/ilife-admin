@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,6 +37,7 @@ import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.service.DictMetaService;
 import com.pcitech.iLife.modules.mod.service.DictValueService;
+import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.ope.entity.Performance;
 import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.service.DictService;
@@ -55,6 +58,8 @@ public class DictValueController extends BaseController {
 	private DictMetaService dictMetaService;
 	@Autowired
 	private DictService dictService;
+	@Autowired
+	private ItemCategoryService itemCategoryService;
 	
 	@ModelAttribute
 	public DictValue get(@RequestParam(required=false) String id) {
@@ -327,5 +332,75 @@ public class DictValueController extends BaseController {
 		return "modules/mod/dictValueListPending";
 	}
 	
+
+	/**
+	 * 根据CategoryId、measureId从指定字典获取推荐值。用于自动提示。
+	 * @param dictId 字典ID 必选
+	 * @param query {
+	 * 	categoryId : xxx, 可选
+	 * 	measureId : xxx, 当前不需要。字典不针对单个属性提供
+	 *  q: xxx 输入查询字符串，可选。为空匹配全部
+	 *  size: xxx 可选。不填则返回全部
+	 * }
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/search/{dictId}", method = RequestMethod.GET)
+	public JSONObject searchValues(@PathVariable String dictId, @RequestBody JSONObject json) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		
+		DictValue query = new DictValue();
+		
+		DictMeta dictMeta = dictMetaService.get(dictId);//查询字典
+		if( dictMeta == null || dictMeta.getId() == null || dictMeta.getId().trim().length()==0) {
+			result.put("msg", "dictId is required.");
+			return result;
+		}
+		query.setDictMeta(dictMeta);
+		
+		//检查属性信息
+		/**
+		Measure measure = measureService.get(json.getString("measureId"));
+		if(measure == null) {
+			result.put("msg", "measureId is required.");
+			return result;
+		}
+		//**/
+		
+		//检查是否目录相关，如果目录相关则设置categoryId参数
+		if("0".equals(dictMeta.getIgnoreCategory())) {//目录相关
+			ItemCategory itemCategory = itemCategoryService.get(json.getString("categoryId"));
+			if(itemCategory == null) {
+				result.put("msg", "the Dict is category specified.  categoryId is required.");
+				return result;
+			}
+			query.setCategory(itemCategory);
+		}
+		//设置搜索字符串
+		if(json.getString("q")!=null && json.getString("q").trim().length()>0) {
+			query.setOriginalValue(json.getString("q").trim());
+		}
+		//返回条数：注意数据库查询中直接得到全部，仅控制返回数量
+		int size = -1;
+		try {
+			size = Integer.parseInt(json.getString("size"));
+		}catch(Exception ex) {
+			//do nothing
+		}		
+		//查询得到推荐值
+		List<DictValue> dictValues = dictValueService.findList(query);
+		List<String> suggestions = Lists.newArrayList();
+		int count = 1;
+		for(DictValue dictValue:dictValues) {
+			if(size>0 && count>size)
+				break;
+			suggestions.add(dictValue.getOriginalValue());
+			count++;
+		}
+		result.put("success", false);
+		result.put("data", suggestions);
+		return result;
+	}
 	
 }

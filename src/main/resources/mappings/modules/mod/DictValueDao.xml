@@ -49,7 +49,10 @@
 				AND a.category_id = #{category.id}
 			</if>
 			<if test="originalValue != null and originalValue != ''">
-				AND a.original_value = #{originalValue}
+				AND a.original_value LIKE 
+					<if test="dbName == 'oracle'">'%'||#{originalValue}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{originalValue}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{originalValue},'%')</if>				
 			</if>
 			<if test="isMarked != null">
 				AND a.isMarked = #{isMarked}

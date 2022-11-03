@@ -271,6 +271,9 @@ public class MeasureController extends BaseController {
 					map.put("name", (category.equalsIgnoreCase(e.getCategory().getId())?"๏":"○")+e.getName());
 				map.put("type", category.equalsIgnoreCase(e.getCategory().getId())?"self":"inherit");
 				map.put("property", e.getProperty());
+				map.put("labelType",e.getAutoLabelType());//标注类型：auto,manual,dict,refer
+				map.put("labelDict",e.getAutoLabelDict());//标注字典，仅对dict标注有效
+				map.put("labelCategory",e.getAutoLabelCategory());//引用标注，仅对refer标注有效
 				mapList.add(map);
 			}
 			
