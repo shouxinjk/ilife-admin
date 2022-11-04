@@ -43,6 +43,7 @@ import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
 import com.pcitech.iLife.modules.mod.service.TagCategoryService;
 import com.pcitech.iLife.modules.mod.service.TagsService;
+import com.pcitech.iLife.modules.mod.service.UserMeasureService;
 import com.pcitech.iLife.modules.ope.entity.Performance;
 import com.pcitech.iLife.util.Util;
 
@@ -63,7 +64,8 @@ public class MeasureController extends BaseController {
 	private TagsService tagsService;
 	@Autowired
 	private TagCategoryService tagCategoryService;
-	
+	@Autowired
+	private UserMeasureService userMeasureService;
 
 	/**
 	 * 根据categoryId加载所有measure列表，以进行VALS标注
@@ -254,6 +256,10 @@ public class MeasureController extends BaseController {
 	public List<Map<String, Object>> listMeasureByCategory(@RequestParam(required=true) String category,@RequestParam(required=false) String cascade,@RequestParam(required=false) String noPrefix,HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
 		boolean isCascade = true;//默认为true，获取当前目录的属性
+		
+		if("user".equalsIgnoreCase(category)) { //兼容用户属性，通过关键字获取
+			return loadUserProps();
+		}
 
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		
@@ -284,6 +290,27 @@ public class MeasureController extends BaseController {
 				isCascade = false;
 		}
 		
+		return mapList;
+	}
+	
+	public List<Map<String, Object>>  loadUserProps(){
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		UserMeasure query = new UserMeasure();
+		List<UserMeasure> userMeasures = userMeasureService.findList(query);
+		for(UserMeasure e:userMeasures) {
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", e.getId());
+			map.put("category", e.getCategory()==null?"0":e.getCategory().getId());
+			map.put("name",e.getCategory()==null? e.getName() :(e.getCategory().getName() +" "+ e.getName()));
+			map.put("type", "self");
+			map.put("property", e.getProperty());
+			map.put("labelType",e.getAutoLabelType());//标注类型：auto,manual,dict,refer
+			map.put("referDict",e.getAutoLabelDict());//标注字典，仅对dict标注有效
+			map.put("referCategory",e.getAutoLabelCategory()==null?"":e.getAutoLabelCategory().getId());//引用标注，仅对refer标注有效
+			map.put("defaultValue","");//返回默认值
+			map.put("isModifiable", "");//是否可手动编辑，用于标注时进行控制
+			mapList.add(map);
+		}
 		return mapList;
 	}
 	
