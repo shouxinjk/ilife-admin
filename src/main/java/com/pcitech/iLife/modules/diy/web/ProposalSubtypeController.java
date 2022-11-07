@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.diy.web;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,12 +24,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.diy.entity.ProposalScheme;
 import com.pcitech.iLife.modules.diy.entity.ProposalSubtype;
+import com.pcitech.iLife.modules.diy.entity.Solution;
 import com.pcitech.iLife.modules.diy.service.ProposalSchemeService;
 import com.pcitech.iLife.modules.diy.service.ProposalSubtypeService;
 
@@ -103,4 +106,22 @@ public class ProposalSubtypeController extends BaseController {
 		return proposalSubtypeService.findList(proposalSubtype);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "listData")
+	public List<Map<String, Object>> listData(ProposalSubtype proposalSubtype, HttpServletRequest request, HttpServletResponse response, Model model) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<ProposalSubtype> list = proposalSubtypeService.findList(proposalSubtype);
+		for (int i=0; i<list.size(); i++){
+			ProposalSubtype e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", e.getId());
+			map.put("pId", "0");
+			map.put("pIds", "0");
+			map.put("name", e.getScheme().getName()+" "+e.getName());
+			mapList.add(map);
+			
+		}
+		return mapList;
+	}
+	
 }

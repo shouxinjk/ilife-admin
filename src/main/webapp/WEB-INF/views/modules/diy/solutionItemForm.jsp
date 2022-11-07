@@ -50,9 +50,14 @@
 		</div>
 		<div class="control-group">
 			<label class="control-label">类型：</label>
-			<div class="controls">
+			<!--div class="controls">
 				<form:input path="type" htmlEscape="false" maxlength="20" class="input-xlarge "/>
-			</div>
+			</div-->
+			<div class="controls">
+				 <sys:treeselect id="type" name="type.id" value="${type.id}" labelName="type.name" labelValue="${type.name}"
+					title="类型" url="/diy/proposalSubtype/listData" />	
+				<span class="help-inline"><font color="red">*</font> </span>				
+			</div>				
 		</div>
 		<div class="control-group">
 			<label class="control-label">标签：</label>

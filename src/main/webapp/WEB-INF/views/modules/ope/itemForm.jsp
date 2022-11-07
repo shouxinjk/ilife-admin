@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>商品管理</title>
+	<title>定制选项管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -27,17 +27,17 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/ope/item/">商品列表</a></li>
-		<li class="active"><a href="${ctx}/ope/item/form?id=${item.id}">商品<shiro:hasPermission name="ope:item:edit">${not empty item.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="ope:item:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/ope/item/opeItems">定制选项列表</a></li>
+		<li class="active"><a href="${ctx}/ope/item/form?id=${item.id}">定制选项<shiro:hasPermission name="ope:item:edit">${not empty item.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="ope:item:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="item" action="${ctx}/ope/item/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">商品类别：</label>
+			<label class="control-label">定制选项类别：</label>
 			<div class="controls">
 				<sys:treeselect id="itemCategory" name="itemCategory.id" value="${item.itemCategory.id}" labelName="itemCategory.name" labelValue="${item.itemCategory.name}"
-					title="商品分类" url="/mod/itemCategory/treeData"  notAllowSelectRoot="true"  cssClass="required"/>
+					title="定制选项分类" url="/mod/itemCategory/treeData"  notAllowSelectRoot="true"  cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

@@ -62,7 +62,7 @@
 					${solutionItem.name}
 				</td>
 				<td>
-					${solutionItem.type}
+					${solutionItem.type.name}
 				</td>
 				<td>
 					${solutionItem.tags}

@@ -64,6 +64,14 @@ public class ItemController extends BaseController {
 	}
 	
 	@RequiresPermissions("ope:item:view")
+	@RequestMapping(value = {"opeItems"})
+	public String listOpeItems(Item item, String treeId,HttpServletRequest request, HttpServletResponse response, Model model) {
+		Page<Item> page = itemService.findPage(new Page<Item>(request, response), item); 
+		model.addAttribute("page", page);
+		return "modules/ope/itemList";
+	}
+	
+	@RequiresPermissions("ope:item:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(Item item, String treeId,HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<Item> page = itemService.findPage(new Page<Item>(request, response), item); 
@@ -111,7 +119,7 @@ public class ItemController extends BaseController {
 		}
 		itemService.save(item);
 		addMessage(redirectAttributes, "保存商品成功");
-		return "redirect:"+Global.getAdminPath()+"/ope/item/?repage";
+		return "redirect:"+Global.getAdminPath()+"/ope/item/opeItems?repage";
 	}
 	
 	@RequiresPermissions("ope:item:edit")
@@ -119,7 +127,7 @@ public class ItemController extends BaseController {
 	public String delete(Item item, RedirectAttributes redirectAttributes) {
 		itemService.delete(item);
 		addMessage(redirectAttributes, "删除商品成功");
-		return "redirect:"+Global.getAdminPath()+"/ope/item/?repage";
+		return "redirect:"+Global.getAdminPath()+"/ope/item/opeItems?repage";
 	}
 
 	@ResponseBody

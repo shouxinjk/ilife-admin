@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>商品管理</title>
+	<title>定制选项管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -18,10 +18,10 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/ope/item/">商品列表</a></li>
-		<shiro:hasPermission name="ope:item:edit"><li><a href="${ctx}/ope/item/form">商品添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/ope/item/opeItems">定制选项列表</a></li>
+		<shiro:hasPermission name="ope:item:edit"><li><a href="${ctx}/ope/item/form">定制选项添加</a></li></shiro:hasPermission>
 	</ul>
-	<form:form id="searchForm" modelAttribute="item" action="${ctx}/ope/item/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="item" action="${ctx}/ope/item/opeItems" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
@@ -36,7 +36,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>商品类别</th>
+				<th>选项类别</th>
 				<th>来源</th>
 				<th>名称</th>
 				<th>导购连接</th>
@@ -76,7 +76,7 @@
 				</td>
 				<shiro:hasPermission name="ope:item:edit"><td>
     				<a href="${ctx}/ope/item/form?id=${item.id}">修改</a>
-					<a href="${ctx}/ope/item/delete?id=${item.id}" onclick="return confirmx('确认要删除该商品吗？', this.href)">删除</a>
+					<a href="${ctx}/ope/item/delete?id=${item.id}" onclick="return confirmx('确认要删除该定制选项吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
