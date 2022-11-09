@@ -17,6 +17,12 @@
 		<if test="type != null and type != ''">
 			AND type = #{type}
 		</if>
+		<if test="label != null and label != ''">
+			AND label = #{label}
+		</if>
+		<if test="value != null and value != ''">
+			AND value = #{value}
+		</if>				
 		<if test="description != null and description != ''">
 			AND description LIKE 
 					<if test="dbName == 'oracle'">'%'||#{description}||'%'</if>

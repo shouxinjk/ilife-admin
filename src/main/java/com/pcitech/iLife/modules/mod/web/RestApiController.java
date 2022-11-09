@@ -124,9 +124,9 @@ public class RestApiController extends BaseController {
 		if(dicts.size()>0) {
 			result.put("success", true);
 			result.put("token", dicts.get(0).getLabel());
-		}else if(Global.getConfig("jd.accessToken")!=null && Global.getConfig("jd.accessToken").trim().length()>0) {
+		}else if(Global.getConfig(type+".accessToken")!=null && Global.getConfig(type+".accessToken").trim().length()>0) {
 			result.put("success", true);
-			result.put("token", Global.getConfig("jd.accessToken"));
+			result.put("token", Global.getConfig(type+".accessToken"));
 			result.put("msg", "use access token form config file. please check validation.");
 		}else {
 			result.put("msg", "no access token found. please check.");
