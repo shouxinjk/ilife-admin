@@ -56,6 +56,8 @@ import com.pcitech.iLife.modules.mod.service.OccasionService;
 import com.pcitech.iLife.modules.mod.service.ViewTemplateService;
 import com.pcitech.iLife.modules.ope.entity.Performance;
 import com.pcitech.iLife.modules.ope.service.PerformanceService;
+import com.pcitech.iLife.modules.sys.entity.Dict;
+import com.pcitech.iLife.modules.sys.service.DictService;
 import com.pcitech.iLife.util.FastDFSUtils;
 import com.pcitech.iLife.util.HttpClientHelper;
 
@@ -72,6 +74,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
 @RequestMapping(value = "${adminPath}/rest/api")
 public class RestApiController extends BaseController {
 
+	@Autowired DictService dictService;
 	@Autowired
 	private ViewTemplateService viewTemplateService;
 	@Autowired
@@ -106,6 +109,30 @@ public class RestApiController extends BaseController {
 		}
 		return mapList;
 	}	
+	
+	//从字典中获取accessToken，而不采用配置文件中的值。
+	//注意：需要运营支持，每月更新accessToken值
+	@ResponseBody
+	@RequestMapping(value = "access-token/{type}", method = RequestMethod.GET)
+	public JSONObject getAccessToken(@PathVariable String type) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		Dict dict = new Dict();
+		dict.setType("access_token");	
+		dict.setValue(type);
+		List<Dict> dicts = dictService.findList(dict);
+		if(dicts.size()>0) {
+			result.put("success", true);
+			result.put("token", dicts.get(0).getLabel());
+		}else if(Global.getConfig("jd.accessToken")!=null && Global.getConfig("jd.accessToken").trim().length()>0) {
+			result.put("success", true);
+			result.put("token", Global.getConfig("jd.accessToken"));
+			result.put("msg", "use access token form config file. please check validation.");
+		}else {
+			result.put("msg", "no access token found. please check.");
+		}
+		return result;//直接返回第一个即可
+	}
 	
 	/**
 	 * 根据id获取下级达人列表

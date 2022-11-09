@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jd.open.api.sdk.DefaultJdClient;
@@ -31,21 +32,40 @@ import com.jd.open.api.sdk.response.kplunion.UnionOpenGoodsPromotiongoodsinfoQue
 import com.jd.open.api.sdk.response.kplunion.UnionOpenOrderRowQueryResponse;
 import com.jd.open.api.sdk.response.kplunion.UnionOpenPromotionCommonGetResponse;
 import com.pcitech.iLife.common.config.Global;
+import com.pcitech.iLife.modules.sys.entity.Dict;
+import com.pcitech.iLife.modules.sys.service.DictService;
 
 //通过拼多多接口完成商品查询获得类目信息
 @Service
 public class JdHelper {
 	private static Logger logger = LoggerFactory.getLogger(JdHelper.class);
+	
+	@Autowired DictService dictService;
+	
 	JdClient client = null;
 	SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private JdClient getClient() {
 		if(client  == null) {
 			client = new DefaultJdClient(Global.getConfig("jd.api.http"), 
-					Global.getConfig("jd.accessToken"), 
+					getAccessToken(),
+					//Global.getConfig("jd.accessToken"), 
 					Global.getConfig("jd.appKey"),
 					Global.getConfig("jd.appSecret"));
 		}
 	    return client;
+	}
+	
+	//从字典中获取accessToken，而不采用配置文件中的值。
+	//注意：需要运营支持，每月更新accessToken值
+	protected String getAccessToken() {
+		Dict dict = new Dict();
+		dict.setType("access_token");	
+		dict.setValue("jd");
+		List<Dict> dicts = dictService.findList(dict);
+		if(dicts.size()>0)
+			return dicts.get(0).getLabel();//直接返回第一个即可
+		logger.warn("no access token found. please check.");
+		return Global.getConfig("jd.accessToken");
 	}
 	
 	/**

@@ -58,6 +58,13 @@ public class JdClientTest {
 	JdItemsSearcher jdItemsSearcher;
 	
 	@Test
+	public void getAccessToken() {
+		String accessToken = jdHelper.getAccessToken();
+		System.err.println(accessToken);
+		assert accessToken != null && accessToken.trim().length()>0;
+	}
+	
+	@Test
 	public void seach() {
 		JFGoodsReq request = new JFGoodsReq();
 		request.setEliteId(1);//传递下标
