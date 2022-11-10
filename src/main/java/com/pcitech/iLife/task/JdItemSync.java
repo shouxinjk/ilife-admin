@@ -56,7 +56,10 @@ public class JdItemSync {
     String username = Global.getConfig("arangodb.username");
     String password = Global.getConfig("arangodb.password");
     String database = Global.getConfig("arangodb.database");
-    
+    @Autowired
+    protected CalcProfit calcProfit;
+    @Autowired
+    protected CalcProfit2Party calcProfit2Party;
     @Autowired
     JdHelper jdHelper;
     
@@ -117,6 +120,21 @@ public class JdItemSync {
     				profit.put("type", "2-party");
     				profit.put("amount", good.getWlUnitPrice()*good.getCommisionRatioWl()*0.01);
     				profit.put("rate", good.getCommisionRatioWl());//是百分比
+    				//直接计算佣金分配：根据佣金分配scheme TODO 注意：当前未考虑类目
+					Map<String, Object> profit3party = calcProfit2Party.getProfit2Party("jd", good.getCid3Name(), good.getWlUnitPrice(), good.getWlUnitPrice()*good.getCommisionRatioWl()*0.01);
+					if(profit3party.get("order")!=null&&profit3party.get("order").toString().trim().length()>0) {
+						profit.put("order", Double.parseDouble(profit3party.get("order").toString()));
+					}
+					if(profit3party.get("team")!=null&&profit3party.get("team").toString().trim().length()>0) {
+						profit.put("team", Double.parseDouble(profit3party.get("team").toString()));
+					}
+					if(profit3party.get("credit")!=null&&profit3party.get("credit").toString().trim().length()>0)profit.put("credit", Double.parseDouble(profit3party.get("credit").toString()));
+					profit.put("type", "3-party");//计算完成后直接设置为3-party
+					
+					doc.getProperties().put("profit", profit);//直接覆盖更新profit
+					
+    				
+    				
     				doc.getProperties().put("profit", profit);//直接覆盖更新profit
 				}else {
 					logger.warn("查询详情失败。【SKU】"+skuId+"【URL】"+url);

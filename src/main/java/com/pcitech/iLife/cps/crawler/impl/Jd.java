@@ -122,7 +122,7 @@ public class Jd extends CrawlerBase {
 					profit.put("amount", amount);
 					profit.put("rate", good.getCommisionRatioWl());//是百分比
 					//直接计算佣金分配：根据佣金分配scheme TODO 注意：当前未考虑类目
-					Map<String, Object> profit3party = calcProfit2Party.getProfit2Party("pdd", good.getCid3Name(), good.getWlUnitPrice(), amount);
+					Map<String, Object> profit3party = calcProfit2Party.getProfit2Party("jd", good.getCid3Name(), good.getWlUnitPrice(), amount);
 					if(profit3party.get("order")!=null&&profit3party.get("order").toString().trim().length()>0) {
 						tipMsg +="店返 ￥"+profit3party.get("order");
 						profit.put("order", Double.parseDouble(profit3party.get("order").toString()));

@@ -107,7 +107,7 @@
         <dependency>
             <groupId>com.taobao</groupId>
             <artifactId>sdk-java</artifactId>
-            <version>20210901</version>
+            <version>20221110</version>
         </dependency>       
         <!-- pdd SDK -->
         <!-- 需要本地安装 -->

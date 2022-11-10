@@ -36,4 +36,9 @@ public class UtilTest {
 		System.err.println(Util.get6bitCode(null));
 	}
 	
+	@Test
+	public void getAbsUrl() throws Exception {
+		System.err.println(Util.getAbsUrl2("https://m.tb.cn/h.U6qJI9k?tk=ab8hdYBD6IX"));
+	}
+	
 }

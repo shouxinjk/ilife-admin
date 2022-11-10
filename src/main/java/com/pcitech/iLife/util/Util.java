@@ -1,7 +1,20 @@
 package com.pcitech.iLife.util;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.util.List;
 import java.util.UUID;
+
+import org.apache.http.HttpHost;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.utils.URIUtils;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 public class Util {
 	public static String get32UUID() {
@@ -145,5 +158,90 @@ public class Util {
 		 	 //int random = (int)System.currentTimeMillis()%4;
 		 	 int random = seed.length()%4;//根据长度随机获取
 			 return shortCodes[random]; 
-		} 
+	} 
+	
+	/**
+	 * 处理跳转链接，获取重定向地址
+	 * 不能工作
+	 * @param url
+	 *            源地址
+	 * @return 目标网页的绝对地址
+	 */
+	public static String getAbsUrl(String url) {
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		HttpClientContext context = HttpClientContext.create();
+		HttpGet httpget = new HttpGet(url);
+		CloseableHttpResponse response = null;
+		String absUrl = null;
+		try {
+			response = httpclient.execute(httpget, context);
+			HttpHost target = context.getTargetHost();
+			List<URI> redirectLocations = context.getRedirectLocations();
+			 System.out.println("httpget.getURI()：" + httpget.getURI());
+			URI location = URIUtils.resolve(httpget.getURI(), target, redirectLocations);
+			 System.out.println("Final HTTP location: " + location.toASCIIString());
+			absUrl = location.toASCIIString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				httpclient.close();
+				response.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return absUrl;
+	}
+	
+	public static String getAbsUrl2(String url) {
+		try {   
+            System.out.println("访问地址:" + url);  
+            URL serverUrl = new URL(url);  
+            HttpURLConnection conn = (HttpURLConnection) serverUrl  
+                    .openConnection();  
+            conn.setRequestMethod("GET");  
+            // 必须设置false，否则会自动redirect到Location的地址  
+            conn.setInstanceFollowRedirects(false);  
+  
+            conn.addRequestProperty("Accept-Charset", "UTF-8;");  
+            conn.addRequestProperty("User-Agent",  
+                    "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.8) Firefox/3.6.8");  
+            conn.addRequestProperty("Referer", url);  
+            conn.connect();  
+            String location = conn.getHeaderField("Location");  
+  
+            serverUrl = new URL(location);  
+            conn = (HttpURLConnection) serverUrl.openConnection();  
+            conn.setRequestMethod("GET");  
+  
+            conn.addRequestProperty("Accept-Charset", "UTF-8;");  
+            conn.addRequestProperty("User-Agent",  
+                    "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.8) Firefox/3.6.8");  
+            conn.addRequestProperty("Referer", url);  
+            conn.connect();  
+            System.out.println("跳转地址:" + location);  
+            return location;
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+		return "null";
+	}
+	
+	public static void main(String[] args) {
+        try {
+            String testUrl="https://s.click.taobao.com/t?e=m%3D2%26s%3D5Bv%2BeNV81epw4vFB6t2Z2ueEDrYVVa64juWlisr3dOdyINtkUhsv0EsnJVia4iYkPYSlF0lm7fL6xVrpyCh8Db6NA0zfsqGLJgaiYT8y1s914chc676%2F4Et5%2Be6mP1%2BGZiqtwk9j5QPwdDmZ4my9rH%2B5CTL8okK1lVAd73Mv%2FUp4FNt6%2F8j7gkUHc2RT1C7LFlPwwaV93CM5hDCuE8TSLA%3D%3D&scm=1007.19011.107453.0_4092&pvid=2b240c54-c83a-44ea-8718-d49ace11a24a&app_pvid=59590_11.231.38.118_1076_1668071262455&ptl=floorId:4094;originalFloorId:4094;pvid:2b240c54-c83a-44ea-8718-d49ace11a24a;app_pvid:59590_11.231.38.118_1076_1668071262455&union_lens=lensId%3AMAPI%401668071262%400be72676_0b72_18460cb8944_5c4c%4001";//原始链接
+            URL Url = new URL(testUrl);
+            HttpURLConnection conn=(HttpURLConnection)Url.openConnection();
+            conn.getResponseCode();
+            String realUrl=conn.getURL().toString();//跳转后所返回的链接
+            System.out.println(realUrl);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+ 
+    }
+	
 }

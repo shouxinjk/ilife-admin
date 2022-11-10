@@ -44,6 +44,8 @@ import org.quartz.JobExecutionException;
 @Service
 public class TaobaoItemSync {
     private static Logger logger = LoggerFactory.getLogger(TaobaoItemSync.class);
+    private Logger kafkaStuff = LoggerFactory.getLogger("kafkaStuff");//kafka output:提交到kafka
+    
     ArangoDbClient arangoClient;
     String host = Global.getConfig("arangodb.host");
     String port = Global.getConfig("arangodb.port");

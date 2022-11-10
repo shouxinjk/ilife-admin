@@ -167,6 +167,24 @@
             </list>
         </property>
     </bean>     
+
+    	<!-- 淘宝商品自动入库: 每天 8,10,16,20 点 执行 -->
+    <bean id="cpsDataSyncTaskTaobaoItemSearch" class="com.pcitech.iLife.task.TaobaoItemsSearcher"></bean>
+    <bean id="cpsDataSyncTaskTaobaoItemSearchMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="cpsDataSyncTaskTaobaoItemSearch"></property>
+        <property name="targetMethod" value="execute"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskTaobaoItemSearchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="cpsDataSyncTaskTaobaoItemSearchMethod"></property>
+        <property name="cronExpression" value="0 0 1 * * ?"></property>
+    </bean>
+    <bean id="cpsDataSyncTaskTaobaoItemSearchScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cpsDataSyncTaskTaobaoItemSearchTrigger"></ref>
+            </list>
+        </property>
+    </bean> 
     
     	<!-- 拼多多商品自动入库: 每天 8,10,16,20 点 执行 -->
     <bean id="cpsDataSyncTaskPddItemSearch" class="com.pcitech.iLife.task.PddItemsSearcher"></bean>

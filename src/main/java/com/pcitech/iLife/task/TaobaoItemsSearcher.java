@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.jd.open.api.sdk.domain.kplunion.GoodsService.request.query.JFGoodsReq;
 import com.jd.open.api.sdk.domain.kplunion.GoodsService.response.query.CharacteristicServiceInfo;
@@ -32,6 +33,7 @@ import com.pcitech.iLife.common.utils.IdGen;
 import com.pcitech.iLife.cps.JdHelper;
 import com.pcitech.iLife.cps.KaolaHelper;
 import com.pcitech.iLife.cps.PddHelper;
+import com.pcitech.iLife.cps.TaobaoHelper;
 import com.pcitech.iLife.cps.kaola.CategoryInfo;
 import com.pcitech.iLife.cps.kaola.GoodInfo;
 import com.pcitech.iLife.cps.kaola.GoodsInfoResponse;
@@ -57,6 +59,7 @@ import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse.GoodsDeta
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsZsUnitUrlGenResponse.GoodsZsUnitGenerateResponse;
 import com.suning.api.entity.advertise.UnitlistQueryRequest;
 import com.taobao.api.ApiException;
+import com.taobao.api.response.TbkDgOptimusMaterialResponse;
 import com.taobao.api.response.TbkItemInfoGetResponse.NTbkItem;
 
 import org.apache.commons.lang3.StringUtils;
@@ -70,8 +73,10 @@ import org.quartz.JobExecutionException;
  * 
  */
 @Service
-public class JdItemsSearcher {
-    private static Logger logger = LoggerFactory.getLogger(JdItemsSearcher.class);
+public class TaobaoItemsSearcher {
+    private static Logger logger = LoggerFactory.getLogger(TaobaoItemsSearcher.class);
+    private Logger kafkaStuff = LoggerFactory.getLogger("kafkaStuff");//kafka output:提交到kafka
+
     ArangoDbClient arangoClient;
     String host = Global.getConfig("arangodb.host");
     String port = Global.getConfig("arangodb.port");
@@ -83,13 +88,14 @@ public class JdItemsSearcher {
     @Autowired
     protected CalcProfit2Party calcProfit2Party;
     @Autowired
-    JdHelper jdHelper;
+    TaobaoHelper taobaoHelper;
     @Autowired
 	private PlatformCategoryService platformCategoryService;
     
     //默认设置
     int pageSize = 50;//每页数量，默认20，上限50，建议20
-    String urlPrefix = "https://";//https://item.jd.com/26898778009.html
+    String itemPrefix = "https://detail.tmall.com/item.htm?id=";//默认所有采集数据均以id为唯一识别。注意，该地址不能作为商品跳转地址
+    String urlPrefix = "https:"; //返回的url缺少协议头
     
     // 记录处理条数
     long totalAmount = 0;
@@ -103,85 +109,69 @@ public class JdItemsSearcher {
     DecimalFormat df = new DecimalFormat("#.00");//double类型直接截断，保留小数点后两位，不四舍五入
 	NumberFormat nf = null;
 
-    public JdItemsSearcher() {
+    public TaobaoItemsSearcher() {
     	nf = NumberFormat.getNumberInstance();
 		nf.setMaximumFractionDigits(2);	// 保留两位小数
 		nf.setRoundingMode(RoundingMode.DOWN);// 如果不需要四舍五入，可以使用RoundingMode.DOWN
     }
     
-    private void upsertItem(String poolName,JFGoodsResp item) {
-		String  url = urlPrefix+item.getMaterialUrl();//得到唯一URL
+    private void upsertItem(String poolName,TbkDgOptimusMaterialResponse.MapData item) {
+		String  url = itemPrefix+item.getItemId();//得到唯一URL
 		String itemKey = Util.md5(url);//根据URL生成唯一key
 		//准备更新doc
 		BaseDocument doc = new BaseDocument();
 		doc.setKey(itemKey);
 		doc.getProperties().put("url", url);
 		Map<String,Object> seller = new HashMap<String,Object>();
-		seller.put("name", item.getShopInfo().getShopName());
+		seller.put("name", item.getShopTitle());
 		doc.getProperties().put("seller", seller);	
 		Map<String,Object> distributor = new HashMap<String,Object>();
-		distributor.put("name", "京东");
+		distributor.put("name", "淘宝");
 		doc.getProperties().put("distributor", distributor);	
 		Map<String,Object> link = new HashMap<String,Object>();
-		link.put("web", url);
-		link.put("wap", url);//移动端URL保持与web一致
-		if(item.getCouponInfo()!=null && item.getCouponInfo().getCouponList().length>0) {//取第一个优惠券作为领券链接
-			link.put("coupon",  item.getCouponInfo().getCouponList()[0].getLink());
+		link.put("web", urlPrefix+item.getClickUrl());
+		link.put("wap", urlPrefix+item.getClickUrl());
+		link.put("web2", urlPrefix+item.getClickUrl());
+		link.put("wap2", urlPrefix+item.getClickUrl());	
+		if(item.getCouponClickUrl()!=null && item.getCouponClickUrl().trim().length()>0) {//取第一个优惠券作为领券链接
+			link.put("coupon",  urlPrefix+item.getCouponClickUrl());
 		}
 		//注意：此接口返回值内没有导购链接，需要二次调用生成补充
 		doc.getProperties().put("link", link);		
 		Map<String,Object> task = new HashMap<String,Object>();
-		task.put("user", "robot-jdItemsSearcher");
-		task.put("executor", "robot-jdItemsSearcher-instance");
+		task.put("user", "robot-taobaoItemsSearcher");
+		task.put("executor", "robot-taobaoItemsSearcher-instance");
 		task.put("timestamp", new Date().getTime());
 		task.put("url", url);
 		doc.getProperties().put("task", task);
 		doc.getProperties().put("type", "commodity");
-		doc.getProperties().put("source", "jd");
+		doc.getProperties().put("source", "taobao");
 
-		doc.getProperties().put("title", item.getSkuName());//更新title
+		doc.getProperties().put("title", item.getTitle());//更新title
 		
 		List<String> tags = new ArrayList<String>();
 		//将放心购标签作为商品标签 
-		if(item.getSkuLabelInfo()!=null && item.getSkuLabelInfo().getFxgServiceList()!=null) {
-			for(CharacteristicServiceInfo label:item.getSkuLabelInfo().getFxgServiceList())
-				tags.add(label.getServiceName());
+		if(item.getItemDescription()!=null && item.getItemDescription().trim().length()>0) {
+			for(String tag: item.getItemDescription().split(" ") )
+				if(tag.trim().length()>0)
+					tags.add(tag.trim());
 		}
 		doc.getProperties().put("tags", tags);
 		
-		//更新品牌信息到prop列表
-		Map<String,String> props = new HashMap<String,String>();
-		props.put("品牌", item.getBrandName());//增加品牌属性
-		doc.getProperties().put("props", props);
-		
 		//更新图片列表：注意脚本中已经有采集，此处使用自带的内容
 		List<String> images = new ArrayList<String>();
-		for(UrlInfo img:item.getImageInfo().getImageList())//增加展示图片
-			images.add(img.getUrl());
+		images.add(urlPrefix+item.getPictUrl());
 		doc.getProperties().put("images", images);
 		
 		//将第一张展示图片作为logo
-		doc.getProperties().put("logo", item.getImageInfo().getWhiteImage());
-//		doc.getProperties().put("logo", item.getImageInfo().getImageList()[0].getUrl());//图片列表内第一张为主图，作为logo
-		
-		//如果有documentInfo，则作为summary
-		if(item.getDocumentInfo()!=null && item.getDocumentInfo().getDocument().trim().length()>0)
-			doc.getProperties().put("summary", item.getDocumentInfo().getDocument().replaceAll("\\s+"," "));
+		doc.getProperties().put("logo", urlPrefix+item.getPictUrl());
 		
 		//增加类目
-//		List<String> categories = new ArrayList<String>();
-//		categories.add(item.getCategoryInfo().getCid1Name());
-//		categories.add(item.getCategoryInfo().getCid2Name());
-//		categories.add(item.getCategoryInfo().getCid3Name());
-//		doc.getProperties().put("category", categories);//更新类目，包含多级分类
-		String category = item.getCategoryInfo().getCid1Name();
-		category += " "+item.getCategoryInfo().getCid2Name();
-		category += " "+item.getCategoryInfo().getCid2Name();
-		doc.getProperties().put("category", category);//更新类目，包含多级分类
+		doc.getProperties().put("category", poolName);//采用物料分类作为类目描述
 		//检查类目映射
 		PlatformCategory query = new PlatformCategory();
-		query.setName(category);
-		query.setPlatform("jd");
+		query.setName(poolName);
+		query.setPlatform("taobao");
 		List<PlatformCategory> list = platformCategoryService.findMapping(query);
 		if(list.size()>0) {//有则更新
 			Map<String,Object> meta = new HashMap<String,Object>();
@@ -190,8 +180,8 @@ public class JdItemsSearcher {
 			doc.getProperties().put("meta", meta);	
 		}else {//否则写入等待标注
 			query.setIsNewRecord(true);
-			query.setId(Util.md5("jd"+category));//采用手动生成ID，避免多次查询生成多条记录
-			query.setPlatform("jd");
+			query.setId(Util.md5("taobao"+poolName));//采用手动生成ID，避免多次查询生成多条记录
+			query.setPlatform("taobao");
 			query.setCreateDate(new Date());
 			query.setUpdateDate(new Date());
 			platformCategoryService.save(query);
@@ -204,36 +194,41 @@ public class JdItemsSearcher {
 		//更新价格：直接覆盖
 		Map<String,Object> price = new HashMap<String,Object>();
 		price.put("currency", "￥");
-		price.put("bid", parseNumber(item.getPriceInfo().getPrice()));
-		price.put("sale", parseNumber(item.getPriceInfo().getLowestPrice()));
-		if(item.getCouponInfo()!=null && item.getCouponInfo().getCouponList().length>0) {//取第一个优惠金额
-			price.put("coupon",  parseNumber(item.getCouponInfo().getCouponList()[0].getDiscount()));
+		price.put("bid", item.getReservePrice());
+		price.put("sale", item.getZkFinalPrice());
+		if(item.getCouponAmount()!=null && item.getCouponAmount()>0) {
+			price.put("coupon", item.getCouponAmount()*0.01);//待定
 		}
 		doc.getProperties().put("price", price);
 		
 		//更新佣金：直接覆盖
 		Map<String,Object> profit = new HashMap<String,Object>();
-		profit.put("rate", parseNumber(item.getCommissionInfo().getCommissionShare()));//返回的是百分比，直接使用即可
-		profit.put("amount", parseNumber(item.getCommissionInfo().getCommission()));
-		profit.put("type", "2-party");
-		//直接计算佣金分配：根据佣金分配scheme TODO 注意：当前未考虑类目
-		Map<String, Object> profit3party = calcProfit2Party.getProfit2Party("jd", item.getCategoryInfo().getCid3Name(), item.getPriceInfo().getPrice(), item.getCommissionInfo().getCommission());
-		if(profit3party.get("order")!=null&&profit3party.get("order").toString().trim().length()>0) {
-			profit.put("order", Double.parseDouble(profit3party.get("order").toString()));
+		try {
+			double rate = Double.parseDouble(item.getCommissionRate())*0.01;//需要核对数据
+			profit.put("rate", parseNumber(rate*100));//返回的是百分比，直接使用即可
+			profit.put("amount", rate*Double.parseDouble(item.getZkFinalPrice()));
+			profit.put("type", "2-party");
+			//直接计算佣金分配：根据佣金分配scheme TODO 注意：当前未考虑类目
+			Map<String, Object> profit3party = calcProfit2Party.getProfit2Party("taobao", poolName, Double.parseDouble(item.getZkFinalPrice()), rate*Double.parseDouble(item.getZkFinalPrice()));
+			if(profit3party.get("order")!=null&&profit3party.get("order").toString().trim().length()>0) {
+				profit.put("order", Double.parseDouble(profit3party.get("order").toString()));
+			}
+			if(profit3party.get("team")!=null&&profit3party.get("team").toString().trim().length()>0) {
+				profit.put("team", Double.parseDouble(profit3party.get("team").toString()));
+			}
+			if(profit3party.get("credit")!=null&&profit3party.get("credit").toString().trim().length()>0)profit.put("credit", Double.parseDouble(profit3party.get("credit").toString()));
+			profit.put("type", "3-party");//计算完成后直接设置为3-party
+			
+			doc.getProperties().put("profit", profit);
+		}catch(Exception ex) {
+			logger.debug("failed parse commission",ex);
 		}
-		if(profit3party.get("team")!=null&&profit3party.get("team").toString().trim().length()>0) {
-			profit.put("team", Double.parseDouble(profit3party.get("team").toString()));
-		}
-		if(profit3party.get("credit")!=null&&profit3party.get("credit").toString().trim().length()>0)profit.put("credit", Double.parseDouble(profit3party.get("credit").toString()));
-		profit.put("type", "3-party");//计算完成后直接设置为3-party
-		
-		doc.getProperties().put("profit", profit);
 		
 		//设置状态。注意，需要设置sync=pending 等待计算CPS链接
 		//状态更新
 		Map<String,Object> status = new HashMap<String,Object>();
 		status.put("crawl", "ready");
-		status.put("sync", "pending");//等待生成CPS链接
+		status.put("sync", "ready");//等待生成CPS链接
 		status.put("load", "pending");
 		status.put("classify", "pending");
 		status.put("satisify", "pending");//这个要在classify之后才执行
@@ -249,13 +244,15 @@ public class JdItemsSearcher {
 		doc.getProperties().put("timestamp", timestamp);
 
 		//更新doc
-		logger.debug("try to upsert jd item.[itemKey]"+itemKey,JSON.toString(doc));
-//		需要区分是否已经存在，如果已经存在则直接更新，但要避免更新profit信息，以免出发3-party分润任务
-//		arangoClient.upsert("my_stuff", itemKey, doc);   
+		logger.debug("try to upsert taobao item.[itemKey]"+itemKey,JSON.toString(doc));
+
+		//TODO：可以直接推送到kafka，减少数据库操作
 		BaseDocument old = arangoClient.find("my_stuff", itemKey);
 		if(old!=null && itemKey.equals(old.getKey())) {//已经存在，则直接跳过
 			//do nothing
 		}else {//否则写入
+			Gson gson = new Gson();
+			System.err.println(gson.toJson(doc));
 			arangoClient.insert("my_stuff", doc);   
 			processedMap.put(poolName, processedMap.get(poolName)+1);
 			processedAmount++;
@@ -280,61 +277,28 @@ public class JdItemsSearcher {
 	 * 4，处理完成后发送通知给管理者
      */
     public void execute() throws JobExecutionException {
-    		logger.info("JD cps item search job start. " + new Date());
+    		logger.info("Taobao cps item search job start. " + new Date());
     		processedMap = new HashMap<String,Long>();
     		totalMap = new HashMap<String,Long>();
     		poolNameMap = new HashMap<String,String>();
 
-        //准备查询条件，除1001-选品库外，每一种分别查询
-    		//频道ID:1-好券商品,2-精选卖场,10-9.9包邮,15-京东配送,22-实时热销榜,23-为你推荐,24-数码家电,25-超市,26-母婴玩具,27-家具日用,28-美妆穿搭,30-图书文具,31-今日必推,32-京东好物,33-京东秒杀,34-拼购商品,40-高收益榜,41-自营热卖榜,108-秒杀进行中,109-新品首发,110-自营,112-京东爆品,125-首购商品,129-高佣榜单,130-视频商品,153-历史最低价商品榜，210-极速版商品，238-新人价商品，247-京喜9.9，249-京喜秒杀，1000-招商团长，1001-选品库
-    		String poolNameStr = "1-好券商品,2-精选卖场,10-9.9包邮,15-京东配送,22-实时热销榜,23-为你推荐,24-数码家电,25-超市,26-母婴玩具,27-家具日用,28-美妆穿搭,30-图书文具,31-今日必推,32-京东好物,33-京东秒杀,34-拼购商品,40-高收益榜,41-自营热卖榜,108-秒杀进行中,109-新品首发,110-自营,112-京东爆品,125-首购商品,129-高佣榜单,130-视频商品,153-历史最低价商品榜，210-极速版商品，238-新人价商品，247-京喜9.9，249-京喜秒杀，1000-招商团长";
-    		String[] poolNameArray = poolNameStr.split(",");
-    		poolNameStr = poolNameStr.replaceAll("\\d+\\-", "");
-    		String[] poolNames = poolNameStr.split(",");
-    		int k=0;
-    		for(String str:poolNames) {
-    			logger.debug(poolNameArray[k]+"-->"+str);
-    			k++;
-    		}
+    		//准备选品库信息
+    		Map<String, Long> materialCategoryMap = getMaterialCateogry();
     		//准备连接
     		arangoClient = new ArangoDbClient(host,port,username,password,database);
-        int poolNameIndex = 1;
-    		for(String poolName:poolNames) {//逐个分类查询，每个分类均进行遍历
+    		for(String poolName:materialCategoryMap.keySet()) {//逐个分类查询，每个分类均进行遍历
     			logger.debug("start search by poolName.[poolName]"+poolName);
     			processedMap.put(poolName, 0L);//默认设置相应分类的条数为0
-    			JFGoodsReq request = new JFGoodsReq();
-    			request.setEliteId(poolNameIndex++);//传递下标
-    			request.setPageIndex(1);//默认从第一页开始:下标从1开始
-    			request.setPageSize(pageSize);
-    			request.setSortName("commissionShare");//排序字段(price：单价, commissionShare：佣金比例, commission：佣金， inOrderCount30DaysSku：sku维度30天引单量，comments：评论数，goodComments：好评数)
-    			request.setSort("desc");//asc,desc升降序,默认降序
-    			request.setPid(Global.getConfig("jd.pid"));//联盟id_应用id_推广位id，三段式
-    			request.setFields("hotWords,documentInfo,skuLabelInfo,promotionLabelInfo");//支持出参数据筛选，逗号','分隔，目前可用：videoInfo(视频信息),hotWords(热词),similar(相似推荐商品),documentInfo(段子信息)，skuLabelInfo（商品标签），promotionLabelInfo（商品促销标签）
-    			
-    			//Step1:搜索得到推荐商品列表
-    			logger.debug("try to search items.[request]"+JsonUtil.transferToJson(request));
     			try {
-	    			JingfenQueryResult resp = jdHelper.search(request);
-	    			JFGoodsResp[] jfgoods = resp.getData();
-	    			for(JFGoodsResp jfgood:jfgoods) {
-	    				upsertItem(poolName,jfgood);
+    				//Step1:搜索得到推荐商品列表
+    				List<TbkDgOptimusMaterialResponse.MapData> items = taobaoHelper.getOptimusMaterial(materialCategoryMap.get(poolName));//默认直接获取20条，每天执行即可
+    				logger.debug("got items by material id.[name]"+poolName+"[id]"+materialCategoryMap.get(poolName));
+    				//Step2:遍历得到所有条目
+	    			for(TbkDgOptimusMaterialResponse.MapData item:items) {
+	    				upsertItem(poolName,item);
 	    			}
-	    			//检查分页，如果有分页则循环遍历
-				long totalAmountPerPool = resp.getTotalCount();
-				totalMap.put(poolName,totalAmountPerPool );//默认设置相应分类的总条数
-		    		totalAmount += totalAmountPerPool;
-		    		long totalPages = (totalAmountPerPool + pageSize -1)/pageSize;
-		    		for(int i=2;i<totalPages+1;i++) {//如果有分页则逐页获取
-		    			logger.debug("start process search result by page.[pageNo]"+i+"/"+totalPages);
-		    			request.setPageIndex(i);
-		    			resp = jdHelper.search(request);
-		    			jfgoods = resp.getData();
-		    			for(JFGoodsResp jfgood:jfgoods) {
-		    				upsertItem(poolName,jfgood);
-		    			}
-		    		}
 	    		}catch(Exception ex) {
-	    			
+	    			logger.warn("error while query items by material id.ignore.[name]"+poolName+"[id]"+materialCategoryMap.get(poolName),ex.getMessage());
 	    		}
     		}
 		//完成后关闭arangoDbClient
@@ -358,8 +322,8 @@ public class JdItemsSearcher {
     	    JSONObject result = null;
 		JSONObject msg = new JSONObject();
 		msg.put("openid", Global.getConfig("default_tech_guy_openid"));//固定发送
-		msg.put("title", "导购数据同步任务结果");
-		msg.put("task", "京东商品入库 已同步");
+		msg.put("title", "数据自动上架任务结果");
+		msg.put("task", "淘宝商品入库 已同步");
 		msg.put("time", fmt.format(new Date()));
 		msg.put("remark", remark);
 		msg.put("color", totalAmount-processedAmount==0?"#FF0000":"#000000");
@@ -375,6 +339,72 @@ public class JdItemsSearcher {
         
         //处理数量归零
         processedAmount = 0;
+    }
+    
+    private Map<String,Long> getMaterialCateogry(){
+    	Map<String,Long> materialCategory = Maps.newHashMap();
+		materialCategory.put("天猫国际直营类目爆款清单",44413L);
+		materialCategory.put("天猫国际大贸清单",44412L);
+		materialCategory.put("国际直营爆款补贴清单",37089L);
+		materialCategory.put("国际直营爆款清单",37088L);
+		materialCategory.put("天猫国际直营品牌清单",38508L);
+		materialCategory.put("天猫国际直营99元选10件",36223L);
+		materialCategory.put("天猫国际直营2件5折起",36224L);
+		materialCategory.put("天猫国际199选N件",28659L);
+		materialCategory.put("天猫国际直营99元选35件",36222L);
+		materialCategory.put("特色淘抢购商品库 ",34616L);
+		materialCategory.put("好券-综合",3756L);
+		materialCategory.put("好券-鞋包配饰",3762L);
+		materialCategory.put("好券-母婴",3760L);
+		materialCategory.put("好券-女装",3767L);
+		materialCategory.put("好券-美妆个护",3763L);
+		materialCategory.put("好券-食品",3761L);
+		materialCategory.put("好券-家居家装",3758L);
+		materialCategory.put("好券-男装",3764L);
+		materialCategory.put("好券-运动户外",3766L);
+		materialCategory.put("好券-数码家电",3759L);
+		materialCategory.put("好券-内衣",3765L);
+		materialCategory.put("实时热销-综合",28026L);
+		materialCategory.put("实时热销-大服饰 ",28029L);
+		materialCategory.put("实时热销-大快消 ",28027L);
+		materialCategory.put("实时热销-电器美家 ",28028L);
+		materialCategory.put("大额券-综合",27446L);
+		materialCategory.put("大额券-女装",27448L);
+		materialCategory.put("大额券-食品",27451L);
+		materialCategory.put("大额券-美妆个护",27453L);
+		materialCategory.put("大额券-家居家装",27798L);
+		materialCategory.put("大额券-母婴 ",27454L);
+		materialCategory.put("品牌券-综合",3786L);
+		materialCategory.put("品牌券-鞋包配饰",3796L);
+		materialCategory.put("品牌券-母婴",3789L);
+		materialCategory.put("品牌券-女装",3788L);
+		materialCategory.put("品牌券-美妆个护",3794L);
+		materialCategory.put("品牌券-食品",3791L);
+		materialCategory.put("品牌券-家居家装",3792L);
+		materialCategory.put("品牌券-男装",3790L);
+		materialCategory.put("品牌券-运动户外",3795L);
+		materialCategory.put("品牌券-数码家电",3793L);
+		materialCategory.put("品牌券-内衣",3787L);
+		materialCategory.put("潮流范",4093L);
+		materialCategory.put("特惠",4094L);
+		materialCategory.put("本地生活-电影代金券",19812L);
+		materialCategory.put("本地生活-演出/演唱会/剧目/会展",25378L);
+		materialCategory.put("本地生活-视频年卡",28636L);
+		materialCategory.put("本地生活-喜马拉雅年卡儿童节目等",29105L);
+		materialCategory.put("本地生活-hpv疫苗预约",25885L);
+		materialCategory.put("本地生活-体检",25886L);
+		materialCategory.put("本地生活-口腔",25888L);
+		materialCategory.put("本地生活-基因检测",25890L);
+		materialCategory.put("飞猪-签证",26077L);
+		materialCategory.put("飞猪-酒店",27913L);
+		materialCategory.put("飞猪-自助餐",27914L);
+		materialCategory.put("飞猪-门票",19811L);
+		materialCategory.put("本地生活-肯德基/必胜客/麦当劳",19810L);
+		materialCategory.put("本地生活-生活服务",28888L);
+		materialCategory.put("本地生活-家政服务",19814L);
+		materialCategory.put("品牌精选清单",39313L);
+		
+		return materialCategory;
     }
 
 }
