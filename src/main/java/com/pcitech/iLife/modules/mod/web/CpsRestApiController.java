@@ -165,7 +165,7 @@ public class CpsRestApiController extends BaseController {
 			//存入达人链接数据库，等待手动处理
 			insertBrokerSeed(json.getString("openid"),"url",json.getString("url"),json.getString("url"),false);
 			//推送通知消息
-			sendWeworkMsg("达人商品上架", "发送后未能自动采集，请前往查看", json.getString("url"));
+			sendWeworkMsg("达人商品上架", "发送后未能自动采集，请前往查看", "https://www.biglistoflittlethings.com/static/logo/distributor/ilife.png", json.getString("url"));
 			result.put("msg", "not support yet.");
 			return result;
 		}
@@ -174,7 +174,7 @@ public class CpsRestApiController extends BaseController {
 			//存入达人链接数据库，等待手动处理
 			insertBrokerSeed(json.getString("openid"),"url",json.getString("url"),json.getString("url"),false);
 			//推送通知消息
-			sendWeworkMsg("非CPS商品上架", "非导购商品信息未能自动采集，请前往查看", json.getString("url"));
+			sendWeworkMsg("非CPS商品上架", "非导购商品信息未能自动采集，请前往查看", "https://www.biglistoflittlethings.com/static/logo/distributor/ilife.png", json.getString("url"));
 			
 		}
 		
@@ -188,6 +188,7 @@ public class CpsRestApiController extends BaseController {
 				broker.setOpenid(json.getString("openid"));
 				broker.setNickname("小确幸er");
 			}
+			result.put("broker",broker);
 		}
 		return result;
 	}
