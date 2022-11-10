@@ -165,7 +165,7 @@ public class CpsRestApiController extends BaseController {
 			//存入达人链接数据库，等待手动处理
 			insertBrokerSeed(json.getString("openid"),"url",json.getString("url"),json.getString("url"),false);
 			//推送通知消息
-			sendWeworkMsg("达人商品未能自动上架", "发送后未能自动采集，请前往查看", "https://www.biglistoflittlethings.com/static/logo/distributor/ilife.png", json.getString("url"));
+			sendWeworkMsg("达人商品上架", "发送后未能自动采集，请前往查看", json.getString("url"));
 			result.put("msg", "not support yet.");
 			return result;
 		}
@@ -174,8 +174,20 @@ public class CpsRestApiController extends BaseController {
 			//存入达人链接数据库，等待手动处理
 			insertBrokerSeed(json.getString("openid"),"url",json.getString("url"),json.getString("url"),false);
 			//推送通知消息
-			sendWeworkMsg("非CPS商品上架", "非导购商品信息未能自动采集，请前往查看", "https://www.biglistoflittlethings.com/static/logo/distributor/ilife.png", json.getString("url"));
+			sendWeworkMsg("非CPS商品上架", "非导购商品信息未能自动采集，请前往查看", json.getString("url"));
 			
+		}
+		
+		//增加发送达人信息
+		if(json.getString("openid")!=null && json.getString("openid").trim().length()>0) {
+			Broker broker = brokerService.getByOpenid(json.getString("openid"));
+			if(broker!=null) {
+				result.put("broker", broker);
+			}else {
+				broker = brokerService.get("system");//否则获取系统达人，如：未注册用户直接发送则会需要该返回
+				broker.setOpenid(json.getString("openid"));
+				broker.setNickname("小确幸er");
+			}
 		}
 		return result;
 	}
@@ -518,10 +530,35 @@ public class CpsRestApiController extends BaseController {
 		
 		//更新doc
 		logger.debug("try to upsert seed item.[url]"+data,JSON.toJSONString(doc));
-		arangoClient.insert("my_stuff", doc); 
+		arangoClient.insert("broker_seeds", doc); 
 		//完成后关闭arangoDbClient
 		arangoClient.close();
   }
+	  //发送企业微信通知消息
+	  //采用文本卡片形式，便于复制文字
+	  public void sendWeworkMsg(String title,String description,String url) {
+			//组装模板消息
+			JSONObject json = new JSONObject();
+			json.put("msgtype", "textcard");
+			JSONObject textcard = new JSONObject();
+			textcard.put("title" , title);
+			textcard.put("description" , url);
+			textcard.put("url" , url);
+			textcard.put("btntxt" , "前往查看");
+			json.put("textcard", textcard);
+			
+			logger.debug("try to send cp msg. ",json);
+			
+	   	    //准备发起HTTP请求：设置data server Authorization
+		    Map<String,String> header = new HashMap<String,String>();
+		    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
+		    
+			//发送到企业微信
+			HttpClientHelper.getInstance().post(
+					Global.getConfig("wework.templateMessenge")+"/notify-cp-company-broker", 
+					json,header);
+	  }
+	  
 	  //发送企业微信通知消息
 	  //直接用卡片方式组织
 	  public void sendWeworkMsg(String title,String description,String picUrl,String url) {
@@ -551,4 +588,5 @@ public class CpsRestApiController extends BaseController {
 					Global.getConfig("wework.templateMessenge")+"/notify-cp-company-broker", 
 					json,header);
 	  }
+
 }
