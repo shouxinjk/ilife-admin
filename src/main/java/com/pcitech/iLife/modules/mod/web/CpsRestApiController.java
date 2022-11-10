@@ -160,6 +160,15 @@ public class CpsRestApiController extends BaseController {
 			result.put("msg", "url is mandatory");
 			return result;
 		}
+		//增加发送达人信息
+		Broker broker = brokerService.get("system");//获取系统达人，如：未注册用户直接发送则会需要该返回
+		broker.setOpenid(json.getString("openid"));
+		broker.setNickname("小确幸er");
+		if(json.getString("openid")!=null && json.getString("openid").trim().length()>0) {
+			broker = brokerService.getByOpenid(json.getString("openid"));
+		}
+		
+		//开始采集
 		Crawler crawler = crawlerUtil.getCrawler(json.getString("url"));
 		if(crawler == null) {
 			//存入达人链接数据库，等待手动处理
@@ -167,9 +176,11 @@ public class CpsRestApiController extends BaseController {
 			//推送通知消息
 			sendWeworkMsg("达人商品上架", "发送后未能自动采集，请前往查看", "https://www.biglistoflittlethings.com/static/logo/distributor/ilife.png", json.getString("url"));
 			result.put("msg", "not support yet.");
+			result.put("broker",broker);
 			return result;
 		}
 		result = crawler.enhouse(json.getString("url"), json.getString("openid"));
+		result.put("broker",broker);
 		if("nocps".equalsIgnoreCase(result.getString("type"))) {
 			//存入达人链接数据库，等待手动处理
 			insertBrokerSeed(json.getString("openid"),"url",json.getString("url"),json.getString("url"),false);
@@ -178,18 +189,6 @@ public class CpsRestApiController extends BaseController {
 			
 		}
 		
-		//增加发送达人信息
-		if(json.getString("openid")!=null && json.getString("openid").trim().length()>0) {
-			Broker broker = brokerService.getByOpenid(json.getString("openid"));
-			if(broker!=null) {
-				result.put("broker", broker);
-			}else {
-				broker = brokerService.get("system");//否则获取系统达人，如：未注册用户直接发送则会需要该返回
-				broker.setOpenid(json.getString("openid"));
-				broker.setNickname("小确幸er");
-			}
-			result.put("broker",broker);
-		}
 		return result;
 	}
 	
