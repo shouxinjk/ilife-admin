@@ -185,7 +185,7 @@ public class CpsRestApiController extends BaseController {
 				  String pattern = "[a-zA-Z0-9]{11}";
 					 try {
 					     Pattern r = Pattern.compile(pattern);
-					     Matcher m = r.matcher(json.getString("text"));
+					     Matcher m = r.matcher(json.getString("text")); 
 					     if (m.find()) {
 					    	 String token = m.group();
 					         logger.debug("match: " + token);
