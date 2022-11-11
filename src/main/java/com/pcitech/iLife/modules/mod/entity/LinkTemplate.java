@@ -20,7 +20,7 @@ public class LinkTemplate extends DataEntity<LinkTemplate> {
 	private String name;		// 名称
 	private String condition;		// 判定规则
 	private String expression;		// 处理规则
-	private String priority;		// 备用。优先级
+	private String priority="10";		// 备用。优先级
 	private String description;		// 描述
 	
 	public LinkTemplate() {

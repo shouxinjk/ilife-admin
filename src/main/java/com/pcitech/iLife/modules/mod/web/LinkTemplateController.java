@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
@@ -62,18 +63,26 @@ public class LinkTemplateController extends BaseController {
 	/**
 	 * 输入URL，转换为标准URL格式。处理逻辑:
 	 * 获取所有连接规则，使用condition逐个匹配，如果符合则执行  expression 得到结果URL返回
+	 * 
+	 * 注意：必须用post 方法。避免链接中带有参数导致缺失
 	 * @param url 输入URL
 	 * @param response
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/convert", method = RequestMethod.GET)
-	public Map<String,Object> convertUrl( @RequestParam(required=true) String url, HttpServletResponse response) {
-		logger.debug("try to covert url.[url]"+url);
+	@RequestMapping(value = "rest/convert", method = RequestMethod.POST)
+	public Map<String,Object> convertUrl( @RequestParam(required=true) JSONObject json, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
 		Map<String,Object> result = Maps.newHashMap();
 		result.put("success", false);//默认认为处理都失败了，我们比较谦虚的哈
+
+		String url = json.getString("url");
 		result.put("sUrl", url);//原始链接放回去
+		if(url==null || url.trim().length()==0) {
+			result.put("msg", "url is required.");
+			return result;
+		}
+		logger.debug("try to covert url.[url]"+url);
 		
 		//获取所有待处理规则
 		List<LinkTemplate> templates = linkTemplateService.findByPriority();
@@ -82,11 +91,11 @@ public class LinkTemplateController extends BaseController {
 		GroovyShell shell = new GroovyShell(binding);
 		for(LinkTemplate template:templates) {//没啥技巧，就一个个比对呗
 			logger.debug("try to match url.[rule]"+template.getCondition());
-        	String  script = org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(template.getCondition()); //注意：必须转移，双引号等无法引用。
+        	String  script = org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(template.getCondition()); //注意：必须转义，双引号等无法引用。
 	        Object value = shell.evaluate(script);//返回：boolean，即ture/false
 	        logger.debug("match result.[result]"+value);
 	        if(Boolean.valueOf(""+value)) {//如果命中了，则处理URL
-	        	script = org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(template.getExpression()); //注意：必须转移，双引号等无法引用。
+	        	script = org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(template.getExpression()); //注意：必须转义，双引号等无法引用。
 	        	value = shell.evaluate(script);//返回：string，已经完成组装为目标URL了
 	        	result.put("success", true);
 	        	result.put("url", ""+value);

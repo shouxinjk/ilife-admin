@@ -181,7 +181,7 @@ public class CpsRestApiController extends BaseController {
 					type = "taobaoToken";
 			}else if(json.getString("text").indexOf("s.click.taobao.com")>0) { //检查click跳转链接
 					type = "taobaoClick";
-			}else {//检查淘口令
+			}else if(json.getString("text").indexOf("http")<0){//检查淘口令，仅在不包含链接时执行
 				  String pattern = "[a-zA-Z0-9]{11}";
 					 try {
 					     Pattern r = Pattern.compile(pattern);
