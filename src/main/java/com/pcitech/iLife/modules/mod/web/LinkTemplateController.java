@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -71,7 +72,7 @@ public class LinkTemplateController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/convert", method = RequestMethod.POST)
-	public Map<String,Object> convertUrl( @RequestParam(required=true) JSONObject json, HttpServletResponse response) {
+	public Map<String,Object> convertUrl( @RequestBody JSONObject json, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
 		Map<String,Object> result = Maps.newHashMap();
 		result.put("success", false);//默认认为处理都失败了，我们比较谦虚的哈
