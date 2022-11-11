@@ -173,10 +173,24 @@ public class CpsRestApiController extends BaseController {
 		if(crawler == null) {
 			//存入达人链接数据库，等待手动处理
 			String type = "url";
-			if(json.getString("url").indexOf("m.tb.cn")>0)
+			if(json.getString("url").indexOf("m.tb.cn")>0) { //检查移动端短连接
 					type = "taobaoToken";
-			else if(json.getString("url").indexOf("s.click.taobao.com")>0)
+			}else if(json.getString("url").indexOf("s.click.taobao.com")>0) { //检查click跳转链接
 					type = "taobaoClick";
+			}else {//检查淘口令
+				  String pattern = "[a-zA-Z0-9]{11}";
+					 try {
+					     Pattern r = Pattern.compile(pattern);
+					     Matcher m = r.matcher(json.getString("url"));
+					     if (m.find()) {
+					    	 String token = m.group();
+					         logger.debug("match: " + token);
+					         type = "taobaoToken";
+					     }
+					 }catch(Exception ex) {//无需处理
+					 	logger.debug("Failed to match taobao token.",ex);
+					 }				
+			}
 			insertBrokerSeed(json.getString("openid"),type,json.getString("url"),json.getString("url"),false);
 			//推送通知消息
 			sendWeworkMsg("达人商品上架", "发送后未能自动采集，请前往查看", "https://www.biglistoflittlethings.com/static/logo/distributor/ilife.png", json.getString("url"));
