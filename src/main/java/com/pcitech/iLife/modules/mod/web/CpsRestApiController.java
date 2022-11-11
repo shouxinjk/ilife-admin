@@ -160,6 +160,10 @@ public class CpsRestApiController extends BaseController {
 			result.put("msg", "url is mandatory");
 			return result;
 		}
+		if(json.getString("text")==null || json.getString("text").trim().length()==0) { //原始文本内容也作为必要参数
+			result.put("msg", "text is mandatory");
+			return result;
+		}
 		//增加发送达人信息
 		Broker broker = brokerService.get("system");//获取系统达人，如：未注册用户直接发送则会需要该返回
 		broker.setOpenid(json.getString("openid"));
@@ -173,15 +177,15 @@ public class CpsRestApiController extends BaseController {
 		if(crawler == null) {
 			//存入达人链接数据库，等待手动处理
 			String type = "url";
-			if(json.getString("url").indexOf("m.tb.cn")>0) { //检查移动端短连接
+			if(json.getString("text").indexOf("m.tb.cn")>0) { //检查移动端短连接
 					type = "taobaoToken";
-			}else if(json.getString("url").indexOf("s.click.taobao.com")>0) { //检查click跳转链接
+			}else if(json.getString("text").indexOf("s.click.taobao.com")>0) { //检查click跳转链接
 					type = "taobaoClick";
 			}else {//检查淘口令
 				  String pattern = "[a-zA-Z0-9]{11}";
 					 try {
 					     Pattern r = Pattern.compile(pattern);
-					     Matcher m = r.matcher(json.getString("url"));
+					     Matcher m = r.matcher(json.getString("text"));
 					     if (m.find()) {
 					    	 String token = m.group();
 					         logger.debug("match: " + token);
@@ -191,8 +195,9 @@ public class CpsRestApiController extends BaseController {
 					 	logger.debug("Failed to match taobao token.",ex);
 					 }				
 			}
-			insertBrokerSeed(json.getString("openid"),type,json.getString("url"),json.getString("url"),false);
+			insertBrokerSeed(json.getString("openid"),type,json.getString("url"),json.getString("text"),false);
 			//推送通知消息
+			sendWeworkMsg("达人商品上架", "发送后未能自动采集，请前往查看", json.getString("url"));//推送卡片
 			sendWeworkMsg("达人商品上架", "发送后未能自动采集，请前往查看", "https://www.biglistoflittlethings.com/static/logo/distributor/ilife.png", json.getString("url"));
 			result.put("msg", "not support yet.");
 			result.put("broker",broker);
