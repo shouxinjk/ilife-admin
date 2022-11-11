@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.pcitech.iLife.cps.crawler.impl.Jd;
 import com.pcitech.iLife.cps.crawler.impl.Pdd;
+import com.pcitech.iLife.cps.crawler.impl.Vip;
 import com.pcitech.iLife.modules.mod.service.PlatformSourceService;
 
 @Service
@@ -17,6 +18,7 @@ public class CrawlerUtil {
     
 	@Autowired Pdd pdd;
 	@Autowired Jd jd;
+	@Autowired Vip vip;
 	
 	//提供一个工厂方法，能够根据类型获取爬虫实例
 	public Crawler getCrawler(String url) {
@@ -25,6 +27,8 @@ public class CrawlerUtil {
 			return pdd;
 		else if("jd".equalsIgnoreCase(type))
 			return jd;
+		else if("vip".equalsIgnoreCase(type))
+			return vip;
 		else
 			return null;
 	}

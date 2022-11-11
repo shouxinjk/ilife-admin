@@ -121,6 +121,9 @@ public class VipItemSync {
 					images.addAll(goodInfo.getGoodsDetailPictures());//添加图片列表
 					doc.getProperties().put("images", images);
 					
+					//标题
+					doc.getProperties().put("title", goodInfo.getGoodsName());//更新title
+					
 					//将第一张展示图片作为logo
 					doc.getProperties().put("logo", goodInfo.getGoodsMainPicture());
 
