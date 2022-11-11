@@ -172,6 +172,12 @@
 		    <version>4.2.8.RELEASE</version>
 		</dependency>
  
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+ 
  		<dependency>
 		  <groupId>org.jsoup</groupId>
 		  <artifactId>jsoup</artifactId>

@@ -42,6 +42,8 @@ public class TaobaoClientTest {
             {"https://s.click.taobao.com/BnQEBRu",false },
             {"https://detail.tmall.com/item_o.htm?ali_trackid=2:mm_40898641_151950481_44929750210:1668041893_051_1016785630&spm=a2159r.13376465.0.0&pvid=null&releaseId=318828&union_lens=lensId:TAPI@1668041256@2127f5d2_09c9_1845f01aff7_411b@035ERW7S1aAPCuXmnZhWw7ZE;recoveryid:1668041893_051_1016785630&bxsign=tbkPiwRSKUkgZY5V20qH2Iqukhr3JG_m3DfevUd0vYbqZnggReq-10LfsnfBKx_Ypk2pfX-8Xs18b9XD23IY09DSUSoVbA9lCmJ9qQhZkW8NjBMaX-cK-lFqkphZwNYVyczAI91c2mPohkvFfMDC67woA&un=27f22f092a0a15f72040bd82ddc2e1ea&bucketId=447258&id=682168120476&scm=null&ut_sk=1.utdid_27658042_1668041856890.TaoPassword-Outside.taoketop",true },
             {"https://s.click.taobao.com/BnQEBRu",false },
+            {"https://uland.taobao.com/item/edetail?id=pB6gD9VdqJuxtPma8ATgm0tptm-Dd9xgVHpJWWGV6nIOA",true},
+            {"https://detail.tmall.com/item.htm?id=594562185909",false},
            };
     }
 	

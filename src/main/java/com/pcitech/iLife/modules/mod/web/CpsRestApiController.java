@@ -172,7 +172,12 @@ public class CpsRestApiController extends BaseController {
 		Crawler crawler = crawlerUtil.getCrawler(json.getString("url"));
 		if(crawler == null) {
 			//存入达人链接数据库，等待手动处理
-			insertBrokerSeed(json.getString("openid"),"url",json.getString("url"),json.getString("url"),false);
+			String type = "url";
+			if(json.getString("url").indexOf("m.tb.cn")>0)
+					type = "taobaoToken";
+			else if(json.getString("url").indexOf("s.click.taobao.com")>0)
+					type = "taobaoClick";
+			insertBrokerSeed(json.getString("openid"),type,json.getString("url"),json.getString("url"),false);
 			//推送通知消息
 			sendWeworkMsg("达人商品上架", "发送后未能自动采集，请前往查看", "https://www.biglistoflittlethings.com/static/logo/distributor/ilife.png", json.getString("url"));
 			result.put("msg", "not support yet.");
