@@ -55,6 +55,7 @@
 		<thead>
 			<tr>
 				<th>名称</th>
+				<th>上级</th>
 				<th>描述</th>
 				<th>类型</th>
 				<th>LOGO</th>
@@ -73,6 +74,9 @@
 				<td>
 					<a href="${ctx}/diy/proposalSection/?scheme.id=${proposalScheme.id}">${proposalScheme.name}</a>
 				</td>
+				<td>
+					<a href="${ctx}/diy/proposalSection/?scheme.id=${proposalScheme.parent.id}">${proposalScheme.parent.name}</a>
+				</td>				
 				<td>
 					${proposalScheme.description}
 				</td>

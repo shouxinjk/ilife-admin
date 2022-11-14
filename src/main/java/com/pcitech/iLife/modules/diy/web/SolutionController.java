@@ -443,8 +443,18 @@ public class SolutionController extends BaseController {
 		}else {
 			solution.setByOpenid(null);
 		}
+		if(params.getString("byNickname")!=null) {
+			solution.setByNickname(params.getString("byNickname"));
+		}else {
+			solution.setByOpenid(null);
+		}
 		if(params.getString("forOpenid")!=null) {
 			solution.setForOpenid(params.getString("forOpenid"));
+		}else {
+			solution.setForOpenid(null);
+		}
+		if(params.getString("forNickname")!=null) {
+			solution.setForNickname(params.getString("forNickname"));
 		}else {
 			solution.setForOpenid(null);
 		}

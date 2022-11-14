@@ -98,12 +98,20 @@ public class ProposalSubtypeController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "rest/subtypes/{schemeId}", method = RequestMethod.GET)
 	public List<ProposalSubtype> listSubtypesByProposalSchemeId(@PathVariable String schemeId) {
+		List<ProposalSubtype> subtypes = Lists.newArrayList();
 		ProposalScheme proposalScheme = proposalSchemeService.get(schemeId);
-		if( proposalScheme==null )
-			return Lists.newArrayList();
-		ProposalSubtype proposalSubtype = new ProposalSubtype();
-		proposalSubtype.setScheme(proposalScheme);
-		return proposalSubtypeService.findList(proposalSubtype);
+		while(proposalScheme!=null ){
+			ProposalSubtype proposalSubtype = new ProposalSubtype();
+			proposalSubtype.setScheme(proposalScheme);
+			for(ProposalSubtype item:proposalSubtypeService.findList(proposalSubtype)) {
+				if (subtypes.indexOf(item) == subtypes.lastIndexOf(item)) { //如果不存在则加入
+					subtypes.add(item);
+				}
+					
+			}
+			proposalScheme = proposalSchemeService.get(proposalScheme.getParent());
+		}
+		return subtypes;
 	}
 
 	@ResponseBody

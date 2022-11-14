@@ -37,6 +37,7 @@ import groovy.lang.GroovyShell;
 @Service
 public class CrawlerBase extends Crawler {
 	protected static Logger logger = LoggerFactory.getLogger(CrawlerBase.class);
+	protected static Logger kafkaStuffLogger = LoggerFactory.getLogger("kafkaLoggerStuff");//kafka output:提交到kafka
 	protected ArangoDbClient arangoClient;
     protected String host = Global.getConfig("arangodb.host");
     protected String port = Global.getConfig("arangodb.port");

@@ -21,6 +21,8 @@ public class Solution extends DataEntity<Solution> {
 	private String name;		// 名称
 	private String forOpenid;		// 目标用户
 	private String byOpenid;		// 定制用户
+	private String forNickname;		// 目标用户昵称
+	private String byNickname;		// 定制用户昵称
 	private Integer status;		// 状态
 	private String description;		// 描述
 	
@@ -75,6 +77,22 @@ public class Solution extends DataEntity<Solution> {
 		this.byOpenid = byOpenid;
 	}
 	
+	public String getForNickname() {
+		return forNickname;
+	}
+
+	public void setForNickname(String forNickname) {
+		this.forNickname = forNickname;
+	}
+
+	public String getByNickname() {
+		return byNickname;
+	}
+
+	public void setByNickname(String byNickname) {
+		this.byNickname = byNickname;
+	}
+
 	@NotNull(message="状态不能为空")
 	public Integer getStatus() {
 		return status;

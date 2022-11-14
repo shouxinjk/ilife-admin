@@ -16,6 +16,7 @@ import com.pcitech.iLife.modules.mod.entity.Broker;
 public class ProposalScheme extends DataEntity<ProposalScheme> {
 	
 	private static final long serialVersionUID = 1L;
+	private ProposalScheme parent;
 	private String name;		// 名称
 	private String description;		// 描述
 	private String type="free";		// 类型:free手动定制 guide指南生成 默认为free
@@ -32,6 +33,14 @@ public class ProposalScheme extends DataEntity<ProposalScheme> {
 
 	public ProposalScheme(String id){
 		super(id);
+	}
+
+	public ProposalScheme getParent() {
+		return parent;
+	}
+
+	public void setParent(ProposalScheme parent) {
+		this.parent = parent;
 	}
 
 	public String getName() {

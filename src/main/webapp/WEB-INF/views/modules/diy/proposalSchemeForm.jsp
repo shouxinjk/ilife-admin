@@ -34,6 +34,13 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
+			<label class="control-label">上级：</label>
+			<div class="controls">
+				 <sys:treeselect id="parent" name="parent.id" value="${proposalScheme.parent.id}" labelName="parent.name" labelValue="${proposalScheme.parent.name}"
+					title="动态表单" url="/diy/proposalScheme/listData"/>					
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">名称：</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
@@ -59,7 +66,7 @@
 		<div class="control-group">
 			<label class="control-label">LOGO：</label>
 			<div class="controls">
-				<form:input path="logo" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				<form:input path="logo" htmlEscape="false" maxlength="1024" class="input-xlarge "/>
 			</div>
 		</div>		
 		<div class="control-group">

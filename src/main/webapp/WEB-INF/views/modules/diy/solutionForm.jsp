@@ -56,17 +56,29 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">目标用户：</label>
+			<label class="control-label">目标用户Openid：</label>
 			<div class="controls">
 				<form:input path="forOpenid" htmlEscape="false" maxlength="64" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">定制用户：</label>
+			<label class="control-label">定制用户Openid：</label>
 			<div class="controls">
 				<form:input path="byOpenid" htmlEscape="false" maxlength="64" class="input-xlarge "/>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">目标用户昵称：</label>
+			<div class="controls">
+				<form:input path="forNickname" htmlEscape="false" maxlength="64" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">定制用户昵称：</label>
+			<div class="controls">
+				<form:input path="byNickname" htmlEscape="false" maxlength="64" class="input-xlarge "/>
+			</div>
+		</div>		
 		<div class="control-group">
 			<label class="control-label">状态：</label>
 			<div class="controls">

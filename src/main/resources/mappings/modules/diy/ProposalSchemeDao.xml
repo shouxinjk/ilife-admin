@@ -3,6 +3,8 @@
 <mapper namespace="com.pcitech.iLife.modules.diy.dao.ProposalSchemeDao">
     
 	<sql id="proposalSchemeColumns">
+		a.parent_id AS "parent.id",
+		ps.name AS "parent.name",
 		a.id AS "id",
 		a.name AS "name",
 		a.description AS "description",
@@ -23,6 +25,7 @@
 	</sql>
 	
 	<sql id="proposalSchemeJoins">
+		LEFT JOIN diy_proposal_scheme ps ON ps.id = a.parent_id
 		LEFT JOIN mod_broker b ON b.id = a.broker_id
 		LEFT JOIN diy_form f ON f.id = a.form_id
 	</sql>
@@ -54,6 +57,9 @@
 			<if test="category != null and category != ''">
 				AND a.category = #{category}
 			</if>
+			<if test="parent != null and parent.id != null and parent.id != ''">
+				AND a.parent_id = #{parent.id}
+			</if>			
 			<if test="broker != null and broker.id != null and broker.id != ''">
 				AND a.broker_id = #{broker.id}
 			</if>
@@ -91,6 +97,7 @@
 	
 	<insert id="insert">
 		INSERT INTO diy_proposal_scheme(
+			parent_id,
 			id,
 			name,
 			description,
@@ -107,6 +114,7 @@
 			update_date,
 			del_flag
 		) VALUES (
+			#{parent.id},
 			#{id},
 			#{name},
 			#{description},
@@ -127,6 +135,7 @@
 	
 	<update id="update">
 		UPDATE diy_proposal_scheme SET 	
+			parent_id = #{parent.id},
 			name = #{name},
 			description = #{description},
 			type = #{type},

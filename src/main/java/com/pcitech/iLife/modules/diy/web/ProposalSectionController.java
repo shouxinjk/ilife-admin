@@ -105,16 +105,32 @@ public class ProposalSectionController extends BaseController {
 	@RequestMapping(value = "listData")
 	public List<Map<String, Object>> listData(ProposalSection proposalSection, HttpServletRequest request, HttpServletResponse response, Model model) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<ProposalSection> list = proposalSectionService.findList(proposalSection);
-		for (int i=0; i<list.size(); i++){
-			ProposalSection e = list.get(i);
-			Map<String, Object> map = Maps.newHashMap();
-			map.put("id", e.getId());
-			map.put("pId", "0");
-			map.put("pIds", "0");
-			map.put("name", e.getName());
-			mapList.add(map);
-			
+		while(proposalSection!=null) { //需要循环获取上级scheme下的section
+			List<ProposalSection> list = proposalSectionService.findList(proposalSection);
+			for (int i=0; i<list.size(); i++){
+				ProposalSection e = list.get(i);
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", "0");
+				map.put("pIds", "0");
+				map.put("name", e.getName());
+				
+				if (mapList.indexOf(map) == mapList.lastIndexOf(map)) { //不存在则加入
+					mapList.add(map);
+				}
+				
+			}
+			ProposalScheme scheme = proposalSchemeService.get(proposalSection.getScheme());
+			ProposalScheme parentScheme = null;
+			if(scheme!=null) {
+				parentScheme = proposalSchemeService.get(scheme.getParent());
+				if(parentScheme!=null)
+					proposalSection.setScheme(parentScheme);//查询上级关联的section
+				else
+					proposalSection = null;
+			}else {
+				proposalSection = null;
+			}
 		}
 		return mapList;
 	}

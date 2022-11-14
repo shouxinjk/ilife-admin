@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.arangodb.entity.BaseDocument;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.jd.open.api.sdk.domain.kplunion.GoodsService.response.query.PromotionGoodsResp;
 import com.jd.open.api.sdk.domain.kplunion.promotioncommon.PromotionService.response.get.PromotionCodeResp;
 import com.pcitech.iLife.common.config.Global;
@@ -177,6 +178,15 @@ public class Jd extends CrawlerBase {
 					timestamp.put("crawl", new Date());//入库时间
 					doc.getProperties().put("timestamp", timestamp);
 
+					/**
+					//直接提交到kafka
+					//暂缓：由于推送有异步时间可能会导致点击返回卡片时无法读取
+					Map<String,Object> jsonDoc = doc.getProperties();
+					jsonDoc.put("_key", itemKey);
+					System.err.println(new Gson().toJson(jsonDoc));
+					kafkaStuffLogger.info(new Gson().toJson(jsonDoc));
+					//**/
+					
 					//更新到arangodb
 		    		arangoClient = new ArangoDbClient(host,port,username,password,database);
 		    		//更新doc

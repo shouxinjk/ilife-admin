@@ -78,10 +78,10 @@
 					${solution.name}
 				</td>
 				<td>
-					${solution.forOpenid}
+					${solution.forNickname}
 				</td>
 				<td>
-					${solution.byOpenid}
+					${solution.byNickname}
 				</td>
 				<td>
 					${fns:getDictLabel(solution.status, 'yes_no', '')}
