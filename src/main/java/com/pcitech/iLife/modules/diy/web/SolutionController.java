@@ -207,6 +207,7 @@ public class SolutionController extends BaseController {
 		}
 		//得到原有的方案及条目
 		Solution solution = solutionService.get(solutionId);
+		Solution oldSolution = solutionService.get(solutionId); //单独查询，避免直接引用
 		if( solution==null) {
 			result.put("msg", "Solution not found.[id]"+solutionId);
 			return result;
@@ -216,7 +217,6 @@ public class SolutionController extends BaseController {
 		List<SolutionItem> solutionItems = solutionItemService.findList(solutionItem);
 		
 		//先克隆solution：注意不能直接引用，需要克隆。此处未实现clonable接口，通过JSON转换一次
-		Solution oldSolution = JSONObject.parseObject(JSONObject.toJSONString(solution), Solution.class);
 		String id = Util.get32UUID();//重新设置ID作为新纪录
 		solution.setRefer(oldSolution);//注意：要首先设置引用条目为原始记录
 		solution.setIsNewRecord(true);
