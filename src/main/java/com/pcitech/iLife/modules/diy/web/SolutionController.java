@@ -475,6 +475,13 @@ public class SolutionController extends BaseController {
 		ProposalSection proposalSection  = new ProposalSection();
 		proposalSection.setScheme(scheme);
 		List<ProposalSection> sections = proposalSectionService.findList(proposalSection);
+		while( scheme!=null && (sections == null || sections.size()==0) ) { //如果没有则追溯到最上级：如果当前已定义则直接使用，不支持合并
+			ProposalScheme parentScheme = proposalSchemeService.get(scheme.getParent());
+			proposalSection.setScheme(parentScheme);
+			sections = proposalSectionService.findList(proposalSection);
+			scheme = parentScheme;
+		}
+		//根据types自动建立
 		for(ProposalSection section:sections) {
 			SolutionItem item = new SolutionItem();
 			item.setSolution(solution);
