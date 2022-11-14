@@ -54,9 +54,9 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>所属主题</th>
-				<th>引用方案</th>
 				<th>名称</th>
+				<th>主题</th>
+				<th>引用方案</th>
 				<th>目标用户</th>
 				<th>定制用户</th>
 				<th>状态</th>
@@ -68,14 +68,14 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="solution">
 			<tr>
-				<td><a href="${ctx}/diy/solution/form?id=${solution.id}">
-					${solution.scheme.name}
-				</a></td>
+				<td><a href="${ctx}/diy/solutionItem/list?solution.id=${solution.id}">
+					${solution.name}
+				</a></td>			
 				<td>
-					${solution.refer.name}
+					${solution.scheme.name}
 				</td>
 				<td>
-					${solution.name}
+					${solution.refer.name}
 				</td>
 				<td>
 					${solution.forNickname}

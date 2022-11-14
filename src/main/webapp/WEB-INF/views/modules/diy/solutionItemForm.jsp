@@ -36,7 +36,7 @@
 		<div class="control-group">
 			<label class="control-label">方案：</label>
 			<div class="controls">
-				 <sys:treeselect id="solution" name="solution.id" value="${solution.id}" labelName="solution.name" labelValue="${solution.name}"
+				 <sys:treeselect id="solution" name="solution.id" value="${solutionItem.solution.id}" labelName="solution.name" labelValue="${solutionItem.solution.name}"
 					title="个性化方案" url="/diy/solution/listData" />	
 				<span class="help-inline"><font color="red">*</font> </span>				
 			</div>			
