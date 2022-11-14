@@ -26,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
@@ -214,8 +215,8 @@ public class SolutionController extends BaseController {
 		solutionItem.setSolution(solution);
 		List<SolutionItem> solutionItems = solutionItemService.findList(solutionItem);
 		
-		//先克隆solution
-		Solution oldSolution = solution;
+		//先克隆solution：注意不能直接引用，需要克隆。此处未实现clonable接口，通过JSON转换一次
+		Solution oldSolution = JSONObject.parseObject(JSONObject.toJSONString(solution), Solution.class);
 		String id = Util.get32UUID();//重新设置ID作为新纪录
 		solution.setRefer(oldSolution);//注意：要首先设置引用条目为原始记录
 		solution.setIsNewRecord(true);
@@ -227,8 +228,18 @@ public class SolutionController extends BaseController {
 		}else {
 			solution.setByOpenid(null);
 		}
+		if(params.getString("byNickname")!=null) {
+			solution.setByNickname(params.getString("byNickname"));
+		}else {
+			solution.setByOpenid(null);
+		}
 		if(params.getString("forOpenid")!=null) {
 			solution.setForOpenid(params.getString("forOpenid"));
+		}else {
+			solution.setForOpenid(null);
+		}
+		if(params.getString("forNickname")!=null) {
+			solution.setForNickname(params.getString("forNickname"));
 		}else {
 			solution.setForOpenid(null);
 		}
