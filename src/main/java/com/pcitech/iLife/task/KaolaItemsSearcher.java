@@ -64,20 +64,12 @@ import org.quartz.JobExecutionException;
  * 
  */
 @Service
-public class KaolaItemsSearcher {
+public class KaolaItemsSearcher extends ItemSearcherBase {
     private static Logger logger = LoggerFactory.getLogger(KaolaItemsSearcher.class);
-    ArangoDbClient arangoClient;
-    String host = Global.getConfig("arangodb.host");
-    String port = Global.getConfig("arangodb.port");
-    String username = Global.getConfig("arangodb.username");
-    String password = Global.getConfig("arangodb.password");
-    String database = Global.getConfig("arangodb.database");
     
     @Autowired
     KaolaHelper kaolaHelper;
-    @Autowired
-	private PlatformCategoryService platformCategoryService;
-    
+
     //默认设置
     int pageSize = 200;//最大单页200条
     String urlPrefix = "https://jinbao.pinduoduo.com/goods-detail?s=";//https://jinbao.pinduoduo.com/goods-detail?s=Y9X2m1wSlN1U8LcVwvfZHeaZwozbWFjf_JQvP59gKL7
@@ -164,6 +156,7 @@ public class KaolaItemsSearcher {
 		}
 		doc.getProperties().put("category", category);//更新类目，包含多级分类
 		//检查类目映射
+		boolean categoryMapped = false;
 		PlatformCategory query = new PlatformCategory();
 		query.setName(category);
 		query.setPlatform("kaola");
@@ -173,6 +166,7 @@ public class KaolaItemsSearcher {
 			meta.put("category", list.get(0).getCategory().getId());
 			meta.put("categoryName", list.get(0).getCategory().getName());
 			doc.getProperties().put("meta", meta);	
+			categoryMapped = true;
 		}else {//否则写入等待标注
 			query.setIsNewRecord(true);
 			query.setId(Util.md5("kaola"+category));//采用手动生成ID，避免多次查询生成多条记录
@@ -236,6 +230,13 @@ public class KaolaItemsSearcher {
 			arangoClient.insert("my_stuff", doc);   
 			processedMap.put(poolName, processedMap.get(poolName)+1);
 			processedAmount++;
+		}
+		
+		//直接提交到kafka：仅在有类目的情况下推送，便于立即measure
+		if(categoryMapped) {
+			Map<String,Object> jsonDoc = doc.getProperties();
+			jsonDoc.put("_key", itemKey);
+			kafkaStuffLogger.info(new Gson().toJson(jsonDoc));
 		}
     }
     

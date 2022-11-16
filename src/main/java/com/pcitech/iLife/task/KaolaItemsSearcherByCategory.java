@@ -38,6 +38,7 @@ import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsRequest;
 import com.pcitech.iLife.cps.kaola.QuerySelectedGoodsResponse;
 import com.pcitech.iLife.modules.mod.entity.Clearing;
 import com.pcitech.iLife.modules.mod.entity.Order;
+import com.pcitech.iLife.modules.mod.entity.PlatformCategory;
 import com.pcitech.iLife.modules.mod.service.ClearingService;
 import com.pcitech.iLife.modules.mod.service.OrderService;
 import com.pcitech.iLife.util.ArangoDbClient;
@@ -67,15 +68,9 @@ import org.quartz.JobExecutionException;
  * 
  */
 @Service
-public class KaolaItemsSearcherByCategory {
+public class KaolaItemsSearcherByCategory extends ItemSearcherBase {
     private static Logger logger = LoggerFactory.getLogger(KaolaItemsSearcherByCategory.class);
-    ArangoDbClient arangoClient;
-    String host = Global.getConfig("arangodb.host");
-    String port = Global.getConfig("arangodb.port");
-    String username = Global.getConfig("arangodb.username");
-    String password = Global.getConfig("arangodb.password");
-    String database = Global.getConfig("arangodb.database");
-    
+
     @Autowired
     KaolaHelper kaolaHelper;
     
@@ -155,6 +150,34 @@ public class KaolaItemsSearcherByCategory {
 		}
 		doc.getProperties().put("category", categories);//更新类目，包含多级分类
 
+		//检查类目映射
+		boolean categoryMapped = false;
+		if(categories.size()>0) {
+			String category = categories.get(categories.size()-1);//取最后一级
+			PlatformCategory query = new PlatformCategory();
+			query.setName(category);
+			query.setPlatform("kaola");
+			List<PlatformCategory> list = platformCategoryService.findMapping(query);
+			if(list.size()>0) {//有则更新
+				Map<String,Object> meta = new HashMap<String,Object>();
+				meta.put("category", list.get(0).getCategory().getId());
+				meta.put("categoryName", list.get(0).getCategory().getName());
+				doc.getProperties().put("meta", meta);	
+				categoryMapped = true;
+			}else {//否则写入等待标注
+				query.setIsNewRecord(true);
+				query.setId(Util.md5("kaola"+category));//采用手动生成ID，避免多次查询生成多条记录
+				query.setPlatform("kaola");
+				query.setCreateDate(new Date());
+				query.setUpdateDate(new Date());
+				platformCategoryService.save(query);
+				//检查是否支持无类目映射入库
+				if(!"true".equalsIgnoreCase(Global.getConfig("sx.enhouseWithoutCategoryMapping"))) {
+					return;
+				}
+			}
+		}
+		
 		//更新CPS链接：在link基础上补充
 		link.put("wap2", item.getLinkInfo().getShortShareUrl());
 		link.put("web2", item.getLinkInfo().getShortShareUrl());
@@ -205,6 +228,13 @@ public class KaolaItemsSearcherByCategory {
 			arangoClient.insert("my_stuff", doc);   
 			processedMap.put(categoryName, processedMap.get(categoryName)+1);
 			processedAmount++;
+		}
+		
+		//直接提交到kafka：仅在有类目的情况下推送，便于立即measure
+		if(categoryMapped) {
+			Map<String,Object> jsonDoc = doc.getProperties();
+			jsonDoc.put("_key", itemKey);
+			kafkaStuffLogger.info(new Gson().toJson(jsonDoc));
 		}
     }
     

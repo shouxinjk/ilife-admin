@@ -73,25 +73,12 @@ import org.quartz.JobExecutionException;
  * 
  */
 @Service
-public class TaobaoItemsSearcher {
+public class TaobaoItemsSearcher extends ItemSearcherBase {
     private static Logger logger = LoggerFactory.getLogger(TaobaoItemsSearcher.class);
-    private Logger kafkaStuff = LoggerFactory.getLogger("kafkaStuff");//kafka output:提交到kafka
 
-    ArangoDbClient arangoClient;
-    String host = Global.getConfig("arangodb.host");
-    String port = Global.getConfig("arangodb.port");
-    String username = Global.getConfig("arangodb.username");
-    String password = Global.getConfig("arangodb.password");
-    String database = Global.getConfig("arangodb.database");
-    @Autowired
-    protected CalcProfit calcProfit;
-    @Autowired
-    protected CalcProfit2Party calcProfit2Party;
     @Autowired
     TaobaoHelper taobaoHelper;
-    @Autowired
-	private PlatformCategoryService platformCategoryService;
-    
+
     //默认设置
     int pageSize = 50;//每页数量，默认20，上限50，建议20
     String itemPrefix = "https://detail.tmall.com/item.htm?id=";//默认所有采集数据均以id为唯一识别。注意，该地址不能作为商品跳转地址
@@ -169,6 +156,7 @@ public class TaobaoItemsSearcher {
 		//增加类目
 		doc.getProperties().put("category", poolName);//采用物料分类作为类目描述
 		//检查类目映射
+		boolean categoryMapped = false;
 		PlatformCategory query = new PlatformCategory();
 		query.setName(poolName);
 		query.setPlatform("taobao");
@@ -178,6 +166,7 @@ public class TaobaoItemsSearcher {
 			meta.put("category", list.get(0).getCategory().getId());
 			meta.put("categoryName", list.get(0).getCategory().getName());
 			doc.getProperties().put("meta", meta);	
+			categoryMapped = true;
 		}else {//否则写入等待标注
 			query.setIsNewRecord(true);
 			query.setId(Util.md5("taobao"+poolName));//采用手动生成ID，避免多次查询生成多条记录
@@ -256,6 +245,13 @@ public class TaobaoItemsSearcher {
 			arangoClient.insert("my_stuff", doc);   
 			processedMap.put(poolName, processedMap.get(poolName)+1);
 			processedAmount++;
+		}
+		
+		//直接提交到kafka：仅在有类目的情况下推送，便于立即measure
+		if(categoryMapped) {
+			Map<String,Object> jsonDoc = doc.getProperties();
+			jsonDoc.put("_key", itemKey);
+			kafkaStuffLogger.info(new Gson().toJson(jsonDoc));
 		}
     }
     

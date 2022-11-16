@@ -70,22 +70,11 @@ import org.quartz.JobExecutionException;
  * 
  */
 @Service
-public class JdItemsSearcher {
+public class JdItemsSearcher extends ItemSearcherBase {
     private static Logger logger = LoggerFactory.getLogger(JdItemsSearcher.class);
-    ArangoDbClient arangoClient;
-    String host = Global.getConfig("arangodb.host");
-    String port = Global.getConfig("arangodb.port");
-    String username = Global.getConfig("arangodb.username");
-    String password = Global.getConfig("arangodb.password");
-    String database = Global.getConfig("arangodb.database");
-    @Autowired
-    protected CalcProfit calcProfit;
-    @Autowired
-    protected CalcProfit2Party calcProfit2Party;
+
     @Autowired
     JdHelper jdHelper;
-    @Autowired
-	private PlatformCategoryService platformCategoryService;
     
     //默认设置
     int pageSize = 50;//每页数量，默认20，上限50，建议20
@@ -179,6 +168,7 @@ public class JdItemsSearcher {
 		category += " "+item.getCategoryInfo().getCid2Name();
 		doc.getProperties().put("category", category);//更新类目，包含多级分类
 		//检查类目映射
+		boolean categoryMapped = false;
 		PlatformCategory query = new PlatformCategory();
 		query.setName(category);
 		query.setPlatform("jd");
@@ -188,6 +178,7 @@ public class JdItemsSearcher {
 			meta.put("category", list.get(0).getCategory().getId());
 			meta.put("categoryName", list.get(0).getCategory().getName());
 			doc.getProperties().put("meta", meta);	
+			categoryMapped = true;
 		}else {//否则写入等待标注
 			query.setIsNewRecord(true);
 			query.setId(Util.md5("jd"+category));//采用手动生成ID，避免多次查询生成多条记录
@@ -260,6 +251,14 @@ public class JdItemsSearcher {
 			processedMap.put(poolName, processedMap.get(poolName)+1);
 			processedAmount++;
 		}
+		
+		//直接提交到kafka：仅在有类目的情况下推送，便于立即measure
+		if(categoryMapped) {
+			Map<String,Object> jsonDoc = doc.getProperties();
+			jsonDoc.put("_key", itemKey);
+			kafkaStuffLogger.info(new Gson().toJson(jsonDoc));
+		}
+		
     }
     
     private double parseNumber(double d) {

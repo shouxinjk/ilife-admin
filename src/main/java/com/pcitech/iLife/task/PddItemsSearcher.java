@@ -58,20 +58,12 @@ import org.quartz.JobExecutionException;
  * 
  */
 @Service
-public class PddItemsSearcher {
+public class PddItemsSearcher extends ItemSearcherBase {
     private static Logger logger = LoggerFactory.getLogger(PddItemsSearcher.class);
-    ArangoDbClient arangoClient;
-    String host = Global.getConfig("arangodb.host");
-    String port = Global.getConfig("arangodb.port");
-    String username = Global.getConfig("arangodb.username");
-    String password = Global.getConfig("arangodb.password");
-    String database = Global.getConfig("arangodb.database");
-    
+
     @Autowired
     PddHelper pddHelper;
-    @Autowired
-	private PlatformCategoryService platformCategoryService;
-    
+
     //默认设置
     int pageSize = 100;
     String urlPrefix = "https://jinbao.pinduoduo.com/goods-detail?s=";//https://jinbao.pinduoduo.com/goods-detail?s=Y9X2m1wSlN1U8LcVwvfZHeaZwozbWFjf_JQvP59gKL7
@@ -143,6 +135,7 @@ public class PddItemsSearcher {
 		profit.put("amount",parseNumber(commssion));//单位为元
 		doc.getProperties().put("profit", profit);	
 		//检查类目映射
+		boolean categoryMapped = false;
 		PlatformCategory platformCategoryMapping = platformCategoryService.get("pdd"+item.getCatIds().get(item.getCatIds().size()-1));
 		if(platformCategoryMapping!=null) {//有则更新
 			doc.getProperties().put("category", platformCategoryMapping.getName());	//补充原始类目名称
@@ -151,6 +144,7 @@ public class PddItemsSearcher {
 				meta.put("category", platformCategoryMapping.getCategory().getId());
 				meta.put("categoryName", platformCategoryMapping.getCategory().getName());
 				doc.getProperties().put("meta", meta);	
+				categoryMapped = true;
 			}
 		}else {
 			//检查是否支持无类目映射入库
@@ -181,6 +175,14 @@ public class PddItemsSearcher {
 		//更新doc
 		logger.debug("try to upsert pdd item.[itemKey]"+itemKey,JSON.toString(doc));
 		arangoClient.upsert("my_stuff", itemKey, doc);   
+		
+		//直接提交到kafka：仅在有类目的情况下推送，便于立即measure
+		if(categoryMapped) {
+			Map<String,Object> jsonDoc = doc.getProperties();
+			jsonDoc.put("_key", itemKey);
+			kafkaStuffLogger.info(new Gson().toJson(jsonDoc));
+		}
+		
 		/**
 		//需要区分是否已经存在，如果已经存在则直接更新，但要避免更新profit信息，以免出发3-party分润任务
 		//存在同名但URL不同的情况，需要先排除同名商品：根据source及title排重

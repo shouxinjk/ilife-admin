@@ -48,20 +48,12 @@ import org.quartz.JobExecutionException;
  * 
  */
 @Service
-public class VipItemSearcher {
+public class VipItemSearcher extends ItemSearcherBase {
     private static Logger logger = LoggerFactory.getLogger(VipItemSearcher.class);
-    ArangoDbClient arangoClient;
-    String host = Global.getConfig("arangodb.host");
-    String port = Global.getConfig("arangodb.port");
-    String username = Global.getConfig("arangodb.username");
-    String password = Global.getConfig("arangodb.password");
-    String database = Global.getConfig("arangodb.database");
-    
+
     @Autowired
     VipHelper vipHelper;
-    @Autowired
-	private PlatformCategoryService platformCategoryService;
-    
+
     // 记录处理条数
     long totalAmount = 0;
     long processedAmount = 0;
@@ -151,6 +143,7 @@ public class VipItemSearcher {
 		doc.getProperties().put("category", category);//更新类目，包含多级分类
 		
 		//检查类目映射
+		boolean categoryMapped = false;
 		PlatformCategory query = new PlatformCategory();
 		query.setName(category);
 		query.setPlatform("vip");
@@ -160,6 +153,7 @@ public class VipItemSearcher {
 			meta.put("category", list.get(0).getCategory().getId());
 			meta.put("categoryName", list.get(0).getCategory().getName());
 			doc.getProperties().put("meta", meta);	
+			categoryMapped = true;
 		}else {//否则写入等待标注
 			query.setIsNewRecord(true);
 			query.setId(Util.md5("vip"+category));//采用手动生成ID，避免多次查询生成多条记录
@@ -220,6 +214,13 @@ public class VipItemSearcher {
 			arangoClient.insert("my_stuff", doc);   
 			processedMap.put(poolName, processedMap.get(poolName)+1);
 			processedAmount++;
+		}
+		
+		//直接提交到kafka：仅在有类目的情况下推送，便于立即measure
+		if(categoryMapped) {
+			Map<String,Object> jsonDoc = doc.getProperties();
+			jsonDoc.put("_key", itemKey);
+			kafkaStuffLogger.info(new Gson().toJson(jsonDoc));
 		}
     }
     

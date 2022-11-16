@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.arangodb.entity.BaseDocument;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.cps.PddHelper;
 import com.pcitech.iLife.cps.crawler.Crawler;
@@ -209,6 +210,7 @@ public class Taobao extends CrawlerBase {
 				doc.getProperties().put("profit", profit);	
 				
 				//检查类目映射
+				boolean categoryMapped = false;
 				PlatformCategory platformCategoryMapping = platformCategoryService.get("pdd"+resp.getGoodsDetails().get(0).getCatIds().get(resp.getGoodsDetails().get(0).getCatIds().size()-1));
 				if(platformCategoryMapping!=null) {//有则更新
 					doc.getProperties().put("category", platformCategoryMapping.getName());	//补充原始类目名称
@@ -217,6 +219,7 @@ public class Taobao extends CrawlerBase {
 						meta.put("category", platformCategoryMapping.getCategory().getId());
 						meta.put("categoryName", platformCategoryMapping.getCategory().getName());
 						doc.getProperties().put("meta", meta);	
+						categoryMapped = true;
 					}
 				}/**else {
 					//检查是否支持无类目映射入库
@@ -239,6 +242,13 @@ public class Taobao extends CrawlerBase {
 	    		//完成后关闭arangoDbClient
 	    		arangoClient.close();
 
+				//直接提交到kafka：仅在有类目的情况下推送，便于立即measure
+				if(categoryMapped) {
+					Map<String,Object> jsonDoc = doc.getProperties();
+					jsonDoc.put("_key", itemKey);
+					kafkaStuffLogger.info(new Gson().toJson(jsonDoc));
+				}
+	    		
 	    		//临时修改返回数据，将佣金信息作为摘要提示
 	    		tipMsg += " 点击查看详情";
 	    		doc.getProperties().put("summary", tipMsg);
