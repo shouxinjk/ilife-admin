@@ -27,7 +27,7 @@ public class WxGroup extends DataEntity<WxGroup> {
 	private String gid;		// 微信群ID
 	private Integer members;		// 成员人数
 	private String token;		// 激活码
-	private String status;		// 状态
+	private String status="active";		// 状态
 	
 	public WxGroup() {
 		super();
