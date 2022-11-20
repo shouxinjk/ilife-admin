@@ -68,6 +68,76 @@ public class ItemDimensionController extends BaseController {
 		return entity;
 	}
 
+
+	//根据category获取相应的客观评价树。
+	//自动根据category及parentId=1查询得到根节点
+	@ResponseBody
+	@RequestMapping(value = "rest/link-tree-by-category", method = RequestMethod.GET)
+	public List<Map<String, Object>> listDiemensionTreeForSankeyByCategory(String categoryId) {
+		ItemCategory category = itemCategoryService.get(categoryId);
+		if(category == null || category.getId() == null || category.getId().trim().length()==0) //必须有category，否则返回空白列表
+			return Lists.newArrayList();
+		ItemDimension root = new ItemDimension(); 
+		root.setId("1");//指定该目录下ID为1的记录为根节点
+		ItemDimension q = new ItemDimension(); 
+		q.setCategory(category);
+		q.setParent(root);
+		
+		List<ItemDimension> nodes = itemDimensionService.findList(q);
+		if(nodes !=null && nodes.size()>0) {
+			List<Map<String, Object>> links = Lists.newArrayList();
+			listDiemensionTreeForSunkey(links,categoryId,nodes.get(0).getId());
+			return links;
+		}else {//否则尝试查询root.id=categoryId的记录
+			return Lists.newArrayList();
+		}
+	}
+
+	/**
+	 * 获取sankey节点，包含：
+	 * source: dimension
+	 * target: dimension / measure
+	 * weight: xxx
+	 */
+	@ResponseBody
+//	@RequestMapping(value = "rest/dim-link-tree", method = RequestMethod.GET)
+	private void listDiemensionTreeForSunkey(List<Map<String, Object>> links, String categoryId,String parentId) {
+		ItemDimension parentDimension = itemDimensionService.get(parentId);//以当前维度为父节点查询
+		ItemCategory category = itemCategoryService.get(categoryId);
+		ItemDimension q = new ItemDimension(); 
+		q.setParent(parentDimension);
+		q.setCategory(category);
+		for(ItemDimension node:itemDimensionService.findList(q)) {//组装link列表:source为父节点，target为子节点
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("source", node);//当前节点为source
+			map.put("target", parentDimension);//父节点为target
+			map.put("weight", node.getWeight());
+			map.put("value", node.getWeight()*0.75);//设置默认值
+			links.add(map);
+			listDiemensionTreeForSunkey(links, node.getCategory().getId(),node.getId());//迭代获取所有下级维度
+		}
+		//获取关联的属性节点
+		ItemDimensionMeasure dimensionMeasure = new ItemDimensionMeasure();
+		dimensionMeasure.setDimension(parentDimension);
+		List<ItemDimensionMeasure> dimensionMeasures = itemDimensionMeasureService.findList(dimensionMeasure);
+		for(ItemDimensionMeasure item:dimensionMeasures) {
+			//需要判定measure是否是继承得到
+			Measure measure = measureService.get(item.getMeasure());
+			//添加属性
+			Map<String, Object> node = Maps.newHashMap();
+			if(measure==null) {
+				//ignore 表示measure在建立后被删除
+			}else {
+				node.put("source", measure);
+			}
+			node.put("target", parentDimension);
+			node.put("weight", item.getWeight());
+			node.put("value", item.getWeight()*0.75);//设置默认值
+			links.add(node);
+		}
+	}
+	
+	
 	//根据category获取相应的客观评价树。
 	//自动根据category及parentId=1查询得到根节点
 	@ResponseBody
