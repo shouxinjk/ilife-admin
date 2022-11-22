@@ -383,6 +383,7 @@ public class RestApiController extends BaseController {
 			@RequestParam( value="fileId",required=false)String fileId, 
 			HttpServletRequest request, HttpServletResponse response, Model model) {
 		Map<String, Object> result = Maps.newHashMap();
+		result.put("status",false);
 		long size= file.getSize();//这里可以控制大小，当前不做处理
 		try {
 			FastDFSUtils util = FastDFSUtils.getInstance();

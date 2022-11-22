@@ -86,7 +86,13 @@ public class ItemDimensionController extends BaseController {
 		List<ItemDimension> nodes = itemDimensionService.findList(q);
 		if(nodes !=null && nodes.size()>0) {
 			List<Map<String, Object>> links = Lists.newArrayList();
-			listDiemensionTreeForSunkey(links,categoryId,nodes.get(0).getId());
+			//listDiemensionTreeForSunkey(links,categoryId,nodes.get(0).getId());
+			//丢弃顶级节点，直接获取下级节点
+			q.setParent(nodes.get(0));
+			nodes = itemDimensionService.findList(q);
+			for(ItemDimension node:nodes) {
+				listDiemensionTreeForSunkey(links,categoryId,node.getId());
+			}
 			return links;
 		}else {//否则尝试查询root.id=categoryId的记录
 			return Lists.newArrayList();
@@ -103,10 +109,10 @@ public class ItemDimensionController extends BaseController {
 //	@RequestMapping(value = "rest/dim-link-tree", method = RequestMethod.GET)
 	private void listDiemensionTreeForSunkey(List<Map<String, Object>> links, String categoryId,String parentId) {
 		ItemDimension parentDimension = itemDimensionService.get(parentId);//以当前维度为父节点查询
-		ItemCategory category = itemCategoryService.get(categoryId);
+//		ItemCategory category = itemCategoryService.get(categoryId);
 		ItemDimension q = new ItemDimension(); 
 		q.setParent(parentDimension);
-		q.setCategory(category);
+//		q.setCategory(category);
 		for(ItemDimension node:itemDimensionService.findList(q)) {//组装link列表:source为父节点，target为子节点
 			Map<String, Object> map = Maps.newHashMap();
 			map.put("source", node);//当前节点为source
