@@ -25,9 +25,21 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
+			<li><label>昵称：</label>
+				<form:input path="nickname" htmlEscape="false" maxlength="20" class="input-medium"/>
+			</li>
 			<li><label>真实姓名：</label>
 				<form:input path="name" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
+			<li><label>openid：</label>
+				<form:input path="openid" htmlEscape="false" maxlength="32" class="input-medium"/>
+			</li>	
+			<li><label>状态：</label>
+				<form:select path="status" class="input-medium">
+					<form:option value="" label=""/>
+					<form:options items="${fns:getDictList('broker_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+			</li>								
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>

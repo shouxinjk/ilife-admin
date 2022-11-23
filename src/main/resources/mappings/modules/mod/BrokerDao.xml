@@ -200,13 +200,22 @@
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			<if test="status != null and status != ''">
 				AND a.status = #{status}
-			</if>			
+			</if>	
+			<if test="openid != null and openid != ''">
+				AND a.openid = #{openid}
+			</if>					
 			<if test="name != null and name != ''">
 				AND a.name LIKE 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
+			<if test="nickname != null and nickname != ''">
+				AND a.nickname LIKE 
+					<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{nickname}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{nickname},'%')</if>
+			</if>			
 			<if test="parent != null and parent.id != null and parent.id != ''">
 				AND a.parent_id = #{parent.id}
 			</if>			
