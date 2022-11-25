@@ -23,6 +23,7 @@ public class Solution extends DataEntity<Solution> {
 	private String byOpenid;		// 定制用户
 	private String forNickname;		// 目标用户昵称
 	private String byNickname;		// 定制用户昵称
+	private String article;		// 文章 json
 	private Integer status;		// 状态
 	private String description;		// 描述
 	
@@ -91,6 +92,14 @@ public class Solution extends DataEntity<Solution> {
 
 	public void setByNickname(String byNickname) {
 		this.byNickname = byNickname;
+	}
+
+	public String getArticle() {
+		return org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(article);
+	}
+
+	public void setArticle(String article) {
+		this.article = article;
 	}
 
 	@NotNull(message="状态不能为空")

@@ -39,6 +39,7 @@ import com.pcitech.iLife.modules.diy.service.ProposalSchemeService;
 import com.pcitech.iLife.modules.diy.service.ProposalSectionService;
 import com.pcitech.iLife.modules.diy.service.SolutionItemService;
 import com.pcitech.iLife.modules.diy.service.SolutionService;
+import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.util.Util;
 
 /**
@@ -565,5 +566,21 @@ public class SolutionController extends BaseController {
 		return result;
 	}
 	
+	//获取指定solution
+	@ResponseBody
+	@RequestMapping(value = "rest/solution/{id}", method = RequestMethod.GET)
+	public Map<String, Object> getSolutionById(@PathVariable String id,HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> result = Maps.newHashMap();
+		Solution old = solutionService.get(id);
+		if(old == null) {
+			result.put("status",false);
+			result.put("description","Solution does not exist. id:"+id);
+		}else {
+			result.put("status",true);
+			result.put("description","Solution found successfully");
+			result.put("data", old);
+		}
+		return result;
+	}
 	
 }
