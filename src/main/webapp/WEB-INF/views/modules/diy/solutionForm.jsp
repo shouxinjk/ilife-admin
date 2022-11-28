@@ -425,7 +425,7 @@
 		        type:"get",
 		        data:{},
 		        success:function(res){
-			        if(res.status){
+			        if(res.success){
 			            solution = res.data;
 			            //解析article
 					    try{
