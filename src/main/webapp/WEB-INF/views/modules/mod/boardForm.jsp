@@ -134,7 +134,8 @@
 		            //显示标题框及发布按钮
 		            $("#btnPublish").css("display","block");
 		            $("#postTitle").css("display","block");
-		            $("#postTitle").val(board.title+" - "+templateName);//默认采用商品标题 - 模板标题
+		            //$("#postTitle").val(board.title+" - "+templateName);//默认采用商品标题 - 模板标题
+		            $("#postTitle").val(board.title);//默认采用商品标题
 		        }
 		    });      
 		}

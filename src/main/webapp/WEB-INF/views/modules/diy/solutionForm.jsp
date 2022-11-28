@@ -99,7 +99,7 @@
 		function requestArticle(){
 		    var templateId = $("#articleScheme").val();
 		    var templateName = $("#articleScheme").find("option:selected").text();
-		    console.log("\n===try to generate article by template. ===\n",templateId);
+		    console.log("\n===try to generate article by template. ===\n",templateId,solution,items);
 		    //生成html并显示到界面
 		    $.ajax({
 		        url:"${ctx}/rest/api/material-html",
@@ -121,7 +121,8 @@
 		            //显示标题框及发布按钮
 		            $("#btnPublish").css("display","block");
 		            $("#postTitle").css("display","block");
-		            $("#postTitle").val(solution.name+" - "+templateName);//默认采用商品标题 - 模板标题
+		            //$("#postTitle").val(solution.name+" - "+templateName);//默认采用商品标题 - 模板标题
+		            $("#postTitle").val(solution.name);//默认采用商品标题
 		        }
 		    });      
 		}
@@ -218,14 +219,14 @@
 		    var sources = [];
 		    items.forEach(function(solution_item){//这个是solutionitem
 		    	if(solution_item.stuff){
-		    		solution_item.stuff.forEach(function(item){ //这个才是循环所有stuff条目
-		    	    	console.log("try to insert item.",item);
-				    	if(item.stuff.price.sale>priceMax)priceMax = item.stuff.price.sale;
-				    	if(item.stuff.price.sale<priceMin)priceMin = item.stuff.price.sale;
-				    	if(item.stuff.profit && item.stuff.profit.order>profitMax)profitMax = item.stuff.profit.order;
-				    	if(item.stuff.profit && item.stuff.profit.order<profitMin)profitMin = item.stuff.profit.order;
-				    	if(distributors.indexOf(item.stuff.distributor.name)<0)distributors.push(item.stuff.distributor.name);
-				    	if(sources.indexOf(item.stuff.source)<0)sources.push(item.stuff.source);	    			
+		    		solution_item.stuff.forEach(function(stuff){ //这个才是循环所有stuff条目
+		    	    	console.log("try to insert item.",stuff);
+				    	if(stuff.price.sale>priceMax)priceMax = stuff.price.sale;
+				    	if(stuff.price.sale<priceMin)priceMin = stuff.price.sale;
+				    	if(stuff.profit && stuff.profit.order>profitMax)profitMax = stuff.profit.order;
+				    	if(stuff.profit && stuff.profit.order<profitMin)profitMin = stuff.profit.order;
+				    	if(distributors.indexOf(stuff.distributor.name)<0)distributors.push(stuff.distributor.name);
+				    	if(sources.indexOf(stuff.source)<0)sources.push(stuff.source);	    			
 		    		});
 		    	}
 		    });
@@ -445,25 +446,25 @@
 		//根据solutionId查询所有item列表
 		function loadSolutionItems(solutionId){
 		    $.ajax({
-		        url:"${ctx}/diy/solutionItem/rest/solution-items/"+solutionId,
+		        url:"${ctx}/diy/solution/rest/items/"+solutionId,
 		        type:"get",
 		        data:{},
-		        success:function(items){
-			        for(var i = 0 ; i < items.length ; i++){
-			            loadStuffItem(items[i]);//查询具体的item条目
+		        success:function(ret){
+			        for(var i = 0 ; i < ret.data.length ; i++){
+			            loadStuffItem(ret.data[i]);//查询具体的item条目
 			        }  
 		        }
 		    }) 
 		}
 		//查询单个solutionItem的stuff条目明细
-		function loadstuffItem(solutionItem){//获取内容列表
+		function loadStuffItem(solutionItem){//获取内容列表
 			//注意，stuff条目有多个，需要逐个获取。这里有性能问题
 			var stuff = [];
 			solutionItem["stuff"] = stuff;//默认stuff为空白
 			items.push(solutionItem);
 			
 			//装载具体条目
-			var itemKeys = solutionItem.items?solutionItem.items.split(","):[];//否则为空
+			var itemKeys = solutionItem.itemIds?solutionItem.itemIds.split(","):[];//否则为空
 			itemKeys.forEach(function(itemKey){
 				if(itemKey && itemKey.trim().length>0){
 				    $.ajax({

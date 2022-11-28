@@ -89,17 +89,5 @@ public class SolutionItemController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/diy/solutionItem/?repage";
 	}
 	
-	@ResponseBody
-	@RequestMapping(value = "rest/solution-items/{solutionId}", method = RequestMethod.GET)
-	public List<SolutionItem> getItemsByBoard(@PathVariable String solutionId,HttpServletRequest request, HttpServletResponse response, Model model) {
-		
-		Solution solution = new Solution();
-		solution.setId(solutionId);
-		
-		SolutionItem solutionItem = new SolutionItem();
-		solutionItem.setSolution(solution);
-		
-		return solutionItemService.findList(solutionItem);
-	}
 
 }
