@@ -445,7 +445,7 @@
 		//根据solutionId查询所有item列表
 		function loadSolutionItems(solutionId){
 		    $.ajax({
-		        url:"${ctx}/diy/solutionItem/rest/solutionitems/"+solutionId,
+		        url:"${ctx}/diy/solutionItem/rest/solution-items/"+solutionId,
 		        type:"get",
 		        data:{},
 		        success:function(items){
