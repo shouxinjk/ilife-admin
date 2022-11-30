@@ -130,6 +130,16 @@ public class BoardController extends BaseController {
 		map.put("size", size);
 		return boardService.findByBrokerId(map);
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "rest/byOpenid/{openid}", method = RequestMethod.GET)
+	public List<Board> getBoardByOpenid(@PathVariable String openid,@RequestParam int offset,@RequestParam int size,HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> map = Maps.newHashMap();
+		map.put("byOpenid", openid);
+		map.put("offset", offset);
+		map.put("size", size);
+		return boardService.findByOpenid(map);
+	}
 	
 	//查询所有board
 	@ResponseBody

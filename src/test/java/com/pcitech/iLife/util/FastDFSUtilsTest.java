@@ -19,7 +19,7 @@ public class FastDFSUtilsTest {
 		
 		FastDFSUtils util = FastDFSUtils.getInstance();
 		
-        File file = new File("/Users/alexchew/Documents/lighthouse.png");
+        File file = new File("/Users/alexchew/Downloads/5183444_135116531000_2.jpg");
         InputStream inputStream = new FileInputStream(file);
         int length = inputStream.available();
         byte[] bytes = new byte[length];

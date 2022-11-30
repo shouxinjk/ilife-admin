@@ -129,6 +129,7 @@ public class ProposalSchemeController extends BaseController {
 		return proposalSchemeService.findList(proposalScheme);
 	}
 	
+	//根据名称查询方案类型，如果无匹配则返回全部
 	@ResponseBody
 	@RequestMapping(value = "rest/byName/{name}", method = RequestMethod.GET)
 	public List<ProposalScheme> listByName(@PathVariable String name) {
@@ -139,7 +140,12 @@ public class ProposalSchemeController extends BaseController {
 			proposalScheme.setName(name);
 		}
 		proposalScheme.setStatus("1");//仅查询已发布主题
-		return proposalSchemeService.findList(proposalScheme);
+		List<ProposalScheme> list = proposalSchemeService.findList(proposalScheme);
+		if(list.size()==0) {
+			proposalScheme.setName("");//不限制，将获取全部
+			list = proposalSchemeService.findList(proposalScheme);
+		}
+		return list;
 	}
 	
 	@ResponseBody

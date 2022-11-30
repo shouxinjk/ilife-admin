@@ -25,6 +25,8 @@ public class Board extends DataEntity<Board> {
 	private String article;		// 文章 json
 	private String status;		// 状态
 	private Broker broker; //创建该Board的达人
+	private String byOpenid;		// 定制用户
+	private String byNickname;		// 定制用户昵称
 	
 	public Board() {
 		super();
@@ -57,6 +59,22 @@ public class Board extends DataEntity<Board> {
 
 	public void setBroker(Broker broker) {
 		this.broker = broker;
+	}
+
+	public String getByOpenid() {
+		return byOpenid;
+	}
+
+	public void setByOpenid(String byOpenid) {
+		this.byOpenid = byOpenid;
+	}
+
+	public String getByNickname() {
+		return byNickname;
+	}
+
+	public void setByNickname(String byNickname) {
+		this.byNickname = byNickname;
 	}
 
 	public String getDescription() {

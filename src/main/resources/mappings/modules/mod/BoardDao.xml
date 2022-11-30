@@ -12,6 +12,8 @@
 		b.name AS "broker.name",
 		b.nickname AS "broker.nickname",
 		a.broker_id AS "broker.id",
+		a.by_openid AS "byOpenid",
+		a.by_nickname AS "byNickname",			
 		a.poster AS "poster",
 		a.article AS "article",
 		a.keywords AS "keywords",
@@ -48,6 +50,19 @@
 		limit #{offset},#{size}  
 	</select>
 	
+	<select id="findByOpenid" resultType="Board">
+		SELECT 
+			<include refid="boardColumns"/>
+		FROM mod_board a
+		<include refid="boardJoins"/>
+		<where>
+			a.del_flag = 0
+			AND a.by_openid = #{byOpenid} 
+		</where>		
+		ORDER BY a.update_date DESC 
+		limit #{offset},#{size}  
+	</select>	
+	
 	<select id="findAllBoards" resultType="Board">
 		SELECT 
 			<include refid="boardColumns"/>
@@ -67,6 +82,9 @@
 		<include refid="boardJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="byOpenid != null and byOpenid != ''">
+				AND a.by_openid = #{byOpenid}
+			</if>			
 			<if test="title != null and title != ''">
 				AND a.title LIKE 
 					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
@@ -120,6 +138,8 @@
 		INSERT INTO mod_board(
 			id,
 			broker_id,
+			by_openid,
+			by_nickname,
 			title,
 			logo,
 			description,
@@ -137,6 +157,8 @@
 		) VALUES (
 			#{id},
 			#{broker.id},
+			#{byOpenid},
+			#{byNickname},
 			#{title},
 			#{logo},
 			#{description},
@@ -157,6 +179,8 @@
 	<update id="update">
 		UPDATE mod_board SET 	
 			broker_id = #{broker.id},
+			by_openid = #{byOpenid},
+			by_nickname = #{byNickname},
 			title = #{title},
 			logo = #{logo},
 			description = #{description},

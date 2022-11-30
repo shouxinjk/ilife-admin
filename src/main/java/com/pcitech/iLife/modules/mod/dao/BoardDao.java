@@ -20,6 +20,9 @@ public interface BoardDao extends CrudDao<Board> {
 	//根据brokerId查找创建的board。含分页参数
 	public List<Board> findByBrokerId(Map<String,Object> params);
 	
+	//根据openid查找创建的board。含分页参数
+	public List<Board> findByOpenid(Map<String,Object> params);
+	
 	//显示所有board。含分页参数
 	public List<Board> findAllBoards(Map<String,Object> params);
 	
