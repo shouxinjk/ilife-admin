@@ -759,7 +759,19 @@
 						<sys:treeselect id="broker" name="broker.id" value="${board.broker.id}" labelName="broker.name" labelValue="${board.broker.name}"
 							title="选择达人" url="/mod/broker/treeData" extId="${broker.id}" cssClass="" allowClear="true"/>
 					</div>
-				</div>			
+				</div>		
+				<div class="control-group">
+					<label class="control-label">定制用户Openid：</label>
+					<div class="controls">
+						<form:input path="byOpenid" htmlEscape="false" maxlength="64" class="input-xlarge "/>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">定制用户昵称：</label>
+					<div class="controls">
+						<form:input path="byNickname" htmlEscape="false" maxlength="128" class="input-xlarge "/>
+					</div>
+				</div>						
 				<div class="control-group">
 					<label class="control-label">标题：</label>
 					<div class="controls">

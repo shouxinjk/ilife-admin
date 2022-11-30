@@ -38,7 +38,8 @@
 			<tr>
 				<th>Logo</th>
 				<th>标题</th>
-				<th>创建者</th>
+				<th>创建达人</th>
+				<th>创建用户</th>		
 				<th>标签</th>
 				<th>类型</th>
 				<th>关键词</th>
@@ -56,6 +57,7 @@
 					${board.title}
 				</a></td>
 				<td>${board.broker.name}</td>
+				<td>${board.byNickname}</td>				
 				<td>${board.tags}</td>
 				<td>${fns:getDictLabel(board.type, 'boardType', board.type)}</td>
 				<td>${board.keywords}</td>
