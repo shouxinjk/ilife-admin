@@ -9,9 +9,12 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pcitech.iLife.common.config.Global;
+import com.pcitech.iLife.modules.sys.entity.Dict;
+import com.pcitech.iLife.modules.sys.service.DictService;
 import com.pdd.pop.sdk.common.util.JsonUtil;
 import com.pdd.pop.sdk.http.PopAccessTokenClient;
 import com.pdd.pop.sdk.http.PopClient;
@@ -53,6 +56,8 @@ public class PddHelper {
 	PopAccessTokenClient tokenClient  = null;
 	PopClient client = null;
 	
+	@Autowired DictService dictService;
+	
 	private PopClient getClient() {
 		if(client  == null) {
 			client = new PopHttpClient( Global.getConfig("pdd.clientId"), Global.getConfig("pdd.clientSecret"));
@@ -73,7 +78,7 @@ public class PddHelper {
 	public List<OpenApiResponsePropertiesItem> getProperty(Long categoryId) throws Exception{
         PddGoodsCatTemplateGetRequest request = new PddGoodsCatTemplateGetRequest();
         request.setCatId(categoryId);
-        PddGoodsCatTemplateGetResponse response = getClient().syncInvoke(request,Global.getConfig("pdd.accessToken"));
+        PddGoodsCatTemplateGetResponse response = getClient().syncInvoke(request,getAccessToken());
         logger.debug(JsonUtil.transferToJson(response));
         return response.getOpenApiResponse().getProperties();
 	}
@@ -111,9 +116,22 @@ public class PddHelper {
 		req.setPid(Global.getConfig("pdd.pid"));
 		req.setCustomParameters(getCustomParams(brokerId));
 		req.setSourceUrl(url);
-		PddDdkGoodsZsUnitUrlGenResponse response = getClient().syncInvoke(req,Global.getConfig("pdd.accessToken"));
+		PddDdkGoodsZsUnitUrlGenResponse response = getClient().syncInvoke(req,getAccessToken());
 		logger.debug(JsonUtil.transferToJson(response));
 		return response.getGoodsZsUnitGenerateResponse();
+	}
+	
+	//从字典中获取accessToken，而不采用配置文件中的值。
+	//注意：需要运营支持，每月更新accessToken值
+	protected String getAccessToken() {
+		Dict dict = new Dict();
+		dict.setType("access_token");	
+		dict.setValue("pdd");
+		List<Dict> dicts = dictService.findList(dict);
+		if(dicts.size()>0)
+			return dicts.get(0).getLabel();//直接返回第一个即可
+		logger.warn("no access token found. please check.");
+		return Global.getConfig("pdd.accessToken");
 	}
 	
 	/**
