@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.CategoryBrokerDao">
+    
+	<sql id="categoryBrokerColumns">
+		a.id AS "id",
+		a.category_id AS "category.id",
+		c.name AS "category.name",
+		a.broker_id AS "broker.id",
+		b.nickname AS "broker.nickname",
+		b.openid AS "broker.openid",
+		a.badge_id AS "badge.id",
+		bb.name AS "badge.name",
+		bb.key AS "badge.key",
+		bb.level AS "badge.level",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="categoryBrokerJoins">
+		LEFT JOIN mod_item_category c ON c.id = a.category_id	
+		LEFT JOIN mod_broker b ON b.id = a.broker_id
+		LEFT JOIN mod_badge bb ON bb.id = a.badge_id		
+	</sql>
+    
+	<select id="get" resultType="CategoryBroker">
+		SELECT 
+			<include refid="categoryBrokerColumns"/>
+		FROM int_category_broker a
+		<include refid="categoryBrokerJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="CategoryBroker">
+		SELECT 
+			<include refid="categoryBrokerColumns"/>
+		FROM int_category_broker a
+		<include refid="categoryBrokerJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="category != null and category.id != null and category.id != ''">
+				AND a.category_id = #{category.id}
+			</if>
+			<if test="broker != null and broker.id != null and broker.id != ''">
+				AND a.broker_id = #{broker.id}
+			</if>
+			<if test="badge != null and badge.id != null and badge.id != ''">
+				AND a.badge_id = #{badge.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="CategoryBroker">
+		SELECT 
+			<include refid="categoryBrokerColumns"/>
+		FROM int_category_broker a
+		<include refid="categoryBrokerJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO int_category_broker(
+			id,
+			category_id,
+			broker_id,
+			badge_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{category.id},
+			#{broker.id},
+			#{badge.id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE int_category_broker SET 	
+			category_id = #{category.id},
+			broker_id = #{broker.id},
+			badge_id = #{badge.id},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE int_category_broker SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
