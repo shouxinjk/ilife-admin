@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -291,6 +292,62 @@ public class MeasureController extends BaseController {
 		}
 		
 		return mapList;
+	}
+	
+	/**
+	 * 移动端能够直接提交新建属性。注意对新建属性默认补齐设置
+	 * @param measure
+	 * @return
+	 */
+	@RequestMapping(value = "rest/upsert")
+	public JSONObject upsert(Measure measure) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(measure.getId()==null||measure.getId().trim().length()==0) {//自动补齐默认设置
+			measure.setId(Util.get32UUID());
+			measure.setIsNewRecord(true);
+			//注意：需要在前端自动补齐
+			/**
+			measure.setAlpha(0.2);
+			measure.setBeta(0.2);
+			measure.setGamma(0.2);
+			measure.setDelte(0.2);
+			measure.setEpsilon(0.2);
+			
+			measure.setZeta(0.5);
+			measure.setEta(0.3);
+			measure.setTheta(0.2);
+			//**/
+		}
+		try {
+			measureService.save(measure);
+			result.put("success", true);
+			result.put("data", measure);
+			result.put("msg",  "保存关键属性成功");
+		}catch(Exception ex) {
+			result.put("msg", ex.getMessage());
+		}
+		//将tag分别建立为主题
+		if(measure.getTags()!=null&&measure.getTags().trim().length()>0) {
+			saveTags(measure);
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "rest/delete/{id}")
+	public JSONObject delete(String id) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		Measure measure = measureService.get(id);
+		if(measure ==null) {
+			result.put("msg", "指定ID的关键属性不存在");
+			return result;
+		}
+		result.put("data", measure);
+		measureService.delete(measure);
+		result.put("success", true);
+		result.put("msg", "删除商品属性成功");
+		return result;
 	}
 	
 	public List<Map<String, Object>>  loadUserProps(){

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,6 +41,7 @@ import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.ItemDimensionMeasureService;
 import com.pcitech.iLife.modules.mod.service.ItemDimensionService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 客观评价明细Controller
@@ -167,6 +169,134 @@ public class ItemDimensionMeasureController extends BaseController {
 		return result;
 	}
 	
+	
+	/**
+	 * 显示所有待添加属性，包括当前节点属性，以及可继承属性
+	 * 供移动端显示所有可添加属性列表
+	 */
+	@RequestMapping(value = {"rest/measures/{categoryId}/{dimensionId}"})
+	public JSONObject listPendingMeasures(@PathVariable String categoryId, @PathVariable String dimensionId) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		
+		//根据Category递归查询获取属性
+		ItemCategory category = itemCategoryService.get(categoryId);
+		List<Measure> pendingMeasures = Lists.newArrayList();
+		
+		//查询已经关联的属性，根据dimension查询获取
+		ItemDimension itemDimension = itemDimensionService.get(dimensionId);//重新加载得到全部信息
+		ItemDimensionMeasure query = new ItemDimensionMeasure();
+		query.setDimension(itemDimension);
+		List<ItemDimensionMeasure> existItemDimensionMeasures = itemDimensionMeasureService.findList(query);
+		result.put("addedMeasures", existItemDimensionMeasures);//已经添加的关键属性列表
+		
+		List<String> ids = Lists.newArrayList();//记录已经添加的itemDimensionMeasure ID列表
+		for(ItemDimensionMeasure item:existItemDimensionMeasures) {
+			ids.add(item.getMeasure().getId());
+		}
+		
+		//递归查询获取属性
+		//遍历获取所有节点的属性
+		while(category!=null) {
+			List<Measure> measures =measureService.findByCategory(category.getId());
+			for (Measure item:measures){
+				if(ids.indexOf(item.getId())<0)
+					pendingMeasures.add(item);
+			}
+			category = itemCategoryService.get(category.getParent());//逐层获取继承属性
+		}
+		result.put("pendingMeasures", pendingMeasures);//可添加列表
+				
+		result.put("success", true);
+		return result;
+	}
+	
+	/**
+	 * 从移动端直接删除
+	 * 需要同时更新其他节点weight
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "rest/delete/{id}")
+	public JSONObject delete(@PathVariable String id) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		
+		ItemDimensionMeasure itemDimensionMeasure = itemDimensionMeasureService.get(id);
+		if( itemDimensionMeasure == null) {
+			result.put("mgs", "无指定ID记录");
+			return result;
+		}
+		
+		result.put("data", itemDimensionMeasure);
+		itemDimensionMeasureService.delete(itemDimensionMeasure);
+		
+		//自动重新计算其他节点权重：等比例放大
+		double ratio = 1;
+		if(itemDimensionMeasure.getWeight()<100 && itemDimensionMeasure.getWeight()>0)
+			ratio = 100/(100-itemDimensionMeasure.getWeight());
+		
+		ItemDimensionMeasure q = new ItemDimensionMeasure();
+		q.setDimension(itemDimensionMeasure.getDimension());
+		
+		List<ItemDimensionMeasure> nodes = itemDimensionMeasureService.findList(q);//查找所有属性节点
+		//逐条更新weight
+		for(ItemDimensionMeasure node:nodes) {
+			node.setWeight(node.getWeight()*ratio);
+			node.setUpdateDate(new Date());
+			itemDimensionMeasureService.save(node);
+		}
+		
+		result.put("success", true);
+		
+		return result;
+	}
+	
+	/**
+	 * 从移动端直接新增或修改
+	 * @param itemDimensionMeasure
+	 * @return
+	 */
+	@RequestMapping(value = "rest/upsert")
+	public JSONObject upsert(ItemDimensionMeasure itemDimensionMeasure) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(itemDimensionMeasure.getId()==null || itemDimensionMeasure.getId().trim().length()==0) {//新增需要设置ID
+			itemDimensionMeasure.setId(Util.get32UUID());
+			itemDimensionMeasure.setIsNewRecord(true);
+			itemDimensionMeasure.setCreateDate(new Date());
+		}
+		
+		itemDimensionMeasureService.save(itemDimensionMeasure);
+		result.put("data", itemDimensionMeasure);
+		
+		//重新计算已有节点权重：等比例缩放
+		double ratio = 1;
+		if(itemDimensionMeasure.getWeight()<100 && itemDimensionMeasure.getWeight()>0)
+			ratio = (100-itemDimensionMeasure.getWeight())/100;
+		
+		ItemDimensionMeasure q = new ItemDimensionMeasure();
+		q.setDimension(itemDimensionMeasure.getDimension());
+		
+		List<ItemDimensionMeasure> nodes = itemDimensionMeasureService.findList(q);//查找所有属性节点
+		double total = 0;
+		for(ItemDimensionMeasure node:nodes) {
+			total += node.getWeight();
+		}
+		if(total==0) {
+			result.put("msg", "re-calculate weight error due to total is 0.");
+			result.put("success", true);
+			return result;
+		}
+		
+		for(ItemDimensionMeasure node:nodes) {
+			node.setWeight(ratio*node.getWeight()/total);
+			node.setUpdateDate(new Date());
+			itemDimensionMeasureService.save(node);
+		}
+		result.put("success", true);
+		return result;
+	}
 	
 	@RequiresPermissions("mod:itemDimensionMeasure:view")
 	@RequestMapping(value = "form")

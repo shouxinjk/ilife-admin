@@ -38,6 +38,8 @@ import com.pcitech.iLife.modules.mod.service.ItemDimensionService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
 import com.pcitech.iLife.util.Util;
 
+import groovy.util.Node;
+
 /**
  * 商品维度Controller
  * @author chenci
@@ -227,6 +229,200 @@ public class ItemDimensionController extends BaseController {
 		q.setFeatured(true);//仅返回featured节点
 		return itemDimensionService.findList(q);
 	}
+	
+	/**
+	 * 根据dimensionId获取所有下级节点。返回下级维度列表
+	 * 如果为根节点，并且未建立评价体系，则默认从父级类目复制
+	 * 参数：
+	 * dimensionId：维度ID
+	 *
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/child-dimension", method = RequestMethod.GET)
+	public List<ItemDimension> listChildDimensionByDimensionId(String dimensionId) {
+		ItemDimension dimension = itemDimensionService.get(dimensionId);
+		if(dimension==null)//如果没有则直接返回空
+			return Lists.newArrayList();
+		ItemDimension q = new ItemDimension(); 
+		q.setParent(dimension);
+		List<ItemDimension> result = itemDimensionService.findList(q);
+		//如果当前节点为根节点，且当前节点没有定义评价体系则默认克隆上级节点评价体系
+		if(result == null || result.size()==0) {
+			ItemCategory category = itemCategoryService.get(dimensionId);//根据维度ID获取类目，用于判定是否是根节点
+			if(category!=null) {//如果为根节点，则默认从父节点复制
+				inheritFromParent(dimensionId);
+				result = itemDimensionService.findList(q);//复制完成后重新得到节点
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * 从移动端直接新增或修改
+	 * @param itemDimension
+	 * @return
+	 */
+	@RequestMapping(value = "rest/upsert")
+	public JSONObject upsert(ItemDimension itemDimension) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(itemDimension.getId()==null || itemDimension.getId().trim().length()==0) {//新增需要设置ID
+			itemDimension.setId(Util.get32UUID());
+			itemDimension.setIsNewRecord(true);
+			//设置默认字段
+			itemDimension.setPropKey("m"+Util.get6bitCodeRandom());
+		}
+		itemDimensionService.save(itemDimension);//先直接保存
+		result.put("data", itemDimension);
+		//自动重新计算其他节点权重：等比例压缩
+		ItemDimension q = new ItemDimension();
+		q.setParent(itemDimension.getParent());
+		List<ItemDimension> nodes = itemDimensionService.findList(q);
+		
+		double ratio = 1;
+		if(itemDimension.getWeight()<100 && itemDimension.getWeight()>0)
+			ratio = (100-itemDimension.getWeight())/100;
+		
+		double total = 0;
+		for(ItemDimension node:nodes) {
+			total += node.getWeight();
+		}
+		if(total==0) {
+			result.put("msg", "re-calculate weight error due to total is 0.");
+			result.put("success", true);
+			return result;
+		}
+		
+		for(ItemDimension node:nodes) {
+			if(node.getId().equalsIgnoreCase(itemDimension.getId())) {
+				//当前节点，忽略
+			}else {//否则更新权重
+				node.setWeight(ratio*node.getWeight()/total);
+				node.setUpdateDate(new Date());
+				itemDimensionService.save(node);
+			}
+		}
+		
+		//更新脚本
+		if(itemDimension.getId() != null && itemDimension.getId().trim().length()>0)
+			saveWithScript(itemDimension);
+		//递归更新父节点
+		if(itemDimension.getParent()!=null && itemDimension.getParent().getId()!=null)
+			saveWithScript(itemDimension.getParent());
+		result.put("msg",  "保存维度成功");
+		result.put("success", true);
+		return result;
+	}
+	
+
+	/**
+	 * 从移动端直接删除
+	 * 需要同时更新其他节点weight
+	 * @param itemDimension
+	 * @return
+	 */
+	@RequestMapping(value = "rest/delete/{id}")
+	public JSONObject delete(@PathVariable String id) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		ItemDimension itemDimension = itemDimensionService.get(id);
+		if(itemDimension ==null || itemDimension.getId()==null) {//没有则直接忽略
+			result.put("msg", "指定的指标节点不存在。");
+			return result;
+		}
+		result.put("data", itemDimension);
+		itemDimensionService.delete(itemDimension);//先直接删除
+		
+		//自动重新计算其他节点权重：等比例压缩
+		double ratio = 1;
+		if(itemDimension.getWeight()<100 && itemDimension.getWeight()>0)
+			ratio = 100/(100-itemDimension.getWeight());
+		ItemDimension q = new ItemDimension();
+		q.setParent(itemDimension.getParent());
+		List<ItemDimension> nodes = itemDimensionService.findList(q);
+		
+		for(ItemDimension node:nodes) {
+			if(node.getId().equalsIgnoreCase(itemDimension.getId())) {
+				//当前节点，忽略
+			}else {//否则更新权重
+				node.setWeight(node.getWeight()*ratio);
+				itemDimensionService.save(node);
+			}
+		}
+		
+		//更新脚本
+		if(itemDimension.getId() != null && itemDimension.getId().trim().length()>0)
+			saveWithScript(itemDimension);
+		//递归更新父节点
+		if(itemDimension.getParent()!=null && itemDimension.getParent().getId()!=null)
+			saveWithScript(itemDimension.getParent());
+		result.put("msg",  "删除维度成功");
+		result.put("success", true);
+		return result;
+	}
+	
+	/**
+	 * 用于从移动端复制父节点评价体系
+	 * 获取父节点的评价维度及评价属性，并更新到当前节点
+	 * @param id 维度ID，顶级节点为类目ID
+	 * @return
+	 */
+	public JSONObject inheritFromParent(String id) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		logger.error("got dimension by category id. "+id);
+
+		//获取上级节点：直接根据dimension对应的category查找上级category
+		ItemCategory itemCategory = itemCategoryService.get(id);
+		if(itemCategory == null) {
+			result.put("msg", "无法获取父节点及其评价维度，忽略");
+		}else {//尝试获取上级ItemCategory
+			ItemCategory parentItemCategory = itemCategory.getParent();
+			if(parentItemCategory == null) {
+				result.put("msg", "没有父节点，忽略");
+			}else {
+				logger.error("try get current node by category id. "+id);
+				ItemDimension itemDimension = itemDimensionService.get(id);//根据当前类目ID查询维度节点
+				if(itemDimension == null) {//如果根据cagtegory ID查询不存在，则查询该类目下ID为1的记录
+					logger.debug("no root dimension found by category id. try query.[category id]"+id);
+					ItemDimension parent = new ItemDimension();
+					parent.setId("1");
+					ItemDimension q = new ItemDimension();
+					q.setCategory(itemCategory);
+					q.setParent(parent);
+					List<ItemDimension> roots = itemDimensionService.findList(q);
+					if(roots.size()>0) {
+						itemDimension = roots.get(0);
+					}
+				}
+				
+				logger.error("try get parent node by category id. "+parentItemCategory.getId());
+				ItemDimension parentDimension = itemDimensionService.get(parentItemCategory.getId());//根节点ID与category相同
+				if(parentDimension == null) {//如果根据cagtegory ID查询不存在，则查询该类目下ID为1的记录
+					logger.debug("no root dimension found by category id. try query.[category id]"+parentItemCategory.getId());
+					ItemDimension parent = new ItemDimension();
+					parent.setId("1");
+					ItemDimension q = new ItemDimension();
+					q.setCategory(parentItemCategory);
+					q.setParent(parent);
+					List<ItemDimension> roots = itemDimensionService.findList(q);
+					if(roots.size()>0) {
+						parentDimension = roots.get(0);
+					}
+				}
+				
+				if(parentDimension!=null && itemDimension!=null) {
+					copyDimensionAndMeauser(parentDimension, itemDimension);//递归复制所有评价节点及属性
+					result.put("msg", "根据目录复制父节点维度成功");
+					result.put("success", true);
+				}else {
+					result.put("msg", "不能根据类目ID获取维度节点，忽略");
+				}
+			}
+		}
+		return result;
+	}
+	
 
 	/**
 	 * 查询 分类-维度-属性 树结构数据
