@@ -231,18 +231,20 @@ public class ItemDimensionController extends BaseController {
 	}
 	
 	/**
-	 * 根据dimensionId获取所有下级节点。返回下级维度列表
+	 * 根据dimensionId获取所有下级节点。包含指标节点及属性节点
 	 * 如果为根节点，并且未建立评价体系，则默认从父级类目复制
 	 * 参数：
 	 * dimensionId：维度ID
 	 *
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/child-dimension", method = RequestMethod.GET)
-	public List<ItemDimension> listChildDimensionByDimensionId(String dimensionId) {
+	@RequestMapping(value = "rest/child", method = RequestMethod.GET)
+	public JSONObject listChildDimensionByDimensionId(String dimensionId) {
+		JSONObject json = new JSONObject();
+		json.put("success", false);
 		ItemDimension dimension = itemDimensionService.get(dimensionId);
 		if(dimension==null)//如果没有则直接返回空
-			return Lists.newArrayList();
+			return json;
 		ItemDimension q = new ItemDimension(); 
 		q.setParent(dimension);
 		List<ItemDimension> result = itemDimensionService.findList(q);
@@ -254,7 +256,16 @@ public class ItemDimensionController extends BaseController {
 				result = itemDimensionService.findList(q);//复制完成后重新得到节点
 			}
 		}
-		return result;
+		json.put("dimensions", result);
+		
+		//查询属性节点
+		ItemDimensionMeasure q2 = new ItemDimensionMeasure();
+		q2.setDimension(dimension);
+		json.put("measures", itemDimensionMeasureService.findList(q2));
+		
+		json.put("success", true);
+		
+		return json;
 	}
 	
 	/**
@@ -274,10 +285,13 @@ public class ItemDimensionController extends BaseController {
 		}
 		itemDimensionService.save(itemDimension);//先直接保存
 		result.put("data", itemDimension);
-		//自动重新计算其他节点权重：等比例压缩
+		//自动重新计算其他节点权重：等比例压缩。注意要包含子节点及属性节点共同重新计算
 		ItemDimension q = new ItemDimension();
 		q.setParent(itemDimension.getParent());
-		List<ItemDimension> nodes = itemDimensionService.findList(q);
+		List<ItemDimension> nodes = itemDimensionService.findList(q); //获取节点列表
+		ItemDimensionMeasure q2 = new ItemDimensionMeasure();
+		q2.setDimension(itemDimension.getParent());
+		List<ItemDimensionMeasure> measures = itemDimensionMeasureService.findList(q2);
 		
 		double ratio = 1;
 		if(itemDimension.getWeight()<100 && itemDimension.getWeight()>0)
@@ -287,13 +301,16 @@ public class ItemDimensionController extends BaseController {
 		for(ItemDimension node:nodes) {
 			total += node.getWeight();
 		}
+		for(ItemDimensionMeasure measure:measures) {
+			total += measure.getWeight();
+		}
 		if(total==0) {
 			result.put("msg", "re-calculate weight error due to total is 0.");
 			result.put("success", true);
 			return result;
 		}
 		
-		for(ItemDimension node:nodes) {
+		for(ItemDimension node:nodes) { //更新节点权重
 			if(node.getId().equalsIgnoreCase(itemDimension.getId())) {
 				//当前节点，忽略
 			}else {//否则更新权重
@@ -302,7 +319,11 @@ public class ItemDimensionController extends BaseController {
 				itemDimensionService.save(node);
 			}
 		}
-		
+		for(ItemDimensionMeasure measure:measures) {//更新属性权重
+			measure.setWeight(ratio*measure.getWeight()/total);
+			measure.setUpdateDate(new Date());
+			itemDimensionMeasureService.save(measure);
+		}
 		//更新脚本
 		if(itemDimension.getId() != null && itemDimension.getId().trim().length()>0)
 			saveWithScript(itemDimension);
@@ -341,7 +362,11 @@ public class ItemDimensionController extends BaseController {
 		q.setParent(itemDimension.getParent());
 		List<ItemDimension> nodes = itemDimensionService.findList(q);
 		
-		for(ItemDimension node:nodes) {
+		ItemDimensionMeasure q2 = new ItemDimensionMeasure();
+		q2.setDimension(itemDimension.getParent());
+		List<ItemDimensionMeasure> measures = itemDimensionMeasureService.findList(q2);
+		
+		for(ItemDimension node:nodes) {//更新节点权重
 			if(node.getId().equalsIgnoreCase(itemDimension.getId())) {
 				//当前节点，忽略
 			}else {//否则更新权重
@@ -349,7 +374,11 @@ public class ItemDimensionController extends BaseController {
 				itemDimensionService.save(node);
 			}
 		}
-		
+		for(ItemDimensionMeasure measure:measures) {//更新属性权重
+			measure.setWeight(ratio*measure.getWeight());
+			measure.setUpdateDate(new Date());
+			itemDimensionMeasureService.save(measure);
+		}
 		//更新脚本
 		if(itemDimension.getId() != null && itemDimension.getId().trim().length()>0)
 			saveWithScript(itemDimension);

@@ -238,13 +238,23 @@ public class ItemDimensionMeasureController extends BaseController {
 		
 		ItemDimensionMeasure q = new ItemDimensionMeasure();
 		q.setDimension(itemDimensionMeasure.getDimension());
-		
 		List<ItemDimensionMeasure> nodes = itemDimensionMeasureService.findList(q);//查找所有属性节点
-		//逐条更新weight
+		
+		ItemDimension q2 = new ItemDimension();
+		q2.setParent(itemDimensionMeasure.getDimension());
+		List<ItemDimension> dimensions = itemDimensionService.findList(q2);//查找所有指标节点
+		
+		//更新属性节点weight
 		for(ItemDimensionMeasure node:nodes) {
 			node.setWeight(node.getWeight()*ratio);
 			node.setUpdateDate(new Date());
 			itemDimensionMeasureService.save(node);
+		}
+		//更新指标节点weight
+		for(ItemDimension dimension:dimensions) {
+			dimension.setWeight(ratio*dimension.getWeight());
+			dimension.setUpdateDate(new Date());
+			itemDimensionService.save(dimension);
 		}
 		
 		result.put("success", true);
@@ -277,11 +287,18 @@ public class ItemDimensionMeasureController extends BaseController {
 		
 		ItemDimensionMeasure q = new ItemDimensionMeasure();
 		q.setDimension(itemDimensionMeasure.getDimension());
-		
 		List<ItemDimensionMeasure> nodes = itemDimensionMeasureService.findList(q);//查找所有属性节点
+		
+		ItemDimension q2 = new ItemDimension();
+		q2.setParent(itemDimensionMeasure.getDimension());
+		List<ItemDimension> dimensions = itemDimensionService.findList(q2);
+		
 		double total = 0;
 		for(ItemDimensionMeasure node:nodes) {
 			total += node.getWeight();
+		}
+		for(ItemDimension dimension:dimensions) {
+			total += dimension.getWeight();
 		}
 		if(total==0) {
 			result.put("msg", "re-calculate weight error due to total is 0.");
@@ -293,6 +310,11 @@ public class ItemDimensionMeasureController extends BaseController {
 			node.setWeight(ratio*node.getWeight()/total);
 			node.setUpdateDate(new Date());
 			itemDimensionMeasureService.save(node);
+		}
+		for(ItemDimension dimension:dimensions) {
+			dimension.setWeight(ratio*dimension.getWeight()/total);
+			dimension.setUpdateDate(new Date());
+			itemDimensionService.save(dimension);
 		}
 		result.put("success", true);
 		return result;
