@@ -908,9 +908,8 @@ public class ItemDimensionController extends BaseController {
 			}
 			itemDimension.setScript(script);
 			itemDimension.setScriptMemo(scriptMemo);
-			
-			itemDimensionService.save(itemDimension);
 		}
+		itemDimensionService.save(itemDimension);
 	}
 	
 	@RequiresPermissions("mod:itemDimension:edit")
