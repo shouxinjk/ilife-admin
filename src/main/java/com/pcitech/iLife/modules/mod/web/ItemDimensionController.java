@@ -384,7 +384,7 @@ public class ItemDimensionController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "rest/dimension/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "rest/dimension/{id}", method = RequestMethod.PUT)
 	public JSONObject delete(@PathVariable String id) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);

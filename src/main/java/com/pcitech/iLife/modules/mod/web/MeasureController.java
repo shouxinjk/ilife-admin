@@ -337,7 +337,7 @@ public class MeasureController extends BaseController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "rest/measure/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "rest/measure/{id}", method = RequestMethod.PUT)
 	public JSONObject delete(String id) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
