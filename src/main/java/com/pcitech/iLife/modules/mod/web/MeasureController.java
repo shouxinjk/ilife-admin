@@ -299,6 +299,7 @@ public class MeasureController extends BaseController {
 	 * @param measure
 	 * @return
 	 */
+	@ResponseBody
 	@RequestMapping(value = "rest/measure", method = RequestMethod.POST)
 	public JSONObject upsert(Measure measure) {
 		JSONObject result = new JSONObject();
@@ -334,6 +335,7 @@ public class MeasureController extends BaseController {
 		return result;
 	}
 	
+	@ResponseBody
 	@RequestMapping(value = "rest/measure/{id}", method = RequestMethod.DELETE)
 	public JSONObject delete(String id) {
 		JSONObject result = new JSONObject();

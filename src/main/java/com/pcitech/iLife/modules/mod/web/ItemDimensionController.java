@@ -273,6 +273,7 @@ public class ItemDimensionController extends BaseController {
 	 * @param itemDimension
 	 * @return
 	 */
+	@ResponseBody
 	@RequestMapping(value = "rest/dimension", method = RequestMethod.POST)
 	public JSONObject upsert(ItemDimension itemDimension) {
 		JSONObject result = new JSONObject();
@@ -381,6 +382,7 @@ public class ItemDimensionController extends BaseController {
 	 * @param itemDimension
 	 * @return
 	 */
+	@ResponseBody
 	@RequestMapping(value = "rest/dimension/{id}", method = RequestMethod.DELETE)
 	public JSONObject delete(@PathVariable String id) {
 		JSONObject result = new JSONObject();
