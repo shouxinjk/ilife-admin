@@ -217,7 +217,7 @@ public class ItemDimensionMeasureController extends BaseController {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "rest/delete/{id}")
+	@RequestMapping(value = "rest/{id}", method = RequestMethod.DELETE)
 	public JSONObject delete(@PathVariable String id) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
@@ -267,7 +267,7 @@ public class ItemDimensionMeasureController extends BaseController {
 	 * @param itemDimensionMeasure
 	 * @return
 	 */
-	@RequestMapping(value = "rest/upsert")
+	@RequestMapping(value = "rest/upsert", method = RequestMethod.POST)
 	public JSONObject upsert(ItemDimensionMeasure itemDimensionMeasure) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);

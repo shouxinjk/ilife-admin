@@ -299,7 +299,7 @@ public class MeasureController extends BaseController {
 	 * @param measure
 	 * @return
 	 */
-	@RequestMapping(value = "rest/upsert")
+	@RequestMapping(value = "rest/upsert", method = RequestMethod.POST)
 	public JSONObject upsert(Measure measure) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
@@ -334,7 +334,7 @@ public class MeasureController extends BaseController {
 		return result;
 	}
 	
-	@RequestMapping(value = "rest/delete/{id}")
+	@RequestMapping(value = "rest/{id}", method = RequestMethod.DELETE)
 	public JSONObject delete(String id) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);

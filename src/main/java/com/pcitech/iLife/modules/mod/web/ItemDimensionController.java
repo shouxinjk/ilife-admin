@@ -273,8 +273,8 @@ public class ItemDimensionController extends BaseController {
 	 * @param itemDimension
 	 * @return
 	 */
-	@RequestMapping(value = "rest/upsert", method = RequestMethod.POST)
-	public JSONObject upsert(ItemDimension itemDimension) {
+	@RequestMapping(value = "rest/save", method = RequestMethod.POST)
+	public JSONObject save(ItemDimension itemDimension) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		if(itemDimension.getId()==null || itemDimension.getId().trim().length()==0) {//新增需要设置ID
@@ -349,14 +349,38 @@ public class ItemDimensionController extends BaseController {
 		return result;
 	}
 	
-
+	/**
+	 * 从移动端查询 维度信息，包括当前维度节点、上级、上上级。直到根目录
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "rest/{id}", method = RequestMethod.GET)
+	public List<ItemDimension> getById(@PathVariable String id) {
+		List<ItemDimension> result = Lists.newArrayList();
+		boolean hasMore = true;
+		while(hasMore) {
+			ItemDimension itemDimension = itemDimensionService.get(id);
+			if(itemDimension != null) {
+				result.add(itemDimension);
+				if(itemDimension.getParent()!=null) {
+					id = itemDimension.getParent().getId();
+				}else {
+					hasMore = false;
+				}
+			}else {
+				hasMore = false;
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * 从移动端直接删除
 	 * 需要同时更新其他节点weight
 	 * @param itemDimension
 	 * @return
 	 */
-	@RequestMapping(value = "rest/delete/{id}", method = RequestMethod.POST)
+	@RequestMapping(value = "rest/{id}", method = RequestMethod.DELETE)
 	public JSONObject delete(@PathVariable String id) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
