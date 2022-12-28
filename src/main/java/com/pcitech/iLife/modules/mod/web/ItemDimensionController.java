@@ -273,8 +273,8 @@ public class ItemDimensionController extends BaseController {
 	 * @param itemDimension
 	 * @return
 	 */
-	@RequestMapping(value = "rest/save", method = RequestMethod.POST)
-	public JSONObject save(ItemDimension itemDimension) {
+	@RequestMapping(value = "rest/dimension", method = RequestMethod.POST)
+	public JSONObject upsert(ItemDimension itemDimension) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		if(itemDimension.getId()==null || itemDimension.getId().trim().length()==0) {//新增需要设置ID
@@ -354,7 +354,7 @@ public class ItemDimensionController extends BaseController {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "rest/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "rest/dimension/{id}", method = RequestMethod.GET)
 	public List<ItemDimension> getById(@PathVariable String id) {
 		List<ItemDimension> result = Lists.newArrayList();
 		boolean hasMore = true;
@@ -380,7 +380,7 @@ public class ItemDimensionController extends BaseController {
 	 * @param itemDimension
 	 * @return
 	 */
-	@RequestMapping(value = "rest/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "rest/dimension/{id}", method = RequestMethod.DELETE)
 	public JSONObject delete(@PathVariable String id) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);

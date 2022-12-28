@@ -174,7 +174,7 @@ public class ItemDimensionMeasureController extends BaseController {
 	 * 显示所有待添加属性，包括当前节点属性，以及可继承属性
 	 * 供移动端显示所有可添加属性列表
 	 */
-	@RequestMapping(value = {"rest/measures/{categoryId}/{dimensionId}"})
+	@RequestMapping(value = {"rest/pending-measures/{categoryId}/{dimensionId}"}, method = RequestMethod.GET)
 	public JSONObject listPendingMeasures(@PathVariable String categoryId, @PathVariable String dimensionId) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
@@ -217,7 +217,7 @@ public class ItemDimensionMeasureController extends BaseController {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "rest/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "rest/dimension-measure/{id}", method = RequestMethod.DELETE)
 	public JSONObject delete(@PathVariable String id) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
@@ -267,7 +267,7 @@ public class ItemDimensionMeasureController extends BaseController {
 	 * @param itemDimensionMeasure
 	 * @return
 	 */
-	@RequestMapping(value = "rest/upsert", method = RequestMethod.POST)
+	@RequestMapping(value = "rest/dimension-measure", method = RequestMethod.POST)
 	public JSONObject upsert(ItemDimensionMeasure itemDimensionMeasure) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
