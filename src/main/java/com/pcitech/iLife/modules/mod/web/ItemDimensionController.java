@@ -280,10 +280,19 @@ public class ItemDimensionController extends BaseController {
 		if(itemDimension.getId()==null || itemDimension.getId().trim().length()==0) {//新增需要设置ID
 			itemDimension.setId(Util.get32UUID());
 			itemDimension.setIsNewRecord(true);
+			itemDimension.setCreateDate(new Date());
+			itemDimension.setUpdateDate(new Date());
+			itemDimension.setSort(10);//默认随便设置
 			//设置默认字段
 			itemDimension.setPropKey("m"+Util.get6bitCodeRandom());
 		}
 		itemDimensionService.save(itemDimension);//先直接保存
+		//查询ItemDimension作为后续使用，由于需要重新计算脚本，对于新提交节点，需要重新查询，避免导致duplicate记录错误
+		itemDimension = itemDimensionService.get(itemDimension);
+		if(itemDimension == null) {
+			result.put("msg", "save dimension failed.");
+			return result;
+		}
 		result.put("data", itemDimension);
 		//自动重新计算其他节点权重：等比例压缩。注意要包含子节点及属性节点共同重新计算
 		ItemDimension q = new ItemDimension();
@@ -894,8 +903,9 @@ public class ItemDimensionController extends BaseController {
 			}
 			itemDimension.setScript(script);
 			itemDimension.setScriptMemo(scriptMemo);
+			
+			itemDimensionService.save(itemDimension);
 		}
-		itemDimensionService.save(itemDimension);
 	}
 	
 	@RequiresPermissions("mod:itemDimension:edit")
