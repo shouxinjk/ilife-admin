@@ -354,7 +354,7 @@ public class ItemDimensionController extends BaseController {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "rest/dimension/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "rest/full-dimension/{id}", method = RequestMethod.GET)
 	public List<ItemDimension> getById(@PathVariable String id) {
 		List<ItemDimension> result = Lists.newArrayList();
 		boolean hasMore = true;
