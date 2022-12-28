@@ -174,6 +174,7 @@ public class ItemDimensionMeasureController extends BaseController {
 	 * 显示所有待添加属性，包括当前节点属性，以及可继承属性
 	 * 供移动端显示所有可添加属性列表
 	 */
+	@ResponseBody
 	@RequestMapping(value = {"rest/pending-measures/{categoryId}/{dimensionId}"}, method = RequestMethod.GET)
 	public JSONObject listPendingMeasures(@PathVariable String categoryId, @PathVariable String dimensionId) {
 		JSONObject result = new JSONObject();
