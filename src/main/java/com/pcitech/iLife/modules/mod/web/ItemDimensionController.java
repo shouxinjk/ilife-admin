@@ -273,7 +273,7 @@ public class ItemDimensionController extends BaseController {
 	 * @param itemDimension
 	 * @return
 	 */
-	@RequestMapping(value = "rest/upsert")
+	@RequestMapping(value = "rest/upsert", method = RequestMethod.POST)
 	public JSONObject upsert(ItemDimension itemDimension) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
@@ -288,9 +288,14 @@ public class ItemDimensionController extends BaseController {
 		}
 		itemDimensionService.save(itemDimension);//先直接保存
 		//查询ItemDimension作为后续使用，由于需要重新计算脚本，对于新提交节点，需要重新查询，避免导致duplicate记录错误
-		itemDimension = itemDimensionService.get(itemDimension);
-		if(itemDimension == null) {
-			result.put("msg", "save dimension failed.");
+		try {
+			itemDimension = itemDimensionService.get(itemDimension);
+			if(itemDimension == null) {
+				result.put("msg", "save dimension failed.");
+				return result;
+			}
+		}catch(Exception ex) {
+			result.put("msg", ex.getMessage());
 			return result;
 		}
 		result.put("data", itemDimension);
@@ -351,7 +356,7 @@ public class ItemDimensionController extends BaseController {
 	 * @param itemDimension
 	 * @return
 	 */
-	@RequestMapping(value = "rest/delete/{id}")
+	@RequestMapping(value = "rest/delete/{id}", method = RequestMethod.POST)
 	public JSONObject delete(@PathVariable String id) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
