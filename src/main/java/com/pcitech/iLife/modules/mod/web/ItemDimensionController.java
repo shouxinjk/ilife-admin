@@ -289,17 +289,15 @@ public class ItemDimensionController extends BaseController {
 		}
 		itemDimensionService.save(itemDimension);//先直接保存
 		//查询ItemDimension作为后续使用，由于需要重新计算脚本，对于新提交节点，需要重新查询，避免导致duplicate记录错误
-		try {
-			itemDimension = itemDimensionService.get(itemDimension);
-			if(itemDimension == null) {
-				result.put("msg", "save dimension failed.");
-				return result;
-			}
-		}catch(Exception ex) {
-			result.put("msg", ex.getMessage());
+		itemDimension = itemDimensionService.get(itemDimension);
+		if(itemDimension == null) {
+			result.put("msg", "save dimension failed.");
 			return result;
 		}
+
 		result.put("data", itemDimension);
+		
+		/**
 		//自动重新计算其他节点权重：等比例压缩。注意要包含子节点及属性节点共同重新计算
 		ItemDimension q = new ItemDimension();
 		q.setParent(itemDimension.getParent());
@@ -339,6 +337,8 @@ public class ItemDimensionController extends BaseController {
 			measure.setUpdateDate(new Date());
 			itemDimensionMeasureService.save(measure);
 		}
+		//**/
+		
 		//更新脚本
 		if(itemDimension.getId() != null && itemDimension.getId().trim().length()>0)
 			saveWithScript(itemDimension);
@@ -395,6 +395,7 @@ public class ItemDimensionController extends BaseController {
 		result.put("data", itemDimension);
 		itemDimensionService.delete(itemDimension);//先直接删除
 		
+		/**
 		//自动重新计算其他节点权重：等比例压缩
 		double ratio = 1;
 		if(itemDimension.getWeight()<100 && itemDimension.getWeight()>0)
@@ -420,6 +421,8 @@ public class ItemDimensionController extends BaseController {
 			measure.setUpdateDate(new Date());
 			itemDimensionMeasureService.save(measure);
 		}
+		//**/
+		
 		//更新脚本
 		if(itemDimension.getId() != null && itemDimension.getId().trim().length()>0)
 			saveWithScript(itemDimension);
@@ -935,8 +938,10 @@ public class ItemDimensionController extends BaseController {
 			}
 			itemDimension.setScript(script);
 			itemDimension.setScriptMemo(scriptMemo);
+			
+			itemDimensionService.save(itemDimension);
 		}
-		itemDimensionService.save(itemDimension);
+		
 	}
 	
 	@RequiresPermissions("mod:itemDimension:edit")

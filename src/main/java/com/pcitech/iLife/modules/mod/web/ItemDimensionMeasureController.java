@@ -233,6 +233,7 @@ public class ItemDimensionMeasureController extends BaseController {
 		result.put("data", itemDimensionMeasure);
 		itemDimensionMeasureService.delete(itemDimensionMeasure);
 		
+		/**
 		//自动重新计算其他节点权重：等比例放大
 		double ratio = 1;
 		if(itemDimensionMeasure.getWeight()<100 && itemDimensionMeasure.getWeight()>0)
@@ -258,6 +259,7 @@ public class ItemDimensionMeasureController extends BaseController {
 			dimension.setUpdateDate(new Date());
 			itemDimensionService.save(dimension);
 		}
+		//**/
 		
 		result.put("success", true);
 		
@@ -283,6 +285,7 @@ public class ItemDimensionMeasureController extends BaseController {
 		itemDimensionMeasureService.save(itemDimensionMeasure);
 		result.put("data", itemDimensionMeasure);
 		
+		/**
 		//重新计算已有节点权重：等比例缩放
 		double ratio = 1;
 		if(itemDimensionMeasure.getWeight()<100 && itemDimensionMeasure.getWeight()>0)
@@ -319,6 +322,8 @@ public class ItemDimensionMeasureController extends BaseController {
 			dimension.setUpdateDate(new Date());
 			itemDimensionService.save(dimension);
 		}
+		//**/
+		
 		result.put("success", true);
 		return result;
 	}
