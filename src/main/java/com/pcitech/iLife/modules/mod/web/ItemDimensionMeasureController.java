@@ -273,7 +273,7 @@ public class ItemDimensionMeasureController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/dimension-measure", method = RequestMethod.POST)
-	public JSONObject upsert(ItemDimensionMeasure itemDimensionMeasure) {
+	public JSONObject upsert(@RequestBody ItemDimensionMeasure itemDimensionMeasure) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		if(itemDimensionMeasure.getId()==null || itemDimensionMeasure.getId().trim().length()==0) {//新增需要设置ID

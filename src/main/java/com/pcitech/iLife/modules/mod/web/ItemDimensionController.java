@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -275,7 +276,7 @@ public class ItemDimensionController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/dimension", method = RequestMethod.POST)
-	public JSONObject upsert(ItemDimension itemDimension) {
+	public JSONObject upsert(@RequestBody ItemDimension itemDimension) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		if(itemDimension.getId()==null || itemDimension.getId().trim().length()==0) {//新增需要设置ID
