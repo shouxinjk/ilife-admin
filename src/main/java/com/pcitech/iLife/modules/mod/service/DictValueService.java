@@ -22,7 +22,11 @@ import com.pcitech.iLife.modules.mod.dao.DictValueDao;
 @Service
 @Transactional(readOnly = true)
 public class DictValueService extends CrudService<DictValueDao, DictValue> {
-
+	//根据openid获取待标注字典值列表
+	public List<DictValue> findPendingList(Map<String,Object> param){
+		return dao.findPendingList(param);
+	}
+	
 	//批量忽略/启用类目相关
 	@Transactional(readOnly = false)
 	public void batchUpdateCategoryInfo(Map<String,Object> params) {

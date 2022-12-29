@@ -20,6 +20,7 @@ public class Performance extends DataEntity<Performance> {
 	private ItemCategory category;		// 关键属性
 	private Measure measure;		// 关键属性
 	private Double markedValue;		// 标注值
+	private Integer markers; //标注人数
 	private String originalValue;		// 原始值
 	private Double normalizedValue;		// 归一值
 	private Double controlValue;		// 对照值
@@ -60,6 +61,14 @@ public class Performance extends DataEntity<Performance> {
 		this.markedValue = markedValue;
 	}
 	
+	public Integer getMarkers() {
+		return markers;
+	}
+
+	public void setMarkers(Integer markers) {
+		this.markers = markers;
+	}
+
 	public String getOriginalValue() {
 		return originalValue;
 	}

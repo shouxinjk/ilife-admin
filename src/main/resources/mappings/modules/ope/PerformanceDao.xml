@@ -9,6 +9,7 @@
 		a.measure_id AS "measure.id",
 		m.name AS "measure.name",		
 		a.marked_value AS "markedValue",
+		a.markers AS "markers",
 		a.original_value AS "originalValue",
 		a.normalized_value AS "normalizedValue",
 		a.control_value AS "controlValue",
@@ -37,6 +38,29 @@
 		<include refid="performanceJoins"/>
 		WHERE a.id = #{id}
 	</select>
+
+	<!-- 查询待评分数据列表：根据评价人数及时间升序排列。能够根据指定openid过滤 -->
+	<select id="findPendingList" resultType="Performance">
+		SELECT 
+			<include refid="performanceColumns"/>
+		FROM ope_performance a
+		<include refid="performanceJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="categoryId != null and categoryId != ''">
+				AND a.category_id = #{categoryId}
+			</if>				
+			<if test="measureId != null and measureId != ''">
+				AND a.measure_id = #{measureId}
+			</if>	
+			<if test="openid != null and openid != ''">
+				AND NOT EXISTS(select performance_id from ope_human_marked_value where openid=#{openid} and performance_id=a.id)
+			</if>										
+		</where>
+		<!-- 默认优先标注人数，其次加入时间 -->
+		ORDER BY a.markers,a.create_date
+		limit #{from},#{to}
+	</select>	
 	
 	<!-- 根据categoryId查找有标注值，但定义在其他类目，的属性列表 -->	
 	<select id="findInheritMeasures" resultType="java.util.HashMap">
@@ -161,6 +185,7 @@
 			category_id,
 			measure_id,
 			marked_value,
+			markers,
 			original_value,
 			normalized_value,
 			control_value,
@@ -178,6 +203,7 @@
 			#{category.id},
 			#{measure.id},
 			#{markedValue},
+			#{markers},
 			#{originalValue},
 			#{normalizedValue},
 			#{controlValue},
@@ -198,6 +224,7 @@
 			category_id = #{category.id},
 			measure_id = #{measure.id},
 			marked_value = #{markedValue},
+			markers = #{markers},
 			original_value = #{originalValue},
 			normalized_value = #{normalizedValue},
 			control_value = #{controlValue},

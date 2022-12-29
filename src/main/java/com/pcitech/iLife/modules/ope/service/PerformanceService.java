@@ -77,6 +77,11 @@ public class PerformanceService extends CrudService<PerformanceDao, Performance>
 		super.delete(performance);
 	}
 	
+	//根据openid获取待标注属性值列表
+	public List<Performance> findPendingList(Map<String,Object> param){
+		return dao.findPendingList(param);
+	}
+	
 	public List<TreeNode> getTree(List<ItemCategory> itemCategoryTree) {
 		List<TreeNode> list=new ArrayList<TreeNode>();
 		Measure query=new Measure();

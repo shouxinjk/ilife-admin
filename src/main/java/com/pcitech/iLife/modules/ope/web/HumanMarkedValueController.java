@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -36,8 +37,11 @@ import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
 import com.pcitech.iLife.modules.ope.entity.HumanMarkedValue;
+import com.pcitech.iLife.modules.ope.entity.Performance;
 import com.pcitech.iLife.modules.ope.service.HumanMarkedValueService;
 import com.pcitech.iLife.modules.ope.service.PerformanceService;
+import com.pcitech.iLife.modules.sys.entity.Dict;
+import com.pcitech.iLife.modules.sys.service.DictService;
 import com.pcitech.iLife.util.Util;
 
 /**
@@ -58,6 +62,9 @@ public class HumanMarkedValueController extends BaseController {
 	@Autowired
 	private PerformanceService performanceService;
 	
+	@Autowired
+	private DictService dictService;
+	
 	@ModelAttribute
 	public HumanMarkedValue get(@RequestParam(required=false) String id) {
 		HumanMarkedValue entity = null;
@@ -71,27 +78,66 @@ public class HumanMarkedValueController extends BaseController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "rest/value", method = RequestMethod.POST)
-	//增加或修改已有标注记录，字段包括measureId、personId、originalValue、value
-	public Map<String,String> updateValuesByMeasureId( @RequestBody Map<String,Object> params, HttpServletResponse response) {
-		response.setContentType("application/json; charset=UTF-8");
-		Map<String,String> result = Maps.newHashMap();
-		if(params.get("categoryId")==null || params.get("measureId")==null || params.get("personId")==null || params.get("originalValue")==null || params.get("value")==null) {
-			result.put("result", "error");
-			result.put("msg", "Both measureId/personId/originalValue/Value are required.");
+	@RequestMapping(value = "rest/score", method = RequestMethod.POST)
+	//增加或修改标注记录，要包含measure,category,score,openid,nickname信息
+	public JSONObject updateValuesByMeasureId( @RequestBody HumanMarkedValue markedValue) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(markedValue.getMeasure()==null || markedValue.getPerformance()==null) {
+			result.put("msg", "performance and measure are required.");
 			return result;
 		}
-		String id = Util.md5(""+params.get("measureId")+params.get("personId")+params.get("originalValue"));//构建唯一ID
-		params.put("id", id);
+		if(markedValue.getId()==null || markedValue.getId().trim().length()==0) { //如果是新的则直接设置ID
+			String idHash = markedValue.getMeasure().getId()+
+					markedValue.getCategory()==null?"":markedValue.getCategory().getId()+
+					markedValue.getPerformance().getId()+
+					markedValue.getOpenid();
+			String id = Util.md5(idHash);//构建唯一ID
+			markedValue.setId(id);
+			markedValue.setIsNewRecord(true);//新纪录，直接创建
+		}
+		//保存标注值
 		try {
-			humanMarkedValueService.upsertMarkedValue(params);
+			humanMarkedValueService.save(markedValue);
 		}catch(Exception ex) {
-			result.put("result", "error.");
 			result.put("msg", ex.getMessage());
 			return result;
 		}
-		result.put("result", "succeed.");
-		result.put("msg", "marked value updated.");
+		//汇总标注值更新到performance
+		Performance performance = performanceService.get(markedValue.getPerformance());
+		if(performance==null) {
+			result.put("msg", "cannot find performance by id."+markedValue.getPerformance().getId());
+			return result;
+		}
+		//查询得到对应performance的所有标注记录，查询前清空openid nickname originalValue
+		markedValue.setOpenid("");
+		markedValue.setNickname("");
+		markedValue.setOriginalValue("");
+		List<HumanMarkedValue> markedValues = humanMarkedValueService.findList(markedValue);
+		
+		//根据阈值控制是否直接修改属性值
+		int threshold = 10;//默认10人以上打分才开始计算
+		Dict dict = new Dict();
+		dict.setType("threshold");
+		dict.setLabel("enableHumanMarkValue");
+		List<Dict> dicts = dictService.findList(dict);
+		if(dicts.size()>0) {
+			try {
+				threshold = Integer.parseInt(dicts.get(0).getValue());
+			}catch(Exception ex) {
+				//do nothing
+			}
+		}
+		
+		if(markedValues.size()>threshold) {
+			double sum = 0;
+			for(HumanMarkedValue value:markedValues)sum+=value.getScore();
+			performance.setMarkers(markedValues.size());
+			performance.setMarkedValue(sum/markedValues.size());
+			performanceService.save(performance);
+			result.put("msg", "performance updated.");
+		}
+		result.put("success", true);
 		return result;
 	}
 	

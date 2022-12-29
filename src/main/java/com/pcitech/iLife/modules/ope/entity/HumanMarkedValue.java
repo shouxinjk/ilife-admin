@@ -17,11 +17,11 @@ import com.pcitech.iLife.modules.mod.entity.Measure;
 public class HumanMarkedValue extends DataEntity<HumanMarkedValue> {
 	
 	private static final long serialVersionUID = 1L;
-	private String dimension;		// 维度
-	private Double value;		// 数值
-	private String originalValue;		// 数值
-	private Person person;		// 用户
-	private Item item;		// 商品
+	private Performance performance; //属性值
+	private Double score;		// 标注打分
+	private String originalValue;		// 原始值
+	private String openid;		// 标注用户openid
+	private String nickname;		// 标注用户昵称
 	private ItemCategory category; //类目
 	private Measure measure;		// 关键属性
 	
@@ -33,21 +33,36 @@ public class HumanMarkedValue extends DataEntity<HumanMarkedValue> {
 		super(id);
 	}
 
-	@Length(min=0, max=255, message="维度长度必须介于 0 和 255 之间")
-	public String getDimension() {
-		return dimension;
+	public Performance getPerformance() {
+		return performance;
 	}
 
-	public void setDimension(String dimension) {
-		this.dimension = dimension;
-	}
-	
-	public Double getValue() {
-		return value;
+	public void setPerformance(Performance performance) {
+		this.performance = performance;
 	}
 
-	public void setValue(Double value) {
-		this.value = value;
+	public Double getScore() {
+		return score;
+	}
+
+	public void setScore(Double score) {
+		this.score = score;
+	}
+
+	public String getOpenid() {
+		return openid;
+	}
+
+	public void setOpenid(String openid) {
+		this.openid = openid;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 	public String getOriginalValue() {
@@ -56,22 +71,6 @@ public class HumanMarkedValue extends DataEntity<HumanMarkedValue> {
 
 	public void setOriginalValue(String originalValue) {
 		this.originalValue = originalValue;
-	}
-
-	public Person getPerson() {
-		return person;
-	}
-
-	public void setPerson(Person person) {
-		this.person = person;
-	}
-
-	public Item getItem() {
-		return item;
-	}
-
-	public void setItem(Item item) {
-		this.item = item;
 	}
 
 	public Measure getMeasure() {

@@ -31,13 +31,18 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.DictMeta;
+import com.pcitech.iLife.modules.mod.entity.DictValue;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.entity.Persona;
 import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
+import com.pcitech.iLife.modules.mod.service.DictValueService;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
+import com.pcitech.iLife.modules.ope.entity.HumanMarkedValue;
 import com.pcitech.iLife.modules.ope.entity.Performance;
+import com.pcitech.iLife.modules.ope.service.HumanMarkedValueService;
 import com.pcitech.iLife.modules.ope.service.PerformanceService;
 
 /**
@@ -54,6 +59,89 @@ public class PerformanceController extends BaseController {
 	private ItemCategoryService itemCategoryService;
 	@Autowired
 	private PerformanceService performanceService;
+	@Autowired
+	private HumanMarkedValueService humanMarkedValueService;
+	@Autowired
+	private DictValueService dictValueService;
+
+	/**
+	 * 根据categoryId及openid获取所有待标注属性值及字典值列表，其中categoryId为可选:
+	 * 1，根据categoryId及openid获取待标注属性值
+	 * 2，根据categoryId及openid获取待标注字典值
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/pending",method = RequestMethod.GET)
+	public JSONObject listPendingValuesAndDicts( @RequestParam(required=true) String openid,  
+			@RequestParam String categoryId,  
+			@RequestParam int from,  
+			@RequestParam int to) {
+		JSONObject result = new JSONObject();
+		result.put("success",false);
+		
+		if(openid==null||openid.trim().length()==0) {
+			result.put("msg", "openid is required.");
+			return result;
+		}
+		
+		//组织查询参数
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("openid", openid);
+		params.put("from", from);
+		params.put("to", to);
+		
+		//查询Category
+		ItemCategory category = itemCategoryService.get(categoryId);
+		if(category==null) {
+			result.put("msg", "no itemCategory found by id."+categoryId);
+		}else {
+			params.put("categoryId", categoryId);
+		}
+		
+		//根据category及openid查询待标注属性值
+		result.put("performance", performanceService.findPendingList(params));
+		
+		//根据category及openid查询待标注字典值
+		result.put("dict", dictValueService.findPendingList(params));
+		
+		result.put("success",true);
+		return result;
+	}
+	
+	/**
+	 * 根据measureId及openid获取所有字典值列表，包含已经参与评分的记录:
+	 * 1，根据measureId获取所有数值记录
+	 * 2，根据measureId及openid获取所有已评分记录
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/values-with-score",method = RequestMethod.GET)
+	public JSONObject listValuesWithScoreByMeasureAndOpenid( @RequestParam(required=true) String measureId,  
+			@RequestParam String openid) {
+		JSONObject result = new JSONObject();
+		result.put("success",false);
+		
+		//查询Measure
+		Measure measure = measureService.get(measureId);
+		if(measure==null) {
+			result.put("msg", "cannot find measure by id."+measureId);
+			return result;
+		}
+		
+		//根据measure查询所有performance
+		Performance performance = new Performance();
+		performance.setMeasure(measure);
+		result.put("values", performanceService.findList(performance));
+		
+		//根据measure及openid查询所有humanMarkedDict
+		HumanMarkedValue humanMarkedValue = new HumanMarkedValue();
+		humanMarkedValue.setOpenid(openid);
+		humanMarkedValue.setMeasure(measure);
+		result.put("scores", humanMarkedValueService.findList(humanMarkedValue));
+		
+		result.put("success",true);
+		return result;
+	}
 	
 	//根据measureId及categoryId查询performance值
 	@ResponseBody

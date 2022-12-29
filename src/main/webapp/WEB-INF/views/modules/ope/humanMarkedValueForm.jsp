@@ -36,12 +36,6 @@
 		<input type="hidden" id="pId" name="pId" value="${pId}"/>
 		<input type="hidden" id="pType" name="pType" value="${pType}"/>			
 		<sys:message content="${message}"/>		
-		<!--div class="control-group">
-			<label class="control-label">维度：</label>
-			<div class="controls">
-				<form:input path="dimension" htmlEscape="false" maxlength="255" class="input-xlarge "/>
-			</div>
-		</div-->
 		<div class="control-group">
 			<label class="control-label">所属类目：</label>
 			<div class="controls">
@@ -65,23 +59,21 @@
 		<div class="control-group">
 			<label class="control-label">标注值：</label>
 			<div class="controls">
-				<form:input path="value" htmlEscape="false" class="input-xlarge  number"/>
+				<form:input path="score" htmlEscape="false" class="input-xlarge  number"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">用户：</label>
+			<label class="control-label">标注者openid：</label>
 			<div class="controls">
-				<sys:treeselect id="person" name="person.id" value="${humanMarkedValue.person.id}" labelName="person.nickname" labelValue="${humanMarkedValue.person.nickname}"
-					title="用户" url="/ope/person/listData"  />
+				<form:input path="openid" htmlEscape="false" maxlength="64" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品：</label>
+			<label class="control-label">标注者昵称：</label>
 			<div class="controls">
-				<sys:treeselect id="item" name="item.id" value="${humanMarkedValue.item.id}" labelName="item.name" labelValue="${humanMarkedValue.item.name}"
-					title="商品" url="/ope/item/listData"  />
+				<form:input path="nickname" htmlEscape="false" maxlength="512" class="input-xlarge "/>
 			</div>
-		</div>
+		</div>		
 		<div class="form-actions">
 			<shiro:hasPermission name="ope:humanMarkedValue:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

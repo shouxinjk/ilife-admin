@@ -4,13 +4,10 @@
     
 	<sql id="humanMarkedValueColumns">
 		a.id AS "id",
-		a.dimension AS "dimension",
-		a.value AS "value",
+		a.performance_id AS "performance.id",
+		p.original_value AS "performance.originalValue",
+		a.score AS "score",
 		a.original_value AS "originalValue",
-		a.person_id AS "person.id",
-		pe.nickname AS "person.nickname",
-		a.item_id AS "item.id",
-		it.name AS "item.name",
 		a.category_id AS "category.id",
 		c.name AS "category.name",		
 		a.measure_id AS "measure.id",
@@ -25,10 +22,9 @@
 	
 	<sql id="humanMarkedValueJoins">
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
-		LEFT JOIN ope_person pe ON pe.id = a.person_id
-		LEFT JOIN ope_item it ON it.id = a.item_id
 		LEFT JOIN mod_item_category c ON c.id = a.category_id
 		LEFT JOIN mod_measure me ON me.id = a.measure_id
+		LEFT JOIN ope_performance p ON p.id = a.performance_id
 	</sql>
     
 	<select id="get" resultType="HumanMarkedValue">
@@ -46,12 +42,27 @@
 		<include refid="humanMarkedValueJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL} 
-			<if test="category != null and category.id != ''">
+			<if test="category != null and category.id != null and category.id != ''">
 				AND a.category_id = #{category.id}
 			</if>				
-			<if test="measure != null and measure.id != ''">
+			<if test="measure != null and measure.id != null and measure.id != ''">
 				AND a.measure_id = #{measure.id}
-			</if>				
+			</if>	
+			<if test="performance != null and performance.id != null and performance.id != ''">
+				AND a.performance_id = #{performance.id}
+			</if>	
+			<if test="originalValue != null and originalValue != ''">
+				AND a.original_value = #{originalValue}
+			</if>
+			<if test="openid != null and openid != ''">
+				AND a.openid = #{openid}
+			</if>			
+			<if test="nickname != null and nickname != ''">
+				AND a.nickname LIKE 
+					<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{nickname}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{nickname},'%')</if>
+			</if>									
 		</where>	
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -86,40 +97,15 @@
 			</otherwise>
 		</choose>
 	</select>
-
-	<!-- 增加属性值标注：一个用户仅能对一个属性标注一次 -->
-	<update id="upsertMarkedValue">
-		INSERT INTO ope_human_marked_value(
-			id,
-			dimension,
-			value,
-			original_value,
-			person_id,
-			category_id,
-			measure_id,
-			update_by,
-			update_date
-		) VALUES (
-			#{id},
-			#{dimension},
-			#{value},
-			#{originalValue},
-			#{personId},
-			#{categoryId},
-			#{measureId},
-			#{personId},
-			now()
-		) ON DUPLICATE KEY UPDATE value=#{value},update_date=now()
-	</update>
 	
 	<insert id="insert">
 		INSERT INTO ope_human_marked_value(
 			id,
-			dimension,
-			value,
+			performance_id,
+			score,
 			original_value,
-			person_id,
-			item_id,
+			openid,
+			nickname,
 			category_id,
 			measure_id,
 			create_by,
@@ -129,11 +115,11 @@
 			del_flag
 		) VALUES (
 			#{id},
-			#{dimension},
-			#{value},
+			#{performance.id},
+			#{score},
 			#{originalValue},
-			#{person.id},
-			#{item.id},
+			#{openid},
+			#{nickname},
 			#{category.id},
 			#{measure.id},
 			#{createBy.id},
@@ -146,11 +132,11 @@
 	
 	<update id="update">
 		UPDATE ope_human_marked_value SET 	
-			dimension = #{dimension},
-			value = #{value},
-			original_value = #{originalValue},
-			person_id = #{person.id},
-			item_id = #{item.id},
+			performance_id = #{performance.id},
+			score = #{score},
+			original_value = #{performance.originalValue},
+			openid = #{openid},
+			nickname = #{nickname},
 			category_id = #{category.id},
 			measure_id = #{measure.id},
 			update_by = #{updateBy.id},

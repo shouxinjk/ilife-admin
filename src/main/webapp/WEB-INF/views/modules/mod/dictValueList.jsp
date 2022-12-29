@@ -116,6 +116,7 @@
 				<th>描述</th>
 				<th>原始值/Label</th>
 				<th>标注值/mvalue</th>
+				<th>标注人数</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:dictValue:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -151,6 +152,9 @@
 				<td>
 					<div class="rating" id="rate-${dictValue.id}" data-id="${dictValue.id}" data-markedValue="${dictValue.markedValue}"></div>					
 				</td>
+				<td>
+					${dictValue.markers}
+				</td>				
 				<td><a href="${ctx}/mod/dictValue/form?id=${dictValue.id}">
 					<fmt:formatDate value="${dictValue.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</a></td>

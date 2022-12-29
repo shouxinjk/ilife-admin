@@ -31,11 +31,6 @@ public class HumanMarkedValueService extends CrudService<HumanMarkedValueDao, Hu
 		return super.get(id);
 	}
 	
-	@Transactional(readOnly = false)
-	public void upsertMarkedValue(Map<String,Object> params) {
-		humanMarkedValueDao.upsertMarkedValue(params);
-	}
-	
 	public List<HumanMarkedValue> findList(HumanMarkedValue humanMarkedValue) {
 		return super.findList(humanMarkedValue);
 	}

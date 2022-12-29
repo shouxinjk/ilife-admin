@@ -38,7 +38,9 @@ import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.service.DictMetaService;
 import com.pcitech.iLife.modules.mod.service.DictValueService;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
+import com.pcitech.iLife.modules.ope.entity.HumanMarkedDict;
 import com.pcitech.iLife.modules.ope.entity.Performance;
+import com.pcitech.iLife.modules.ope.service.HumanMarkedDictService;
 import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.service.DictService;
 import com.pcitech.iLife.util.Util;
@@ -58,6 +60,8 @@ public class DictValueController extends BaseController {
 	private DictMetaService dictMetaService;
 	@Autowired
 	private DictService dictService;
+	@Autowired
+	private HumanMarkedDictService humanMarkedDictService;
 	@Autowired
 	private ItemCategoryService itemCategoryService;
 	
@@ -147,6 +151,41 @@ public class DictValueController extends BaseController {
 		dictValueService.delete(dictValue);
 		addMessage(redirectAttributes, "删除业务字典成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/dictValue/?repage";
+	}
+	
+	/**
+	 * 根据dictMeta及openid获取所有字典值列表，包含已经参与评分的记录:
+	 * 1，根据dictId获取所有数值记录
+	 * 2，根据dictId及openid获取所有已评分记录
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/values-with-score",method = RequestMethod.GET)
+	public JSONObject listValuesWithScoreByDictMetaAndOpenid( @RequestParam(required=true) String dictId,  
+			@RequestParam String openid) {
+		JSONObject result = new JSONObject();
+		result.put("success",false);
+		
+		//查询DictMeta
+		DictMeta dictMeta = dictMetaService.get(dictId);
+		if(dictMeta==null) {
+			result.put("msg", "cannot find dictMeta by id."+dictId);
+			return result;
+		}
+		
+		//根据dictMeta查询所有DictValue
+		DictValue dictValue = new DictValue();
+		dictValue.setDictMeta(dictMeta);
+		result.put("values", dictValueService.findList(dictValue));
+		
+		//根据dictMeta及openid查询所有humanMarkedDict
+		HumanMarkedDict humanMarkedDict = new HumanMarkedDict();
+		humanMarkedDict.setOpenid(openid);
+		humanMarkedDict.setDictMeta(dictMeta);
+		result.put("scores", humanMarkedDictService.findList(humanMarkedDict));
+		
+		result.put("success",true);
+		return result;
 	}
 	
 	/**

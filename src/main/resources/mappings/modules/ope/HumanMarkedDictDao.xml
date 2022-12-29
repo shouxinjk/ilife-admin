@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.ope.dao.HumanMarkedDictDao">
+    
+	<sql id="humanMarkedDictColumns">
+		a.dict_id AS "dictMeta.id",
+		a.category_id AS "category.id",
+		a.value_id AS "dictValue.id",
+		a.original_value AS "originalValue",
+		a.score AS "score",
+		a.openid AS "openid",
+		a.nickname AS "nickname",
+		a.update_date AS "updateDate",
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="humanMarkedDictJoins">
+	</sql>
+    
+	<select id="get" resultType="HumanMarkedDict">
+		SELECT 
+			<include refid="humanMarkedDictColumns"/>
+		FROM ope_human_marked_dict a
+		<include refid="humanMarkedDictJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="HumanMarkedDict">
+		SELECT 
+			<include refid="humanMarkedDictColumns"/>
+		FROM ope_human_marked_dict a
+		<include refid="humanMarkedDictJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="dictMeta != null and dictMeta.id != null and dictMeta.id != ''">
+				AND a.dict_id = #{dictMeta.id}
+			</if>
+			<if test="category != null and category.id != null and category.id != ''">
+				AND a.category_id = #{category.id}
+			</if>
+			<if test="dictValue != null and dictValue.id != null and dictValue.id != ''">
+				AND a.value_id = #{dictValue.id}
+			</if>
+			<if test="originalValue != null and originalValue != ''">
+				AND a.original_value = #{originalValue}
+			</if>
+			<if test="openid != null and openid != ''">
+				AND a.openid = #{openid}
+			</if>			
+			<if test="nickname != null and nickname != ''">
+				AND a.nickname LIKE 
+					<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{nickname}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{nickname},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="HumanMarkedDict">
+		SELECT 
+			<include refid="humanMarkedDictColumns"/>
+		FROM ope_human_marked_dict a
+		<include refid="humanMarkedDictJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO ope_human_marked_dict(
+			dict_id,
+			category_id,
+			value_id,
+			original_value,
+			score,
+			openid,
+			nickname,
+			update_date,
+			id,
+			create_by,
+			create_date,
+			update_by,
+			del_flag
+		) VALUES (
+			#{dictMeta.id},
+			#{category.id},
+			#{dictValue.id},
+			#{originalValue},
+			#{score},
+			#{openid},
+			#{nickname},
+			#{updateDate},
+			#{id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE ope_human_marked_dict SET 	
+			dict_id = #{dictMeta.id},
+			category_id = #{category.id},
+			value_id = #{dictValue.id},
+			original_value = #{originalValue},
+			score = #{score},
+			openid = #{openid},
+			nickname = #{nickname},
+			update_date = #{updateDate},
+			update_by = #{updateBy.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE ope_human_marked_dict SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

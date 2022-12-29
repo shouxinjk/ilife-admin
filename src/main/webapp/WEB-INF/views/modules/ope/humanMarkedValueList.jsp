@@ -52,13 +52,13 @@
 					${humanMarkedValue.measure.name}
 				</td>				
 				<td>
-					${humanMarkedValue.originalValue}
+					${humanMarkedValue.performance.originalValue}
 				</td>				
 				<td>
-					${humanMarkedValue.value}
+					${humanMarkedValue.score}
 				</td>
 				<td>
-					${humanMarkedValue.updateBy.name}
+					${humanMarkedValue.nickname}
 				</td>
 				<td>
 					<fmt:formatDate value="${humanMarkedValue.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

@@ -13,6 +13,7 @@
 		c.name AS "category.name",
 		a.original_value AS "originalValue",
 		a.marked_value AS "markedValue",
+		a.markers AS "markers",
 		a.isMarked AS "isMarked",
 		a.score AS "score",
 		a.create_by AS "createBy.id",
@@ -34,6 +35,29 @@
 		<include refid="dictValueJoins"/>
 		WHERE a.id = #{id}
 	</select>
+	
+	<!-- 查询待评分字典数据列表：根据评价人数及时间升序排列。能够根据指定openid过滤 -->
+	<select id="findPendingList" resultType="DictValue">
+		SELECT 
+			<include refid="dictValueColumns"/>
+		FROM mod_dict_value a
+		<include refid="dictValueJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="categoryId != null and categoryId != ''">
+				AND a.category_id = #{categoryId}
+			</if>				
+			<if test="dictId != null and dictId != ''">
+				AND a.dict_id = #{dictId}
+			</if>	
+			<if test="openid != null and openid != ''">
+				AND NOT EXISTS(select value_id from ope_human_marked_dict where openid=#{openid} and value_id=a.id)
+			</if>										
+		</where>
+		<!-- 默认优先标注人数，其次加入时间 -->
+		ORDER BY a.markers,a.create_date
+		limit #{from},#{to}
+	</select>	
 	
 	<select id="findList" resultType="DictValue">
 		SELECT 
@@ -93,6 +117,7 @@
 			category_id,
 			original_value,
 			marked_value,
+			markers,
 			create_by,
 			create_date,
 			update_by,
@@ -105,6 +130,7 @@
 			#{category.id},
 			#{originalValue},
 			#{markedValue},
+			#{markers},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -120,6 +146,7 @@
 			category_id = #{category.id},
 			original_value = #{originalValue},
 			marked_value = #{markedValue},
+			markers = #{markers},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate},
 			isMarked = 1

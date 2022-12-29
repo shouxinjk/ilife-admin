@@ -27,4 +27,7 @@ public interface PerformanceDao extends CrudDao<Performance> {
 	public void updateMarkedValue(Map<String,Object> params); 
 	//更新属性值的controlValue及level
 	public void updateControlValue(Map<String,Object> params); 	
+	
+	//根据openid获取待标注属性值列表
+	public List<Performance> findPendingList(Map<String,Object> param);
 }

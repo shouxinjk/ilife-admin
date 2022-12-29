@@ -88,6 +88,7 @@
 				<th>归一值</th>
 				<th>对照值</th-->
 				<th>标注值/mvalue</th>
+				<th>标注人数</th>
 				<th>已同步?</th>
 				<th>更新者</th>
 				<th>更新时间</th>
@@ -126,6 +127,9 @@
 				<td>
 					<div class="rating" id="rate-${performance.id}" data-id="${performance.id}" data-markedValue="${performance.markedValue}"></div>
 				</td>	
+				<td>
+					${performance.markers}
+				</td>				
 				<td>
 					${fns:getDictLabel(performance.isReady, 'yes_no', '')}
 				</td>							
