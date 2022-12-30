@@ -271,7 +271,7 @@ public class HumanMarkedValueController extends BaseController {
 		HumanMarkedValue humanMarkedValue = new HumanMarkedValue();
 		Page<HumanMarkedValue> page = humanMarkedValueService.findPage(new Page<HumanMarkedValue>(request, response), humanMarkedValue);
 		model.addAttribute("page", page);
-		return "treeData/none";
+		return "modules/ope/humanMarkedValueList";
 	}
 	
 

@@ -7,6 +7,8 @@
 		a.performance_id AS "performance.id",
 		p.original_value AS "performance.originalValue",
 		a.score AS "score",
+		a.openid AS "openid",
+		a.nickname AS "nickname",		
 		a.original_value AS "originalValue",
 		a.category_id AS "category.id",
 		c.name AS "category.name",		

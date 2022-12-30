@@ -48,8 +48,8 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>所属字典</th>
-				<th>所属类目</th>
+				<th>字典</th>
+				<th>类目</th>
 				<th>字典值</th>
 				<th>原始值</th>
 				<th>score</th>

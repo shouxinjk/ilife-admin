@@ -4,8 +4,11 @@
     
 	<sql id="humanMarkedDictColumns">
 		a.dict_id AS "dictMeta.id",
+		dm.name AS "dictMeta.name",
 		a.category_id AS "category.id",
+		c.name AS "category.name",
 		a.value_id AS "dictValue.id",
+		dv.original_value AS "dictValue.originalValue",
 		a.original_value AS "originalValue",
 		a.score AS "score",
 		a.openid AS "openid",
@@ -19,6 +22,10 @@
 	</sql>
 	
 	<sql id="humanMarkedDictJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_item_category c ON c.id = a.category_id
+		LEFT JOIN mod_dict_meta dm ON dm.id = a.dict_id
+		LEFT JOIN mod_dict_value dv ON dv.id = a.value_id	
 	</sql>
     
 	<select id="get" resultType="HumanMarkedDict">
