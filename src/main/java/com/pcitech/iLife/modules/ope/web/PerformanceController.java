@@ -131,6 +131,7 @@ public class PerformanceController extends BaseController {
 		//根据measure查询所有performance
 		Performance performance = new Performance();
 		performance.setMeasure(measure);
+		performance.setIsMarked(null);//重要：需要忽略是否已标注设置
 		result.put("values", performanceService.findList(performance));
 		
 		//根据measure及openid查询所有humanMarkedDict

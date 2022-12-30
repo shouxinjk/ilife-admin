@@ -176,6 +176,7 @@ public class DictValueController extends BaseController {
 		//根据dictMeta查询所有DictValue
 		DictValue dictValue = new DictValue();
 		dictValue.setDictMeta(dictMeta);
+		dictValue.setIsMarked(null);//重要：忽略是否已标注
 		result.put("values", dictValueService.findList(dictValue));
 		
 		//根据dictMeta及openid查询所有humanMarkedDict

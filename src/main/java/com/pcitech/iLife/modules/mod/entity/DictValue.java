@@ -21,7 +21,7 @@ public class DictValue extends DataEntity<DictValue> {
 	private Double markedValue;		// 标注值
 	private Integer markers; //标注人数
 	private Double score;		// 预留，标注得分，实际是1-10分级值
-	private int isMarked = 1; //是否已标注：0待标注，1已标注；默认为已标注。通过管理系统建立或修改均认为已标注。直接通过SQL操作认为未标注
+	private Integer isMarked = 1; //是否已标注：0待标注，1已标注；默认为已标注。通过管理系统建立或修改均认为已标注。直接通过SQL操作认为未标注
 	
 	public DictValue() {
 		super();
@@ -84,11 +84,11 @@ public class DictValue extends DataEntity<DictValue> {
 		return isMarked>0;
 	}
 	
-	public int getIsMarked() {
+	public Integer getIsMarked() {
 		return isMarked;
 	}
 
-	public void setIsMarked(int isMarked) {
+	public void setIsMarked(Integer isMarked) {
 		this.isMarked = isMarked;
 	}
 	
