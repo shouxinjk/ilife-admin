@@ -50,7 +50,7 @@
 			<tr>
 				<th>所属字典</th>
 				<th>所属类目</th>
-				<th>字典值ID</th>
+				<th>字典值</th>
 				<th>原始值</th>
 				<th>score</th>
 				<th>标注者openid</th>
@@ -63,13 +63,13 @@
 		<c:forEach items="${page.list}" var="humanMarkedDict">
 			<tr>
 				<td><a href="${ctx}/ope/humanMarkedDict/form?id=${humanMarkedDict.id}">
-					${humanMarkedDict.dictMeta.id}
+					${humanMarkedDict.dictMeta.name}
 				</a></td>
 				<td>
-					${humanMarkedDict.category.id}
+					${humanMarkedDict.category.name}
 				</td>
 				<td>
-					${humanMarkedDict.dictValue.id}
+					${humanMarkedDict.dictValue.originalValue}
 				</td>
 				<td>
 					${humanMarkedDict.originalValue}

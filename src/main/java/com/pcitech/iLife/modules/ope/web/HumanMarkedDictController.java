@@ -106,7 +106,7 @@ public class HumanMarkedDictController extends BaseController {
 			}
 		}
 		
-		if(markedDicts.size()>0) {
+		if(markedDicts.size()>threshold) {
 			double sum = 0;
 			for(HumanMarkedDict value:markedDicts)sum+=value.getScore();
 			dictValue.setMarkers(markedDicts.size());

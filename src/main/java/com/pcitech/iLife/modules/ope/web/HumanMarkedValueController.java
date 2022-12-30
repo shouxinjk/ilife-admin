@@ -36,6 +36,7 @@ import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.MeasureService;
+import com.pcitech.iLife.modules.ope.entity.HumanMarkedDict;
 import com.pcitech.iLife.modules.ope.entity.HumanMarkedValue;
 import com.pcitech.iLife.modules.ope.entity.Performance;
 import com.pcitech.iLife.modules.ope.service.HumanMarkedValueService;
@@ -265,8 +266,11 @@ public class HumanMarkedValueController extends BaseController {
 	
 	@RequiresPermissions("ope:humanMarkedValue:view")
 	@RequestMapping(value = "none")
-	public String none(Model model) {
-		model.addAttribute("message","请选择属性节点。");
+	public String none(HttpServletRequest request, HttpServletResponse response, Model model) {
+		//默认直接查询所有标注值
+		HumanMarkedValue humanMarkedValue = new HumanMarkedValue();
+		Page<HumanMarkedValue> page = humanMarkedValueService.findPage(new Page<HumanMarkedValue>(request, response), humanMarkedValue);
+		model.addAttribute("page", page);
 		return "treeData/none";
 	}
 	

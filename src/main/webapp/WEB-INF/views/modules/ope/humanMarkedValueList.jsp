@@ -29,11 +29,11 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<!--th>维度</th-->
 				<th>所属类目</th>
 				<th>关键属性</th>
+				<th>属性值</th>
 				<th>原始值</th>
-				<th>标注值</th>
+				<th>score</th>
 				<th>标注达人</th>
 				<th>标注时间</th>
 				<shiro:hasPermission name="ope:humanMarkedValue:edit"><th>操作</th></shiro:hasPermission>
@@ -42,9 +42,6 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="humanMarkedValue">
 			<tr>
-				<!--td><a href="${ctx}/ope/humanMarkedValue/form?id=${humanMarkedValue.id}">
-					${humanMarkedValue.dimension}
-				</a></td-->
 				<td>
 					${humanMarkedValue.category.name}
 				</td>				
@@ -53,7 +50,10 @@
 				</td>				
 				<td>
 					${humanMarkedValue.performance.originalValue}
-				</td>				
+				</td>	
+				<td>
+					${humanMarkedValue.originalValue}
+				</td>							
 				<td>
 					${humanMarkedValue.score}
 				</td>
