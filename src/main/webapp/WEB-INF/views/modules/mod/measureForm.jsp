@@ -134,6 +134,12 @@
 						<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 					</div>
 				</div>
+				<div class="control-group">
+					<label class="control-label">属性描述：</label>
+					<div class="controls">
+						<form:textarea path="description" htmlEscape="false" rows="2" maxlength="100" class="input-xlarge "/>
+					</div>
+				</div>				
 				<!--div class="control-group">
 					<label class="control-label">属性占比：</label>
 					<div class="controls">

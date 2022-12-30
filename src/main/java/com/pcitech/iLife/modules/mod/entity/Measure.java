@@ -17,6 +17,7 @@ public class Measure extends DataEntity<Measure> {
 	private static final long serialVersionUID = 1L;
 	private ItemCategory category;		// 类别
 	private ItemDimension itemDimension;		// 维度
+	private String description=""; //描述
 	private String property;		// 属性定义
 	private String name;		// 属性名称
 	private Double percentage;		// 属性占比
@@ -58,6 +59,14 @@ public class Measure extends DataEntity<Measure> {
 
 	public void setCategory(ItemCategory category) {
 		this.category = category;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public ItemDimension getItemDimension() {

@@ -97,13 +97,14 @@
 		<c:forEach items="${page.list}" var="measure">
 			<tr>
 				<td>
-					${measure.category.name}
+					名称：${measure.name}<br/>
+					类目：${measure.category.name}<br/>
+					描述：${measure.description}
 				</td>
 				<!--td>
 					${measure.itemDimension.name}
 				</td-->
 				<td>
-					名称：${measure.name}<br/>
 					属性：${measure.property} <br/>
 					默认值：${measure.defaultValue}<br/>
 					可修改：${fns:getDictLabel(measure.isModifiable, 'yes_no', measure.isModifiable)}
