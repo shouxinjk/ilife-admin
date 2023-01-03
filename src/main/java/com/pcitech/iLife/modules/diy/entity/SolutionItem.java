@@ -16,12 +16,14 @@ public class SolutionItem extends DataEntity<SolutionItem> {
 	
 	private static final long serialVersionUID = 1L;
 	private Solution solution;		// 方案
+	private GuideTermItem guideTermItem; //引用的指南规则：对于自动指南将生成该字段
 	private String name;		// 名称
 	private String description;		// 描述
 	private String tags;		// 标签
 	private ProposalSubtype type;		// 类型
 	private String itemIds;		// 关联条目
 	private double priority=100;		// 排序
+
 	
 	public SolutionItem() {
 		super();
@@ -39,6 +41,14 @@ public class SolutionItem extends DataEntity<SolutionItem> {
 		this.solution = solution;
 	}
 	
+	public GuideTermItem getGuideTermItem() {
+		return guideTermItem;
+	}
+
+	public void setGuideTermItem(GuideTermItem guideTermItem) {
+		this.guideTermItem = guideTermItem;
+	}
+
 	@Length(min=1, max=50, message="名称长度必须介于 1 和 50 之间")
 	public String getName() {
 		return name;

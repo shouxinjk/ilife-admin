@@ -36,11 +36,12 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>选项类别</th>
-				<th>来源</th>
+				<th>类别</th>
 				<th>名称</th>
-				<th>导购连接</th>
 				<th>摘要</th>
+				<th>搜索关键字</th>
+				<th>来源</th>
+				<th>URL</th>
 				<th>状态</th>
 				<th>更新者</th>
 				<th>更新时间</th>
@@ -54,16 +55,19 @@
 					${item.itemCategory.name}
 				</a></td>
 				<td>
+					${item.name}
+				</td>	
+				<td>
+					${item.summary}
+				</td>							
+				<td>
+					${item.keywords}
+				</td>				
+				<td>
 					${item.source}
 				</td>
 				<td>
-					${item.name}
-				</td>
-				<td>
 					${item.url}
-				</td>
-				<td>
-					${item.summary}
 				</td>
 				<td>
 					${fns:getDictLabel(item.status, 'is_active', '无')}

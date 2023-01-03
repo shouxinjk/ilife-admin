@@ -17,12 +17,16 @@ import com.pcitech.iLife.modules.ope.entity.Item;
 public class GuideTermItem extends DataEntity<GuideTermItem> {
 	
 	private static final long serialVersionUID = 1L;
+	private String name; //名称
 	private String description;		// 描述
-	private Double weight;		// 权重
+	private Double weight=1.0;		// 权重：默认为100%
 	private GuideTerm term;		// 指南条目
 	private Item item;		// 关联的条目
 	private String script;		// 匹配规则
 	private String scriptDesc;		// 规则描述
+	private String tips;		// 注意事项
+	private String tags;		// 标签
+	private ProposalSubtype type;	 	//subtype类型
 	private Integer sort=100;		// sort
 	
 	public GuideTermItem() {
@@ -31,6 +35,14 @@ public class GuideTermItem extends DataEntity<GuideTermItem> {
 
 	public GuideTermItem(String id){
 		super(id);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Length(min=0, max=255, message="描述长度必须介于 0 和 255 之间")
@@ -83,6 +95,30 @@ public class GuideTermItem extends DataEntity<GuideTermItem> {
 		this.scriptDesc = scriptDesc;
 	}
 	
+	public String getTips() {
+		return tips;
+	}
+
+	public void setTips(String tips) {
+		this.tips = tips;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+
+	public ProposalSubtype getType() {
+		return type;
+	}
+
+	public void setType(ProposalSubtype type) {
+		this.type = type;
+	}
+
 	public Integer getSort() {
 		return sort;
 	}

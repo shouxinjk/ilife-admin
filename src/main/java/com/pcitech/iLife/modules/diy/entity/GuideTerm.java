@@ -19,6 +19,8 @@ public class GuideTerm extends DataEntity<GuideTerm> {
 	private ProposalSection section;		// Section
 	private String name;		// 名称
 	private String description;		// 描述
+	private String tips;		// 注意事项
+	private String tags;		// 标签
 	private String criteria;		// 适用条件
 	private String criteriaDesc;		// 适用条件描述
 	private String script;		// 脚本规则
@@ -67,6 +69,22 @@ public class GuideTerm extends DataEntity<GuideTerm> {
 		this.description = description;
 	}
 	
+	public String getTips() {
+		return tips;
+	}
+
+	public void setTips(String tips) {
+		this.tips = tips;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+
 	public String getCriteria() {
 		return criteria;
 	}

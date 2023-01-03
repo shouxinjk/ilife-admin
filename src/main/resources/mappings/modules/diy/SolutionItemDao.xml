@@ -5,6 +5,8 @@
 	<sql id="solutionItemColumns">
 		a.id AS "id",
 		a.solution_id AS "solution.id",
+		a.guide_term_item_id AS "guideTermItem.id",
+		gti.name AS "guideTermItem.name",
 		s.name AS "solution.name",
 		a.name AS "name",
 		a.description AS "description",
@@ -24,6 +26,7 @@
 	<sql id="solutionItemJoins">
 		LEFT JOIN diy_solution s ON s.id = a.solution_id
 		LEFT JOIN diy_proposal_subtype st ON st.id = a.type
+		LEFT JOIN int_guide_term_item gti ON gti.id = a.guide_term_item_id
 	</sql>
     
 	<select id="get" resultType="SolutionItem">
@@ -84,6 +87,7 @@
 		INSERT INTO diy_solution_item(
 			id,
 			solution_id,
+			guide_term_item_id,
 			name,
 			description,
 			tags,
@@ -98,6 +102,7 @@
 		) VALUES (
 			#{id},
 			#{solution.id},
+			#{guideTermIterm.id},
 			#{name},
 			#{description},
 			#{tags},
@@ -115,6 +120,7 @@
 	<update id="update">
 		UPDATE diy_solution_item SET 	
 			solution_id = #{solution.id},
+			guide_term_item_id = #{guideTermItem.id},
 			name = #{name},
 			description = #{description},
 			tags = #{tags},

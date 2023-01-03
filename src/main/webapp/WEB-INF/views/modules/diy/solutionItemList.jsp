@@ -44,6 +44,7 @@
 			<tr>
 				<th>方案</th>
 				<th>名称</th>
+				<th>指南规则</th>				
 				<th>类型</th>
 				<th>标签</th>
 				<th>描述</th>
@@ -60,6 +61,9 @@
 				</a></td>
 				<td>
 					${solutionItem.name}
+				</td>				
+				<td>
+					${solutionItem.guideTermItem.name}
 				</td>
 				<td>
 					${solutionItem.type.name}

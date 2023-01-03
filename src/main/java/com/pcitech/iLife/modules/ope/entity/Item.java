@@ -19,6 +19,7 @@ public class Item extends DataEntity<Item> {
 	
 	private static final long serialVersionUID = 1L;
 	private ItemCategory itemCategory;		// 商品类别
+	private String keywords;		// 搜索关键字
 	private String source;		// 来源
 	private String name;		// 名称
 	private String url;		// 导购连接
@@ -51,6 +52,14 @@ public class Item extends DataEntity<Item> {
 
 	public void setItemCategory(ItemCategory itemCategory) {
 		this.itemCategory = itemCategory;
+	}
+
+	public String getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
 	}
 
 	@Length(min=0, max=100, message="来源长度必须介于 0 和 100 之间")

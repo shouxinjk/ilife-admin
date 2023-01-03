@@ -34,11 +34,26 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
+			<label class="control-label">类型：</label>
+			<div class="controls">
+				 <sys:treeselect id="type" name="type.id" value="${guideTermItem.type.id}" labelName="type.name" labelValue="${guideTermItem.type.name}"
+					title="类型" url="/diy/proposalSubtype/listData" />	
+				<span class="help-inline"><font color="red">*</font> </span>				
+			</div>				
+		</div>	
+		<div class="control-group">
+			<label class="control-label">名称：</label>
+			<div class="controls">
+				<form:input path="name" htmlEscape="false" maxlength="50" class="input-xlarge"/>
+			</div>
+		</div>			
+		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">
-				<form:textarea path="description" htmlEscape="false" rows="4" maxlength="255" class="input-xxlarge "/>
+				<form:textarea path="description" htmlEscape="false" rows="4" maxlength="255" class="input-xlarge "/>
 			</div>
 		</div>
+		<!--
 		<div class="control-group">
 			<label class="control-label">权重：</label>
 			<div class="controls">
@@ -46,6 +61,7 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+		-->
 		<div class="control-group">
 			<label class="control-label">指南条目：</label>
 			<div class="controls">
@@ -61,19 +77,31 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">规则描述：</label>
+			<div class="controls">
+				<form:textarea path="scriptDesc" htmlEscape="false" rows="4" class="input-xlarge "/>
+			</div>
+		</div>	
+		<div class="control-group">
+			<label class="control-label">注意事项：</label>
+			<div class="controls">
+				<form:textarea path="tips" htmlEscape="false" rows="3" class="input-xlarge "/>
+			</div>
+		</div>	
+		<div class="control-group">
+			<label class="control-label">标签：</label>
+			<div class="controls">
+				<form:textarea path="tags" htmlEscape="false" rows="2" maxlength="256" class="input-xlarge "/>
+			</div>
+		</div>						
+		<div class="control-group">
 			<label class="control-label">匹配规则：</label>
 			<div class="controls">
 				<form:textarea path="script" htmlEscape="false" rows="4" class="input-xxlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">规则描述：</label>
-			<div class="controls">
-				<form:textarea path="scriptDesc" htmlEscape="false" rows="4" class="input-xxlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">sort：</label>
+			<label class="control-label">排序：</label>
 			<div class="controls">
 				<form:input path="sort" htmlEscape="false" maxlength="11" class="input-xlarge  digits"/>
 			</div>

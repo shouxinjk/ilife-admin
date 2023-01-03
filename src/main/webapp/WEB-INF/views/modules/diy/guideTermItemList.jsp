@@ -41,12 +41,14 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>类型</th>
 				<th>描述</th>
-				<th>权重</th>
 				<th>指南条目</th>
 				<th>关联的条目</th>
+				<th>注意事项</th>
+				<th>Tags</th>
 				<th>规则描述</th>
-				<th>sort</th>
+				<th>排序</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="diy:guideTermItem:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -54,11 +56,11 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="guideTermItem">
 			<tr>
-				<td><a href="${ctx}/diy/guideTermItem/form?id=${guideTermItem.id}">
-					${guideTermItem.description}
-				</a></td>
 				<td>
-					${guideTermItem.weight}
+					${guideTermItem.type.name}
+				</td>			
+				<td>
+					${guideTermItem.description}
 				</td>
 				<td>
 					${guideTermItem.term.name}
@@ -66,6 +68,12 @@
 				<td>
 					${guideTermItem.item.name}
 				</td>
+				<td>
+					${guideTermItem.tips}
+				</td>
+				<td>
+					${guideTermItem.tags}
+				</td>								
 				<td>
 					${guideTermItem.scriptDesc}
 				</td>

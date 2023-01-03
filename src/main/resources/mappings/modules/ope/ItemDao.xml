@@ -6,6 +6,7 @@
 		a.id AS "id",
 		a.item_category_id AS "itemCategory.id",
 		c.name AS "itemCategory.name",
+		a.keywords AS "keywords",
 		a.source AS "source",
 		a.name AS "name",
 		a.url AS "url",
@@ -90,6 +91,7 @@
 		INSERT INTO ope_item(
 			id,
 			item_category_id,
+			keywords,
 			source,
 			name,
 			url,
@@ -115,6 +117,7 @@
 		) VALUES (
 			#{id},
 			#{itemCategory.id},
+			#{keywords},
 			#{source},
 			#{name},
 			#{url},
@@ -143,6 +146,7 @@
 	<update id="update">
 		UPDATE ope_item SET 	
 			item_category_id = #{itemCategory.id},
+			keywords = #{keywords},
 			source = #{source},
 			name = #{name},
 			url = #{url},

@@ -89,11 +89,12 @@
 		<thead>
 			<tr>
 				<th width="60">#</th>
-				<th>商品类别</th>
-				<th>来源</th>
+				<th>类别</th>
 				<th>名称</th>
-				<th>导购连接</th>
 				<th>摘要</th>
+				<th>搜索关键字</th>
+				<th>来源</th>
+				<th>URL</th>
 				<th>状态</th>
 				<th>更新者</th>
 				<th>更新时间</th>
@@ -110,16 +111,19 @@
 					${item.itemCategory.name}
 				</a></td>
 				<td>
+					${item.name}
+				</td>	
+				<td>
+					${item.summary}
+				</td>							
+				<td>
+					${item.keywords}
+				</td>				
+				<td>
 					${item.source}
 				</td>
 				<td>
-					${item.name}
-				</td>
-				<td>
 					${item.url}
-				</td>
-				<td>
-					${item.summary}
 				</td>
 				<td>
 					${fns:getDictLabel(item.status, 'is_active', '无')}
@@ -132,7 +136,7 @@
 				</td>
 				<shiro:hasPermission name="ope:item:edit"><td>
     				<a href="${ctx}/ope/item/form?id=${item.id}">修改</a>
-					<a href="${ctx}/ope/item/delete?id=${item.id}" onclick="return confirmx('确认要删除该商品吗？', this.href)">删除</a>
+					<a href="${ctx}/ope/item/delete?id=${item.id}" onclick="return confirmx('确认要删除该条目吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

@@ -46,8 +46,9 @@
 				<th>章节</th>
 				<th>名称</th>
 				<th>描述</th>
+				<th>注意事项</th>
+				<th>标签</th>				
 				<th>适用条件描述</th>
-				<th>脚本描述</th>
 				<th>优先级</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="diy:guideTerm:edit"><th>操作</th></shiro:hasPermission>
@@ -69,10 +70,13 @@
 					${guideTerm.description}
 				</td>
 				<td>
-					${guideTerm.criteriaDesc}
+					${guideTerm.tips}
 				</td>
 				<td>
-					${guideTerm.scriptDesc}
+					${guideTerm.tags}
+				</td>								
+				<td>
+					${guideTerm.criteriaDesc}
 				</td>
 				<td>
 					${guideTerm.priority}

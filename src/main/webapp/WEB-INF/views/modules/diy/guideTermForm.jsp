@@ -57,21 +57,34 @@
 		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">
-				<form:textarea path="description" htmlEscape="false" rows="4" maxlength="512" class="input-xxlarge "/>
+				<form:textarea path="description" htmlEscape="false" rows="4" maxlength="512" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">适用条件：</label>
+			<label class="control-label">注意事项：</label>
+			<div class="controls">
+				<form:textarea path="tips" htmlEscape="false" rows="4" maxlength="512" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">标签：</label>
+			<div class="controls">
+				<form:textarea path="tags" htmlEscape="false" rows="2" maxlength="256" class="input-xlarge "/>
+			</div>
+		</div>	
+		<div class="control-group">
+			<label class="control-label">适用条件描述：</label>
+			<div class="controls">
+				<form:textarea path="criteriaDesc" htmlEscape="false" rows="4" class="input-xlarge "/>
+			</div>
+		</div>					
+		<div class="control-group">
+			<label class="control-label">适用条件脚本：</label>
 			<div class="controls">
 				<form:textarea path="criteria" htmlEscape="false" rows="4" class="input-xxlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">适用条件描述：</label>
-			<div class="controls">
-				<form:textarea path="criteriaDesc" htmlEscape="false" rows="4" class="input-xxlarge "/>
-			</div>
-		</div>
+		<!-- 
 		<div class="control-group">
 			<label class="control-label">脚本规则：</label>
 			<div class="controls">
@@ -84,6 +97,7 @@
 				<form:textarea path="scriptDesc" htmlEscape="false" rows="4" class="input-xxlarge "/>
 			</div>
 		</div>
+		-->
 		<div class="control-group">
 			<label class="control-label">优先级：</label>
 			<div class="controls">

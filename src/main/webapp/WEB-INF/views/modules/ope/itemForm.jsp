@@ -42,33 +42,47 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">名称：</label>
+			<div class="controls">
+				<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">摘要：</label>
+			<div class="controls">
+				<form:input path="summary" htmlEscape="false" maxlength="1000" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">搜索关键字：</label>
+			<div class="controls">
+				<form:input path="keywords" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">来源：</label>
 			<div class="controls">
 				<form:input path="source" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">名称：</label>
-			<div class="controls">
-				<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">导购连接：</label>
+			<label class="control-label">URL：</label>
 			<div class="controls">
 				<form:input path="url" htmlEscape="false" maxlength="1000" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">标致图片：</label>
+			<label class="control-label">状态：</label>
+			<div class="controls">
+				<form:radiobuttons path="status" items="${fns:getDictList('is_active')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>		
+		<!--
+		<div class="control-group">
+			<label class="control-label">LOGO：</label>
 			<div class="controls">
 				<form:input path="logo" htmlEscape="false" maxlength="1000" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">摘要：</label>
-			<div class="controls">
-				<form:input path="summary" htmlEscape="false" maxlength="1000" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -131,13 +145,7 @@
 				<form:input path="credit" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">状态：</label>
-			<div class="controls">
-				<form:radiobuttons path="status" items="${fns:getDictList('is_active')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+		-->
 		<div class="form-actions">
 			<shiro:hasPermission name="ope:item:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

@@ -4,6 +4,7 @@
     
 	<sql id="guideTermItemColumns">
 		a.id AS "id",
+		a.name AS "name",
 		a.description AS "description",
 		a.weight AS "weight",
 		a.term_id AS "term.id",
@@ -12,6 +13,11 @@
 		i.name AS "item.name",
 		a.script AS "script",
 		a.script_desc AS "scriptDesc",
+		a.tips AS "tips",
+		a.tags AS "tags",
+		a.type AS "type.id",	
+		st.name AS "type.name",
+		st.logo AS "type.logo",			
 		a.sort AS "sort",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
@@ -23,6 +29,7 @@
 	<sql id="guideTermItemJoins">
 		LEFT JOIN diy_guide_term gt ON gt.id = a.term_id
 		LEFT JOIN ope_item i ON i.id = a.item_id
+		LEFT JOIN diy_proposal_subtype st ON st.id = a.type
 	</sql>
     
 	<select id="get" resultType="GuideTermItem">
@@ -72,12 +79,16 @@
 	<insert id="insert">
 		INSERT INTO int_guide_term_item(
 			id,
+			name,
 			description,
 			weight,
 			term_id,
 			item_id,
 			script,
 			script_desc,
+			tips,
+			tags,
+			type,
 			sort,
 			create_by,
 			create_date,
@@ -86,12 +97,16 @@
 			del_flag
 		) VALUES (
 			#{id},
+			#{name},
 			#{description},
 			#{weight},
 			#{term.id},
 			#{item.id},
 			#{script},
 			#{scriptDesc},
+			#{tips},
+			#{tags},
+			#{type.id},
 			#{sort},
 			#{createBy.id},
 			#{createDate},
@@ -103,12 +118,16 @@
 	
 	<update id="update">
 		UPDATE int_guide_term_item SET 	
+			name = #{name},
 			description = #{description},
 			weight = #{weight},
 			term_id = #{term.id},
 			item_id = #{item.id},
 			script = #{script},
 			script_desc = #{scriptDesc},
+			tips = #{tips},
+			tags = #{tags},
+			type = #{type.id},
 			sort = #{sort},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}

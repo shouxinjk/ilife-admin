@@ -49,12 +49,15 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">类型：</label>
-			<!--div class="controls">
-				<form:input path="type" htmlEscape="false" maxlength="20" class="input-xlarge "/>
-			</div-->
+			<label class="control-label">指南规则引用：</label>
 			<div class="controls">
-				 <sys:treeselect id="type" name="type.id" value="${type.id}" labelName="type.name" labelValue="${type.name}"
+				<form:input path="guideTermItem.id" htmlEscape="false" maxlength="50" class="input-xlarge"/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">类型：</label>
+			<div class="controls">
+				 <sys:treeselect id="type" name="type.id" value="${solutionItem.type.id}" labelName="type.name" labelValue="${solutionItem.type.name}"
 					title="类型" url="/diy/proposalSubtype/listData" />	
 				<span class="help-inline"><font color="red">*</font> </span>				
 			</div>				
@@ -62,7 +65,7 @@
 		<div class="control-group">
 			<label class="control-label">标签：</label>
 			<div class="controls">
-				<form:textarea path="tags" htmlEscape="false" rows="4" maxlength="512" class="input-xxlarge "/>
+				<form:textarea path="tags" htmlEscape="false" rows="2" maxlength="512" class="input-xxlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -80,7 +83,7 @@
 		<div class="control-group">
 			<label class="control-label">排序：</label>
 			<div class="controls">
-				<form:input path="priority" htmlEscape="false" maxlength="11" class="input-xlarge  digits"/>
+				<form:input path="priority" htmlEscape="false" maxlength="11" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="form-actions">
