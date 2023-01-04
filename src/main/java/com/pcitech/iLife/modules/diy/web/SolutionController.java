@@ -31,10 +31,16 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.diy.entity.GuideBookProposal;
+import com.pcitech.iLife.modules.diy.entity.GuideTerm;
+import com.pcitech.iLife.modules.diy.entity.GuideTermItem;
 import com.pcitech.iLife.modules.diy.entity.ProposalScheme;
 import com.pcitech.iLife.modules.diy.entity.ProposalSection;
 import com.pcitech.iLife.modules.diy.entity.Solution;
 import com.pcitech.iLife.modules.diy.entity.SolutionItem;
+import com.pcitech.iLife.modules.diy.service.GuideBookProposalService;
+import com.pcitech.iLife.modules.diy.service.GuideTermItemService;
+import com.pcitech.iLife.modules.diy.service.GuideTermService;
 import com.pcitech.iLife.modules.diy.service.ProposalSchemeService;
 import com.pcitech.iLife.modules.diy.service.ProposalSectionService;
 import com.pcitech.iLife.modules.diy.service.SolutionItemService;
@@ -59,6 +65,12 @@ public class SolutionController extends BaseController {
 	private ProposalSchemeService proposalSchemeService;
 	@Autowired
 	private ProposalSectionService proposalSectionService;
+	@Autowired
+	private GuideBookProposalService guideBookProposalService;
+	@Autowired
+	private GuideTermService guideTermService;
+	@Autowired
+	private GuideTermItemService guideTermItemService;
 	
 	@ModelAttribute
 	public Solution get(@RequestParam(required=false) String id) {
@@ -410,12 +422,122 @@ public class SolutionController extends BaseController {
 			result.put("msg", "schemeId is required.");
 			return result;
 		}
-		//得到主题定义
+		
+		//得到主题定义，并判断类型
 		ProposalScheme scheme = proposalSchemeService.get(schemeId);
 		if( scheme==null) {
 			result.put("msg", "ProposalScheme not found.[id]"+schemeId);
 			return result;
 		}
+		
+		if("guide".equalsIgnoreCase(scheme.getType())) { //根据类型分别创建
+			return createGuideSolution(scheme, params);
+		}else {
+			return createManualSolution(scheme, params);
+		}
+		
+	}
+	//创建指南自动生成方案：自动根据指南得到初始方案
+	private JSONObject createGuideSolution(ProposalScheme scheme,JSONObject params) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+
+		//先创建solution
+		Solution solution = new Solution();
+		String id = Util.get32UUID();
+		solution.setId(id);
+		solution.setIsNewRecord(true);
+		solution.setScheme(scheme);
+		solution.setName(scheme.getName());
+		solution.setDescription(scheme.getDescription());
+		solution.setStatus(1);//默认为启用
+		if(params.getString("byOpenid")!=null) {
+			solution.setByOpenid(params.getString("byOpenid"));
+		}else {
+			solution.setByOpenid(null);
+		}
+		if(params.getString("byNickname")!=null) {
+			solution.setByNickname(params.getString("byNickname"));
+		}else {
+			solution.setByOpenid(null);
+		}
+		if(params.getString("forOpenid")!=null) {
+			solution.setForOpenid(params.getString("forOpenid"));
+		}else {
+			solution.setForOpenid(null);
+		}
+		if(params.getString("forNickname")!=null) {
+			solution.setForNickname(params.getString("forNickname"));
+		}else {
+			solution.setForOpenid(null);
+		}
+		solutionService.save(solution);
+		
+		//查询得到所有关联的guideTermItem，并逐条生成：根据引用的section生成section条目，其余生成普通条目，初始时del_flag均为1
+		GuideBookProposal guideBookProposalQuery = new GuideBookProposal();
+		guideBookProposalQuery.setProposal(scheme);
+		List<GuideBookProposal> guideBookProposals = guideBookProposalService.findList(guideBookProposalQuery);
+		for(GuideBookProposal guideBookProposal:guideBookProposals ) { //遍历所有指南
+			GuideTerm guideTermQuery = new GuideTerm();
+			guideTermQuery.setBook(guideBookProposal.getGuide());
+			List<GuideTerm> guideTerms = guideTermService.findList(guideTermQuery);
+			for(GuideTerm guideTerm:guideTerms) { //遍历所有指南关联条目
+				//根据term条目生成section条目
+				SolutionItem section = new SolutionItem();
+				section.setId(Util.md5(id+guideTerm.getSection().getId()));//固定ID，保证当前solution内唯一
+				section.setIsNewRecord(true);
+				section.setDelFlag("1");//默认不予显示：待分析系统匹配完成后调整
+				section.setSolution(solution);
+				section.setName(guideTerm.getSection().getName());
+				section.setPriority(guideTerm.getSection().getPriority()*1000);//默认排序
+				section.setDescription(guideTerm.getTips());
+				section.setTags(guideTerm.getTags());
+				//section.setType(null);//固定为section类型，表示是分隔符
+				try {
+					solutionItemService.save(section);
+				}catch(Exception ex) {
+					//do nothing
+				}
+				//查询关联的item并生成普通条目
+				GuideTermItem guideTermItemQuery = new GuideTermItem();
+				guideTermItemQuery.setTerm(guideTerm);
+				List<GuideTermItem> guideTermItems = guideTermItemService.findList(guideTermItemQuery);
+				for(GuideTermItem guideTermItem:guideTermItems) { //逐条生成
+					guideTermItem = guideTermItemService.get(guideTermItem);//获取所有内容
+					//生成item：排序为section*1000+item
+					SolutionItem item = new SolutionItem();
+					item.setId(Util.md5(id+guideTermItem.getId()+guideTermItem.getItem().getId()));//固定ID，保证当前solution内唯一
+					item.setIsNewRecord(true);
+					item.setDelFlag("1");//默认不予显示：待分析系统匹配完成后调整
+					item.setSolution(solution);
+					item.setName(guideTermItem.getItem().getName());//显示选项名称
+					item.setPriority(guideTerm.getSection().getPriority()*1000+guideTermItem.getSort());//默认排序
+					item.setDescription(guideTermItem.getTips());
+					item.setTags(guideTermItem.getTags());
+					item.setType(guideTermItem.getType());
+					item.setGuideTermItem(guideTermItem);//表示根据guideTermItem生成
+					try {
+						solutionItemService.save(item);
+					}catch(Exception ex) {
+						//do nothing
+					}
+				}
+			}
+		}
+		Solution nSolution = solutionService.get(id);
+		SolutionItem nSolutionItem = new SolutionItem();
+		nSolutionItem.setSolution(nSolution);
+		
+		result.put("success", true);
+		result.put("solution", nSolution);//返回新建立的solution
+		result.put("solutionItems", solutionItemService.findList(nSolutionItem));//返回新建立的solutionItem列表：TODO 由于默认del_flag为1，默认列表为空
+		return result;
+
+	}
+	//创建定制师方案：手动定制类型
+	private JSONObject createManualSolution(ProposalScheme scheme, JSONObject params) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
 		
 		//先创建solution
 		Solution solution = new Solution();

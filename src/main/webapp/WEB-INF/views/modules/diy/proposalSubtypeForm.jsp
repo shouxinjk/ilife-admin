@@ -37,7 +37,7 @@
 			<label class="control-label">主题：</label>
 			<div class="controls">
 				 <sys:treeselect id="scheme" name="scheme.id" value="${proposalSection.scheme.id}" labelName="scheme.name" labelValue="${proposalSection.scheme.name}"
-					title="定制主题" url="/diy/proposalScheme/listData"  cssClass="required"/>					
+					title="定制主题" url="/diy/proposalScheme/listData" />					
 			</div>			
 		</div>
 		<div class="control-group">

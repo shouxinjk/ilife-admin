@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.diy.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,11 @@ import com.pcitech.iLife.modules.diy.dao.ProposalSchemeDao;
 @Service
 @Transactional(readOnly = true)
 public class ProposalSchemeService extends CrudService<ProposalSchemeDao, ProposalScheme> {
-
+	//获取分页列表
+	public List<ProposalScheme> findPagedList(Map<String,Object> param){
+		return dao.findPagedList(param);
+	}
+	
 	public ProposalScheme get(String id) {
 		return super.get(id);
 	}

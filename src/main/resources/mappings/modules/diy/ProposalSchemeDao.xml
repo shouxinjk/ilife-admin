@@ -37,6 +37,20 @@
 		<include refid="proposalSchemeJoins"/>
 		WHERE a.id = #{id}
 	</select>
+
+	<!-- 分页查询全部结果 -->
+	<select id="findPagedList" resultType="ProposalScheme">
+		SELECT 
+			<include refid="proposalSchemeColumns"/>
+		FROM diy_proposal_scheme a
+		<include refid="proposalSchemeJoins"/>
+		<where>
+			a.del_flag = 0										
+		</where>
+		ORDER BY a.update_date DESC
+		limit #{from},#{to}
+	</select>	
+	
 	
 	<select id="findList" resultType="ProposalScheme">
 		SELECT 

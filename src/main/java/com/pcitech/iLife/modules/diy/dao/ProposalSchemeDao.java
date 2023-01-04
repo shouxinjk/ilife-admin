@@ -3,6 +3,9 @@
  */
 package com.pcitech.iLife.modules.diy.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.diy.entity.ProposalScheme;
@@ -14,5 +17,6 @@ import com.pcitech.iLife.modules.diy.entity.ProposalScheme;
  */
 @MyBatisDao
 public interface ProposalSchemeDao extends CrudDao<ProposalScheme> {
-	
+	//获取分页列表
+	public List<ProposalScheme> findPagedList(Map<String,Object> param);
 }
