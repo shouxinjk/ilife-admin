@@ -309,12 +309,26 @@ public class ProposalSchemeController extends BaseController {
 		//获取关联的section
 		ProposalSection proposalSectionQuery = new ProposalSection();
 		proposalSectionQuery.setScheme(scheme);
-		result.put("sections", proposalSectionService.findList(proposalSectionQuery));
+		List<ProposalSection> sections = proposalSectionService.findList(proposalSectionQuery);
+		ProposalScheme parentScheme = scheme;
+		while( parentScheme!=null && (sections == null || sections.size()==0) ) { //如果没有则追溯到最上级：如果当前已定义则直接使用，不支持合并
+			parentScheme = proposalSchemeService.get(parentScheme.getParent());
+			proposalSectionQuery.setScheme(parentScheme);
+			sections = proposalSectionService.findList(proposalSectionQuery);
+		}
+		result.put("sections", sections);
 		
 		//获取关联的subtype
 		ProposalSubtype proposalSubtypeQuery = new ProposalSubtype();
 		proposalSubtypeQuery.setScheme(scheme);
-		result.put("subtypes", proposalSubtypeService.findList(proposalSubtypeQuery));
+		List<ProposalSubtype> subtypes = proposalSubtypeService.findList(proposalSubtypeQuery);
+		parentScheme = scheme;
+		while( parentScheme!=null && (subtypes == null || subtypes.size()==0) ) { //如果没有则追溯到最上级：如果当前已定义则直接使用，不支持合并
+			parentScheme = proposalSchemeService.get(parentScheme.getParent());
+			proposalSubtypeQuery.setScheme(parentScheme);
+			subtypes = proposalSubtypeService.findList(proposalSubtypeQuery);
+		}
+		result.put("subtypes", subtypes);
 		
 		result.put("success", true);
 		return result;
