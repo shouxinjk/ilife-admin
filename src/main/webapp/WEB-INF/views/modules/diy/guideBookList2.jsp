@@ -133,7 +133,9 @@
 					${fns:getDictLabel(guideBook.type, 'guide_type', '')}
 				</td>
 				<td>
-					${guideBook.url}
+					<c:if test="${guideBook.url}">
+						<a href="${guideBook.url}">查看</a>
+					</c:if>			
 				</td>
 				<td>
 					${fns:getDictLabel(guideBook.status, 'yes_no', '')}
