@@ -26,7 +26,7 @@
 			loadUserProps();
 			
 		    //显示tabs
-		    $( "#tabs" ).tabs();
+		    //$( "#tabs" ).tabs();
 		    
 		    //注册事件：转换为脚本
 		    $("#generateScriptBtn").click(function(){
@@ -176,7 +176,7 @@
 			
 			var tabScheme = {
 					"type": "fieldset",
-					"title": "属性设置",
+					"title": "填写表单验证脚本",
 					"items": [{
 						"type": "tabs",
 						"id": "navtabs",
