@@ -93,9 +93,10 @@
 					字段类型：${fns:getDictLabel(userMeasure.field, 'field_type', userMeasure.field)}
 				</td>										
 				<td>
-					默认值：${userMeasure.defaultScore}<br/>
-					归一化参考值：${userMeasure.controlValue}<br/>
-					默认评分：${userMeasure.defaultRank}
+					默认值：${userMeasure.defaultValue}<br/>
+					控制值：${userMeasure.controlValue}<br/>
+					默认得分：${userMeasure.defaultScore}<br/>
+					默认等级：${userMeasure.defaultRank}
 				</td>	
 				<td>
 					类别：${userMeasure.autoLabelTagCategory.name}<br/>

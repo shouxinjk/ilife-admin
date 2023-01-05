@@ -30,6 +30,15 @@
 <script src="${ctxStatic}/bootstrap-slider/bootstrap-slider.min.js" type="text/javascript"></script-->
 <link href="${ctxStatic}/chosen/chosen.min.css" type="text/css" rel="stylesheet" />
 <script src="${ctxStatic}/chosen/chosen.jquery.min.js" type="text/javascript"></script>
+<!-- jsonform -->
+<!-- 与后台框架bootstrap冲突，不予引入 -->
+<!--link rel="stylesheet" type="text/css" href="${ctxStatic}/jsonform/bootstrap.css?v=0.02" /-->
+<link rel="stylesheet" type="text/css" href="${ctxStatic}/jsonform/bootstrap-wysihtml5.css" />
+<!-- link rel="stylesheet" type="text/css" href="${ctxStatic}/jsonform/spectrum.css" / -->
+<script type="text/javascript" src="${ctxStatic}/jsonform/underscore.js"></script>
+<script type="text/javascript" src="${ctxStatic}/jsonform/jsv.js"></script>
+<script type="text/javascript" src="${ctxStatic}/jsonform/jsonform.js"></script>
+<!-- iLife -->    
 <link href="${ctxStatic}/common/iLife.css" type="text/css" rel="stylesheet" />
 <script src="${ctxStatic}/common/iLife.js" type="text/javascript"></script>
 <script src="${ctxStatic}/common/md5.js" type="text/javascript"></script>

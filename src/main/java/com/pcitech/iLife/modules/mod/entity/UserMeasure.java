@@ -21,6 +21,7 @@ public class UserMeasure extends DataEntity<UserMeasure> {
 	private String name;		// name
 	private String weight;		// weight
 	private String controlValue;		// control_value
+	private String defaultValue;		// default_score
 	private String defaultScore;		// default_score
 	private String defaultRank;		// default_rank
 	private String type;		//数据类型
@@ -104,6 +105,14 @@ public class UserMeasure extends DataEntity<UserMeasure> {
 		this.controlValue = controlValue;
 	}
 	
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
 	public String getDefaultScore() {
 		return defaultScore;
 	}
