@@ -215,7 +215,7 @@
     	var script = $("#script").val();
     	props.forEach(function(prop){
     		const re = new RegExp(prop.property, 'g');
-    		if(script.match(re)){
+    		if(script.match(re) && scriptFields.indexOf(prop.property)<0){ //仅放入一次
     			scriptFields.push(prop.property);
     		}
     	});		
@@ -347,11 +347,11 @@
 		<!-- 公式编辑 -->
 	    <div id="tabs" style="width:60%; display:flex;flex-direction:row;flex-wrap:nowrap">
         	<div style="width:60%">
-				<div>适用条件：选择属性编辑适用条件，结果为true或false，完成后 <span id="generateScriptBtn" style="color:blue;">生成脚本</span></div>
+				<div>适用条件：选择属性编辑适用条件，结果为true或false。 <span id="generateScriptBtn" style="color:blue;">生成脚本</span></div>
 				<div>
 					<form:textarea path="scriptDesc" id="scriptDesc" htmlEscape="false" rows="10" class="input-xxlarge "/>
 				</div>		
-				<div style="margin-top:10px;">规则脚本：支持数学运算及逻辑运算，点击右侧属性列表可自动获取属性名称。<span id="generateFormBtn" style="color:blue;">测试脚本</span></div>
+				<div style="margin-top:10px;">规则脚本：支持数学运算及逻辑运算。<span id="generateFormBtn" style="color:blue;">测试脚本</span></div>
 				<div>
 					<form:textarea path="script" id="script" htmlEscape="false" rows="10" class="input-xxlarge "/>
 				</div>   
