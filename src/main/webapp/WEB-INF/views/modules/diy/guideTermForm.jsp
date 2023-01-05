@@ -117,6 +117,10 @@
 			formTabs = {};//清空tabs
 			formScheme = JSON.parse(JSON.stringify(formSchemeTpl));
 			
+			//默认隐藏表单测试结果
+			$("#testResult").css("display","none");
+			$("#testMsg").css("display","none");
+			
 			checkScriptFields();//先检查脚本中引用的字段
 			
 			//遍历属性组织formScheme
@@ -219,14 +223,48 @@
 		
 		//jsonForm 提交响应事件
 		var jsonFormSubmit = function (errors, values) {//jsonform 提交函数
+			//清空结果显示
+			$("#testResult").empty();
+			$("#testMsg").empty();
           if (errors) {
             console.log("got erros.",errors);
             siiimpleToast.message('提交表单出错',{
                 position: 'bottom|center'
               }); 
           }else {
-            console.log("try to submit data.",values);
-            //TODO 完成表单验证提交。需要后端提供接口，能够接收数据及脚本，完成groovy验证，返回数据结果
+        	var data = {
+		        	script: $("#criteria").val(),
+		        	values: values
+		        };
+            console.log("try to submit data.",data);
+		    //带数据值，验证表单计算结果
+		    $.ajax({
+		        url:"${ctx}/diy/guideTerm/rest/test",
+		        type:"post",
+		        data:JSON.stringify(data),
+		        headers:{
+		            "Content-Type":"application/json"
+		        },  		        
+		        success:function(res){
+		            console.log("\n=== script result ===\n",res);
+		            if(res.success){ //计算完成，直接更新结果
+		                $("#testResult").css("display","block");
+		                $("#testResult").append("<div>验证结果："+res.data+"</div>");
+		                if(res.data){
+		                	$("#testResult").css("background-color","#c9fddd");
+		                }else{
+		                	$("#testResult").css("background-color","#fdbbc2");
+		                }
+		            }else{ //否则提示出错，并更新信息到界面
+		            	$("#testMsg").css("display","block");
+			            if(res.msg)$("#testMsg").append("<div>提示："+res.msg+"</div>");
+			            if(res.err)$("#testMsg").append("<div>错误："+res.err+"</div>");
+		                siiimpleToast.message('计算错误，请检查脚本及数值',{
+		                    position: 'bottom|center'
+		                  }); 
+		            }
+		        }
+		    }); 
           }
         };
 	</script>
@@ -309,7 +347,7 @@
 				<div>
 					<form:textarea path="criteriaDesc" id="criteriaDesc" htmlEscape="false" rows="10" class="input-xxlarge "/>
 				</div>		
-				<div style="margin-top:10px;">规则脚本：支持数学运算及逻辑运算，点击右侧属性列表可自动获取属性名称。<span id="generateFormBtn" style="color:blue;">生成表单</span></div>
+				<div style="margin-top:10px;">规则脚本：支持数学运算及逻辑运算，点击右侧属性列表可自动获取属性名称。<span id="generateFormBtn" style="color:blue;">测试脚本</span></div>
 				<div>
 					<form:textarea path="criteria" id="criteria" htmlEscape="false" rows="10" class="input-xxlarge "/>
 				</div>   
@@ -329,6 +367,8 @@
     <!-- 公式检查 -->
     <div style="padding-left:10px;width:100%;">
     	<div>填写表单数据，并验证规则 </div>
+    	<div id="testResult" style="display:none;font-weight:bold;line-height:18px;background-color:#b3fdd5;color:green;border:1px solid darkgreen;"></div>
+    	<div id="testMsg" style="display:none;color:red;line-height:18px;background-color:#fb8d98;border:1px solid darkred;"></div>
     	<form id="jsonform"></form>
     </div>			              		
 </body>

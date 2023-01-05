@@ -14,11 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -28,6 +32,9 @@ import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.diy.entity.GuideTerm;
 import com.pcitech.iLife.modules.diy.entity.Solution;
 import com.pcitech.iLife.modules.diy.service.GuideTermService;
+
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 
 /**
  * 个性化定制指南条目Controller
@@ -111,6 +118,50 @@ public class GuideTermController extends BaseController {
 			
 		}
 		return mapList;
+	}
+	
+	/**
+	 * 根据脚本及输入值计算结果。返回是否匹配 true/false
+	 * @param script(string), values:{property: value}
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/test", method = RequestMethod.POST)
+	public JSONObject testScript(@RequestBody JSONObject json) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		
+		String script = json.getString("script");
+		if(script ==null || script.trim().length()==0) {
+			result.put("msg", "script is required.");
+			return result;
+		}
+		
+		JSONObject values = json.getJSONObject("values");
+		if(values == null || values.size() == 0) {
+			result.put("msg", "values is required.");
+			return result;
+		}
+		
+		//绑定参数
+		Binding binding = new Binding();
+		for(String key: values.keySet()) {
+			try {
+				binding.setVariable(key, values.get(key));
+			}catch(Exception ex) {
+				result.put("err", "failed binding value. key:"+key+"\tvalue:"+values.get(key));
+			}
+		}
+
+		//计算脚本
+		try {
+	        GroovyShell shell = new GroovyShell(binding);
+	        Object value = shell.evaluate(script);//计算得到结果
+	        result.put("data", value);
+	        result.put("success", true);
+		}catch(Exception ex) {//如果计算发生错误也使用默认链接
+			result.put("err", "failed evaluate script."+ex.getMessage());
+		}
+		return result;
 	}
 	
 }
