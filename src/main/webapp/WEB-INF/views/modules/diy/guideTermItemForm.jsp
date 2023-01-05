@@ -124,6 +124,7 @@
 		checkScriptFields();//先检查脚本中引用的字段
 		
 		//遍历属性组织formScheme
+		var enumTypes = ["string","String"];//支持预先生成候选项
     	props.forEach(function(prop){
 			if(scriptFields==null || scriptFields.length==0 || scriptFields.indexOf(prop.property)>-1){//有引用时加入
 				//表单字段
@@ -131,7 +132,7 @@
 						type: prop.type,
 						title: prop.name
 					};
-				if(prop.tags && prop.tags.trim().length>0 && prop.type=="String"){ //仅对字符类提供选项
+				if(prop.tags && prop.tags.trim().length>0 && enumTypes.indexOf(prop.type)>-1){ //仅对字符类提供选项
 					formItem["enum"] = prop.tags.split(" ");
 				}
 				formFields[prop.property]=formItem;
