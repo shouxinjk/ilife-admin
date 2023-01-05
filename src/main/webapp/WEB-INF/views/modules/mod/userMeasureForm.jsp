@@ -126,12 +126,17 @@
 				</div>
 			</div>	
 			<div class="control-group">
-				<label class="control-label">属性类型：</label>
+				<label class="control-label">数据类型：</label>
 				<div class="controls">
-					<form:select path="type" items="${fns:getDictList('propertyType')}" itemLabel="label" itemValue="value" htmlEscape="false" class="input-xlarge"/>
-					<!--form:input path="type" htmlEscape="false" maxlength="100" class="input-xlarge "/-->
+					<form:select path="type" items="${fns:getDictList('value_type')}" itemLabel="label" itemValue="value" htmlEscape="false" class="input-xlarge"/>
 				</div>
-			</div>				
+			</div>		
+			<div class="control-group">
+				<label class="control-label">字段类型：</label>
+				<div class="controls">
+					<form:select path="field" items="${fns:getDictList('field_type')}" itemLabel="label" itemValue="value" htmlEscape="false" class="input-xlarge"/>
+				</div>
+			</div>						
 			<!--div class="control-group">
 				<label class="control-label">所属维度：</label>
 				<div class="controls">

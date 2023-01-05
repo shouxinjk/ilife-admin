@@ -68,18 +68,12 @@
 		<thead>
 			<tr>
 				<th>名称</th>
-				<!--th>分类</th>
-				<th>占比</th-->
 				<th>属性定义</th>
-				<th>属性类型</th>
-				<!--th>归一化参考值</th-->
-				<th>默认数值</th>
-				<!--th>默认等级</th-->
+				<th>数值设置</th>
+				<th>关联标签</th>		
 				<th>VALS分布</th>
 				<th>能力分布</th>				
 				<th>数据算法</th>
-				<th>标签类目</th>		
-				<th>标签</th>	
 				<!--th>更新时间</th-->
 				<shiro:hasPermission name="mod:userMeasure:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -87,30 +81,26 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="userMeasure">
 			<tr>
-				<td><a href="${ctx}/mod/userMeasure/form?id=${userMeasure.id}">
-					${userMeasure.name}
-				</a></td>
-				<!--td>
-					${userMeasure.category.name}
+				<td>
+					<a href="${ctx}/mod/userMeasure/form?id=${userMeasure.id}">
+						${userMeasure.name}
+					</a>
+				</td>
+				<td>
+					KEY：${userMeasure.property}<br/>
+					属性分类：${userMeasure.category.name}<br/>
+					数据类型：${fns:getDictLabel(userMeasure.type, 'value_type', userMeasure.type)}<br/>
+					字段类型：${fns:getDictLabel(userMeasure.field, 'field_type', userMeasure.field)}
+				</td>										
+				<td>
+					默认值：${userMeasure.defaultScore}<br/>
+					归一化参考值：${userMeasure.controlValue}<br/>
+					默认评分：${userMeasure.defaultRank}
 				</td>	
 				<td>
-					${userMeasure.weight}
-				</td-->
-				<td>
-					${userMeasure.property}
-				</td>	
-				<td>
-					${fns:getDictLabel(userMeasure.type, 'propertyType', userMeasure.type)}
-				</td>									
-				<!--td>
-					${userMeasure.controlValue}
-				</td-->
-				<td>
-					${userMeasure.defaultScore}
-				</td>			
-				<!--td>
-					${userMeasure.defaultRank}
-				</td-->		
+					类别：${userMeasure.autoLabelTagCategory.name}<br/>
+					标签：${userMeasure.tags}
+				</td>							
 				<td align="center" width="250px">
 					<div id="slider-alpha-${userMeasure.id}" data-slider-value="${userMeasure.alpha}" style="width:90%;margin:10px;"></div>
 					<div id="slider-beta-${userMeasure.id}" data-slider-value="${userMeasure.beta}" style="width:90%;margin:10px;"></div>
@@ -128,11 +118,7 @@
 				多值策略：${fns:getDictLabel(userMeasure.multiValueFunc, 'multiValueFunc', userMeasure.multiValueFunc)}<br/>
 				自动标注：${fns:getDictLabel(userMeasure.autoLabelType, 'autoLabelType', userMeasure.autoLabelType)}<br/>
 				Dict字典：${fns:getDictMetaLabelName(userMeasure.autoLabelDict, 'user', userMeasure.autoLabelDict)} ${fns:getDictMetaLabelKey(userMeasure.autoLabelDict, 'user', userMeasure.autoLabelDict)} <br/>
-				Refer类目：${userMeasure.autoLabelCategory.name}</td>	
-				<td>${userMeasure.autoLabelTagCategory.name}</td>	
-				<td>
-					${userMeasure.tags}
-				</td>											
+				Refer类目：${userMeasure.autoLabelCategory.name}</td>													
 				<!--td>
 					<fmt:formatDate value="${userMeasure.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td-->

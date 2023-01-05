@@ -23,7 +23,8 @@ public class UserMeasure extends DataEntity<UserMeasure> {
 	private String controlValue;		// control_value
 	private String defaultScore;		// default_score
 	private String defaultRank;		// default_rank
-	private String type;		// type
+	private String type;		//数据类型
+	private String field;	//字段类型
 	private String tags;		// tags
 	
 	private String expression;		// 脚本表达式
@@ -151,6 +152,14 @@ public class UserMeasure extends DataEntity<UserMeasure> {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getField() {
+		return field;
+	}
+
+	public void setField(String field) {
+		this.field = field;
 	}
 
 	public String getTags() {
