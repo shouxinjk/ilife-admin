@@ -19,7 +19,7 @@ public class ProposalScheme extends DataEntity<ProposalScheme> {
 	private ProposalScheme parent;
 	private String name;		// 名称
 	private String description;		// 描述
-	private String type="free";		// 类型:free手动定制 guide指南生成 默认为free
+	private String type;		// 类型:free手动定制 guide指南生成 默认为free
 	private String logo; //logo
 	private JsonForm form;		// 表单
 	private String category;		// 类别

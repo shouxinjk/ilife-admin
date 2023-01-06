@@ -152,6 +152,7 @@ public class ProposalSchemeController extends BaseController {
 			return Lists.newArrayList();
 		ProposalScheme proposalScheme = new ProposalScheme();
 		proposalScheme.setStatus(status);
+		proposalScheme.setType("");//所有类型
 		return proposalSchemeService.findList(proposalScheme);
 	}
 	
@@ -166,6 +167,7 @@ public class ProposalSchemeController extends BaseController {
 			proposalScheme.setName(name);
 		}
 		proposalScheme.setStatus("1");//仅查询已发布主题
+		proposalScheme.setType("");//所有类型
 		List<ProposalScheme> list = proposalSchemeService.findList(proposalScheme);
 		if(list.size()==0) {
 			proposalScheme.setName("");//不限制，将获取全部

@@ -69,6 +69,7 @@
 				<form:input path="logo" htmlEscape="false" maxlength="1024" class="input-xlarge "/>
 			</div>
 		</div>		
+		<!-- 
 		<div class="control-group">
 			<label class="control-label">表单：</label>
 			<div class="controls">
@@ -76,6 +77,7 @@
 					title="动态表单" url="/diy/jsonForm/listData"/>					
 			</div>				
 		</div>
+		-->
 		<div class="control-group">
 			<label class="control-label">类别：</label>
 			<div class="controls">
