@@ -32,12 +32,16 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.diy.entity.GuideBook;
 import com.pcitech.iLife.modules.diy.entity.GuideBookProposal;
+import com.pcitech.iLife.modules.diy.entity.GuideTerm;
+import com.pcitech.iLife.modules.diy.entity.GuideTermItem;
 import com.pcitech.iLife.modules.diy.entity.JsonForm;
 import com.pcitech.iLife.modules.diy.entity.ProposalScheme;
 import com.pcitech.iLife.modules.diy.entity.ProposalSection;
 import com.pcitech.iLife.modules.diy.entity.ProposalSubtype;
 import com.pcitech.iLife.modules.diy.service.GuideBookProposalService;
 import com.pcitech.iLife.modules.diy.service.GuideBookService;
+import com.pcitech.iLife.modules.diy.service.GuideTermItemService;
+import com.pcitech.iLife.modules.diy.service.GuideTermService;
 import com.pcitech.iLife.modules.diy.service.ProposalSchemeService;
 import com.pcitech.iLife.modules.diy.service.ProposalSectionService;
 import com.pcitech.iLife.modules.diy.service.ProposalSubtypeService;
@@ -62,6 +66,10 @@ public class ProposalSchemeController extends BaseController {
 	private ProposalSubtypeService proposalSubtypeService;
 	@Autowired
 	private GuideBookProposalService guideBookProposalService;
+	@Autowired
+	private GuideTermService guideTermService;
+	@Autowired
+	private GuideTermItemService guideTermItemService;
 	
 	@ModelAttribute
 	public ProposalScheme get(@RequestParam(required=false) String id) {
@@ -330,6 +338,58 @@ public class ProposalSchemeController extends BaseController {
 		}
 		result.put("subtypes", subtypes);
 		
+		result.put("success", true);
+		return result;
+	}
+	
+
+	/**
+	 * 根据ID获取所有相关脚本。组织为一个字符串。
+	 * 用于前端识别包含的表单参数条目
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/script/{schemeId}", method = RequestMethod.GET)
+	public JSONObject getCombinedScripts(@PathVariable String schemeId) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if( schemeId==null || schemeId.trim().length() == 0) {
+			result.put("msg", "schemeId is required.");
+			return result;
+		}
+		
+		//查询得到ProposalScheme
+		ProposalScheme scheme = proposalSchemeService.get(schemeId);
+		if(scheme == null) {
+			result.put("msg", "cannot find scheme by id. "+schemeId);
+			return result;
+		}
+		result.put("scheme", scheme);
+		
+		StringBuffer sb = new StringBuffer();//组织装载所有guideTerm及guideTermItem的规则
+		
+		//获取关联的指南
+		GuideBookProposal guideBookProposalQuery = new GuideBookProposal();
+		guideBookProposalQuery.setProposal(scheme);//根据原scheme获取所有关联的指南
+		List<GuideBookProposal> guideBookProposals = guideBookProposalService.findList(guideBookProposalQuery);
+		for(GuideBookProposal guideBookProposal:guideBookProposals) {
+			GuideTerm guideTermQuery = new GuideTerm();
+			guideTermQuery.setBook(guideBookProposal.getGuide());
+			List<GuideTerm> guideTerms = guideTermService.findList(guideTermQuery);
+			for(GuideTerm guideTerm:guideTerms) { //遍历所有指南条目
+				sb.append(" ");
+				sb.append(guideTerm.getCriteria());//添加指南适用条件
+				//查询关联的item并生成普通条目
+				GuideTermItem guideTermItemQuery = new GuideTermItem();
+				guideTermItemQuery.setTerm(guideTerm);
+				List<GuideTermItem> guideTermItems = guideTermItemService.findList(guideTermItemQuery);
+				for(GuideTermItem guideTermItem:guideTermItems) { //遍历指南条目关联选项
+					sb.append(" ");
+					sb.append(guideTermItem.getScript());//添加规则脚本
+				}
+			}
+		}
+		result.put("scripts", sb.toString());
 		result.put("success", true);
 		return result;
 	}

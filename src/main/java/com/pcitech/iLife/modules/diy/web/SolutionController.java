@@ -48,6 +48,9 @@ import com.pcitech.iLife.modules.diy.service.SolutionService;
 import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.util.Util;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+
 /**
  * 个性定制方案Controller
  * @author chenci
@@ -451,6 +454,10 @@ public class SolutionController extends BaseController {
 		solution.setName(scheme.getName());
 		solution.setDescription(scheme.getDescription());
 		solution.setStatus(1);//默认为启用
+		if(params.get("userInfo")==null) { //直接生成方案，必须有用户信息
+			result.put("msg", "userInfo is required.");
+			return result;
+		}
 		if(params.getString("byOpenid")!=null) {
 			solution.setByOpenid(params.getString("byOpenid"));
 		}else {
@@ -482,20 +489,23 @@ public class SolutionController extends BaseController {
 			guideTermQuery.setBook(guideBookProposal.getGuide());
 			List<GuideTerm> guideTerms = guideTermService.findList(guideTermQuery);
 			for(GuideTerm guideTerm:guideTerms) { //遍历所有指南关联条目
+				//验证是否适用
+				if(!testScript(guideTerm.getCriteria(),params.getJSONObject("userInfo")))
+					continue;
 				//根据term条目生成section条目
 				SolutionItem section = new SolutionItem();
 				section.setId(Util.md5(id+guideTerm.getSection().getId()));//固定ID，保证当前solution内唯一
 				section.setIsNewRecord(true);
-				section.setDelFlag("1");//默认不予显示：待分析系统匹配完成后调整
+//				section.setDelFlag("1");//默认不予显示：待分析系统匹配完成后调整 仅用于并行分析场景
 				section.setSolution(solution);
 				section.setName(guideTerm.getSection().getName());
 				section.setPriority(guideTerm.getSection().getPriority()*1000);//默认排序
 				section.setDescription(guideTerm.getTips());
 				section.setTags(guideTerm.getTags());
 				//section.setType(null);//固定为section类型，表示是分隔符
-				try {
+				try { 
 					solutionItemService.save(section);
-				}catch(Exception ex) {
+				}catch(Exception ex) {//由于存在多个相同section，如果出现仅保留一条，出错则直接忽略
 					//do nothing
 				}
 				//查询关联的item并生成普通条目
@@ -504,11 +514,14 @@ public class SolutionController extends BaseController {
 				List<GuideTermItem> guideTermItems = guideTermItemService.findList(guideTermItemQuery);
 				for(GuideTermItem guideTermItem:guideTermItems) { //逐条生成
 					guideTermItem = guideTermItemService.get(guideTermItem);//获取所有内容
+					//验证是否适用
+					if(!testScript(guideTermItem.getScript(),params.getJSONObject("userInfo")))
+						continue;
 					//生成item：排序为section*1000+item
 					SolutionItem item = new SolutionItem();
 					item.setId(Util.md5(id+guideTermItem.getId()+guideTermItem.getItem().getId()));//固定ID，保证当前solution内唯一
 					item.setIsNewRecord(true);
-					item.setDelFlag("1");//默认不予显示：待分析系统匹配完成后调整
+//					item.setDelFlag("1");//默认不予显示：待分析系统匹配完成后调整 仅用于并行分析模式
 					item.setSolution(solution);
 					item.setName(guideTermItem.getItem().getName());//显示选项名称
 					item.setPriority(guideTerm.getSection().getPriority()*1000+guideTermItem.getSort());//默认排序
@@ -530,10 +543,41 @@ public class SolutionController extends BaseController {
 		
 		result.put("success", true);
 		result.put("solution", nSolution);//返回新建立的solution
-		result.put("solutionItems", solutionItemService.findList(nSolutionItem));//返回新建立的solutionItem列表：TODO 由于默认del_flag为1，默认列表为空
+		result.put("solutionItems", solutionItemService.findList(nSolutionItem));//返回新建立的solutionItem列表。注意，在并行分析模式下，由于默认del_flag为1，默认列表为空
 		return result;
 
 	}
+	
+	//验证脚本:返回true/false
+	//如果脚本为空，直接返回true
+	private boolean testScript(String script, JSONObject values) {
+
+		if(script ==null || script.trim().length()==0) {
+			logger.warn("script is null. return true by default.");
+			return true;
+		}
+		
+		//绑定参数
+		Binding binding = new Binding();
+		for(String key: values.keySet()) {
+			try {
+				binding.setVariable(key, values.get(key));
+			}catch(Exception ex) {
+				logger.debug("failed binding value. key:"+key+"\tvalue:"+values.get(key));
+			}
+		}
+
+		//计算脚本
+		try {
+	        GroovyShell shell = new GroovyShell(binding);
+	        Object value = shell.evaluate(script);//计算得到结果
+	        return Boolean.getBoolean(""+value);
+		}catch(Exception ex) {//如果计算发生错误也使用默认链接
+			logger.error("failed evaluate script."+ex.getMessage());
+		}
+		return false;
+	}
+	
 	//创建定制师方案：手动定制类型
 	private JSONObject createManualSolution(ProposalScheme scheme, JSONObject params) {
 		JSONObject result = new JSONObject();
