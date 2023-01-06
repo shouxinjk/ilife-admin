@@ -8,6 +8,7 @@
 		gbk.name AS "book.name",
 		a.section_id AS "section.id",
 		prs.name AS "section.name",
+		prs.priority AS "section.priority",
 		a.name AS "name",
 		a.description AS "description",
 		a.tips AS "tips",
