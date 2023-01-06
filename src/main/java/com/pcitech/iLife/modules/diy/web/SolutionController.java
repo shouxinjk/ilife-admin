@@ -445,13 +445,18 @@ public class SolutionController extends BaseController {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 
+		String by = "";
+		if(params.getString("forNickname")!=null && params.getString("forNickname").trim().length()>0) {
+			by = " by "+params.getString("forNickname");
+		}
+		
 		//先创建solution
 		Solution solution = new Solution();
 		String id = Util.get32UUID();
 		solution.setId(id);
 		solution.setIsNewRecord(true);
 		solution.setScheme(scheme);
-		solution.setName(scheme.getName());
+		solution.setName(scheme.getName()+by);
 		solution.setDescription(scheme.getDescription());
 		solution.setStatus(1);//默认为启用
 		if(params.get("userInfo")==null) { //直接生成方案，必须有用户信息
