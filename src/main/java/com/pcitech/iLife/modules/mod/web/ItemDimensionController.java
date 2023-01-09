@@ -228,6 +228,9 @@ public class ItemDimensionController extends BaseController {
 		ItemDimension q = new ItemDimension(); 
 		q.setCategory(category);
 		q.setFeatured(true);//仅返回featured节点
+		ItemDimension parentDimension = new ItemDimension();
+		parentDimension.setId("1");//指定根节点下级节点
+		q.setParent(parentDimension);
 		return itemDimensionService.findList(q);
 	}
 	
