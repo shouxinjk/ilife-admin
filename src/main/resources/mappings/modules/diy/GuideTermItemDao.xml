@@ -47,6 +47,12 @@
 		<include refid="guideTermItemJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="term != null and term.id != null and term.id != ''">
+				AND a.term_id = #{term.id}
+			</if>
+			<if test="item != null and item.id != null and item.id != ''">
+				AND a.item_id = #{item.id}
+			</if>			
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

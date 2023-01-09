@@ -41,13 +41,9 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>类型</th>
-				<th>描述</th>
-				<th>指南条目</th>
-				<th>关联的条目</th>
-				<th>注意事项</th>
-				<th>Tags</th>
-				<th>规则描述</th>
+				<th>关联设置</th>			
+				<th>选项设置</th>
+				<th>匹配规则</th>
 				<th>排序</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="diy:guideTermItem:edit"><th>操作</th></shiro:hasPermission>
@@ -55,30 +51,20 @@
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="guideTermItem">
-			<tr>
+			<tr>			
 				<td>
-					${guideTermItem.type.name}
-				</td>			
-				<td>
-					${guideTermItem.description}
+					指南：${guideTermItem.term.name}<br/>
+					选项：${guideTermItem.item.name}<br/>
+					描述：${guideTermItem.description}
 				</td>
 				<td>
-					${guideTermItem.term.name}
-				</td>
-				<td>
-					${guideTermItem.item.name}
-				</td>
-				<td>
-					${guideTermItem.tips}
-				</td>
-				<td>
-					${guideTermItem.tags}
+					选项类型：${guideTermItem.type.name}<br/>
+					注意事项：${guideTermItem.tips}<br/>
+					选项标签：${guideTermItem.tags}
 				</td>								
 				<td>
-					${guideTermItem.scriptDesc}
-				</td>
-				<td>
-					${guideTermItem.sort}
+					优先级：${guideTermItem.sort}<br/>
+					匹配规则：${guideTermItem.scriptDesc}
 				</td>
 				<td>
 					<fmt:formatDate value="${guideTermItem.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
