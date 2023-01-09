@@ -37,7 +37,7 @@
 <!-- link rel="stylesheet" type="text/css" href="${ctxStatic}/jsonform/spectrum.css" / -->
 <script type="text/javascript" src="${ctxStatic}/jsonform/underscore.js"></script>
 <script type="text/javascript" src="${ctxStatic}/jsonform/jsv.js"></script>
-<script type="text/javascript" src="${ctxStatic}/jsonform/jsonform.js"></script>
+<script type="text/javascript" src="${ctxStatic}/jsonform/jsonform.js?v=0.21"></script>
 <!-- iLife -->    
 <link href="${ctxStatic}/common/iLife.css" type="text/css" rel="stylesheet" />
 <script src="${ctxStatic}/common/iLife.js" type="text/javascript"></script>

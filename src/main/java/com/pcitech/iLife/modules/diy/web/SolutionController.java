@@ -524,6 +524,7 @@ public class SolutionController extends BaseController {
 						continue;
 					//生成item：排序为section*1000+item
 					SolutionItem item = new SolutionItem();
+					//注意：在生成时，一个方案内同一个item条目仅出现一次，如果出现多次则以优先级高的为准
 					item.setId(Util.md5(id+guideTermItem.getId()+guideTermItem.getItem().getId()));//固定ID，保证当前solution内唯一
 					item.setIsNewRecord(true);
 //					item.setDelFlag("1");//默认不予显示：待分析系统匹配完成后调整 仅用于并行分析模式
@@ -536,7 +537,7 @@ public class SolutionController extends BaseController {
 					item.setGuideTermItem(guideTermItem);//表示根据guideTermItem生成
 					try {
 						solutionItemService.save(item);
-					}catch(Exception ex) {
+					}catch(Exception ex) {//需要判断是否是重复，如果重复则以优先级高的为准
 						//do nothing
 					}
 				}

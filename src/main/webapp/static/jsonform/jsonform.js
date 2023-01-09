@@ -817,17 +817,17 @@ jsonform.elementTypes = {
     }
   },
   'checkboxes':{
-    'template': '<div><%= choiceshtml %></div>',
+    'template': '<div style="display:flex;flex-direction:row;"><%= choiceshtml %></div>',
     'fieldtemplate': true,
     'inputfield': true,
     'onBeforeRender': function (data, node) {
       // Build up choices from the enumeration list
       var choices = null;
       var choiceshtml = null;
-      var template = '<div class="checkbox"><label>' +
+      var template = '<div class="checkbox" style="margin-right:5px;"><label style="display:flex;justify-content:center;align-items:center">' +
         '<input type="checkbox" <% if (value) { %> checked="checked" <% } %> name="<%= name %>" value="1"' +
         '<%= (node.disabled? " disabled" : "")%>' +
-        '/><%= title %></label></div>';
+        '/><span><%= title %></span></label></div>';
       if (!node || !node.schemaElement) return;
 
       if (node.schemaElement.items) {

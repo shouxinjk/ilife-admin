@@ -124,7 +124,7 @@
 			checkScriptFields();//先检查脚本中引用的字段
 			
 			//遍历属性组织formScheme
-			var enumTypes = ["string","String"];//支持预先生成候选项
+			var enumTypes = ["string","array"];//支持预先生成候选项
 	    	props.forEach(function(prop){
 				if(scriptFields==null || scriptFields.length==0 || scriptFields.indexOf(prop.property)>-1){//有引用时加入
 					//表单字段
@@ -135,6 +135,15 @@
 					if(prop.tags && prop.tags.trim().length>0 && enumTypes.indexOf(prop.type)>-1){ //仅对字符类提供选项
 						formItem["enum"] = prop.tags.split(" ");
 					}
+					//array列表装载:当前默认为string类型多选
+					if("array"==prop.type){
+						formItem.type = "string";//默认为string类型
+						formItem = { //增加array结构
+							type: prop.type, //直接为array
+							title: prop.name,
+							items : formItem
+						};
+					}
 					formFields[prop.property]=formItem;
 					//value项
 					if(prop.defaultValue && prop.defaultValue.trim().length>0){
@@ -144,18 +153,11 @@
 					if(!formTabs[prop.category.name]){
 						formTabs[prop.category.name] = [];
 					}
-					if(prop.field=="radiobuttons"){
-						formTabs[prop.category.name].push({
-							key: prop.property,
-							type: prop.field,
-							activeClass: "btn-success"//default
-						});						
-					}else{
-						formTabs[prop.category.name].push({
-							key: prop.property
-						});						
-					}
-
+					formTabs[prop.category.name].push({
+						key: prop.property,
+						type: prop.field,
+						activeClass: "btn-success"//default
+					});	
 				}else{//否则不加入
 					//do nothing
 				}
