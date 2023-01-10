@@ -200,6 +200,12 @@ public class ItemCategoryController extends BaseController {
 		return mapList;
 	}
 	
+	@ResponseBody
+	@RequestMapping(value = "rest/categories")
+	public List<ItemCategory> listCategoryByParentId( @RequestParam(required=false) String parentId) {
+		if(parentId==null || parentId.trim().length()==0) parentId = "1";//默认查询根目录下的节点
+		return itemCategoryService.findByParentId(parentId);
+	}
 
 	/**
 	 * 加载系统默认分类。是标准分类。
