@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -280,6 +281,62 @@ public class CategoryNeedController extends BaseController {
 		Map<String,String> result = Maps.newHashMap();
 		result.put("result", "weight updated.");
 		return result;
+	}
+	
+	//新增或修改权重
+	@ResponseBody
+	@RequestMapping(value = "rest/need", method = RequestMethod.POST)
+	public JSONObject upsert( @RequestBody CategoryNeed categoryNeed) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(categoryNeed.getId()==null||categoryNeed.getId().trim().length()==0) {//认为是新增
+			categoryNeed.setId(Util.get32UUID());
+			categoryNeed.setIsNewRecord(true);
+		}
+		try {
+			categoryNeedService.save(categoryNeed);
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("error", ex.getMessage());
+		}
+		return result;
+	}
+	
+	//删除需要
+	@ResponseBody
+	@RequestMapping(value = "rest/need", method = RequestMethod.PUT)
+	public JSONObject delete( @RequestBody CategoryNeed categoryNeed) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		try {
+			categoryNeedService.delete(categoryNeed);
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("error", ex.getMessage());
+		}
+		return result;
+	}
+	
+	//查询待已添加need列表
+	@ResponseBody
+	@RequestMapping(value = "rest/needs/{categoryId}", method = RequestMethod.GET)
+	public List<CategoryNeed> listNeeds(@PathVariable String categoryId) {
+		ItemCategory itemCategory = itemCategoryService.get(categoryId);
+		if(itemCategory==null)
+			return Lists.newArrayList();
+		CategoryNeed categoryNeedQuery = new CategoryNeed();
+		categoryNeedQuery.setCategory(itemCategory);
+		return categoryNeedService.findList(categoryNeedQuery);
+	}
+	
+	//查询待添加need列表
+	@ResponseBody
+	@RequestMapping(value = "rest/pending-needs/{categoryId}", method = RequestMethod.GET)
+	public List<Motivation> listPendingNeeds(@PathVariable String categoryId) {
+		Map<String,String> params = Maps.newHashMap();
+		params.put("categoryId", categoryId);
+		params.put("name", "");//TODO 添加需要名称，能够根据名称过滤
+		return motivationService.findPendingListForItemCategory(params);
 	}
 
 	@RequiresPermissions("mod:categoryNeed:view")

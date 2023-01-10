@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,8 +33,6 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
-import com.pcitech.iLife.modules.mod.entity.CategoryNeed;
-import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.MotivationCategory;
 import com.pcitech.iLife.modules.mod.entity.Persona;
@@ -336,6 +335,64 @@ public class PhaseNeedController extends BaseController {
 		result.put("result", "weight updated.");
 		return result;
 	}
+	
+
+	//新增或修改权重
+	@ResponseBody
+	@RequestMapping(value = "rest/need", method = RequestMethod.POST)
+	public JSONObject upsert( @RequestBody PhaseNeed phaseNeed) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(phaseNeed.getId()==null||phaseNeed.getId().trim().length()==0) {//认为是新增
+			phaseNeed.setId(Util.get32UUID());
+			phaseNeed.setIsNewRecord(true);
+		}
+		try {
+			phaseNeedService.save(phaseNeed);
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("error", ex.getMessage());
+		}
+		return result;
+	}
+	
+	//删除需要
+	@ResponseBody
+	@RequestMapping(value = "rest/need", method = RequestMethod.PUT)
+	public JSONObject delete( @RequestBody PhaseNeed phaseNeed) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		try {
+			phaseNeedService.delete(phaseNeed);
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("error", ex.getMessage());
+		}
+		return result;
+	}
+	
+	//查询待已添加need列表
+	@ResponseBody
+	@RequestMapping(value = "rest/needs/{categoryId}", method = RequestMethod.GET)
+	public List<PhaseNeed> listNeeds(@PathVariable String phaseId) {
+		Phase phase = phaseService.get(phaseId);
+		if(phase==null)
+			return Lists.newArrayList();
+		PhaseNeed phaseNeedQuery = new PhaseNeed();
+		phaseNeedQuery.setPhase(phase);
+		return phaseNeedService.findList(phaseNeedQuery);
+	}
+	
+	//查询待添加need列表
+	@ResponseBody
+	@RequestMapping(value = "rest/pending-needs/{categoryId}", method = RequestMethod.GET)
+	public List<Motivation> listPendingNeeds(@PathVariable String phaseId) {
+		Map<String,String> params = Maps.newHashMap();
+		params.put("phaseId", phaseId);
+		params.put("name", "");//TODO 添加需要名称，能够根据名称过滤
+		return motivationService.findPendingListForPhase(params);
+	}
+
 
 	@RequiresPermissions("mod:phaseNeed:view")
 	@RequestMapping(value = "index")

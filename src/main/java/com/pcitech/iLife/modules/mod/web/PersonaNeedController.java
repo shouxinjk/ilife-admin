@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,6 +32,8 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.CategoryNeed;
+import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.MotivationCategory;
 import com.pcitech.iLife.modules.mod.entity.OccasionNeed;
@@ -44,6 +47,7 @@ import com.pcitech.iLife.modules.mod.service.PersonaNeedService;
 import com.pcitech.iLife.modules.mod.service.PersonaService;
 import com.pcitech.iLife.modules.mod.service.PhaseNeedService;
 import com.pcitech.iLife.modules.mod.service.PhaseService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 画像需要构成Controller
@@ -351,6 +355,62 @@ public class PersonaNeedController extends BaseController {
 		Map<String,String> result = Maps.newHashMap();
 		result.put("result", "weight updated.");
 		return result;
+	}
+	
+	//新增或修改权重
+	@ResponseBody
+	@RequestMapping(value = "rest/need", method = RequestMethod.POST)
+	public JSONObject upsert( @RequestBody PersonaNeed personaNeed) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(personaNeed.getId()==null||personaNeed.getId().trim().length()==0) {//认为是新增
+			personaNeed.setId(Util.get32UUID());
+			personaNeed.setIsNewRecord(true);
+		}
+		try {
+			personaNeedService.save(personaNeed);
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("error", ex.getMessage());
+		}
+		return result;
+	}
+	
+	//删除需要
+	@ResponseBody
+	@RequestMapping(value = "rest/need", method = RequestMethod.PUT)
+	public JSONObject delete( @RequestBody PersonaNeed personaNeed) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		try {
+			personaNeedService.delete(personaNeed);
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("error", ex.getMessage());
+		}
+		return result;
+	}
+	
+	//查询待已添加need列表
+	@ResponseBody
+	@RequestMapping(value = "rest/needs/{personaId}", method = RequestMethod.GET)
+	public List<PersonaNeed> listNeeds(@PathVariable String personaId) {
+		Persona persona = personaService.get(personaId);
+		if(persona==null)
+			return Lists.newArrayList();
+		PersonaNeed personaNeedQuery = new PersonaNeed();
+		personaNeedQuery.setPersona(persona);
+		return personaNeedService.findList(personaNeedQuery);
+	}
+	
+	//查询待添加need列表
+	@ResponseBody
+	@RequestMapping(value = "rest/pending-needs/{personaId}", method = RequestMethod.GET)
+	public List<Motivation> listPendingNeeds(@PathVariable String personaId) {
+		Map<String,String> params = Maps.newHashMap();
+		params.put("personaId", personaId);
+		params.put("name", "");//TODO 添加需要名称，能够根据名称过滤
+		return motivationService.findPendingListForPersona(params);
 	}
 
 	@RequiresPermissions("mod:personaNeed:view")
