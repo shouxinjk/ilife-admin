@@ -359,7 +359,7 @@ public class PersonaNeedController extends BaseController {
 	
 	//新增或修改权重
 	@ResponseBody
-	@RequestMapping(value = "rest/need", method = RequestMethod.POST)
+	@RequestMapping(value = "rest/persona-need", method = RequestMethod.POST)
 	public JSONObject upsert( @RequestBody PersonaNeed personaNeed) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
@@ -369,6 +369,7 @@ public class PersonaNeedController extends BaseController {
 		}
 		try {
 			personaNeedService.save(personaNeed);
+			result.put("data", personaNeed);
 			result.put("success", true);
 		}catch(Exception ex) {
 			result.put("error", ex.getMessage());
@@ -378,7 +379,7 @@ public class PersonaNeedController extends BaseController {
 	
 	//删除需要
 	@ResponseBody
-	@RequestMapping(value = "rest/need", method = RequestMethod.PUT)
+	@RequestMapping(value = "rest/persona-need", method = RequestMethod.PUT)
 	public JSONObject delete( @RequestBody PersonaNeed personaNeed) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);

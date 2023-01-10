@@ -285,7 +285,7 @@ public class CategoryNeedController extends BaseController {
 	
 	//新增或修改权重
 	@ResponseBody
-	@RequestMapping(value = "rest/need", method = RequestMethod.POST)
+	@RequestMapping(value = "rest/category-need", method = RequestMethod.POST)
 	public JSONObject upsert( @RequestBody CategoryNeed categoryNeed) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
@@ -295,6 +295,7 @@ public class CategoryNeedController extends BaseController {
 		}
 		try {
 			categoryNeedService.save(categoryNeed);
+			result.put("data", categoryNeed);
 			result.put("success", true);
 		}catch(Exception ex) {
 			result.put("error", ex.getMessage());
@@ -304,7 +305,7 @@ public class CategoryNeedController extends BaseController {
 	
 	//删除需要
 	@ResponseBody
-	@RequestMapping(value = "rest/need", method = RequestMethod.PUT)
+	@RequestMapping(value = "rest/category-need", method = RequestMethod.PUT)
 	public JSONObject delete( @RequestBody CategoryNeed categoryNeed) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
