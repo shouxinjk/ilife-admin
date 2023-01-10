@@ -28,7 +28,10 @@
 		<table id="treeTable" class="table table-striped table-bordered table-condensed">
 			<tr>
 				<th>名称</th>
+				<th>别名</th>
+				<th>LOGO</th>
 				<th>标签</th>
+				<th>描述</th>
 				<!--th>满足动机</th>
 				<th>满足诱因</th>
 				<th>适用条件</th>
@@ -45,8 +48,24 @@
 						${tpl.name}
 					</a></td>
 					<td>
-						${tpl.tags}
+						${tpl.alias}
 					</td>					
+					<td>
+						<c:choose>
+						   <c:when test="${fn:startsWith(tpl.logo, 'http')}">
+						   		<img width="48" height="48" src="${tpl.logo}"/>
+						   </c:when>
+						   <c:otherwise>
+						   		<img width="48" height="48" src="http://www.shouxinjk.net/static/logo/category/${tpl.logo}"/>
+						   </c:otherwise>
+						</c:choose>					
+					</td>	
+					<td>
+						${tpl.tags}
+					</td>
+					<td>
+						${tpl.description}
+					</td>									
 					<!--td>
 						${tpl.motivationNames}
 					</td>

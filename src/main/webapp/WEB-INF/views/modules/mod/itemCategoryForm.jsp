@@ -48,9 +48,27 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">别名：</label>
+			<div class="controls">
+				<form:input path="alias" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
+			<label class="control-label">logo：</label>
+			<div class="controls">
+				<form:input path="logo" htmlEscape="false" maxlength="512" class="input-xlarge "/>
+			</div>
+		</div>			
+		<div class="control-group">
+			<label class="control-label">描述：</label>
+			<div class="controls">
+				<form:textarea path="description" htmlEscape="false" rows="3" maxlength="1024" class="input-xlarge"/>
+			</div>
+		</div>	
+		<div class="control-group">
 			<label class="control-label">标签：</label>
 			<div class="controls">
-				<form:textarea path="tags" htmlEscape="false" rows="5" maxlength="1024" class="input-xlarge"/>
+				<form:textarea path="tags" htmlEscape="false" rows="3" maxlength="1024" class="input-xlarge"/>
 			</div>
 		</div>		
 		<!--div class="control-group">

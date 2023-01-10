@@ -21,6 +21,9 @@ import com.pcitech.iLife.common.persistence.TreeEntity;
 public class ItemCategory extends TreeEntity<ItemCategory> {
 	
 	private static final long serialVersionUID = 1L;
+	private String alias; //别名
+	private String logo; //logo
+	private String description; //描述
 	private String motivationIds;		// 满足动机id
 	private String occasionIds;		// 满足诱因id
 	private String motivationNames;		// 满足动机
@@ -37,6 +40,30 @@ public class ItemCategory extends TreeEntity<ItemCategory> {
 
 	public ItemCategory(String id){
 		super(id);
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getTags() {
