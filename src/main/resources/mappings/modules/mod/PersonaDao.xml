@@ -74,6 +74,34 @@
 		WHERE a.phase_id=#{phaseId}
 	</select>		
 	
+	<select id="findPagedList" resultType="Persona">
+		SELECT 
+			<include refid="personaColumns"/>
+		FROM mod_persona a
+		<include refid="personaJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="parentId!=null and parentId != ''">
+				AND a.parent_id = #{parentId}
+			</if>
+			<if test="phaseId!=null and phaseId != ''">
+				AND a.phase_id = #{phaseId}
+			</if>
+			<if test="hierarchyId!=null and hierarchyId != ''">
+				AND a.hierarchy_id = #{hierarchyId}
+			</if>
+		</where>
+		ORDER BY a.update_date DESC
+		limit #{from},#{to}
+	</select>
+		
+	
 	<select id="findList" resultType="Persona">
 		SELECT 
 			<include refid="personaColumns"/>

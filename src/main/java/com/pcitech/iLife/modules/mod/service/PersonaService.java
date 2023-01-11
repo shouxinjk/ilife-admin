@@ -5,6 +5,7 @@ package com.pcitech.iLife.modules.mod.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,11 @@ import com.pcitech.iLife.modules.mod.dao.PersonaDao;
 @Transactional(readOnly = true)
 public class PersonaService extends TreeService<PersonaDao, Persona> {
 
+	//按分页查询
+	public List<Persona> findPagedList(Map<String,Object> params){
+		return dao.findPagedList(params);
+	}
+	
 	public Persona get(String id) {
 		return super.get(id);
 	}

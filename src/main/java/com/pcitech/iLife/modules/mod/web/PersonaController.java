@@ -16,12 +16,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -32,6 +34,7 @@ import com.pcitech.iLife.modules.mod.entity.Board;
 import com.pcitech.iLife.modules.mod.entity.CategoryNeed;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Measure;
+import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.Occasion;
 import com.pcitech.iLife.modules.mod.entity.Persona;
 import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
@@ -363,5 +366,40 @@ public class PersonaController extends BaseController {
 		return personaNeedService.findList(personaNeed);
 	}
 	
+	//查询画像列表
+	@ResponseBody
+	@RequestMapping(value = "rest/personas", method = RequestMethod.GET)
+	public List<Persona> listPersonas() {
+		Persona persona = new Persona();
+		return personaService.findList(persona);
+	}
+	
+	//查询画像列表，分页查询
+	//参数：parentId,phaseId,hierarchyId,name,from,to
+	@ResponseBody
+	@RequestMapping(value = "rest/personas", method = RequestMethod.POST)
+	public List<Persona> listPagedPersonas(@RequestBody Map<String,Object> params) {
+		return personaService.findPagedList(params);
+	}
+	
+	//新增或修改persona
+	@ResponseBody
+	@RequestMapping(value = "rest/persona", method = RequestMethod.POST)
+	public JSONObject upsert( @RequestBody Persona persona) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(persona.getId()==null||persona.getId().trim().length()==0) {//认为是新增
+			persona.setId(Util.get32UUID());
+			persona.setIsNewRecord(true);
+		}
+		try {
+			personaService.save(persona);
+			result.put("data", persona);
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("error", ex.getMessage());
+		}
+		return result;
+	}
 	
 }

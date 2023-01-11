@@ -128,7 +128,7 @@ public class PhaseController extends BaseController {
 	//查询阶段列表，按照优先级排序
 	@ResponseBody
 	@RequestMapping(value = "rest/phases", method = RequestMethod.GET)
-	public List<Phase> listNeeds() {
+	public List<Phase> listPhases() {
 		Phase phase = new Phase();
 		return phaseService.findList(phase);
 	}
