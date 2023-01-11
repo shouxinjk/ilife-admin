@@ -565,9 +565,10 @@ public class ItemCategoryController extends BaseController {
 	
 	//查询所有类目
 	@ResponseBody
-	@RequestMapping(value = "rest/categories", method = RequestMethod.GET)
+	@RequestMapping(value = "rest/all-categories", method = RequestMethod.GET)
 	public List<ItemCategory> listAllCategories( ) {
-		return itemCategoryService.findList(null);//直接返回全部
+		ItemCategory q = new ItemCategory();
+		return itemCategoryService.findList(q);//直接返回全部
 	}
 }
 
