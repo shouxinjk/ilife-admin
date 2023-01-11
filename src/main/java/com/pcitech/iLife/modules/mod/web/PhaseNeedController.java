@@ -372,9 +372,9 @@ public class PhaseNeedController extends BaseController {
 		return result;
 	}
 	
-	//查询待已添加need列表
+	//查询已添加need列表
 	@ResponseBody
-	@RequestMapping(value = "rest/needs/{categoryId}", method = RequestMethod.GET)
+	@RequestMapping(value = "rest/needs/{phaseId}", method = RequestMethod.GET)
 	public List<PhaseNeed> listNeeds(@PathVariable String phaseId) {
 		Phase phase = phaseService.get(phaseId);
 		if(phase==null)
@@ -386,7 +386,7 @@ public class PhaseNeedController extends BaseController {
 	
 	//查询待添加need列表
 	@ResponseBody
-	@RequestMapping(value = "rest/pending-needs/{categoryId}", method = RequestMethod.GET)
+	@RequestMapping(value = "rest/pending-needs/{phaseId}", method = RequestMethod.GET)
 	public List<Motivation> listPendingNeeds(@PathVariable String phaseId) {
 		Map<String,String> params = Maps.newHashMap();
 		params.put("phaseId", phaseId);

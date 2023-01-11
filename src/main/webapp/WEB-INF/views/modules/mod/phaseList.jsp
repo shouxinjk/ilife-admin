@@ -57,17 +57,29 @@
 	<form id="listForm" method="post">
 		<table id="treeTable" class="table table-striped table-bordered table-condensed">
 			<tr>
+				<th>LOGO</th>
 				<th>名称</th>
 				<th>判定条件</th>
 				<th colspan="2">VALS需要构成</th>
 				<th>描述</th>
 				<th style="text-align:center;">排序</th>
-				<th>匹配用户</th>
 				<th>操作</th>
 			</tr>
 			<c:forEach items="${list}" var="tpl">
-				<tr id="${tpl.id}" pId="${tpl.parent.id ne '1'?tpl.parent.id:'0'}" width="80px">
-					<td><a href="${ctx}/mod/phase/form?id=${tpl.id}">${tpl.name}</a></td>
+				<tr id="${tpl.id}" pId="${tpl.parent.id ne '1'?tpl.parent.id:'0'}">
+				<td>
+						<c:choose>
+						   <c:when test="${fn:startsWith(tpl.logo, 'http')}">
+						   		<img width="48" height="48" src="${tpl.logo}"/>
+						   </c:when>
+						   <c:otherwise>
+						   		<img width="48" height="48" src="http://www.shouxinjk.net/static/logo/phase/${tpl.logo}"/>
+						   </c:otherwise>
+						</c:choose>						
+				</td>				
+				<td>
+					<a href="${ctx}/mod/phase/form?id=${tpl.id}">${tpl.name}</a>
+				</td>
 				<td width="120px">
  					${tpl.expression}
  				</td>
@@ -96,12 +108,11 @@
 						${tpl.sort}
 					</shiro:lacksPermission>
 				</td>
-				<td>0</td>
 				<td>
 					<shiro:hasPermission name="mod:phase:edit">
-						<a href="${ctx}/mod/phase/form?id=${tpl.id}">修改</a>
-						<a href="${ctx}/mod/phase/delete?id=${tpl.id}" onclick="return confirmx('要删除该阶段及所有子阶段吗？', this.href)">删除</a>
-						<a href="${ctx}/mod/phase/form?parent.id=${tpl.id}">添加下级栏目</a>
+						<a href="${ctx}/mod/phase/form?id=${tpl.id}">修改</a><br/>
+						<a href="${ctx}/mod/phase/delete?id=${tpl.id}" onclick="return confirmx('要删除该阶段及所有子阶段吗？', this.href)">删除</a><br/>
+						<a href="${ctx}/mod/phase/form?parent.id=${tpl.id}">添加下级</a>
 					</shiro:hasPermission>
 				</td>
 			</tr>

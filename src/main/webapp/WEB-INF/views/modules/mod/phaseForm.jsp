@@ -118,7 +118,13 @@
 					<div class="controls">
 						<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 					</div>
-				</div>					
+				</div>	
+				<div class="control-group">
+					<label class="control-label">LOGO：</label>
+					<div class="controls">
+						<form:input path="logo" htmlEscape="false" maxlength="512" class="input-xlarge "/>
+					</div>
+				</div>									
 				<div class="control-group">
 					<label class="control-label">判定条件：</label>
 					<div class="controls">

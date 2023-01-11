@@ -19,6 +19,7 @@ public class Phase extends TreeEntity<Phase> {
 	
 	private static final long serialVersionUID = 1L;
 	private String name;		// name
+	private String logo;	//logo
 	private String expression;		// expression
 	private Double alpha;		// alpha
 	private Double beta;		// beta
@@ -44,6 +45,14 @@ public class Phase extends TreeEntity<Phase> {
 		this.name = name;
 	}
 	
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+
 	@Length(min=0, max=500, message="expression长度必须介于 0 和 500 之间")
 	public String getExpression() {
 		return expression;
