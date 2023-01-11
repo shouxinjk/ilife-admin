@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.RankDao">
+    
+	<sql id="rankColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.category_id AS "category.id",
+		c.name AS "category.name",
+		c.logo AS "category.logo",
+		a.logo AS "logo",
+		a.description AS "description",
+		a.openid AS "openid",
+		a.nickname AS "nickname",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		uu.name AS "updateBy.name",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="rankJoins">
+		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN mod_item_category c ON c.id = a.category_id	
+	</sql>
+    
+	<select id="get" resultType="Rank">
+		SELECT 
+			<include refid="rankColumns"/>
+		FROM mod_rank a
+		<include refid="rankJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Rank">
+		SELECT 
+			<include refid="rankColumns"/>
+		FROM mod_rank a
+		<include refid="rankJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="category != null and category.id != null and category.id != ''">
+				AND a.category_id = #{category.id}
+			</if>
+			<if test="openid != null and openid != ''">
+				AND a.openid = #{openid}
+			</if>
+			<if test="nickname != null and nickname != ''">
+				AND a.nickname LIKE 
+					<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{nickname}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{nickname},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Rank">
+		SELECT 
+			<include refid="rankColumns"/>
+		FROM mod_rank a
+		<include refid="rankJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO mod_rank(
+			id,
+			name,
+			category_id,
+			logo,
+			description,
+			openid,
+			nickname,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{category.id},
+			#{logo},
+			#{description},
+			#{openid},
+			#{nickname},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mod_rank SET 	
+			name = #{name},
+			category_id = #{category.id},
+			logo = #{logo},
+			description = #{description},
+			openid = #{openid},
+			nickname = #{nickname},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE mod_rank SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

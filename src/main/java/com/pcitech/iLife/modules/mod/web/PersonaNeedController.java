@@ -392,7 +392,7 @@ public class PersonaNeedController extends BaseController {
 		return result;
 	}
 	
-	//查询待已添加need列表
+	//查询已添加need列表
 	@ResponseBody
 	@RequestMapping(value = "rest/needs/{personaId}", method = RequestMethod.GET)
 	public List<PersonaNeed> listNeeds(@PathVariable String personaId) {
