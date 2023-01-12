@@ -28,9 +28,9 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
-import com.pcitech.iLife.modules.mod.entity.Persona;
-import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
 import com.pcitech.iLife.modules.mod.entity.Rank;
+import com.pcitech.iLife.modules.mod.entity.RankItemDimension;
+import com.pcitech.iLife.modules.mod.service.RankItemDimensionService;
 import com.pcitech.iLife.modules.mod.service.RankService;
 import com.pcitech.iLife.util.Util;
 
@@ -45,6 +45,8 @@ public class RankController extends BaseController {
 
 	@Autowired
 	private RankService rankService;
+	@Autowired
+	private RankItemDimensionService rankItemDimensionService;
 	
 	@ModelAttribute
 	public Rank get(@RequestParam(required=false) String id) {
@@ -131,8 +133,21 @@ public class RankController extends BaseController {
 	//根据ID查询：用于根据dimension组合验证排序
 	@ResponseBody
 	@RequestMapping(value = "rest/rank/{id}", method = RequestMethod.GET)
-	public Rank getById( @PathVariable String id) {
-		return rankService.get(id);
+	public JSONObject getById( @PathVariable String id) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		Rank rank = rankService.get(id);
+		if(rank == null) {
+			result.put("msg", "no rank found by id:"+id);
+			return result;
+		}
+		result.put("rank", rank);
+		//查询item列表
+		RankItemDimension q = new RankItemDimension();
+		q.setRank(rank);
+		result.put("items", rankItemDimensionService.findList(q));
+		result.put("success", true);
+		return result;
 	}
 	
 	//删除需要
