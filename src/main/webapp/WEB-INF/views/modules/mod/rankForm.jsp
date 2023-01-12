@@ -46,6 +46,12 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">关键字：</label>
+			<div class="controls">
+				<form:input path="keywords" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+			</div>
+		</div>		
 		<!--div class="control-group">
 			<label class="control-label">LOGO，预留：</label>
 			<div class="controls">

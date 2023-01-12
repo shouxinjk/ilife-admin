@@ -17,6 +17,7 @@ public class Rank extends DataEntity<Rank> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// 名称
 	private ItemCategory category;		// 类目
+	private String keywords;	//主题关键字：用于搜索使用，能够限制排行榜条目
 	private String logo;		// LOGO，预留
 	private String description;		// 描述
 	private String openid;		// 创建者openid
@@ -47,6 +48,14 @@ public class Rank extends DataEntity<Rank> {
 		this.category = category;
 	}
 	
+	public String getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
+	}
+
 	@Length(min=0, max=512, message="LOGO，预留长度必须介于 0 和 512 之间")
 	public String getLogo() {
 		return logo;

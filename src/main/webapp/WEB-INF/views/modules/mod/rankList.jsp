@@ -47,6 +47,7 @@
 			<tr>
 				<th>名称</th>
 				<th>类目</th>
+				<th>主题关键字</th>
 				<th>描述</th>
 				<th>创建者openid</th>
 				<th>创建者昵称</th>
@@ -63,6 +64,9 @@
 				<td>
 					${rank.category.name}
 				</td>
+				<td>
+					${rank.keywords}
+				</td>				
 				<td>
 					${rank.description}
 				</td>
