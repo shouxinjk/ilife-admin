@@ -241,7 +241,7 @@ public class ItemDimensionController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/featured-dimension", method = RequestMethod.GET)
-	public List<ItemDimension> listFeaturedDimensionByCategoryId(String categoryId) {
+	public List<ItemDimension> listFeaturedDimensionByCategoryId(@RequestParam String categoryId) {
 		ItemCategory category = itemCategoryService.get(categoryId);
 		if(category==null)//如果目录没有则直接返回空
 			return Lists.newArrayList();
