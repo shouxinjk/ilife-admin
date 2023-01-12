@@ -183,10 +183,16 @@ public class ItemDimensionController extends BaseController {
 		if(category ==null)//如果category不存在则返回空白列表
 			return Lists.newArrayList();
 		if(parentDimension==null) {//对于维度根节点ID与类目ID不同的情况，parentDimension可能为空，需要另外查询
+			//设置类目维度根节点
 			ItemDimension categoryRootDimension = new ItemDimension();
 			categoryRootDimension.setCategory(category);
 			categoryRootDimension.setId("1");//指定为1
-			List<ItemDimension> rootDimension = itemDimensionService.findList(categoryRootDimension);
+			//设置查询条件：查询根节点下级节点，并且取第一个
+			ItemDimension q = new ItemDimension();
+			q.setCategory(category);
+			q.setParent(categoryRootDimension);
+			List<ItemDimension> rootDimension = itemDimensionService.findList(q);
+			
 			if(rootDimension.size()==0) {//如果没有则表示数据错误，直接返回空白列表
 				return Lists.newArrayList();
 			}else {
