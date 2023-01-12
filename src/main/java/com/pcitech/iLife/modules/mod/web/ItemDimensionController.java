@@ -178,8 +178,22 @@ public class ItemDimensionController extends BaseController {
 	@RequestMapping(value = "rest/dim-tree", method = RequestMethod.GET)
 	public List<Map<String, Object>> listDiemensionTreeForSunburstChart(String categoryId,String parentId) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		ItemDimension parentDimension = itemDimensionService.get(parentId);//以当前维度为父节点查询
 		ItemCategory category = itemCategoryService.get(categoryId);
+		ItemDimension parentDimension = itemDimensionService.get(parentId);//以当前维度为父节点查询
+		if(category ==null)//如果category不存在则返回空白列表
+			return Lists.newArrayList();
+		if(parentDimension==null) {//对于维度根节点ID与类目ID不同的情况，parentDimension可能为空，需要另外查询
+			ItemDimension categoryRootDimension = new ItemDimension();
+			categoryRootDimension.setCategory(category);
+			categoryRootDimension.setId("1");//指定为1
+			List<ItemDimension> rootDimension = itemDimensionService.findList(categoryRootDimension);
+			if(rootDimension.size()==0) {//如果没有则表示数据错误，直接返回空白列表
+				return Lists.newArrayList();
+			}else {
+				parentDimension = rootDimension.get(0);
+			}
+		}
+		
 		ItemDimension q = new ItemDimension(); 
 		q.setParent(parentDimension);
 		q.setCategory(category);
