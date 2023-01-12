@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,11 @@ import com.pcitech.iLife.modules.mod.dao.RankDao;
 @Service
 @Transactional(readOnly = true)
 public class RankService extends CrudService<RankDao, Rank> {
-
+	//分页查询
+	public List<Rank> findPagedList(Map<String,Object> params){
+		return dao.findPagedList(params);
+	}
+	
 	public Rank get(String id) {
 		return super.get(id);
 	}

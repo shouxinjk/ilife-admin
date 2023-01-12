@@ -3,6 +3,9 @@
  */
 package com.pcitech.iLife.modules.mod.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
 import com.pcitech.iLife.modules.mod.entity.Rank;
@@ -14,5 +17,6 @@ import com.pcitech.iLife.modules.mod.entity.Rank;
  */
 @MyBatisDao
 public interface RankDao extends CrudDao<Rank> {
-	
+	//分页查询
+	public List<Rank> findPagedList(Map<String,Object> params);
 }

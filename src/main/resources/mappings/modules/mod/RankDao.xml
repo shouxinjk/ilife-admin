@@ -34,6 +34,32 @@
 		WHERE a.id = #{id}
 	</select>
 	
+	<!-- 分页查询：根据name/categoryId/openid -->
+	<select id="findPagedList" resultType="Rank">
+		SELECT 
+			<include refid="rankColumns"/>
+		FROM mod_rank a
+		<include refid="rankJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="categoryId!=null and categoryId != ''">
+				AND a.category_id = #{categoryId}
+			</if>
+			<if test="openid!=null and openid != ''">
+				AND a.openid = #{openid}
+			</if>
+		</where>
+		ORDER BY a.update_date DESC
+		limit #{from},#{to}
+	</select>
+	
+	
 	<select id="findList" resultType="Rank">
 		SELECT 
 			<include refid="rankColumns"/>

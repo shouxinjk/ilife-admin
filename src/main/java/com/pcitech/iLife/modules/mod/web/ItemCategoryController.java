@@ -570,5 +570,12 @@ public class ItemCategoryController extends BaseController {
 		ItemCategory q = new ItemCategory();
 		return itemCategoryService.findList(q);//直接返回全部
 	}
+	
+	//查询所有建立有排行榜的
+	@ResponseBody
+	@RequestMapping(value = "rest/rank-categories", method = RequestMethod.GET)
+	public List<ItemCategory> listCategoriesHasRank( ) {
+		return itemCategoryService.findListWithRank();//直接返回全部
+	}
 }
 

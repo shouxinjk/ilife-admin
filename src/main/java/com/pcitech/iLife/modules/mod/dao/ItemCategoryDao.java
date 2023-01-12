@@ -22,4 +22,7 @@ public interface ItemCategoryDao extends TreeDao<ItemCategory> {
 
 	public List<ItemCategory> findByParentId(String parentId);
 	
+	//查询建立有排行榜的类目
+	public List<ItemCategory> findListWithRank();
+	
 }

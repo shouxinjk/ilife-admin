@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.mod.web;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -94,10 +95,17 @@ public class RankController extends BaseController {
 	//查询列表：支持根据category.id、name、openid、nickname等查询得到
 	@ResponseBody
 	@RequestMapping(value = "rest/ranks", method = RequestMethod.POST)
-	public List<Rank> listNeeds(@RequestBody Rank rank) {
+	public List<Rank> listRanks(@RequestBody Rank rank) {
 		if(rank==null)
 			return Lists.newArrayList();
 		return rankService.findList(rank);
+	}
+	
+	//查询分页列表：支持根据categoryId、name、openid查询，from、to为分页参数
+	@ResponseBody
+	@RequestMapping(value = "rest/paged-ranks", method = RequestMethod.POST)
+	public List<Rank> listPagedRanks(@RequestBody Map<String,Object> params) {
+		return rankService.findPagedList(params);
 	}
 	
 	//新增或修改

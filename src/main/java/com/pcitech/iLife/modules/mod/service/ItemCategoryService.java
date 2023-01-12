@@ -31,6 +31,10 @@ public class ItemCategoryService extends TreeService<ItemCategoryDao, ItemCatego
 		return super.get(id);
 	}
 	
+	public List<ItemCategory> findListWithRank(){
+		return dao.findListWithRank();
+	}
+	
 	public List<ItemCategory> findList(ItemCategory itemCategory) {
 		return super.findList(itemCategory);
 	}

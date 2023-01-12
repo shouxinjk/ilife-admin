@@ -39,6 +39,19 @@
 		<include refid="itemCategoryJoins"/>
 		WHERE a.id = #{id}
 	</select>
+
+	<!-- 查询所有建立有排行榜的类目列表 -->
+	<select id="findListWithRank" resultType="ItemCategory">
+		SELECT 
+			<include refid="itemCategoryColumns"/>
+		FROM mod_item_category a
+		<include refid="itemCategoryJoins"/>
+		<where>
+			a.del_flag = 0
+			AND a.id in (select distinct category_id from mod_rank)				
+		</where>
+	</select>
+	
 	
 	<select id="findList" resultType="ItemCategory">
 		SELECT 
