@@ -144,8 +144,10 @@ public class RankController extends BaseController {
 			result.put("data", rank);
 			result.put("success", true);
 			//保存所有条目
-			if(rank.getItems()!=null) {
-				for(RankItemDimension item:rank.getItems()) {
+			List<RankItemDimension> rankItems = rank.getItems();
+			rank = rankService.get(rank);//重新加载，避免因为状态为new重复创建
+			if(rankItems!=null&&rankItems.size()>0) {
+				for(RankItemDimension item:rankItems) {
 					if(item.getDimension()==null)//如果未设置dimension则直接忽略
 						continue;
 					item.setRank(rank);
