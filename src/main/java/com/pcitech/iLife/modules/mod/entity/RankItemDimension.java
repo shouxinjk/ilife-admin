@@ -12,7 +12,7 @@ import com.pcitech.iLife.common.persistence.DataEntity;
  * @author ilife
  * @version 2023-01-11
  */
-public class RankItemDimension extends DataEntity<RankItemDimension> {
+public class RankItemDimension extends DataEntity<RankItemDimension> implements Comparable<RankItemDimension> {
 	
 	private static final long serialVersionUID = 1L;
 	private Rank rank;		// 排行榜
@@ -49,6 +49,11 @@ public class RankItemDimension extends DataEntity<RankItemDimension> {
 
 	public void setPriority(Double priority) {
 		this.priority = priority;
+	}
+
+	@Override
+	public int compareTo(RankItemDimension item) {
+		return item.getPriority() - this.priority>=0?1:-1;
 	}
 	
 }

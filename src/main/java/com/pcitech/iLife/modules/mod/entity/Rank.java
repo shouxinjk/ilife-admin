@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.entity;
 
+import java.util.List;
+
 import org.hibernate.validator.constraints.Length;
 
 import com.pcitech.iLife.common.persistence.DataEntity;
@@ -22,6 +24,7 @@ public class Rank extends DataEntity<Rank> {
 	private String description;		// 描述
 	private String openid;		// 创建者openid
 	private String nickname;		// 创建者昵称
+	private List<RankItemDimension> items; // 包含条目。仅用于创建时提交数据，不能直接读取
 	
 	public Rank() {
 		super();
@@ -90,6 +93,14 @@ public class Rank extends DataEntity<Rank> {
 
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
+	}
+
+	public List<RankItemDimension> getItems() {
+		return items;
+	}
+
+	public void setItems(List<RankItemDimension> items) {
+		this.items = items;
 	}
 	
 }

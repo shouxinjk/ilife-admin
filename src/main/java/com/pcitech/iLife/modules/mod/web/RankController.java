@@ -3,6 +3,8 @@
  */
 package com.pcitech.iLife.modules.mod.web;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -117,13 +119,47 @@ public class RankController extends BaseController {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		if(rank.getId()==null||rank.getId().trim().length()==0) {//认为是新增
-			rank.setId(Util.get32UUID());
-			rank.setIsNewRecord(true);
+			if(rank.getItems()!=null && rank.getItems().size()>0) { //如果有条目，则根据条目计算唯一值
+				rank.setIsNewRecord(true);
+				List<RankItemDimension> sortedItems = rank.getItems();
+				Collections.sort(sortedItems, new Comparator<RankItemDimension>(){
+					@Override
+					public int compare(RankItemDimension item1, RankItemDimension item2) {
+						return item1.getPriority() - item2.getPriority()>=0?1:-1;
+					}
+				});
+				StringBuffer sb = new StringBuffer();
+				for(RankItemDimension item:sortedItems) {
+					sb.append(item.getDimension().getId());
+				}
+				if(rank.getKeywords()!=null && rank.getKeywords().trim().length()>0)
+					sb.append(rank.getKeywords().trim());
+				rank.setId(Util.md5(sb.toString()));//根据条目规则计算唯一值
+			}else {	
+				rank.setId(Util.get32UUID());
+			}
 		}
 		try {
 			rankService.save(rank);
 			result.put("data", rank);
 			result.put("success", true);
+			//保存所有条目
+			if(rank.getItems()!=null) {
+				for(RankItemDimension item:rank.getItems()) {
+					if(item.getDimension()==null)//如果未设置dimension则直接忽略
+						continue;
+					item.setRank(rank);
+					if(item.getId()==null || item.getId().trim().length()==0) {
+						item.setIsNewRecord(true);
+						item.setId(Util.md5(rank.getId()+item.getDimension().getId()));//一个排行榜内一个维度仅出现一次
+					}
+					try {
+						rankItemDimensionService.save(item);
+					}catch(Exception ex) {
+						//do nothing
+					}
+				}
+			}
 		}catch(Exception ex) {
 			result.put("error", ex.getMessage());
 		}
