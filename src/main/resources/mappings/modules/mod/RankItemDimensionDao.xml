@@ -8,6 +8,7 @@
 		r.name AS "rank.name",
 		a.dimension_id AS "dimension.id",
 		d.name AS "dimension.name",
+		d.weight AS "dimension.weight",
 		d.description AS "dimension.description",
 		a.priority AS "priority",
 		a.create_by AS "createBy.id",
@@ -51,7 +52,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.priority DESC
+				ORDER BY a.rank_id,a.priority DESC
 			</otherwise>
 		</choose>
 	</select>

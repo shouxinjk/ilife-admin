@@ -109,7 +109,15 @@ public class RankController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "rest/paged-ranks", method = RequestMethod.POST)
 	public List<Rank> listPagedRanks(@RequestBody Map<String,Object> params) {
-		return rankService.findPagedList(params);
+		List<Rank> ranks = rankService.findPagedList(params);
+		List<Rank> result = Lists.newArrayList();
+		for(Rank rank:ranks) {
+			RankItemDimension q = new RankItemDimension();
+			q.setRank(rank);
+			rank.setItems(rankItemDimensionService.findList(q));
+			result.add(rank);
+		}
+		return result;
 	}
 	
 	//新增或修改
