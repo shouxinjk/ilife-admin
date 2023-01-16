@@ -35,7 +35,7 @@ public class Broker extends DataEntity<Broker> {
 	private String email;		// 邮件
 	private int hierarchy;		// 层级
 	private String securityNo;		// 身份证号码
-	private String level;		// 等级
+	private Integer level;		// 等级
 	private String alipayAccount;		// 支付宝账号
 	private String alipayAccountName;		// 支付宝账户名
 	private String status;		// 账户状态
@@ -147,12 +147,11 @@ public class Broker extends DataEntity<Broker> {
 		this.securityNo = securityNo;
 	}
 	
-	@Length(min=0, max=50, message="等级长度必须介于 0 和 50 之间")
-	public String getLevel() {
+	public Integer getLevel() {
 		return level;
 	}
 
-	public void setLevel(String level) {
+	public void setLevel(Integer level) {
 		this.level = level;
 	}
 	

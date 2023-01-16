@@ -49,7 +49,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.level DESC
+				ORDER BY a.level
 			</otherwise>
 		</choose>
 	</select>
@@ -67,7 +67,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.level DESC
+				ORDER BY a.level
 			</otherwise>
 		</choose>
 	</select>
