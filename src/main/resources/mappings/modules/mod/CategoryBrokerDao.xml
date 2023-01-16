@@ -13,6 +13,8 @@
 		bb.name AS "badge.name",
 		bb.key AS "badge.key",
 		bb.level AS "badge.level",
+		bb.icon AS "badge.icon",
+		bb.description AS "badge.description",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",

@@ -35,8 +35,12 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.mod.entity.Badge;
 import com.pcitech.iLife.modules.mod.entity.Broker;
+import com.pcitech.iLife.modules.mod.entity.CategoryBroker;
+import com.pcitech.iLife.modules.mod.service.BadgeService;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
+import com.pcitech.iLife.modules.mod.service.CategoryBrokerService;
 import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.entity.User;
 import com.pcitech.iLife.modules.sys.service.DictService;
@@ -65,6 +69,12 @@ public class BrokerController extends BaseController {
 	
 	@Autowired
 	private BrokerService brokerService;
+	
+	@Autowired
+	private CategoryBrokerService categoryBrokerService;
+	
+	@Autowired
+	private BadgeService badgeService;
 	
 	@ModelAttribute
 	public Broker get(@RequestParam(required=false) String id) {
@@ -371,6 +381,11 @@ public class BrokerController extends BaseController {
 			//**/
 			//20220416 临时修复结束
 		}else {
+			//查询徽章
+			CategoryBroker categoryBroker = new CategoryBroker();
+			categoryBroker.setBroker(broker);
+			broker.setBadges(categoryBrokerService.findList(categoryBroker));
+			
 			result.put("status", true);
 			result.put("data", broker);
 		}
@@ -390,6 +405,11 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 	if(broker == null) {//如果未找到对应的达人直接返回空
 		result.put("status", false);
 	}else {
+		//查询徽章
+		CategoryBroker categoryBroker = new CategoryBroker();
+		categoryBroker.setBroker(broker);
+		broker.setBadges(categoryBrokerService.findList(categoryBroker));
+		
 		result.put("status", true);
 		result.put("data", broker);
 	}
@@ -449,6 +469,11 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 		if(broker == null) {//如果未找到对应的达人直接返回空
 			result.put("status", false);
 		}else {
+			//查询徽章
+			CategoryBroker categoryBroker = new CategoryBroker();
+			categoryBroker.setBroker(broker);
+			broker.setBadges(categoryBrokerService.findList(categoryBroker));
+			
 			result.put("status", true);
 			result.put("data", broker);
 		}
@@ -550,6 +575,27 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 			result.put("description","Broker created successfully");
 			Broker newbroker = brokerService.get(broker);
 			result.put("data", newbroker);
+			
+			//添加徽章
+			Badge badge = new Badge();
+			badge.setKey("broker");
+			List<Badge> badges = badgeService.findList(badge);
+			if(badges.size()>0) {
+				badge = badges.get(0);
+				CategoryBroker categoryBroker = new CategoryBroker();
+				categoryBroker.setBroker(newbroker);
+				categoryBroker.setBadge(badge);//如有多个则取第一个
+//				categoryBroker.setCategory(null);//不限目录
+				categoryBroker.setId(Util.md5(newbroker.getId()+badge.getId()));
+				categoryBroker.setIsNewRecord(true);//注册时新建
+				try {
+					categoryBrokerService.save(categoryBroker);
+				}catch(Exception ex) {
+					//do nothing
+				}
+			}
+
+			
 		}
 		//检查虚拟豆
 		if(broker.getPoints()==0) {
@@ -590,6 +636,27 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 				}
 				broker.setNickname(nickname);
 				brokerService.save(broker);
+				
+				//添加徽章
+				Broker newbroker = brokerService.get(broker);
+				Badge badge = new Badge();
+				badge.setKey("broker");
+				List<Badge> badges = badgeService.findList(badge);
+				if(badges.size()>0) {
+					badge = badges.get(0);
+					CategoryBroker categoryBroker = new CategoryBroker();
+					categoryBroker.setBroker(newbroker);
+					categoryBroker.setBadge(badge);//如有多个则取第一个
+//					categoryBroker.setCategory(null);//不限目录
+					categoryBroker.setId(Util.md5(newbroker.getId()+badge.getId()));
+					categoryBroker.setIsNewRecord(true);//注册时新建
+					try {
+						categoryBrokerService.save(categoryBroker);
+					}catch(Exception ex) {
+						//do nothing
+					}
+				}
+				
 				//发送通知到上级达人
 				JSONObject json = new JSONObject();
 				json.put("title", "静默达人自动注册");

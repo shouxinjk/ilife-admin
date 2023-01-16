@@ -37,12 +37,11 @@
 			<label class="control-label">授权类目：</label>
 			<div class="controls">
 				 <sys:treeselect id="category" name="category.id" value="${categoryBroker.category.id}" labelName="category.name" labelValue="${categoryBroker.category.name}"
-					title="商品类目" url="/mod/itemCategory/treeData" extId="${category.id}" cssClass="required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+					title="商品类目" url="/mod/itemCategory/treeData" extId="${category.id}" />
 			</div>			
 		</div>
 		<div class="control-group">
-			<label class="control-label">达人/定制师/专家：</label>
+			<label class="control-label">达人：</label>
 			<div class="controls">
 				<sys:treeselect id="broker" name="broker.id" value="${categoryBroker.broker.id}" labelName="broker.nickname" labelValue="${categoryBroker.broker.nickname}"
 					title="达人/定制师/专家" url="/mod/broker/treeData" extId="${broker.id}" cssClass="required" allowClear="true"/>

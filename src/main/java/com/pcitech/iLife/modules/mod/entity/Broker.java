@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -52,6 +53,8 @@ public class Broker extends DataEntity<Broker> {
 	private String companyTelephone;//公司联系人电话
 	
 	private String accountType = "person"; //结算账户类型
+	
+	private List<CategoryBroker> badges; //徽章列表：包含已经获得授权的徽章：仅用于读取
 	
 	public Broker() {
 		super();
@@ -283,6 +286,14 @@ public class Broker extends DataEntity<Broker> {
 
 	public void setOrgnization(Office orgnization) {
 		this.orgnization = orgnization;
+	}
+
+	public List<CategoryBroker> getBadges() {
+		return badges;
+	}
+
+	public void setBadges(List<CategoryBroker> badges) {
+		this.badges = badges;
 	}
 	
 }
