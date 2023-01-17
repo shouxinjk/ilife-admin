@@ -635,7 +635,8 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 			Broker newbroker = brokerService.get(broker);
 			result.put("data", newbroker);
 			
-			//添加徽章
+			//添加徽章：仅对领域专家、学者才需要申请，否则直接通过等级完成
+			/**
 			Badge badge = new Badge();
 			badge.setKey("broker");
 			List<Badge> badges = badgeService.findList(badge);
@@ -653,6 +654,7 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 					//do nothing
 				}
 			}
+			//**/
 
 			
 		}
@@ -697,7 +699,8 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 				broker.setNickname(nickname);
 				brokerService.save(broker);
 				
-				//添加徽章
+				/**
+				//添加徽章:仅学者、专家才需要，否则直接通过等级完成
 				Broker newbroker = brokerService.get(broker);
 				Badge badge = new Badge();
 				badge.setKey("broker");
@@ -716,6 +719,7 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 						//do nothing
 					}
 				}
+				//**/
 				
 				//发送通知到上级达人
 				JSONObject json = new JSONObject();

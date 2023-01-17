@@ -42,9 +42,13 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>类目</th>
-				<th>达人/定制师/专家</th>
 				<th>授权类型</th>
+				<th>达人/专家</th>
+				<th>关联类目</th>
+				<th>姓名</th>
+				<th>公司/院校</th>
+				<th>身份/职位</th>
+				<th>状态</th>							
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:categoryBroker:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -52,15 +56,27 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="categoryBroker">
 			<tr>
-				<td><a href="${ctx}/mod/categoryBroker/form?id=${categoryBroker.id}">
-					${categoryBroker.category.name}
-				</a></td>
-				<td>
-					${categoryBroker.broker.nickname}
-				</td>
 				<td>
 					${categoryBroker.badge.name}
+				</td>		
+				<td>
+					${categoryBroker.broker.nickname}
+				</td>					
+				<td>
+					${categoryBroker.category.name}
 				</td>
+				<td>
+					${categoryBroker.name}
+				</td>
+				<td>
+					${categoryBroker.company}
+				</td>
+				<td>
+					${categoryBroker.job}
+				</td>
+				<td>
+					${categoryBroker.status}
+				</td>				
 				<td>
 					<fmt:formatDate value="${categoryBroker.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
