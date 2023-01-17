@@ -460,7 +460,13 @@
 					<div class="controls">
 						<form:input path="job" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 					</div>
-				</div>				
+				</div>	
+				<div class="control-group">
+					<label class="control-label">个人简介：</label>
+					<div class="controls">
+						<form:textarea path="description" htmlEscape="false" maxlength="512" class="input-xlarge " rows="4"/>
+					</div>
+				</div>							
 				<div class="control-group">
 					<label class="control-label">身份证号码：</label>
 					<div class="controls">

@@ -31,6 +31,7 @@ public class Broker extends DataEntity<Broker> {
 	private String nickname;		// 昵称：从微信获取
 	private String avatarUrl;		//头像：从微信获取
 	private String name;		// 真实姓名
+	private String description;		//简介
 	private String job;	//工作
 	private String phone;		// 电话号码
 	private String email;		// 邮件
@@ -113,6 +114,14 @@ public class Broker extends DataEntity<Broker> {
 		this.name = name;
 	}
 	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public String getJob() {
 		return job;
 	}
