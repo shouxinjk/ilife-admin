@@ -141,7 +141,7 @@ public class CategoryBrokerController extends BaseController {
 		}
 		//否则设置数据：保证唯一性:brokerId+badgeId+categoryId
 		if(categoryBroker.getId()==null || categoryBroker.getId().trim().length()==0) {
-			categoryBroker.setId(Util.md5(broker.getId()+badge.getId()+categoryBroker.getCategory()!=null?categoryBroker.getCategory().getId():""));
+			categoryBroker.setId(Util.md5(broker.getId()+badge.getId()+(categoryBroker.getCategory()!=null?categoryBroker.getCategory().getId():"")));
 			categoryBroker.setIsNewRecord(true);
 		}
 		//保存勋章
@@ -163,7 +163,7 @@ public class CategoryBrokerController extends BaseController {
 	
 	@ResponseBody
 	@RequestMapping(value = "rest/badge/{id}", method = RequestMethod.GET)
-	public CategoryBroker addBadges(@PathVariable String id) {
+	public CategoryBroker getCategoryBrokerById(@PathVariable String id) {
 		return categoryBrokerService.get(id);
 	}
 	
