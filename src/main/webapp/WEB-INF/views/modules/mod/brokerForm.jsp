@@ -456,6 +456,12 @@
 					</div>
 				</div>
 				<div class="control-group">
+					<label class="control-label">身份职位：</label>
+					<div class="controls">
+						<form:input path="job" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+					</div>
+				</div>				
+				<div class="control-group">
 					<label class="control-label">身份证号码：</label>
 					<div class="controls">
 						<form:input path="securityNo" htmlEscape="false" maxlength="50" class="input-xlarge "/>

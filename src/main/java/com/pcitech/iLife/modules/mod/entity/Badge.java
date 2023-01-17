@@ -19,7 +19,7 @@ public class Badge extends DataEntity<Badge> {
 	private String description;		// 描述
 	private String icon;		// 图标
 	private String key;		// KEY
-	private String level;		// 等级
+	private Integer level;		// 等级
 	
 	public Badge() {
 		super();
@@ -64,13 +64,12 @@ public class Badge extends DataEntity<Badge> {
 	public void setKey(String key) {
 		this.key = key;
 	}
-	
-	@Length(min=0, max=4, message="等级长度必须介于 0 和 4 之间")
-	public String getLevel() {
+
+	public Integer getLevel() {
 		return level;
 	}
 
-	public void setLevel(String level) {
+	public void setLevel(Integer level) {
 		this.level = level;
 	}
 	

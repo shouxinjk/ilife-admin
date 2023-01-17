@@ -557,6 +557,59 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 	}
 	
 	/**
+	 * 授权。针对某一个达人进行。支持传递badge及broker
+	 * {
+	 * 	broker:{id:xxx},
+	 *  badge: {id:xxx}
+	 * }
+	 * 或者
+	 * {
+	 * 	broker:{id:xxx},
+	 *  badge: {key:xxx}
+	 * }
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/badge/badges", method = RequestMethod.POST)
+	public JSONObject addBadges(@RequestBody CategoryBroker categoryBroker) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		//检查数据
+		Badge badge = badgeService.get(categoryBroker.getBadge());
+		//如果为空则尝试根据key查询
+		if(badge == null && categoryBroker.getBadge().getKey()!=null && categoryBroker.getBadge().getKey().trim().length()>0) {
+			List<Badge> badges = badgeService.findList(categoryBroker.getBadge());
+			if(badges.size()>0)
+				badge = badges.get(0);
+			
+		}
+		Broker broker = brokerService.get(categoryBroker.getBroker());
+		if(badge == null || broker == null) {
+			result.put("msg", "bot badge and broker are required.");
+			return result;
+		}
+		//否则设置数据：保证唯一性:brokerId+badgeId+categoryId
+		if(categoryBroker.getId()==null || categoryBroker.getId().trim().length()==0) {
+			categoryBroker.setId(Util.md5(broker.getId()+badge.getId()+categoryBroker.getCategory()!=null?categoryBroker.getCategory().getId():""));
+			categoryBroker.setIsNewRecord(true);
+		}
+		//保存勋章
+		try {
+			categoryBrokerService.save(categoryBroker);
+		}catch(Exception ex) {
+			result.put("error", "save badge to broker failed.");
+			return result;
+		}
+		//根据勋章修改达人等级：需要验证，仅对低级别进行修改
+		if(broker.getLevel()<badge.getLevel()) {
+			broker.setLevel(badge.getLevel());
+			brokerService.save(broker);
+		}
+		result.put("data", broker);
+		result.put("success", true);
+		return result;
+	}
+	
+	/**
 	 * 给指定ID的达人添加下级达人
 	 */
 	@ResponseBody
@@ -568,7 +621,13 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 			result.put("status",false);
 			result.put("description","Cannot find parent broker by id:"+id);
 		}else {
+			if(broker.getId()==null || broker.getId().trim().length()==0) {
+				broker.setId(Util.get32UUID());
+				broker.setIsNewRecord(true);
+			}
 			broker.setParent(parent);
+			if(broker.getLevel()<=4)
+				broker.setLevel(4);//设置等级
 			broker.setHierarchy(parent.getHierarchy()+1);//默认设置为上级达人层级+1
 			brokerService.save(broker);
 			result.put("status",true);
@@ -627,6 +686,7 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 				broker.setId(Util.md5(broker.getOpenid()));
 				broker.setIsNewRecord(true);
 				broker.setParent(parentBroker);
+				broker.setLevel(4);//设置等级
 				broker.setHierarchy(parentBroker.getHierarchy()+1);
 //				broker.setOpenid(broker.getOpenid());
 				broker.setPoints(20);//默认设置
