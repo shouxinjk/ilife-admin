@@ -139,6 +139,8 @@ public class CategoryBrokerController extends BaseController {
 			result.put("msg", "bot badge and broker are required.");
 			return result;
 		}
+		categoryBroker.setBadge(badge);
+		categoryBroker.setBroker(broker);
 		//否则设置数据：保证唯一性:brokerId+badgeId+categoryId
 		if(categoryBroker.getId()==null || categoryBroker.getId().trim().length()==0) {
 			categoryBroker.setId(Util.md5(broker.getId()+badge.getId()+(categoryBroker.getCategory()!=null?categoryBroker.getCategory().getId():"")));
