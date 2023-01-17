@@ -154,7 +154,7 @@ public class CategoryBrokerController extends BaseController {
 			return result;
 		}
 		//根据勋章修改达人等级：需要验证，仅对低级别进行修改
-		if(broker.getLevel()<badge.getLevel()) {
+		if("ready".equalsIgnoreCase(categoryBroker.getStatus()) && broker.getLevel()<badge.getLevel()) {
 			broker.setLevel(badge.getLevel());
 			brokerService.save(broker);
 		}
