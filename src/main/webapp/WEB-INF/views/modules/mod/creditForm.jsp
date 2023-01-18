@@ -52,10 +52,15 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">贡献值：</label>
+			<div class="controls">
+				<form:input path="points" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">名称：</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">

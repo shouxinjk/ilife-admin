@@ -21,6 +21,7 @@ public class Credit extends DataEntity<Credit> {
 	private String description;		// 描述
 	private String icon;		// 图标
 	private Integer priority; //排序优先级
+	private Integer points; //贡献值
 	
 	public Credit() {
 		super();
@@ -81,6 +82,14 @@ public class Credit extends DataEntity<Credit> {
 
 	public void setPriority(Integer priority) {
 		this.priority = priority;
+	}
+
+	public Integer getPoints() {
+		return points;
+	}
+
+	public void setPoints(Integer points) {
+		this.points = points;
 	}
 	
 }

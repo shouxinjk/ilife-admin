@@ -10,6 +10,7 @@
 		a.description AS "description",
 		a.icon AS "icon",
 		a.priority AS "priority",
+		a.points AS "points",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -85,6 +86,7 @@
 			description,
 			icon,
 			priority,
+			points,
 			create_by,
 			create_date,
 			update_by,
@@ -98,6 +100,7 @@
 			#{description},
 			#{icon},
 			#{priority},
+			#{points},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -114,6 +117,7 @@
 			description = #{description},
 			icon = #{icon},
 			priority = #{priority},
+			points = #{points},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}
