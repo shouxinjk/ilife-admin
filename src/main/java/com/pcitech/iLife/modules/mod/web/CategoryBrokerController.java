@@ -205,22 +205,25 @@ public class CategoryBrokerController extends BaseController {
 		JSONObject json = new JSONObject();
 		json.put("openid", broker.getOpenid());//发给请求者
 		String remark = "";
+		String respond = "审核中";
 		if("ready".equalsIgnoreCase(msg.getString("status"))) {
-			json.put("title", badge.getName()+"审核完成");
+			respond = "已通过";
+			json.put("title", badge.getName()+"申请通过");
 			if(broker.getLevel()<badge.getLevel()) {
 				broker.setLevel(badge.getLevel());
 				brokerService.save(broker);
 			}
-			remark = "申请已通过，点击卡片开始"+badge.getDescription();
+			remark = badge.getDescription();
 		}else if("rejected".equalsIgnoreCase(msg.getString("status"))) {
+			respond = "未通过";
 			json.put("title", badge.getName()+"审核失败");
 			remark = "抱歉，审核未能通过。可修改补充优势领域描述，再次发起申请，也可直接与客服联系~~";
 		}
 
 		//发送回复消息 
-		json.put("redirectUrl", "https://www.biglistoflittlethings.com/ilife-web-wx/candidate.html?id="+categoryBroker.getId());
-		json.put("request", badge.getName());
-		json.put("requestTime", sdf.format(categoryBroker.getCreateDate()));
+		json.put("redirectUrl", "https://www.biglistoflittlethings.com/ilife-web-wx/console.html");//直接到用户后台
+		json.put("respond", respond);
+		json.put("respondMsg", badge.getName());
 		json.put("remark", remark);
 		
    	    //准备发起HTTP请求：设置data server Authorization
@@ -228,7 +231,7 @@ public class CategoryBrokerController extends BaseController {
 	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
 		
 		HttpClientHelper.getInstance().post(
-				Global.getConfig("wechat.templateMessenge")+"/notify-mp-forward", 
+				Global.getConfig("wechat.templateMessenge")+"/notify-mp-badge", 
 				json,header);
 		result.put("success", true);
 		return result;
