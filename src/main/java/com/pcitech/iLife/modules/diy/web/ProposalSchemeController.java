@@ -178,14 +178,16 @@ public class ProposalSchemeController extends BaseController {
 	
 	//根据名称查询方案类型，如果无匹配则返回全部
 	@ResponseBody
-	@RequestMapping(value = "rest/pages", method = RequestMethod.GET)
-	public List<ProposalScheme> listPagedList(@RequestParam int from,  
-			@RequestParam int to) {
+	@RequestMapping(value = "rest/pages", method = RequestMethod.POST)
+	public List<ProposalScheme> listPagedList(@RequestBody Map<String,Object> params) {
 		
-		//组织查询参数
-		Map<String,Object> params = Maps.newHashMap();
-		params.put("from", from);
-		params.put("to", to);
+		if(params.get("from")==null) {
+			params.put("from",0);
+		}
+		
+		if(params.get("to")==null) {
+			params.put("to",20);
+		}
 		
 		List<ProposalScheme> list = proposalSchemeService.findPagedList(params);
 		return list;

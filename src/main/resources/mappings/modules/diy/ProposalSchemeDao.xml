@@ -45,7 +45,22 @@
 		FROM diy_proposal_scheme a
 		<include refid="proposalSchemeJoins"/>
 		<where>
-			a.del_flag = 0										
+			a.del_flag = 0	
+			<if test="type != null and type != ''">
+				AND a.type = #{type}
+			</if>
+			<if test="category != null and category != ''">
+				AND a.category = #{category}
+			</if>
+			<if test="parentId != null and parentId != ''">
+				AND a.parent_id = #{parentId}
+			</if>			
+			<if test="brokerId != null and brokerId != ''">
+				AND a.broker_id = #{brokerId}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>												
 		</where>
 		ORDER BY a.update_date DESC
 		limit #{from},#{to}
