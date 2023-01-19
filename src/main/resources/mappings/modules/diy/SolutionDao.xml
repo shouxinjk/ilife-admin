@@ -8,6 +8,7 @@
 		ps.name AS "scheme.name",
 		ps.logo AS "scheme.logo",
 		ps.type AS "scheme.type",
+		ps.category AS "scheme.category",
 		a.refer_id AS "refer.id",
 		s.name AS "refer.name",
 		a.name AS "name",
