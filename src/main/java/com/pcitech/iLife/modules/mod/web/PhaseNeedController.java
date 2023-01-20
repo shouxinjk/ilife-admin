@@ -353,8 +353,8 @@ public class PhaseNeedController extends BaseController {
 			result.put("data", phaseNeed);
 			result.put("success", true);
 		}catch(Exception ex) {
-			result.put("success", true);
-			result.put("msg", "operation done. but got error msg:"+ex.getMessage());
+			result.put("success", false);
+			result.put("error", ex.getMessage());
 		}
 		return result;
 	}
