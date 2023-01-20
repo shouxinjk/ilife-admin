@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -27,6 +29,7 @@ import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.diy.entity.GuideBook;
 import com.pcitech.iLife.modules.diy.entity.GuideTerm;
+import com.pcitech.iLife.modules.diy.entity.ProposalScheme;
 import com.pcitech.iLife.modules.diy.service.GuideBookService;
 
 /**
@@ -40,6 +43,24 @@ public class GuideBookController extends BaseController {
 
 	@Autowired
 	private GuideBookService guideBookService;
+	
+	//过滤获取指南列表：分页可自行设置page
+	/**
+	{
+		page:{
+			pageNo:xxx,
+			pageSize:xxx
+		}
+	}
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/guide-books", method = RequestMethod.POST)
+	public List<GuideBook> listPagedList(@RequestBody GuideBook guideBook) {
+		if(guideBook.getPage()!=null)
+			return guideBookService.findPage(guideBook.getPage(), guideBook).getList();
+		else
+			return guideBookService.findList(guideBook);
+	}
 	
 	@ModelAttribute
 	public GuideBook get(@RequestParam(required=false) String id) {
