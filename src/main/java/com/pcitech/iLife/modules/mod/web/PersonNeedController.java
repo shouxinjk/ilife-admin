@@ -41,10 +41,12 @@ import com.pcitech.iLife.modules.mod.entity.Persona;
 import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
 import com.pcitech.iLife.modules.mod.entity.Phase;
 import com.pcitech.iLife.modules.mod.entity.PhaseNeed;
+import com.pcitech.iLife.modules.mod.service.HierarchyService;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.PersonNeedService;
 import com.pcitech.iLife.modules.mod.service.PersonaNeedService;
 import com.pcitech.iLife.modules.mod.service.PersonaService;
+import com.pcitech.iLife.modules.mod.service.PhaseService;
 import com.pcitech.iLife.modules.ope.entity.Person;
 import com.pcitech.iLife.modules.ope.service.PersonService;
 import com.pcitech.iLife.modules.sys.entity.Dict;
@@ -70,7 +72,10 @@ public class PersonNeedController extends BaseController {
 	private PersonaNeedService personaNeedService;
 	@Autowired
 	private PersonaService personaService;
-	
+	@Autowired
+	private HierarchyService hierarchyService;
+	@Autowired
+	private PhaseService phaseService;
 	@Autowired
 	private DictService dictService;
 	
@@ -181,6 +186,44 @@ public class PersonNeedController extends BaseController {
 	public JSONObject upsert( @RequestBody PersonNeed personNeed) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
+		//如果person不存在则直接建立，并使用默认值设置
+		if(personService.get(personNeed.getPerson())==null) {
+			String personId = Util.get32UUID();
+			if(personNeed.getPerson()!=null && personNeed.getPerson().getId()!=null
+					&& personNeed.getPerson().getId().trim().length()>0) {
+				personId = personNeed.getPerson().getId().trim();
+			}
+			Person person = new Person();
+			person.setId(personId);
+			person.setIsNewRecord(true);//新建
+			
+			//检查设置默认画像
+			Dict dict = new Dict();
+			dict.setType("sx_default");
+			dict.setValue("persona_id");
+			List<Dict> dicts = dictService.findList(dict);
+			if(dicts.size()>0) {
+				person.setPersona(personaService.get(dicts.get(0).getLabel()));
+			}
+			//检查设置默认阶段
+			dict.setValue("phase_id");
+			dicts = dictService.findList(dict);
+			if(dicts.size()>0) {
+				person.setPhase(phaseService.get(dicts.get(0).getLabel()));
+			}
+			//检查设置默认阶层
+			dict.setValue("persona_id");
+			dicts = dictService.findList(dict);
+			if(dicts.size()>0) {
+				person.setHierarchy(hierarchyService.get(dicts.get(0).getLabel()));
+			}
+			try {
+				personService.save(person);
+				personNeed.setPerson(personService.get(personId));
+			}catch(Exception ex) {
+				//do nothing
+			}
+		}
 		if(personNeed.getId()==null||personNeed.getId().trim().length()==0) {//认为是新增
 			//personNeed.setId(Util.get32UUID());
 			personNeed.setId(Util.md5(personNeed.getPerson().getId()+personNeed.getNeed().getId()));//personId+needId唯一
