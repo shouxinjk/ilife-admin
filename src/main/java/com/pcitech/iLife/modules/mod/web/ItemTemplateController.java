@@ -98,8 +98,7 @@ public class ItemTemplateController extends BaseController {
 	public List<ItemTemplate> getItemTemplates(String categoryId,String status){
 		Map<String,Object> params = Maps.newHashMap();
 		params.put("categoryId", categoryId);
-		if(status!=null)
-			params.put("status", status);
+		params.put("status", status);
 		return templateService.findItemList(params);
 	}
 	

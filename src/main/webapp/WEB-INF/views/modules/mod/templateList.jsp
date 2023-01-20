@@ -66,7 +66,9 @@
 				描述：${itemTemplate.name}
 				</td>
 				<td>
-				适用条件：<br/>${itemTemplate.condition}<br/>
+				适用条件描述：<br/>${itemTemplate.conditionDesc}<br/>
+				适用条件规则：<br/>${itemTemplate.condition}<br/>
+				模板描述：<br/>${itemTemplate.description}<br/>				
 				模板规则：<br/>${itemTemplate.expression}
 				</td>				
 				<td>
