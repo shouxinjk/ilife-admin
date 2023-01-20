@@ -51,10 +51,10 @@
 		<include refid="personNeedJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
-			<if test="person.id != null and person.id != ''">
+			<if test="person != null and person.id != null and person.id != ''">
 				AND a.person_id = #{person.id}
 			</if>
-			<if test="need.id != null and need.id != ''">
+			<if test="need !=null and need.id != null and need.id != ''">
 				AND a.need_id = #{need.id}
 			</if>
 		</where>
