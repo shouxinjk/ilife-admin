@@ -167,8 +167,9 @@ public class OccasionController extends BaseController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "rest/all-occasions")
-	public List<Occasion> listAllOccasions(@RequestBody Occasion occasion) {
+	@RequestMapping(value = "rest/all-occasions", method = RequestMethod.GET)
+	public List<Occasion> listAllOccasions() {
+		Occasion occasion = new Occasion();
 		return occasionService.findList(occasion);
 	}
 	
