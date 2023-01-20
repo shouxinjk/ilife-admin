@@ -30,11 +30,15 @@ public class ItemCategoryService extends TreeService<ItemCategoryDao, ItemCatego
 	public ItemCategory get(String id) {
 		return super.get(id);
 	}
-	
+	//查询建立有排行榜的类目
 	public List<ItemCategory> findListWithRank(){
 		return dao.findListWithRank();
 	}
-	
+	//查询建立有推荐语的类目
+	public List<ItemCategory> findListWithAdvice(){
+		return dao.findListWithAdvice();
+	}
+		
 	public List<ItemCategory> findList(ItemCategory itemCategory) {
 		return super.findList(itemCategory);
 	}

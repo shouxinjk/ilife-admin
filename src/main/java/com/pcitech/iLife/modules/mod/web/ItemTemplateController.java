@@ -15,22 +15,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.diy.entity.GuideBook;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.ItemTemplate;
 import com.pcitech.iLife.modules.mod.service.ItemCategoryService;
 import com.pcitech.iLife.modules.mod.service.ItemTemplateService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 类目推广文案Controller
@@ -46,12 +50,56 @@ public class ItemTemplateController extends BaseController {
 	@Autowired
 	private ItemCategoryService itemCategoryService;
 	
+	//新增或修改
+	@ResponseBody
+	@RequestMapping(value = "rest/template", method = RequestMethod.POST)
+	public JSONObject upsert( @RequestBody ItemTemplate itemTemplate) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		String id = Util.get32UUID();
+		if(itemTemplate.getId()==null||itemTemplate.getId().trim().length()==0) {//认为是新增
+			itemTemplate.setId(id);
+			itemTemplate.setIsNewRecord(true);
+		}
+		try {
+			templateService.save(itemTemplate);
+			result.put("data", templateService.get(itemTemplate));
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("success", false);
+			result.put("error", ex.getMessage());
+		}
+		return result;
+	}
+	
+	//过滤获取指南列表：分页可自行设置page
+	/**
+	{
+		page:{
+			pageNo:xxx,
+			pageSize:xxx
+		}
+	}
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/item-templates", method = RequestMethod.POST)
+	public List<ItemTemplate> listPagedList(@RequestBody ItemTemplate itemTemplate) {
+		if(itemTemplate.getPage()!=null)
+			return templateService.findPage(itemTemplate.getPage(), itemTemplate).getList();
+		else
+			return templateService.findList(itemTemplate);
+	}
+	
+	/**
+	 * 根据categoryId获取所有推荐语模板。包含继承的上级类目模板
+	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/item-templates", method = RequestMethod.GET)
 	public List<ItemTemplate> getItemTemplates(String categoryId){
 		return templateService.findItemList(categoryId);
 	}
 	
+	//获取board模板
 	@ResponseBody
 	@RequestMapping(value = "rest/board-templates", method = RequestMethod.GET)
 	public List<ItemTemplate> getBoardTemplates(){

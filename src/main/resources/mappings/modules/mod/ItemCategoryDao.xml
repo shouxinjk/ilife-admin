@@ -52,6 +52,17 @@
 		</where>
 	</select>
 	
+	<!-- 查询所有建立有推荐语的类目列表：过滤单品推荐语 -->
+	<select id="findListWithAdvice" resultType="ItemCategory">
+		SELECT 
+			<include refid="itemCategoryColumns"/>
+		FROM mod_item_category a
+		<include refid="itemCategoryJoins"/>
+		<where>
+			a.del_flag = 0
+			AND a.id in (select distinct category_id from mod_template where type='item')				
+		</where>
+	</select>	
 	
 	<select id="findList" resultType="ItemCategory">
 		SELECT 

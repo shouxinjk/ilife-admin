@@ -20,8 +20,9 @@ public class ItemTemplate extends DataEntity<ItemTemplate> {
 	private String condition;		// 适用条件表达式
 	private String expression;		// 规则脚本表达式
 	private int priority=10;		// 优先级
-	private String status="active"; //状态：active启用，inactive禁用
-	private String description;		// 描述
+	private String status; //状态：active启用，inactive禁用
+	private String conditionDesc;		// 适用条件描述
+	private String description;		// 推荐语描述
 	
 	public ItemTemplate() {
 		super();
@@ -88,6 +89,14 @@ public class ItemTemplate extends DataEntity<ItemTemplate> {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getConditionDesc() {
+		return conditionDesc;
+	}
+
+	public void setConditionDesc(String conditionDesc) {
+		this.conditionDesc = conditionDesc;
 	}
 
 	@Length(min=0, max=1024, message="描述长度必须介于 0 和 1024 之间")

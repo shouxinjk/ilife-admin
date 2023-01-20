@@ -577,5 +577,12 @@ public class ItemCategoryController extends BaseController {
 	public List<ItemCategory> listCategoriesHasRank( ) {
 		return itemCategoryService.findListWithRank();//直接返回全部
 	}
+	
+	//查询所有建立有推荐语的
+	@ResponseBody
+	@RequestMapping(value = "rest/advice-categories", method = RequestMethod.GET)
+	public List<ItemCategory> listCategoriesHasAdvice( ) {
+		return itemCategoryService.findListWithAdvice();//直接返回全部
+	}
 }
 

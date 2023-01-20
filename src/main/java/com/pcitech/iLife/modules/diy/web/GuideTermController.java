@@ -29,9 +29,11 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.diy.entity.GuideBook;
 import com.pcitech.iLife.modules.diy.entity.GuideTerm;
 import com.pcitech.iLife.modules.diy.entity.Solution;
 import com.pcitech.iLife.modules.diy.service.GuideTermService;
+import com.pcitech.iLife.util.Util;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -118,6 +120,28 @@ public class GuideTermController extends BaseController {
 			
 		}
 		return mapList;
+	}
+	
+	//新增或修改
+	@ResponseBody
+	@RequestMapping(value = "rest/guide-term", method = RequestMethod.POST)
+	public JSONObject upsert( @RequestBody GuideTerm guideTerm) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		String id = Util.get32UUID();
+		if(guideTerm.getId()==null||guideTerm.getId().trim().length()==0) {//认为是新增
+			guideTerm.setId(id);
+			guideTerm.setIsNewRecord(true);
+		}
+		try {
+			guideTermService.save(guideTerm);
+			result.put("data", guideTermService.get(guideTerm));
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("success", false);
+			result.put("error", ex.getMessage());
+		}
+		return result;
 	}
 	
 	/**

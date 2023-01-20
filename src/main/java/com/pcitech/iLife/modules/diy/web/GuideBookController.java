@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -31,6 +32,8 @@ import com.pcitech.iLife.modules.diy.entity.GuideBook;
 import com.pcitech.iLife.modules.diy.entity.GuideTerm;
 import com.pcitech.iLife.modules.diy.entity.ProposalScheme;
 import com.pcitech.iLife.modules.diy.service.GuideBookService;
+import com.pcitech.iLife.modules.mod.entity.OccasionNeed;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 个性化定制指南Controller
@@ -81,6 +84,30 @@ public class GuideBookController extends BaseController {
 		model.addAttribute("page", page);
 		return "modules/diy/guideBookList";
 	}
+	
+
+	//新增或修改
+	@ResponseBody
+	@RequestMapping(value = "rest/guide", method = RequestMethod.POST)
+	public JSONObject upsert( @RequestBody GuideBook guideBook) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		String id = Util.get32UUID();
+		if(guideBook.getId()==null||guideBook.getId().trim().length()==0) {//认为是新增
+			guideBook.setId(id);
+			guideBook.setIsNewRecord(true);
+		}
+		try {
+			guideBookService.save(guideBook);
+			result.put("data", guideBookService.get(guideBook));
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("success", false);
+			result.put("error", ex.getMessage());
+		}
+		return result;
+	}
+
 	
 	/**
 	 * 根据定制指南ID查询所有待添加指南列表

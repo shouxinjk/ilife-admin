@@ -25,4 +25,7 @@ public interface ItemCategoryDao extends TreeDao<ItemCategory> {
 	//查询建立有排行榜的类目
 	public List<ItemCategory> findListWithRank();
 	
+	//查询建立有推荐语的类目
+	public List<ItemCategory> findListWithAdvice();
+	
 }

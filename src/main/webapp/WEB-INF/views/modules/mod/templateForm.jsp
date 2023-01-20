@@ -58,15 +58,27 @@
 			</div>
 		</div>		
 		<div class="control-group">
+			<label class="control-label">适用条件描述：</label>
+			<div class="controls">
+				<form:textarea path="conditionDesc" htmlEscape="false" rows="3" maxlength="1024" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">适用条件表达式：</label>
 			<div class="controls">
-				<form:textarea path="condition" htmlEscape="false" rows="5" maxlength="1024" class="input-xlarge "/>
+				<form:textarea path="condition" htmlEscape="false" rows="4" maxlength="1024" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">规则脚本描述：</label>
+			<div class="controls">
+				<form:textarea path="description" htmlEscape="false" rows="3"  maxlength="1024" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">规则脚本表达式：</label>
 			<div class="controls">
-				<form:textarea path="expression" htmlEscape="false" rows="5" maxlength="1024" class="input-xlarge "/>
+				<form:textarea path="expression" htmlEscape="false" rows="4" maxlength="1024" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -81,12 +93,6 @@
 			<label class="control-label">优先级：</label>
 			<div class="controls">
 				<form:input path="priority" htmlEscape="false" maxlength="8" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">描述：</label>
-			<div class="controls">
-				<form:textarea path="description" htmlEscape="false" rows="5"  maxlength="1024" class="input-xxlarge "/>
 			</div>
 		</div>
 		<div class="form-actions">
