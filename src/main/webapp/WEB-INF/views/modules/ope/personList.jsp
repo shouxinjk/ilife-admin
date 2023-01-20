@@ -37,25 +37,20 @@
 		<thead>
 			<tr>
 				<th>昵称</th>
-				<th>vals模型</th>
 				<th>所属阶段</th>
 				<th>所属阶层</th>
 				<th>用户分群</th>
-				<th>生活方式</th>
-				<th>最后访问时间</th>
+				<th>最近访问时间</th>
+				<th>注册时间</th>
 				<shiro:hasPermission name="ope:person:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="person">
 			<tr>
-				<td><a href="${ctx}/ope/person/form?id=${person.id}">
-					${person.nickname}
-				</a></td>
 				<td>
-					${person.functionality}
+					${person.nickname}
 				</td>
-				
 				<td>
 					${person.phase.name}
 				</td>
@@ -66,11 +61,11 @@
 					${person.persona.name}
 				</td>
 				<td>
-					${person.lifeStyle.name}
-				</td>
-				<td>
 					<fmt:formatDate value="${person.lastAccess}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
+				<td>
+					<fmt:formatDate value="${person.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>				
 				<td>
 				<shiro:hasPermission name="ope:person:edit">
     				<a href="${ctx}/ope/person/form?id=${person.id}">修改</a>

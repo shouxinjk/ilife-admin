@@ -33,6 +33,7 @@
 	<form:form id="inputForm" modelAttribute="person" action="${ctx}/ope/person/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
+		<!-- 
 		<div class="control-group">
 			<label class="control-label">分数：</label>
 			<div class="controls">
@@ -45,12 +46,21 @@
 				<form:input path="level" htmlEscape="false" maxlength="8" class="input-xlarge  digits"/>
 			</div>
 		</div>
+		-->
 		<div class="control-group">
 			<label class="control-label">昵称：</label>
 			<div class="controls">
 				<form:input path="nickname" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 			</div>
 		</div>
+
+		<div class="control-group">
+			<label class="control-label">头像：</label>
+			<div class="controls">
+				<form:input path="logo" htmlEscape="false" maxlength="1000" class="input-xlarge "/>
+			</div>
+		</div>		
+		<!-- 
 		<div class="control-group">
 			<label class="control-label">economy：</label>
 			<div class="controls">
@@ -69,12 +79,7 @@
 				<form:input path="society" htmlEscape="false" maxlength="500" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">头像：</label>
-			<div class="controls">
-				<form:input path="logo" htmlEscape="false" maxlength="1000" class="input-xlarge "/>
-			</div>
-		</div>
+
 		<div class="control-group">
 			<label class="control-label">functionality：</label>
 			<div class="controls">
@@ -104,7 +109,8 @@
 			<div class="controls">
 				<form:input path="realization" htmlEscape="false" maxlength="500" class="input-xlarge "/>
 			</div>
-		</div>
+		</div>		
+		 -->
 		<div class="control-group">
 			<label class="control-label">偏好模型：</label>
 			<div class="controls">

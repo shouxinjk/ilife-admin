@@ -14,11 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pcitech.iLife.common.config.Global;
@@ -26,8 +29,15 @@ import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Hierarchy;
+import com.pcitech.iLife.modules.mod.entity.Persona;
+import com.pcitech.iLife.modules.mod.service.HierarchyService;
+import com.pcitech.iLife.modules.mod.service.PersonaService;
+import com.pcitech.iLife.modules.mod.service.PhaseService;
 import com.pcitech.iLife.modules.ope.entity.Person;
 import com.pcitech.iLife.modules.ope.service.PersonService;
+import com.pcitech.iLife.modules.sys.entity.Dict;
+import com.pcitech.iLife.modules.sys.service.DictService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 用户Controller
@@ -40,6 +50,14 @@ public class PersonController extends BaseController {
 
 	@Autowired
 	private PersonService personService;
+	@Autowired
+	private PersonaService personaService;
+	@Autowired
+	private PhaseService phaseService;
+	@Autowired
+	private HierarchyService hierarchyService;
+	@Autowired
+	private DictService dictService;
 	
 	@ModelAttribute
 	public Person get(@RequestParam(required=false) String id) {
@@ -87,6 +105,75 @@ public class PersonController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/ope/person/?repage";
 	}
 
+	//新增或修改person信息：
+	@ResponseBody
+	@RequestMapping(value = "rest/person", method = RequestMethod.POST)
+	public JSONObject upsert( @RequestBody Person person) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		//默认ID为openid，如果未传递则新建
+		String personId = person.getId();
+		if(personId==null||personId.trim().length()==0||personService.get(personId)==null) {//认为是新增
+			personId = Util.get32UUID();
+			person.setId(personId);
+			person.setIsNewRecord(true);
+		}
+		Person oldPerson = personService.get(personId);//对于修改的情况，需要保留原有设置：阶段、阶层、画像
+		//检查设置默认画像
+		if(person.getPersona()==null || personaService.get(person.getPersona())==null) {
+			//如果之前已经设置，则使用之前的设置
+			if(oldPerson!=null&&oldPerson.getPersona()!=null) {//使用原有值
+				person.setPersona(oldPerson.getPersona());
+			}else {//使用默认值
+				Dict dict = new Dict();
+				dict.setType("sx_default");
+				dict.setValue("persona_id");
+				List<Dict> dicts = dictService.findList(dict);
+				if(dicts.size()>0) {
+					person.setPersona(personaService.get(dicts.get(0).getLabel()));
+				}
+			}
+		}
+		//检查设置默认阶段
+		if(person.getPhase()==null || phaseService.get(person.getPhase())==null) {
+			//如果之前已经设置，则使用之前的设置
+			if(oldPerson!=null&&oldPerson.getPhase()!=null) {//使用原有值
+				person.setPhase(oldPerson.getPhase());
+			}else {//使用默认值
+				Dict dict = new Dict();
+				dict.setType("sx_default");
+				dict.setValue("phase_id");
+				List<Dict> dicts = dictService.findList(dict);
+				if(dicts.size()>0) {
+					person.setPhase(phaseService.get(dicts.get(0).getLabel()));
+				}
+			}
+		}
+		//检查设置默认阶层
+		if(person.getHierarchy()==null || hierarchyService.get(person.getHierarchy())==null) {
+			//如果之前已经设置，则使用之前的设置
+			if(oldPerson!=null&&oldPerson.getHierarchy()!=null) {//使用原有值
+				person.setHierarchy(oldPerson.getHierarchy());
+			}else {//使用默认值
+				Dict dict = new Dict();
+				dict.setType("sx_default");
+				dict.setValue("persona_id");
+				List<Dict> dicts = dictService.findList(dict);
+				if(dicts.size()>0) {
+					person.setHierarchy(hierarchyService.get(dicts.get(0).getLabel()));
+				}
+			}
+		}
+		try {
+			personService.save(person);
+			result.put("data", person);
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("error", ex.getMessage());
+		}
+		return result;
+	}
+	
 	@ResponseBody
 	@RequestMapping(value = "listData")
 	public List<Map<String, Object>> listData(Person person, HttpServletRequest request, HttpServletResponse response, Model model) {
