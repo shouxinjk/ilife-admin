@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.mod.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +27,8 @@ public class ItemTemplateService extends CrudService<ItemTemplateDao, ItemTempla
 		return super.get(id);
 	}
 	
-	public List<ItemTemplate> findItemList(String categoryId) {
-		return dao.findItemList(categoryId);
+	public List<ItemTemplate> findItemList(Map<String,Object> params) {
+		return dao.findItemList(params);
 	}
 	
 	public List<ItemTemplate> findBoardList() {

@@ -49,9 +49,13 @@
 		<where>
 			a.del_flag = 0
 			AND a.type = 'item'
-			AND a.status = 'active'			
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			<if test="categoryId != null and categoryId != ''">
+				AND c.id = #{categoryId}
+			</if>								
 			and (a.category_id=c.id or find_in_set(a.category_id,c.parent_ids)>0 ) 
-			AND c.id = #{categoryId}
 		</where>
 		ORDER BY priority DESC
 	</select>

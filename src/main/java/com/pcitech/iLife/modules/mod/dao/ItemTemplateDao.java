@@ -4,6 +4,7 @@
 package com.pcitech.iLife.modules.mod.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
@@ -17,6 +18,6 @@ import com.pcitech.iLife.modules.mod.entity.ItemTemplate;
 @MyBatisDao
 public interface ItemTemplateDao extends CrudDao<ItemTemplate> {
 	public List<ItemTemplate> findByCategoryId(String category);
-	public List<ItemTemplate> findItemList(String categoryId);
+	public List<ItemTemplate> findItemList(Map<String,Object> params);
 	public List<ItemTemplate> findBoardList();
 }

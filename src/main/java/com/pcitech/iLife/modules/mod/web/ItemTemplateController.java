@@ -86,7 +86,7 @@ public class ItemTemplateController extends BaseController {
 	public List<ItemTemplate> listPagedList(@RequestBody ItemTemplate itemTemplate) {
 		if(itemTemplate.getPage()!=null)
 			return templateService.findPage(itemTemplate.getPage(), itemTemplate).getList();
-		else
+		else 
 			return templateService.findList(itemTemplate);
 	}
 	
@@ -95,8 +95,12 @@ public class ItemTemplateController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/item-templates", method = RequestMethod.GET)
-	public List<ItemTemplate> getItemTemplates(String categoryId){
-		return templateService.findItemList(categoryId);
+	public List<ItemTemplate> getItemTemplates(String categoryId,String status){
+		Map<String,Object> params = Maps.newHashMap();
+		params.put("categoryId", categoryId);
+		if(status!=null)
+			params.put("status", status);
+		return templateService.findItemList(params);
 	}
 	
 	//获取board模板
