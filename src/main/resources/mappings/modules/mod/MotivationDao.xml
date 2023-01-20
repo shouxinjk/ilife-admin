@@ -101,6 +101,28 @@
 		</choose>
 	</select>
 
+
+	<!-- 查询可添加到指定Persona的需要列表。参数：personId，name -->
+	<select id="findPendingListForPerson" resultType="Motivation">
+		SELECT 
+			<include refid="motivationColumns"/>
+		FROM mod_motivation a
+		<include refid="motivationJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="personId != null and personId != ''">
+				AND a.id not in ( select need_id from int_person_need WHERE person_id=#{personId} and del_flag=0 )
+			</if>
+		</where>
+	</select>	
+	
+
 	<!-- 查询可添加到指定Phase的需要列表。参数：phaseId，name -->
 	<select id="findPendingListForPhase" resultType="Motivation">
 		SELECT 

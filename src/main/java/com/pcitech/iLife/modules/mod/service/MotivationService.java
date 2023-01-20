@@ -33,6 +33,11 @@ public class MotivationService extends CrudService<MotivationDao, Motivation> {
 	@Autowired
 	private PhaseDao phaseDao;
 	
+	//参数personId, name
+	public List<Motivation> findPendingListForPerson(Map<String,String> params){
+		return dao.findPendingListForPerson(params);
+	}
+	
 	//参数phaseId, name
 	public List<Motivation> findPendingListForPhase(Map<String,String> params){
 		return dao.findPendingListForPhase(params);

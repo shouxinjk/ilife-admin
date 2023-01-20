@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,12 +37,19 @@ import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.Channel;
 import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.PersonNeed;
+import com.pcitech.iLife.modules.mod.entity.Persona;
+import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
 import com.pcitech.iLife.modules.mod.entity.Phase;
 import com.pcitech.iLife.modules.mod.entity.PhaseNeed;
 import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.PersonNeedService;
+import com.pcitech.iLife.modules.mod.service.PersonaNeedService;
+import com.pcitech.iLife.modules.mod.service.PersonaService;
 import com.pcitech.iLife.modules.ope.entity.Person;
 import com.pcitech.iLife.modules.ope.service.PersonService;
+import com.pcitech.iLife.modules.sys.entity.Dict;
+import com.pcitech.iLife.modules.sys.service.DictService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 用户需要构成Controller
@@ -58,6 +66,13 @@ public class PersonNeedController extends BaseController {
 	private MotivationService motivationService;
 	@Autowired
 	private PersonNeedService personNeedService;
+	@Autowired
+	private PersonaNeedService personaNeedService;
+	@Autowired
+	private PersonaService personaService;
+	
+	@Autowired
+	private DictService dictService;
 	
 	@ModelAttribute
 	public PersonNeed get(@RequestParam(required=false) String id) {
@@ -159,5 +174,98 @@ public class PersonNeedController extends BaseController {
 		result.put("result", "weight updated.");
 		return result;
 	}
+	
+	//新增或修改权重
+	@ResponseBody
+	@RequestMapping(value = "rest/person-need", method = RequestMethod.POST)
+	public JSONObject upsert( @RequestBody PersonNeed personNeed) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(personNeed.getId()==null||personNeed.getId().trim().length()==0) {//认为是新增
+			//personNeed.setId(Util.get32UUID());
+			personNeed.setId(Util.md5(personNeed.getPerson().getId()+personNeed.getNeed().getId()));//personId+needId唯一
+			personNeed.setIsNewRecord(true);
+		}
+		try {
+			personNeedService.save(personNeed);
+			result.put("data", personNeed);
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("success", true);
+			result.put("msg", "operation done. but got error msg:"+ex.getMessage());
+		}
+		return result;
+	}
+	
+	//删除需要
+	@ResponseBody
+	@RequestMapping(value = "rest/person-need", method = RequestMethod.PUT)
+	public JSONObject delete( @RequestBody PersonNeed personNeed) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		try {
+			personNeedService.delete(personNeed);
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("error", ex.getMessage());
+		}
+		return result;
+	}
+	
+	//查询已添加need列表
+	//对于空白列表，需要从所属画像clone需要构成
+	@ResponseBody
+	@RequestMapping(value = "rest/needs/{personId}", method = RequestMethod.GET)
+	public List<PersonNeed> listNeeds(@PathVariable String personId) {
+		Person person = personService.get(personId);
+		if(person==null)
+			return Lists.newArrayList();
+		PersonNeed personNeedQuery = new PersonNeed();
+		personNeedQuery.setPerson(person);
+		List<PersonNeed> personNeeds = personNeedService.findList(personNeedQuery);
+		if(personNeeds.size()==0) { //从画像克隆
+			Persona persona = person.getPersona();
+			if(persona==null) { //如果用户上没有画像信息，则直接从默认初始画像获取
+				Dict dict = new Dict();
+				dict.setType("sx_default");
+				dict.setValue("persona_id");
+				List<Dict> dicts = dictService.findList(dict);
+				if(dicts.size()>0) {
+					persona = personaService.get(dicts.get(0).getLabel());
+				}
+			}
+			//从画像克隆需要
+			if(persona != null) {
+				PersonaNeed q = new PersonaNeed();
+				q.setPersona(persona);
+				List<PersonaNeed> personaNeeds = personaNeedService.findList(q);
+				for(PersonaNeed personaNeed:personaNeeds) {
+					PersonNeed personNeed = new PersonNeed();
+					personNeed.setPerson(person);
+					personNeed.setNeed(personaNeed.getNeed());
+					personNeed.setWeight(personaNeed.getWeight());
+					personNeed.setIsNewRecord(true);
+					personNeed.setId(Util.md5(person.getId()+personaNeed.getNeed().getId()));
+					try {
+						personNeedService.save(personNeed);
+					}catch(Exception ex) {
+						//do nothing
+					}
+				}
+			}
+		}
+		return personNeedService.findList(personNeedQuery);
+	}
+	
+	//查询待添加need列表
+	@ResponseBody
+	@RequestMapping(value = "rest/pending-needs/{personId}", method = RequestMethod.GET)
+	public List<Motivation> listPendingNeeds(@PathVariable String personId) {
+		Map<String,String> params = Maps.newHashMap();
+		params.put("personId", personId);
+		params.put("name", "");//TODO 添加需要名称，能够根据名称过滤
+		return motivationService.findPendingListForPerson(params);
+	}
 
+	
 }

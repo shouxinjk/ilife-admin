@@ -18,7 +18,7 @@ public class PersonNeed extends DataEntity<PersonNeed> {
 	
 	private static final long serialVersionUID = 1L;
 	private String description;		// 概要描述
-	private String weight;		// 需要程度
+	private Double weight;		// 需要程度
 	private Person person;		// 关联的用户
 	private Motivation need;		// 关联的动机
 	private String expression;		// 满足度表达式
@@ -41,11 +41,11 @@ public class PersonNeed extends DataEntity<PersonNeed> {
 		this.description = description;
 	}
 	
-	public String getWeight() {
+	public Double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(String weight) {
+	public void setWeight(Double weight) {
 		this.weight = weight;
 	}
 	

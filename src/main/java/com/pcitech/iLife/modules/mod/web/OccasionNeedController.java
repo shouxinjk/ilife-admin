@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +35,8 @@ import com.pcitech.iLife.common.utils.StringUtils;
 import com.pcitech.iLife.modules.mod.entity.OccasionNeed;
 import com.pcitech.iLife.modules.mod.entity.Persona;
 import com.pcitech.iLife.modules.mod.entity.PersonaNeed;
+import com.pcitech.iLife.modules.mod.entity.Occasion;
+import com.pcitech.iLife.modules.mod.entity.OccasionNeed;
 import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.mod.entity.Motivation;
 import com.pcitech.iLife.modules.mod.entity.Occasion;
@@ -43,6 +46,7 @@ import com.pcitech.iLife.modules.mod.service.MotivationService;
 import com.pcitech.iLife.modules.mod.service.OccasionCategoryService;
 import com.pcitech.iLife.modules.mod.service.OccasionNeedService;
 import com.pcitech.iLife.modules.mod.service.OccasionService;
+import com.pcitech.iLife.util.Util;
 
 /**
  * 诱因对需要的影响Controller
@@ -264,5 +268,66 @@ public class OccasionNeedController extends BaseController {
 		result.put("result", "weight updated.");
 		return result;
 	}
+
+	//新增或修改权重
+	@ResponseBody
+	@RequestMapping(value = "rest/occasion-need", method = RequestMethod.POST)
+	public JSONObject upsert( @RequestBody OccasionNeed occasionNeed) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(occasionNeed.getId()==null||occasionNeed.getId().trim().length()==0) {//认为是新增
+//			occasionNeed.setId(Util.get32UUID());
+			occasionNeed.setId(Util.md5(occasionNeed.getOccasion().getId()+occasionNeed.getNeed().getId()));//occasionId+needId唯一
+			occasionNeed.setIsNewRecord(true);
+		}
+		try {
+			occasionNeedService.save(occasionNeed);
+			result.put("data", occasionNeed);
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("success", true);
+			result.put("msg", "operation done. but got error msg:"+ex.getMessage());
+		}
+		return result;
+	}
+	
+	//删除需要
+	@ResponseBody
+	@RequestMapping(value = "rest/occasion-need", method = RequestMethod.PUT)
+	public JSONObject delete( @RequestBody OccasionNeed occasionNeed) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		try {
+			occasionNeedService.delete(occasionNeed);
+			result.put("success", true);
+		}catch(Exception ex) {
+			result.put("error", ex.getMessage());
+		}
+		return result;
+	}
+	
+	//查询已添加need列表
+	@ResponseBody
+	@RequestMapping(value = "rest/needs/{occasionId}", method = RequestMethod.GET)
+	public List<OccasionNeed> listNeeds(@PathVariable String occasionId) {
+		Occasion occasion = occasionService.get(occasionId);
+		if(occasion==null)
+			return Lists.newArrayList();
+		OccasionNeed occasionNeedQuery = new OccasionNeed();
+		occasionNeedQuery.setOccasion(occasion);
+		return occasionNeedService.findList(occasionNeedQuery);
+	}
+	
+	//查询待添加need列表
+	@ResponseBody
+	@RequestMapping(value = "rest/pending-needs/{occasionId}", method = RequestMethod.GET)
+	public List<Motivation> listPendingNeeds(@PathVariable String occasionId) {
+		Map<String,String> params = Maps.newHashMap();
+		params.put("occasionId", occasionId);
+		params.put("name", "");//TODO 添加需要名称，能够根据名称过滤
+		return motivationService.findPendingListForOccasion(params);
+	}
+
+
 	
 }

@@ -290,7 +290,8 @@ public class CategoryNeedController extends BaseController {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		if(categoryNeed.getId()==null||categoryNeed.getId().trim().length()==0) {//认为是新增
-			categoryNeed.setId(Util.get32UUID());
+//			categoryNeed.setId(Util.get32UUID());
+			categoryNeed.setId(Util.md5(categoryNeed.getCategory().getId()+categoryNeed.getNeed().getId()));//categoryId+needId唯一
 			categoryNeed.setIsNewRecord(true);
 		}
 		try {
@@ -298,7 +299,8 @@ public class CategoryNeedController extends BaseController {
 			result.put("data", categoryNeed);
 			result.put("success", true);
 		}catch(Exception ex) {
-			result.put("error", ex.getMessage());
+			result.put("success", true);
+			result.put("msg", "operation done. but got error msg:"+ex.getMessage());
 		}
 		return result;
 	}
@@ -318,7 +320,7 @@ public class CategoryNeedController extends BaseController {
 		return result;
 	}
 	
-	//查询待已添加need列表
+	//查询已添加need列表
 	@ResponseBody
 	@RequestMapping(value = "rest/needs/{categoryId}", method = RequestMethod.GET)
 	public List<CategoryNeed> listNeeds(@PathVariable String categoryId) {

@@ -364,7 +364,8 @@ public class PersonaNeedController extends BaseController {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		if(personaNeed.getId()==null||personaNeed.getId().trim().length()==0) {//认为是新增
-			personaNeed.setId(Util.get32UUID());
+			//personaNeed.setId(Util.get32UUID());
+			personaNeed.setId(Util.md5(personaNeed.getPersona().getId()+personaNeed.getNeed().getId()));//personaId+needId唯一
 			personaNeed.setIsNewRecord(true);
 		}
 		try {
@@ -372,7 +373,8 @@ public class PersonaNeedController extends BaseController {
 			result.put("data", personaNeed);
 			result.put("success", true);
 		}catch(Exception ex) {
-			result.put("error", ex.getMessage());
+			result.put("success", true);
+			result.put("msg", "operation done. but got error msg:"+ex.getMessage());
 		}
 		return result;
 	}

@@ -344,7 +344,8 @@ public class PhaseNeedController extends BaseController {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		if(phaseNeed.getId()==null||phaseNeed.getId().trim().length()==0) {//认为是新增
-			phaseNeed.setId(Util.get32UUID());
+//			phaseNeed.setId(Util.get32UUID());
+			phaseNeed.setId(Util.md5(phaseNeed.getPhase().getId()+phaseNeed.getNeed().getId()));//phaseId+needId唯一
 			phaseNeed.setIsNewRecord(true);
 		}
 		try {
@@ -352,7 +353,8 @@ public class PhaseNeedController extends BaseController {
 			result.put("data", phaseNeed);
 			result.put("success", true);
 		}catch(Exception ex) {
-			result.put("error", ex.getMessage());
+			result.put("success", true);
+			result.put("msg", "operation done. but got error msg:"+ex.getMessage());
 		}
 		return result;
 	}

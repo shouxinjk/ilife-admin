@@ -22,6 +22,9 @@ public interface MotivationDao extends CrudDao<Motivation> {
 	
 	public List<Motivation> findByOccasionId(String id);
 	
+	//参数personId, name
+	public List<Motivation> findPendingListForPerson(Map<String,String> params);
+	
 	//参数phaseId, name
 	public List<Motivation> findPendingListForPhase(Map<String,String> params);
 	
