@@ -7,6 +7,7 @@
 		a.rank_id AS "rank.id",
 		r.name AS "rank.name",
 		a.dimension_id AS "dimension.id",
+		d.propKey AS "dimension.propKey",
 		d.name AS "dimension.name",
 		d.weight AS "dimension.weight",
 		d.description AS "dimension.description",

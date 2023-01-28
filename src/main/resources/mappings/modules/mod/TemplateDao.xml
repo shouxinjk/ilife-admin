@@ -6,6 +6,7 @@
 		a.id AS "id",
 		a.category_id AS "category.id",
 		c.name AS "category.name",
+		c.logo AS "category.logo",
 		a.name AS "name",
 		a.type AS "type",
 		a.`condition` AS "condition",
