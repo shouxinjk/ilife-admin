@@ -7,6 +7,7 @@
 		a.name AS "name",
 		a.category_id AS "occasionCategory.id",
 		oc.name AS "occasionCategory.name",
+		oc.logo AS "occasionCategory.logo",
 		a.expr_user AS "exprUser",
 		"-" AS "exprItem",
 		a.expr_trigger AS "exprTrigger",

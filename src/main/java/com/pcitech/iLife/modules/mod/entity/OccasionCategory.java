@@ -21,6 +21,7 @@ public class OccasionCategory extends TreeEntity<OccasionCategory> {
 	private String module="occasionCategory";		// name
 	private String triggerDirection; //内在/外在
 	private String triggerType;//主动被动
+	private String logo; //LOGO
 	
 	public OccasionCategory() {
 		super();
@@ -55,6 +56,14 @@ public class OccasionCategory extends TreeEntity<OccasionCategory> {
 		this.triggerDirection = triggerDirection;
 	}
 
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+	
 	public String getTriggerType() {
 		return triggerType;
 	}

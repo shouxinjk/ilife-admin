@@ -26,6 +26,7 @@
 		<table id="treeTable" class="table table-striped table-bordered table-condensed">
 			<tr>
 				<th>名称</th>
+				<th>LOGO</th>
 				<th>主动/被动</th>
 				<th>内在/外在</th>
 				<th style="text-align:center;">排序</th>
@@ -33,12 +34,22 @@
 			</tr>
 			<c:forEach items="${list}" var="tpl">
 				<tr id="${tpl.id}" pId="${tpl.parent.id ne '1'?tpl.parent.id:'0'}">
-					<td><a href="${ctx}/mod/occasionCategory/form?id=${tpl.id}">${tpl.name}</a></td>
+					<td>${tpl.name}</td>
 					<td>
-							${fns:getDictLabel(tpl.triggerDirection, 'insideOrOutside', '无')}
+						<c:choose>
+						   <c:when test="${fn:startsWith(tpl.logo, 'http')}">
+						   		<img width="48" height="48" src="${tpl.logo}"/>
+						   </c:when>
+						   <c:otherwise>
+						   		<img width="48" height="48" src="http://www.shouxinjk.net/static/logo/category/${tpl.logo}"/>
+						   </c:otherwise>
+						</c:choose>					
+					</td>					
+					<td>
+							${fns:getDictLabel(tpl.triggerDirection, 'insideOrOutside', '-')}
 					</td>
 					<td>
-							${fns:getDictLabel(tpl.triggerType, 'activeOrPassive', '无')}
+							${fns:getDictLabel(tpl.triggerType, 'activeOrPassive', '-')}
 					</td>
 					<td style="text-align:center;">
 						<shiro:hasPermission name="mod:occasionCategory:edit">

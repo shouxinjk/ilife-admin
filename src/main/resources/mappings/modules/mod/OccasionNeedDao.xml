@@ -8,6 +8,7 @@
 		a.weight AS "weight",
 		a.occasion_id AS "occasion.id",
 		o.name AS "occasion.name",
+		o.logo AS "occasion.logo",
 		a.need_id AS "need.id",
 		m.name AS "need.name",
 		m.displayName AS "need.displayName",

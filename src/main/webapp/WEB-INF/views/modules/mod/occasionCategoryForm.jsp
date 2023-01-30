@@ -48,6 +48,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">LOGO：</label>
+			<div class="controls">
+				<form:input path="logo" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+			</div>
+		</div>		
+		<div class="control-group">
 			<label class="control-label">内在/外在：</label>
 			<div class="controls">
 				<form:radiobuttons path="triggerDirection" items="${fns:getDictList('insideOrOutside')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
