@@ -8,6 +8,9 @@
 		a.category_id AS "occasionCategory.id",
 		oc.name AS "occasionCategory.name",
 		oc.logo AS "occasionCategory.logo",
+		a.item_category_id AS "category.id",
+		c.name AS "category.name",
+		c.logo AS "category.logo",
 		a.expr_user AS "exprUser",
 		"-" AS "exprItem",
 		a.expr_trigger AS "exprTrigger",
@@ -29,6 +32,9 @@
 		a.name AS "name",
 		a.category_id AS "occasionCategory.id",
 		oc.name AS "occasionCategory.name",
+		a.item_category_id AS "category.id",
+		c.name AS "category.name",
+		c.logo AS "category.logo",		
 		a.expr_user AS "exprUser",
 		(SELECT group_concat(name) FROM mod_item_category WHERE occasion_ids like concat('%',a.id,'%')) AS "exprItem",
 		a.expr_trigger AS "exprTrigger",
@@ -48,6 +54,7 @@
 	<sql id="occasionJoins">
 		LEFT JOIN sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_occasion_category oc ON oc.id = a.category_id
+		LEFT JOIN mod_item_category c ON c.id = a.item_category_id
 	</sql>   
     
 	<select id="get" resultType="Occasion">
@@ -128,6 +135,7 @@
 			id,
 			name,
 			category_id,
+			item_category_id,
 			expr_user,
 			expr_item,
 			expr_trigger,
@@ -145,6 +153,7 @@
 			#{id},
 			#{name},
 			#{occasionCategory.id},
+			#{category.id},
 			#{exprUser},
 			#{exprItem},
 			#{exprTrigger},
@@ -165,6 +174,7 @@
 		UPDATE mod_occasion SET 	
 			name = #{name},
 			category_id = #{occasionCategory.id},
+			item_category_id = #{category.id},
 			expr_user = #{exprUser},
 			expr_item = #{exprItem},
 			expr_trigger = #{exprTrigger},

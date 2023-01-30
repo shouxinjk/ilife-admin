@@ -17,6 +17,7 @@ public class Occasion extends DataEntity<Occasion> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// name
 	private OccasionCategory occasionCategory;		// category_id
+	private ItemCategory category;		// itemCategory
 	private String exprUser;		// expr_user
 	private String exprItem;		// expr_item
 	private String exprTrigger;		// expr_trigger
@@ -49,6 +50,14 @@ public class Occasion extends DataEntity<Occasion> {
 
 	public void setOccasionCategory(OccasionCategory occasionCategory) {
 		this.occasionCategory = occasionCategory;
+	}
+
+	public ItemCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ItemCategory category) {
+		this.category = category;
 	}
 
 	@Length(min=0, max=500, message="expr_user长度必须介于 0 和 500 之间")

@@ -39,10 +39,14 @@
 		<table width="100%">
 		<tr>
 		<td width="300px" valign="top" style="padding-left:20px">	
-			<div>类别：</div>
+			<div>事件类别：</div>
 			<sys:treeselect id="occasionCategory" name="occasionCategory.id" value="${occasion.occasionCategory.id}" labelName="occasionCategory.name" labelValue="${occasion.occasionCategory.name}"
-							title="外部诱因分类" url="/mod/occasionCategory/treeData" cssClass="required"/>
+							title="事件分类" url="/mod/occasionCategory/treeData" cssClass="required"/>
 			<span class="help-inline"><font color="red">*</font> </span><br/><br/>
+			<div>商品类目：</div>
+			<sys:treeselect id="category" name="category.id" value="${occasion.category.id}" labelName="category.name" labelValue="${occasion.category.name}"
+							title="商品类目" url="/mod/itemCategory/treeData"/>
+			<br/>			
 			<div>名称：</div>
 			<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/><br/><br/>
 			<div>效果描述：</div>
@@ -55,8 +59,8 @@
 			<form:input path="expression" htmlEscape="false" maxlength="100" class="input-xlarge "/><br/><br/>
 			<div>持续时间（截止时间）：</div>
 			<form:input path="exprDuration" htmlEscape="false" maxlength="100" class="input-xlarge "/><br/><br/>
-			来源类别：<form:radiobuttons path="triggerDirection" items="${fns:getDictList('insideOrOutside')}" value="${occasion.triggerDirection}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/><br/><br/>
-			触发类别：<form:radiobuttons path="triggerType" items="${fns:getDictList('activeOrPassive')}" value="${occasion.triggerType}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
+			来源类别：<form:radiobuttons path="triggerDirection" items="${fns:getDictList('insideOrOutside')}" value="${occasion.triggerDirection}" itemLabel="label" itemValue="value" htmlEscape="false" /><br/><br/>
+			触发类别：<form:radiobuttons path="triggerType" items="${fns:getDictList('activeOrPassive')}" value="${occasion.triggerType}" itemLabel="label" itemValue="value" htmlEscape="false" />
 		</td>
 		<td valign="top">
 			<div>事件表达式（支持多个事件定义，，参见模板管理中【运营事件通知】）：</div>

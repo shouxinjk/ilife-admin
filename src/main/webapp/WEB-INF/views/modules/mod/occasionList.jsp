@@ -40,6 +40,7 @@
 				<th>名称</th>
 				<th>内在/外在</th>
 				<th>主动/被动</th>
+				<th>商品类目</th>
 				<!--th>匹配用户</th>
 				<th>匹配商品类别</th-->
 				<th>期望效果</th>
@@ -54,9 +55,9 @@
 				<td>
 					${occasion.occasionCategory.name}
 				</td>			
-				<td><a href="${ctx}/mod/occasion/form?id=${occasion.id}">
+				<td>
 					${occasion.name}
-				</a></td>
+				</td>
 				<td>
 					${fns:getDictLabel(occasion.triggerDirection, 'insideOrOutside', '-')}
 				</td>
@@ -69,6 +70,9 @@
 				<td>
 					${occasion.exprItem}
 				</td-->
+				<td>
+					${occasion.category.name}
+				</td>				
 				<td>
 					${occasion.exprTrigger}
 				</td>
