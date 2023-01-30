@@ -23,6 +23,7 @@ public class Solution extends DataEntity<Solution> {
 	private String byOpenid;		// 定制用户
 	private String forNickname;		// 目标用户昵称
 	private String byNickname;		// 定制用户昵称
+	private String itemIds;		// 关联条目
 	private String article;		// 文章 json
 	private Integer status;		// 状态
 	private String description;		// 描述
@@ -94,6 +95,14 @@ public class Solution extends DataEntity<Solution> {
 		this.byNickname = byNickname;
 	}
 
+	public String getItemIds() {
+		return itemIds;
+	}
+
+	public void setItemIds(String itemIds) {
+		this.itemIds = itemIds;
+	}
+	
 	public String getArticle() {
 		return org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(article);
 	}

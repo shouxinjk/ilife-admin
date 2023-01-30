@@ -650,7 +650,7 @@
 			<div class="controls">
 				<form:input path="byNickname" htmlEscape="false" maxlength="64" class="input-xlarge "/>
 			</div>
-		</div>		
+		</div>			
 		<div class="control-group">
 			<label class="control-label">状态：</label>
 			<div class="controls">
@@ -662,9 +662,15 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">关联商品条目：</label>
+			<div class="controls">
+				<form:textarea path="itemIds" htmlEscape="false" rows="3" class="input-xlarge "/>
+			</div>
+		</div>			
+		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">
-				<form:textarea path="description" htmlEscape="false" rows="4" maxlength="512" class="input-xxlarge "/>
+				<form:textarea path="description" htmlEscape="false" rows="4" maxlength="512" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="form-actions">
