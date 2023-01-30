@@ -308,6 +308,45 @@ public class SolutionController extends BaseController {
 		result.put("success", true);
 		return result;
 	}
+
+	/**
+	 * 向Solution上添加itemKey。注意是字符串操作
+	 * @param solutionId
+	 * @param itemKey
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/solution/stuff/{solutionId}/{itemKey}", method = RequestMethod.POST)
+	public JSONObject addStuffItem2Solution(@PathVariable String solutionId, @PathVariable String itemKey) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if( solutionId==null || solutionId.trim().length() == 0) {
+			result.put("msg", "solutionId is required.");
+			return result;
+		}
+		//得到原有的方案及条目
+		Solution solution = solutionService.get(solutionId);
+		if( solution==null) {
+			result.put("msg", "Solution not found.[id]"+solutionId);
+			return result;
+		}
+		//附加itemKey
+		String itemKeys = solution.getItemIds();
+		if(itemKeys == null || itemKeys.trim().length()==0) {
+			solution.setItemIds(itemKey);
+		}else {//认为已经有设置，则附加
+			String[] ids = itemKeys.split(",");
+			String keys = itemKey;
+			for(String id:ids) {
+				if(id.trim().length()>0)
+					keys += ","+id;
+			}
+			solution.setItemIds(keys);
+		}
+		solutionService.save(solution);
+		result.put("success", true);
+		return result;
+	}
 	
 	/**
 	 * 向SolutionItem上添加itemKey。注意是字符串操作
@@ -317,7 +356,7 @@ public class SolutionController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/solutionItem/stuff/{solutionItemId}/{itemKey}", method = RequestMethod.POST)
-	public JSONObject removeItem(@PathVariable String solutionItemId, @PathVariable String itemKey) {
+	public JSONObject addStuffItem2SolutionItem(@PathVariable String solutionItemId, @PathVariable String itemKey) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		if( solutionItemId==null || solutionItemId.trim().length() == 0) {
