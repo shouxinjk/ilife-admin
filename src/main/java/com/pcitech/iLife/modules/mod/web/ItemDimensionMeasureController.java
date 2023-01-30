@@ -185,10 +185,13 @@ public class ItemDimensionMeasureController extends BaseController {
 		List<Measure> pendingMeasures = Lists.newArrayList();
 		
 		//查询已经关联的属性，根据dimension查询获取
+		List<ItemDimensionMeasure> existItemDimensionMeasures = Lists.newArrayList();
 		ItemDimension itemDimension = itemDimensionService.get(dimensionId);//重新加载得到全部信息
-		ItemDimensionMeasure query = new ItemDimensionMeasure();
-		query.setDimension(itemDimension);
-		List<ItemDimensionMeasure> existItemDimensionMeasures = itemDimensionMeasureService.findList(query);
+		if(itemDimension!=null) {
+			ItemDimensionMeasure query = new ItemDimensionMeasure();
+			query.setDimension(itemDimension);
+			existItemDimensionMeasures = itemDimensionMeasureService.findList(query);
+		}
 		result.put("addedMeasures", existItemDimensionMeasures);//已经添加的关键属性列表
 		
 		List<String> ids = Lists.newArrayList();//记录已经添加的itemDimensionMeasure ID列表
