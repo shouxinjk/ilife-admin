@@ -531,7 +531,7 @@
 		                var hits = data.hits.hits;
 		                for(var i = 0 ; i < hits.length ; i++){
 		                    var hit = hits[i]._source;
-		                    hit["_score"] = Math.random()*100; //先随机给一个值
+		                    hit["_score"] = Number(Math.random()*100.toFixed(1)); //先随机给一个值
 		                    if(!hit.logo) //设置logo
 		                    	hit.logo = hit.images[0].replace(/\.avif/g,"");
 		                    items.push(hit);
@@ -581,7 +581,7 @@
 		            score = Math.sqrt(score/rankItems.length*100)*10; //此处做了额外处理，避免得分较低
 		            //$("#score"+stuff._key).append(Number(score.toFixed(1)));
 		            //将计算结果写入stuff内，并替换列表中的数据
-		            stuff["_score"] = score;
+		            stuff["_score"] = Number(score.toFixed(1));
 		            /**
 		            var idx = items.find(item => item._key == stuff._key);
 		            items.splice(idx, 1, stuff);
