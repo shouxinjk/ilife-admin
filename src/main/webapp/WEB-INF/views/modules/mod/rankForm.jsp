@@ -215,18 +215,14 @@
 		    var priceMax = 0;//最低价格
 		    var distributors = [];
 		    var sources = [];
-		    items.forEach(function(rank_item){//这个是rankitem
-		    	if(rank_item.stuff){
-		    		rank_item.stuff.forEach(function(stuff){ //这个才是循环所有stuff条目
-		    	    	console.log("try to insert item.",stuff);
-				    	if(stuff.price.sale>priceMax)priceMax = stuff.price.sale;
-				    	if(stuff.price.sale<priceMin)priceMin = stuff.price.sale;
-				    	if(stuff.profit && stuff.profit.order>profitMax)profitMax = stuff.profit.order;
-				    	if(stuff.profit && stuff.profit.order<profitMin)profitMin = stuff.profit.order;
-				    	if(distributors.indexOf(stuff.distributor.name)<0)distributors.push(stuff.distributor.name);
-				    	if(sources.indexOf(stuff.source)<0)sources.push(stuff.source);	    			
-		    		});
-		    	}
+		    items.forEach(function(stuff){//这个是rankitem
+    	    	console.log("try to insert item.",stuff);
+		    	if(stuff.price.sale>priceMax)priceMax = stuff.price.sale;
+		    	if(stuff.price.sale<priceMin)priceMin = stuff.price.sale;
+		    	if(stuff.profit && stuff.profit.order>profitMax)profitMax = stuff.profit.order;
+		    	if(stuff.profit && stuff.profit.order<profitMin)profitMin = stuff.profit.order;
+		    	if(distributors.indexOf(stuff.distributor.name)<0)distributors.push(stuff.distributor.name);
+		    	if(sources.indexOf(stuff.source)<0)sources.push(stuff.source);	    			
 		    });
 			//防止数据错误	
 		    if(priceMin>999999){
