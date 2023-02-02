@@ -446,7 +446,7 @@
 			            if(weightSum==0)weightSum=1;
 			            var i=0;
 			            rankItems.forEach(function(rankItem){
-			                rankItem.weight = rankItem.dimension.weight/weightSum;//动态权重
+			                rankItem.weight = Number(rankItem.dimension.weight/weightSum*100.toFixed(0));//动态权重
 			                rankItem.color = colors[i];
 			                rankItem.sort = i+1;//排序
 			                rankItems.splice(i,1,rankItem);//替换原有条目
