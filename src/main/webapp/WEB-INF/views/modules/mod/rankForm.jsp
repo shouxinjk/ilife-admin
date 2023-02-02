@@ -531,7 +531,7 @@
 		                var hits = data.hits.hits;
 		                for(var i = 0 ; i < hits.length ; i++){
 		                    var hit = hits[i]._source;
-		                    hit["_score"] = Number(Math.random()*100.toFixed(1)); //先随机给一个值
+		                    hit["_score"] = Number((Math.random()*100).toFixed(1)); //先随机给一个值
 		                    if(!hit.logo) //设置logo
 		                    	hit.logo = hit.images[0].replace(/\.avif/g,"");
 		                    items.push(hit);
