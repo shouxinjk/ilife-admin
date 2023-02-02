@@ -13,6 +13,7 @@
 		a.description AS "description",
 		a.openid AS "openid",
 		a.nickname AS "nickname",
+		a.article AS "article",	
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -124,6 +125,7 @@
 			description,
 			openid,
 			nickname,
+			article,
 			create_by,
 			create_date,
 			update_by,
@@ -138,6 +140,7 @@
 			#{description},
 			#{openid},
 			#{nickname},
+			#{article},	
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -155,6 +158,7 @@
 			description = #{description},
 			openid = #{openid},
 			nickname = #{nickname},
+			article = #{article},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}
 		WHERE id = #{id}

@@ -24,6 +24,7 @@ public class Rank extends DataEntity<Rank> {
 	private String description;		// 描述
 	private String openid;		// 创建者openid
 	private String nickname;		// 创建者昵称
+	private String article;		// 文章 json
 	private List<RankItemDimension> items; // 包含条目。仅用于创建时提交数据，不能直接读取
 	
 	public Rank() {
@@ -93,6 +94,14 @@ public class Rank extends DataEntity<Rank> {
 
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
+	}
+	
+	public String getArticle() {
+		return org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(article);
+	}
+
+	public void setArticle(String article) {
+		this.article = article;
 	}
 
 	public List<RankItemDimension> getItems() {
