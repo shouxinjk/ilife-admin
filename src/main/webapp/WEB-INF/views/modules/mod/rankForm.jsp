@@ -417,6 +417,7 @@
 		//根据rankId查询清单：直接加载一次
 		var rank = {};
 		var rankItems = [];
+		var weightSum=0;//由于参与排行的维度数量会变化，需要重新计算
 		function loadRank(rankId){
 		    $.ajax({
 		        url:"${ctx}/mod/rank/rest/rank/"+rankId,
@@ -438,14 +439,14 @@
 			            if(res.items && res.items.length>0)
 			            	rankItems = res.items;
 			            var  colors = ['#8b0000', '#dc143c', '#ff4500', '#ff6347', '#1e90ff','#40e0d0','#0dbf8c','#9acd32','#32cd32','#228b22','#067633'];
-			            var weightSum=0;//由于参与排行的维度数量会变化，需要重新计算
+			
 			            rankItems.forEach(function(rankItem){
 			                weightSum += rankItem.dimension.weight;
 			            });
 			            if(weightSum==0)weightSum=1;
 			            var i=0;
 			            rankItems.forEach(function(rankItem){
-			                rankItem.weight = rankItem.dimension.weight/weighSum;//动态权重
+			                rankItem.weight = rankItem.dimension.weight/weightSum;//动态权重
 			                rankItem.color = colors[i];
 			                rankItem.sort = i+1;//排序
 			                rankItems.splice(i,1,rankItem);//替换原有条目
