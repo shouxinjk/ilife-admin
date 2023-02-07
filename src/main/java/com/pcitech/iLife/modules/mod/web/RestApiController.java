@@ -462,7 +462,7 @@ public class RestApiController extends BaseController {
 	//参数为： {prompt: xxx}
 	@ResponseBody
 	@RequestMapping(value = "chatgpt", method = RequestMethod.POST)
-	public JSONObject requestChatGPT(JSONObject json) {
+	public JSONObject requestChatGPT(@RequestBody JSONObject json) {
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		if(json.getString("prompt")==null || json.getString("prompt").trim().length()==0) {
