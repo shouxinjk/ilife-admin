@@ -475,6 +475,14 @@ public class RestApiController extends BaseController {
 		}else {
 			result.put("text", answer);
 			result.put("success", true);
+			//扣除虚拟豆
+			Broker broker = brokerService.getByOpenid(json.getString("openid"));
+			if(broker!=null) {
+				broker.setPoints(broker.getPoints()-1);
+				brokerService.save(broker);
+			}else {
+				result.put("msg", "cannot find broker by openid."+json.getString("openid"));
+			}
 		}
 		return result;
 	}
