@@ -59,7 +59,8 @@ public class BrokerClearingNotifyTask {
     	    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
     	    JSONObject result = null;
     		for(Map<String,Object> item:items) {
-    			if(item.get("broker_openid")==null || item.get("broker_openid").toString().length()==0) {
+    			if(item.get("broker_openid")==null || item.get("broker_openid").toString().length()==0
+    					 || item.get("broker_openid").toString().length()<20) { //注意特殊用户如system其openid为虚拟
     				logger.error("Cannot send clearing notification to broker without openid.[json]"+item);
     				
     				//直接更新通知状态，更新清分记录的通知状态，避免重复发送
@@ -101,7 +102,7 @@ public class BrokerClearingNotifyTask {
     				clearing.setUpdateDate(new Date());
     				clearingService.save(clearing);
     			}
-    	        logger.info("Clearing Notification job executed.[msg]" + msg);
+    	        logger.debug("Clearing Notification job executed.[msg]" + msg);
     		}
     }
     

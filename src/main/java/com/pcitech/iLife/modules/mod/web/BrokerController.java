@@ -558,6 +558,7 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 	
 	/**
 	 * 给指定ID的达人添加下级达人
+	 * 注意初始传递broker只有nickname、openid、avatarUrl
 	 */
 	@ResponseBody
 	@RequestMapping(value = "rest/{id}", method = RequestMethod.POST)
@@ -573,7 +574,7 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 				broker.setIsNewRecord(true);
 			}
 			broker.setParent(parent);
-			if(broker.getLevel()<=4)
+			if(broker.getLevel()==null||broker.getLevel()<=4)
 				broker.setLevel(4);//设置等级
 			broker.setHierarchy(parent.getHierarchy()+1);//默认设置为上级达人层级+1
 			//检查虚拟豆：设置新注册达人初始虚拟豆，并增加邀请达人的虚拟豆
