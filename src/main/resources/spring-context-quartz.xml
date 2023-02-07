@@ -16,7 +16,7 @@
     </bean>
     <bean id="orderClearingTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="orderClearingMethod"></property>
-        <property name="cronExpression" value="0 */5 * * * ?"></property>
+        <property name="cronExpression" value="0 */35 * * * ?"></property>
     </bean>
     <bean id="orderClearingScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -35,7 +35,7 @@
     </bean>
     <bean id="orderClearingNotifyTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="orderClearingNotifyMethod"></property>
-        <property name="cronExpression" value="0 */3 * * * ?"></property>
+        <property name="cronExpression" value="0 */23 * * * ?"></property>
     </bean>
     <bean id="orderClearingNotifyScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
