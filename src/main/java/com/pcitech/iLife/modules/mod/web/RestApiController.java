@@ -58,6 +58,7 @@ import com.pcitech.iLife.modules.ope.entity.Performance;
 import com.pcitech.iLife.modules.ope.service.PerformanceService;
 import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.service.DictService;
+import com.pcitech.iLife.util.AIHelper;
 import com.pcitech.iLife.util.FastDFSUtils;
 import com.pcitech.iLife.util.HttpClientHelper;
 
@@ -458,5 +459,24 @@ public class RestApiController extends BaseController {
 		return result;
 	}
 	
+	//参数为： {prompt: xxx}
+	@ResponseBody
+	@RequestMapping(value = "chatgpt", method = RequestMethod.POST)
+	public JSONObject requestChatGPT(JSONObject json) {
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		if(json.getString("prompt")==null || json.getString("prompt").trim().length()==0) {
+			result.put("text", "问题不能为空哦~~");
+			return result;
+		}
+		String answer = AIHelper.getInstance().requestChatGPT(json.getString("prompt").trim());
+		if(answer == null || answer.trim().length()==0) {
+			result.put("text", "ChatGPT都被你问倒了，半天都没说话，换一个试试呢");
+		}else {
+			result.put("text", answer);
+			result.put("success", true);
+		}
+		return result;
+	}
 	
 }

@@ -834,6 +834,15 @@
 	    <artifactId>nimbus-jose-jwt</artifactId>
 	    <version>4.39.1</version>
 	</dependency>
+	
+		<!-- openAI client -->    
+		<!-- https://github.com/TheoKanning/openai-java --> 
+		<dependency>
+		  <groupId>com.theokanning.openai-gpt3-java</groupId>
+		  <artifactId>client</artifactId>
+		  <version>0.9.0</version>
+		</dependency> 
+	
 		<!-- jwt END -->
 		<!-- 自定义jar依赖包
 		<dependency>
