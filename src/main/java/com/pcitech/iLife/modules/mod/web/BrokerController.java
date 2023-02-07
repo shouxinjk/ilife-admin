@@ -576,7 +576,27 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 			if(broker.getLevel()<=4)
 				broker.setLevel(4);//设置等级
 			broker.setHierarchy(parent.getHierarchy()+1);//默认设置为上级达人层级+1
+			//检查虚拟豆：设置新注册达人初始虚拟豆，并增加邀请达人的虚拟豆
+			Dict dict = new Dict();
+			dict.setType("publisher_point_cost");
+			dict.setValue("initial");
+			List<Dict> initialPoints = dictService.findList(dict);
+			if(initialPoints!=null&&initialPoints.size()>0) {
+				dict = initialPoints.get(0);
+				try{broker.setPoints(Integer.parseInt(dict.getLabel()));}catch(Exception ex) {}
+			}
 			brokerService.save(broker);
+			//查找邀请奖励：增加给上级达人
+			dict = new Dict();
+			dict.setType("publisher_point_cost");
+			dict.setValue("invite-person");
+			List<Dict> invitePoints = dictService.findList(dict);
+			if(invitePoints!=null&&invitePoints.size()>0) {
+				dict = invitePoints.get(0);
+				try{parent.setPoints(parent.getPoints()+Integer.parseInt(dict.getLabel()));}catch(Exception ex) {}
+			}
+			brokerService.save(parent);
+			
 			result.put("status",true);
 			result.put("description","Broker created successfully");
 			Broker newbroker = brokerService.get(broker);
@@ -604,10 +624,6 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 			//**/
 
 			
-		}
-		//检查虚拟豆
-		if(broker.getPoints()==0) {
-			broker.setPoints(20);//默认虚拟豆：固化写死
 		}
 		return result;
 	}
