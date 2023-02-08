@@ -564,47 +564,59 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 	@RequestMapping(value = "rest/{id}", method = RequestMethod.POST)
 	public Map<String, Object> registerBroker(@PathVariable String id,@RequestBody Broker broker, HttpServletRequest request, HttpServletResponse response, Model model) throws WxErrorException{
 		Map<String, Object> result = Maps.newHashMap();
-		Broker parent = brokerService.get(id);
-		if(parent == null) {
-			result.put("status",false);
-			result.put("description","Cannot find parent broker by id:"+id);
-		}else {
-			if(broker.getId()==null || broker.getId().trim().length()==0) {
-				broker.setId(Util.get32UUID());
-				broker.setIsNewRecord(true);
-			}
-			broker.setParent(parent);
-			if(broker.getLevel()==null||broker.getLevel()<=4)
-				broker.setLevel(4);//设置等级
-			broker.setHierarchy(parent.getHierarchy()+1);//默认设置为上级达人层级+1
-			//检查虚拟豆：设置新注册达人初始虚拟豆，并增加邀请达人的虚拟豆
-			Dict dict = new Dict();
-			dict.setType("publisher_point_cost");
-			dict.setValue("initial");
-			List<Dict> initialPoints = dictService.findList(dict);
-			if(initialPoints!=null&&initialPoints.size()>0) {
-				dict = initialPoints.get(0);
-				try{broker.setPoints(Integer.parseInt(dict.getLabel()));}catch(Exception ex) {}
-			}
-			brokerService.save(broker);
-			//查找邀请奖励：增加给上级达人
-			dict = new Dict();
-			dict.setType("publisher_point_cost");
-			dict.setValue("invite-person");
-			List<Dict> invitePoints = dictService.findList(dict);
-			if(invitePoints!=null&&invitePoints.size()>0) {
-				dict = invitePoints.get(0);
-				try{parent.setPoints(parent.getPoints()+Integer.parseInt(dict.getLabel()));}catch(Exception ex) {}
-			}
-			brokerService.save(parent);
-			
+		//先根据openid查找，如果有则直接返回
+		Broker oldone = brokerService.getByOpenid(broker.getOpenid());
+		if(oldone!=null) {
 			result.put("status",true);
-			result.put("description","Broker created successfully");
-			Broker newbroker = brokerService.get(broker);
-			result.put("data", newbroker);
+			result.put("description","broker existed.[openid]"+broker.getOpenid());
+			result.put("data", oldone);
+			return result;
+		}
 			
-			//添加徽章：仅对领域专家、学者才需要申请，否则直接通过等级完成
-			/**
+		//否则新注册
+		Broker parent = brokerService.get(id);
+		if(parent == null) {//注册为默认达人下级成员
+			result.put("description","Cannot find parent broker by id:"+id+". register as default broker's child");
+			parent = brokerService.get("system");
+		}
+		broker.setParent(parent);
+		
+		if(broker.getId()==null || broker.getId().trim().length()==0) {
+			broker.setId(Util.get32UUID());
+			broker.setIsNewRecord(true);
+		}
+		
+		if(broker.getLevel()==null||broker.getLevel()<=4)
+			broker.setLevel(4);//设置等级
+		broker.setHierarchy(parent.getHierarchy()+1);//默认设置为上级达人层级+1
+		//检查虚拟豆：设置新注册达人初始虚拟豆，并增加邀请达人的虚拟豆
+		Dict dict = new Dict();
+		dict.setType("publisher_point_cost");
+		dict.setValue("initial");
+		List<Dict> initialPoints = dictService.findList(dict);
+		if(initialPoints!=null&&initialPoints.size()>0) {
+			dict = initialPoints.get(0);
+			try{broker.setPoints(Integer.parseInt(dict.getLabel()));}catch(Exception ex) {}
+		}
+		brokerService.save(broker);
+		//查找邀请奖励：增加给上级达人
+		dict = new Dict();
+		dict.setType("publisher_point_cost");
+		dict.setValue("invite-person");
+		List<Dict> invitePoints = dictService.findList(dict);
+		if(invitePoints!=null&&invitePoints.size()>0) {
+			dict = invitePoints.get(0);
+			try{parent.setPoints(parent.getPoints()+Integer.parseInt(dict.getLabel()));}catch(Exception ex) {}
+		}
+		brokerService.save(parent);
+		
+		result.put("status",true);
+		result.put("description","Broker created successfully");
+		Broker newbroker = brokerService.get(broker);
+		result.put("data", newbroker);
+		
+		//添加徽章：仅对领域专家、学者才需要申请，否则直接通过等级完成
+		/**
 			Badge badge = new Badge();
 			badge.setKey("broker");
 			List<Badge> badges = badgeService.findList(badge);
@@ -624,8 +636,6 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 			}
 			//**/
 
-			
-		}
 		return result;
 	}
 	
@@ -655,8 +665,16 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 				broker.setLevel(4);//设置等级
 				broker.setHierarchy(parentBroker.getHierarchy()+1);
 //				broker.setOpenid(broker.getOpenid());
-				broker.setPoints(20);//默认设置
-				String nickname = "确幸生活家";
+				//检查虚拟豆：设置新注册达人初始虚拟豆，并增加邀请达人的虚拟豆
+				Dict dict = new Dict();
+				dict.setType("publisher_point_cost");
+				dict.setValue("initial");
+				List<Dict> initialPoints = dictService.findList(dict);
+				if(initialPoints!=null&&initialPoints.size()>0) {
+					dict = initialPoints.get(0);
+					try{broker.setPoints(Integer.parseInt(dict.getLabel()));}catch(Exception ex) {}
+				}
+				String nickname = "小确幸er";
 				if(broker.getNickname()!=null&&broker.getNickname().trim().length()>0) {
 					nickname = broker.getNickname();
 				}
