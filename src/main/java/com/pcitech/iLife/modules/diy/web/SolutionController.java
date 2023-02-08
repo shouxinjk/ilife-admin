@@ -237,6 +237,7 @@ public class SolutionController extends BaseController {
 		solution.setRefer(oldSolution);//注意：要首先设置引用条目为原始记录
 		solution.setIsNewRecord(true);
 		solution.setName(solution.getName()+" copy");
+		solution.setArticle("{}");//不需要原有的article
 		solution.setId(id);
 		
 		if(params.getString("byOpenid")!=null) {
