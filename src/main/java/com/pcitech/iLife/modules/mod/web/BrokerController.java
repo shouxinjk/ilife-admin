@@ -577,7 +577,15 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 		Broker parent = brokerService.get(id);
 		if(parent == null) {//注册为默认达人下级成员
 			result.put("description","Cannot find parent broker by id:"+id+". register as default broker's child");
-			parent = brokerService.get("system");
+			String defaultBrokerId = "system";
+			Dict dict = new Dict();
+			dict.setType("sx_default");
+			dict.setValue("broker_id");
+			List<Dict> dicts = dictService.findList(dict);
+			if(dicts!=null&&dicts.size()>0) {
+				defaultBrokerId = dicts.get(0).getLabel();
+			}
+			parent = brokerService.get(defaultBrokerId);
 		}
 		broker.setParent(parent);
 		
@@ -598,7 +606,11 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 			dict = initialPoints.get(0);
 			try{broker.setPoints(Integer.parseInt(dict.getLabel()));}catch(Exception ex) {}
 		}
-		brokerService.save(broker);
+		try {
+			brokerService.save(broker);
+		}catch(Exception ex) {
+			logger.error("failed save broker.",ex);
+		}
 		//查找邀请奖励：增加给上级达人
 		dict = new Dict();
 		dict.setType("publisher_point_cost");
@@ -608,7 +620,11 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 			dict = invitePoints.get(0);
 			try{parent.setPoints(parent.getPoints()+Integer.parseInt(dict.getLabel()));}catch(Exception ex) {}
 		}
-		brokerService.save(parent);
+		try {
+			brokerService.save(parent);
+		}catch(Exception ex) {
+			logger.error("failed save broker.",ex);
+		}
 		
 		result.put("status",true);
 		result.put("description","Broker created successfully");
