@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 
 import com.pcitech.iLife.common.persistence.DataEntity;
 import com.pcitech.iLife.modules.mod.entity.Broker;
+import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 
 /**
  * 个性化定制模板Entity
@@ -22,7 +23,8 @@ public class ProposalScheme extends DataEntity<ProposalScheme> {
 	private String type;		// 类型:free手动定制 guide指南生成 默认为free
 	private String logo; //logo
 	private JsonForm form;		// 表单
-	private String category;		// 类别
+	private ItemCategory itemCategory;		// 商品类目
+	private String category; //注意：存放的是标签字符串
 	private Broker broker;		// 创建达人
 	private String status;		// 状态
 	private Integer priority=100;		// 优先级
@@ -51,6 +53,14 @@ public class ProposalScheme extends DataEntity<ProposalScheme> {
 		this.name = name;
 	}
 	
+	public ItemCategory getItemCategory() {
+		return itemCategory;
+	}
+
+	public void setItemCategory(ItemCategory itemCategory) {
+		this.itemCategory = itemCategory;
+	}
+
 	public String getDescription() {
 		return description;
 	}

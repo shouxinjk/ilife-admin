@@ -289,7 +289,7 @@
 			<label class="control-label">类型：</label>
 			<div class="controls">
 				 <sys:treeselect id="type" name="type.id" value="${guideTermItem.type.id}" labelName="type.name" labelValue="${guideTermItem.type.name}"
-					title="类型" url="/diy/proposalSubtype/listData" />	
+					title="类型" url="/diy/proposalSubtype/listData?category.id=${guideTermItem.category.id}" />	
 				<span class="help-inline"><font color="red">*</font> </span>				
 			</div>				
 		</div>	

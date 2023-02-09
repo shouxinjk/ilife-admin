@@ -79,12 +79,19 @@
 		</div>
 		-->
 		<div class="control-group">
-			<label class="control-label">类别：</label>
+			<label class="control-label">所属类目：</label>
 			<div class="controls">
-				<form:input path="category" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				<sys:treeselect id="itemCategory" name="itemCategory.id" value="${proposalScheme.itemCategory.id}" labelName="itemCategory.name" labelValue="${proposalScheme.itemCategory.name}"
+					title="所属类目" url="/mod/itemCategory/treeData"  notAllowSelectRoot="true"  cssClass="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>			
+		</div>
+		<div class="control-group">
+			<label class="control-label">标签：</label>
+			<div class="controls">
+				<form:input path="category" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
 			</div>
 		</div>
-
 		<div class="control-group">
 			<label class="control-label">达人：</label>
 			<div class="controls">

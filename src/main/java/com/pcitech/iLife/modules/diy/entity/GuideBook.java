@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 
 import com.pcitech.iLife.common.persistence.DataEntity;
+import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 
 /**
  * 个性化定制指南Entity
@@ -21,6 +22,7 @@ public class GuideBook extends DataEntity<GuideBook> {
 	private String origin;		// 来源
 	private String revision;		// 版本
 	private String tags;		// 标签
+	private ItemCategory category;		// 商品类目
 	private String description;		// 描述
 	private String type;		// 类型
 	private String url;		// URL
@@ -88,6 +90,14 @@ public class GuideBook extends DataEntity<GuideBook> {
 		this.description = description;
 	}
 	
+	public ItemCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ItemCategory category) {
+		this.category = category;
+	}
+
 	@Length(min=0, max=20, message="类型长度必须介于 0 和 20 之间")
 	public String getType() {
 		return type;

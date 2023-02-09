@@ -6,6 +6,7 @@ package com.pcitech.iLife.modules.diy.entity;
 import org.hibernate.validator.constraints.Length;
 
 import com.pcitech.iLife.common.persistence.DataEntity;
+import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 
 /**
  * 个性化定制指南条目Entity
@@ -19,6 +20,7 @@ public class GuideTerm extends DataEntity<GuideTerm> {
 	private ProposalSection section;		// Section
 	private String name;		// 名称
 	private String description;		// 描述
+	private ItemCategory category;	//类目：注意该类目在GuideTerm上不存储，直接引用来源于GuideBook的类目
 	private String tips;		// 注意事项
 	private String tags;		// 标签
 	private String criteria;		// 适用条件
@@ -60,6 +62,14 @@ public class GuideTerm extends DataEntity<GuideTerm> {
 		this.name = name;
 	}
 	
+	public ItemCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ItemCategory category) {
+		this.category = category;
+	}
+
 	@Length(min=0, max=512, message="描述长度必须介于 0 和 512 之间")
 	public String getDescription() {
 		return description;

@@ -5,6 +5,8 @@
 	<sql id="guideBookColumns">
 		a.id AS "id",
 		a.name AS "name",
+		a.category_id AS "category.id",
+		c.name AS "category.name",
 		a.alias AS "alias",
 		a.origin AS "origin",
 		a.revision AS "revision",
@@ -21,6 +23,7 @@
 	</sql>
 	
 	<sql id="guideBookJoins">
+		LEFT JOIN mod_item_category c ON c.id = a.category_id
 	</sql>
     
 	<select id="get" resultType="GuideBook">
@@ -89,6 +92,7 @@
 		INSERT INTO diy_guide_book(
 			id,
 			name,
+			category_id,
 			alias,
 			origin,
 			revision,
@@ -105,6 +109,7 @@
 		) VALUES (
 			#{id},
 			#{name},
+			#{category.id},
 			#{alias},
 			#{origin},
 			#{revision},
@@ -124,6 +129,7 @@
 	<update id="update">
 		UPDATE diy_guide_book SET 	
 			name = #{name},
+			category_id=#{category.id},
 			alias = #{alias},
 			origin = #{origin},
 			revision = #{revision},

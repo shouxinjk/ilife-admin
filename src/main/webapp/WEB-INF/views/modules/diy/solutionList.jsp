@@ -95,6 +95,7 @@
 				<shiro:hasPermission name="diy:solution:edit"><td>
     				<a href="${ctx}/diy/solution/form?id=${solution.id}">修改</a>
 					<a href="${ctx}/diy/solution/delete?id=${solution.id}" onclick="return confirmx('确认要删除该个性定制方案吗？', this.href)">删除</a>
+					<a href="${ctx}/diy/solutionItem/list?solution.id=${solution.id}">查看方案条目</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

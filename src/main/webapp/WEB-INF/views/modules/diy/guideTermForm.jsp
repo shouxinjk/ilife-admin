@@ -274,8 +274,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/diy/guideTerm/">个性化定制指南条目列表</a></li>
-		<li class="active"><a href="${ctx}/diy/guideTerm/form?id=${guideTerm.id}">个性化定制指南条目<shiro:hasPermission name="diy:guideTerm:edit">${not empty guideTerm.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="diy:guideTerm:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/diy/guideTerm/?book.id=${guideTerm.book.id}">指南规则列表</a></li>
+		<li class="active"><a href="${ctx}/diy/guideTerm/form?id=${guideTerm.id}">指南规则<shiro:hasPermission name="diy:guideTerm:edit">${not empty guideTerm.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="diy:guideTerm:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 			<form:form id="inputForm" modelAttribute="guideTerm" action="${ctx}/diy/guideTerm/save" method="post" class="form-horizontal">
 				<form:hidden path="id"/>
@@ -286,14 +286,14 @@
 					<label class="control-label">指南：</label>
 					<div class="controls">
 						 <sys:treeselect id="book" name="book.id" value="${guideTerm.book.id}" labelName="book.name" labelValue="${guideTerm.book.name}"
-							title="定制指南列表" url="/diy/guideBook/listData"  cssClass="required"/>					
+							title="指南列表" url="/diy/guideBook/listData"  cssClass="required"/>					
 					</div>			
 				</div>
 				<div class="control-group">
-					<label class="control-label">Section：</label>
+					<label class="control-label">章节：</label>
 					<div class="controls">
 						 <sys:treeselect id="section" name="section.id" value="${guideTerm.section.id}" labelName="section.name" labelValue="${guideTerm.section.name}"
-							title="定制指南列表" url="/diy/proposalSection/listData"  cssClass="required"/>					
+							title="章节列表" url="/diy/proposalSection/listData?category.id=${guideTerm.category.id}"  cssClass="required"/>					
 					</div>			
 				</div>
 				<div class="control-group">

@@ -10,9 +10,11 @@
 		a.description AS "description",
 		a.type AS "type",
 		a.logo AS "logo",
+		a.category AS "category",
 		a.form_id AS "form.id",
 		a.name AS "form.name",
-		a.category AS "category",
+		a.category_id AS "itemCategory.id",
+		c.name AS "itemCategory.name",
 		a.broker_id AS "broker.id",
 		b.nickname AS "broker.nickname",
 		a.status AS "status",
@@ -28,6 +30,7 @@
 		LEFT JOIN diy_proposal_scheme ps ON ps.id = a.parent_id
 		LEFT JOIN mod_broker b ON b.id = a.broker_id
 		LEFT JOIN diy_form f ON f.id = a.form_id
+		LEFT JOIN mod_item_category c ON c.id = a.category_id
 	</sql>
     
 	<select id="get" resultType="ProposalScheme">
@@ -49,8 +52,8 @@
 			<if test="type != null and type != ''">
 				AND a.type = #{type}
 			</if>
-			<if test="category != null and category != ''">
-				AND a.category = #{category}
+			<if test="categoryId != null and categoryId != ''">
+				AND a.category_id = #{categoryId}
 			</if>
 			<if test="parentId != null and parentId != ''">
 				AND a.parent_id = #{parentId}
@@ -83,8 +86,8 @@
 			<if test="type != null and type != ''">
 				AND a.type = #{type}
 			</if>
-			<if test="category != null and category != ''">
-				AND a.category = #{category}
+			<if test="category != null and category.id !=null and category.id != ''">
+				AND a.category_id = #{category.id}
 			</if>
 			<if test="parent != null and parent.id != null and parent.id != ''">
 				AND a.parent_id = #{parent.id}
@@ -132,8 +135,9 @@
 			description,
 			type,
 			logo,
-			form_id,
 			category,
+			form_id,
+			category_id,
 			broker_id,
 			status,
 			priority,
@@ -149,8 +153,9 @@
 			#{description},
 			#{type},
 			#{logo},
-			#{form.id},
 			#{category},
+			#{form.id},
+			#{itemCategory.id},
 			#{broker.id},
 			#{status},
 			#{priority},
@@ -169,8 +174,9 @@
 			description = #{description},
 			type = #{type},
 			logo = #{logo},
-			form_id = #{form.id},
 			category = #{category},
+			form_id = #{form.id},
+			category_id = #{itemCategory.id},
 			broker_id = #{broker.id},
 			status = #{status},
 			priority = #{priority},

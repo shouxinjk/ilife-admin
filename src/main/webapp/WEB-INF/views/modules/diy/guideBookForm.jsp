@@ -34,6 +34,14 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
+			<label class="control-label">所属类目：</label>
+			<div class="controls">
+				<sys:treeselect id="category" name="category.id" value="${guideBook.category.id}" labelName="category.name" labelValue="${guideBook.category.name}"
+					title="所属类目" url="/mod/itemCategory/treeData"  notAllowSelectRoot="true"  cssClass="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>			
+		</div>		
+		<div class="control-group">
 			<label class="control-label">全称：</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" maxlength="512" class="input-xlarge required"/>
@@ -86,7 +94,7 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">激活：</label>
+			<label class="control-label">启用：</label>
 			<div class="controls">
 				<form:select path="status" class="input-xlarge required">
 					<form:option value="" label=""/>

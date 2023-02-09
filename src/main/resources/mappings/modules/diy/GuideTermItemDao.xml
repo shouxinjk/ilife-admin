@@ -5,6 +5,7 @@
 	<sql id="guideTermItemColumns">
 		a.id AS "id",
 		a.name AS "name",
+		st.category_id AS "category.id",
 		a.description AS "description",
 		a.weight AS "weight",
 		a.term_id AS "term.id",

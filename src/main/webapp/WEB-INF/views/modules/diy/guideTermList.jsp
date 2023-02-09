@@ -18,8 +18,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/diy/guideTerm/">指南规则列表</a></li>
-		<shiro:hasPermission name="diy:guideTerm:edit"><li><a href="${ctx}/diy/guideTerm/form">指南规则添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/diy/guideTerm/?book.id=${guideTerm.book.id}&book.name=${guideTerm.book.name}&category.id=${guideBook.category.id}">指南规则列表</a></li>
+		<shiro:hasPermission name="diy:guideTerm:edit"><li><a href="${ctx}/diy/guideTerm/form?book.id=${guideTerm.book.id}&book.name=${guideTerm.book.name}&category.id=${guideTerm.category.id}">指南规则添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="guideTerm" action="${ctx}/diy/guideTerm/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -87,7 +87,7 @@
 				<shiro:hasPermission name="diy:guideTerm:edit"><td>
     				<a href="${ctx}/diy/guideTerm/form?id=${guideTerm.id}">修改</a>
 					<a href="${ctx}/diy/guideTerm/delete?id=${guideTerm.id}" onclick="return confirmx('确认要删除该个性化定制指南条目吗？', this.href)">删除</a>
-					<a href="${ctx}/diy/guideTermItem/?term.id=${guideTerm.id}">查看关联条目</a>
+					<a href="${ctx}/diy/guideTermItem/?term.id=${guideTerm.id}&category.id=${guideTerm.category.id}">查看关联条目</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

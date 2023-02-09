@@ -19,7 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/diy/guideTerm/">指南规则列表</a></li>
-		<shiro:hasPermission name="diy:guideTerm:edit"><li><a href="${ctx}/diy/guideTerm/form">指南规则添加</a></li></shiro:hasPermission>	
+		<shiro:hasPermission name="diy:guideTerm:edit"><li><a href="${ctx}/diy/guideTerm/form?category.id=${guideTermItem.category.id}">指南规则添加</a></li></shiro:hasPermission>	
 		<li class="active"><a href="${ctx}/diy/guideTermItem/?term.id=${guideTermItem.term.id}">已关联条目</a></li>
 		<shiro:hasPermission name="diy:guideTermItem:edit"><li><a href="${ctx}/ope/item/list2?termId=${guideTermItem.term.id}">待关联条目</a></li></shiro:hasPermission>
 	</ul>

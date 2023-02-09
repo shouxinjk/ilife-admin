@@ -90,6 +90,7 @@
 		<thead>
 			<tr>
 				<th width="60">#</th>
+				<th>所属类目</th>
 				<th>全称</th>
 				<th>简称</th>
 				<th>来源</th>
@@ -97,7 +98,7 @@
 				<th>标签</th>
 				<th>描述</th>
 				<th>类型</th>
-				<th>URL</th>
+				<!--th>URL</th-->
 				<th>激活</th>
 				<th>更新时间</th>
 				<!--
@@ -110,7 +111,8 @@
 			<tr>
 				<td>
 					<input type="checkbox" id="${guideBook.id}" value="${guideBook.id}" class="needBox"/>
-				</td>			
+				</td>	
+				<td>${guideBook.category.name}</td>		
 				<td><a href="${ctx}/diy/guideBook/form?id=${guideBook.id}">
 					${guideBook.name}
 				</a></td>
@@ -132,11 +134,11 @@
 				<td>
 					${fns:getDictLabel(guideBook.type, 'guide_type', '')}
 				</td>
-				<td>
-					<c:if test="${guideBook.url}">
-						<a href="${guideBook.url}">查看</a>
+				<!--td>
+					<c:if test="${fn:contains(guideBook.url,'http')}">
+						<a href="${guideBook.url}">查看原文</a>
 					</c:if>			
-				</td>
+				</td-->
 				<td>
 					${fns:getDictLabel(guideBook.status, 'yes_no', '')}
 				</td>

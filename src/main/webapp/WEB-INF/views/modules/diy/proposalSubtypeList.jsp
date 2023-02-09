@@ -28,6 +28,9 @@
 			<li><label>主题：</label>
 				<form:input path="scheme.id" htmlEscape="false" maxlength="64" class="input-medium"/>
 			</li>
+			<li><label>类目：</label>
+				<form:input path="category.name" htmlEscape="false" maxlength="50" class="input-medium"/>
+			</li>			
 			<li><label>名称：</label>
 				<form:input path="name" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
@@ -40,6 +43,7 @@
 		<thead>
 			<tr>
 				<th>主题</th>
+				<th>所属类目</th>
 				<th>名称</th>
 				<th>描述</th>
 				<th>LOGO</th>
@@ -53,6 +57,9 @@
 				<td><a href="${ctx}/diy/proposalSubtype/form?id=${proposalSubtype.id}">
 					${proposalSubtype.scheme.name}
 				</a></td>
+				<td>
+					${proposalSubtype.category.name}
+				</td>				
 				<td>
 					${proposalSubtype.name}
 				</td>

@@ -9,6 +9,8 @@
 		ps.type AS "scheme.type",
 		ps.category AS "scheme.category",
 		a.name AS "name",
+		a.category_id AS "category.id",
+		c.name AS "category.name",
 		a.description AS "description",
 		a.priority AS "priority",
 		a.create_by AS "createBy.id",
@@ -20,6 +22,7 @@
 	
 	<sql id="proposalSectionJoins">
 		LEFT JOIN diy_proposal_scheme ps ON ps.id = a.scheme_id
+		LEFT JOIN mod_item_category c ON c.id = a.category_id
 	</sql>
     
 	<select id="get" resultType="ProposalSection">
@@ -40,6 +43,9 @@
 			<if test="scheme != null and scheme.id != null and scheme.id != ''">
 				AND a.scheme_id = #{scheme.id}
 			</if>
+			<if test="category != null and category.id != null and category.id != ''">
+				AND a.category_id = #{category.id}
+			</if>			
 			<if test="name != null and name != ''">
 				AND a.name LIKE 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
@@ -80,6 +86,7 @@
 			id,
 			scheme_id,
 			name,
+			category_id,
 			description,
 			priority,
 			create_by,
@@ -91,6 +98,7 @@
 			#{id},
 			#{scheme.id},
 			#{name},
+			#{category.id},
 			#{description},
 			#{priority},
 			#{createBy.id},
@@ -105,6 +113,7 @@
 		UPDATE diy_proposal_section SET 	
 			scheme_id = #{scheme.id},
 			name = #{name},
+			category_id=#{category.id},
 			description = #{description},
 			priority = #{priority},
 			update_by = #{updateBy.id},

@@ -34,8 +34,8 @@
 					<form:options items="${fns:getDictList('proposal_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
-			<li><label>类别：</label>
-				<form:input path="category" htmlEscape="false" maxlength="50" class="input-medium"/>
+			<li><label>所属类目：</label>
+				<form:input path="itemCategory.name" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li><label>达人：</label>
 				<form:input path="broker.id" htmlEscape="false" maxlength="50" class="input-medium"/>
@@ -55,12 +55,12 @@
 		<thead>
 			<tr>
 				<th>名称</th>
-				<th>上级</th>
+				<th>上级主题</th>
+				<th>所属类目</th>
 				<th>描述</th>
 				<th>类型</th>
 				<th>LOGO</th>
-				<th>类别</th>
-				<th>达人</th>
+				<th>标签</th>
 				<th>激活</th>
 				<th>优先级</th>
 				<th>更新时间</th>
@@ -75,7 +75,10 @@
 				</td>
 				<td>
 					<a href="${ctx}/diy/proposalSection/?scheme.id=${proposalScheme.parent.id}">${proposalScheme.parent.name}</a>
-				</td>				
+				</td>	
+				<td>
+					${proposalScheme.itemCategory.name}
+				</td>							
 				<td>
 					${proposalScheme.description}
 				</td>
@@ -85,17 +88,12 @@
 				<td>
 					<img src="${proposalScheme.logo}" width="40" height="40"/>
 				</td>	
-				<!-- 	
-				<td>
-					${proposalScheme.form.name}
-				</td>
-				 -->		
 				<td>
 					${proposalScheme.category}
-				</td>
-				<td>
+				</td>		
+				<!--td>
 					${proposalScheme.broker.nickname}
-				</td>
+				</td-->
 				<td>
 					${fns:getDictLabel(proposalScheme.status, 'yes_no', '')}
 				</td>

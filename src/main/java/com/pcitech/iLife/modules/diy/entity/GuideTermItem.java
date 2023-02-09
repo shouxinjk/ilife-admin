@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 
 import com.pcitech.iLife.common.persistence.DataEntity;
+import com.pcitech.iLife.modules.mod.entity.ItemCategory;
 import com.pcitech.iLife.modules.ope.entity.Item;
 
 /**
@@ -18,6 +19,7 @@ public class GuideTermItem extends DataEntity<GuideTermItem> {
 	
 	private static final long serialVersionUID = 1L;
 	private String name; //名称
+	private ItemCategory category; //类目：注意仅用于读取
 	private String description;		// 描述
 	private Double weight=1.0;		// 权重：默认为100%
 	private GuideTerm term;		// 指南条目
@@ -43,6 +45,14 @@ public class GuideTermItem extends DataEntity<GuideTermItem> {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public ItemCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ItemCategory category) {
+		this.category = category;
 	}
 
 	@Length(min=0, max=255, message="描述长度必须介于 0 和 255 之间")

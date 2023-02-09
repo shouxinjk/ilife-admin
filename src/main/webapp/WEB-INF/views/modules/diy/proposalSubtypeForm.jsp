@@ -36,7 +36,7 @@
 		<div class="control-group">
 			<label class="control-label">主题：</label>
 			<div class="controls">
-				 <sys:treeselect id="scheme" name="scheme.id" value="${proposalSection.scheme.id}" labelName="scheme.name" labelValue="${proposalSection.scheme.name}"
+				 <sys:treeselect id="scheme" name="scheme.id" value="${proposalSubtype.scheme.id}" labelName="scheme.name" labelValue="${proposalSubtype.scheme.name}"
 					title="定制主题" url="/diy/proposalScheme/listData" />					
 			</div>			
 		</div>
@@ -52,6 +52,14 @@
 			<div class="controls">
 				<form:input path="description" htmlEscape="false" maxlength="512" class="input-xlarge "/>
 			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">所属类目：</label>
+			<div class="controls">
+				<sys:treeselect id="category" name="category.id" value="${proposalSubtype.category.id}" labelName="category.name" labelValue="${proposalSubtype.category.name}"
+					title="所属类目" url="/mod/itemCategory/treeData"  notAllowSelectRoot="true"  cssClass="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>			
 		</div>
 		<div class="control-group">
 			<label class="control-label">LOGO：</label>

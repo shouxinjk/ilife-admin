@@ -26,37 +26,37 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th width="60">#</th><!-- 复选框 -->
-				<th>全称</th>
-				<th>简称</th>
-				<th>来源</th>
-				<th>版本</th>
+				<!--th width="60">#</th--><!-- 复选框 -->
+				<th>基本信息</th>
+				<th>类别</th>
+				<th>指南版本</th>
 				<th>标签</th>
 				<th>描述</th>
-				<th>类型</th>
-				<th>URL</th>
-				<th>激活</th>
-				<th>更新时间</th>
+				<th>状态</th>
 				<shiro:hasPermission name="diy:guideBook:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="guideBook">
 			<tr>
-				<td>
+				<!--td>
 					<input type="checkbox" id="${guideBook.id}" value="${guideBook.id}" class="needBox"/>
-				</td>			
-				<td><a href="${ctx}/diy/guideBook/form?id=${guideBook.id}">
-					${guideBook.name}
-				</a></td>
+				</td-->	
 				<td>
-					${guideBook.alias}
-				</td>
+				全称：${guideBook.name}	
+				<c:if test="${fn:contains(guideBook.url,'http')}">
+					<a target="_blank" href="${guideBook.url}">查看原文</a>
+				</c:if>
+				<br/>
+				简称：${guideBook.alias}
+				</td>	
 				<td>
-					${guideBook.origin}
-				</td>
+				类目：${guideBook.category.name}<br/>
+				类型：${fns:getDictLabel(guideBook.type, 'guide_type', '')}
+				</td>					
 				<td>
-					${guideBook.revision}
+				来源：${guideBook.origin}<br/>
+				版本：${guideBook.revision}
 				</td>
 				<td>
 					${guideBook.tags}
@@ -65,22 +65,13 @@
 					${guideBook.description}
 				</td>
 				<td>
-					${fns:getDictLabel(guideBook.type, 'guide_type', '')}
-				</td>
-				<td>
-					<c:if test="${guideBook.url}">
-						<a href="${guideBook.url}">查看</a>
-					</c:if>	
-				</td>
-				<td>
-					${fns:getDictLabel(guideBook.status, 'yes_no', '')}
-				</td>
-				<td>
-					<fmt:formatDate value="${guideBook.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					状态：${fns:getDictLabel(guideBook.status, 'yes_no', '')}<br/>
+					更新时间：<fmt:formatDate value="${guideBook.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="diy:guideBook:edit"><td>
-    				<a href="${ctx}/diy/guideBook/form?id=${guideBook.id}">修改</a>
-					<a href="${ctx}/diy/guideBook/delete?id=${guideBook.id}" onclick="return confirmx('确认要删除该个性化定制指南吗？', this.href)">删除</a>
+    				<a href="${ctx}/diy/guideBook/form?id=${guideBook.id}">修改</a><br/>
+					<a href="${ctx}/diy/guideBook/delete?id=${guideBook.id}" onclick="return confirmx('确认要删除该个性化定制指南吗？', this.href)">删除</a><br/>
+					<a href="${ctx}/diy/guideTerm/list?book.id=${guideBook.id}&book.name=${guideBook.name}&category.id=${guideBook.category.id}">查看指南规则</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

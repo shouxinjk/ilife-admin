@@ -48,6 +48,14 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">所属类目：</label>
+			<div class="controls">
+				<sys:treeselect id="category" name="category.id" value="${proposalSection.category.id}" labelName="category.name" labelValue="${proposalSection.category.name}"
+					title="所属类目" url="/mod/itemCategory/treeData"  notAllowSelectRoot="true"  cssClass="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>			
+		</div>		
+		<div class="control-group">
 			<label class="control-label">描述：</label>
 			<div class="controls">
 				<form:textarea path="description" htmlEscape="false" rows="4" maxlength="512" class="input-xxlarge "/>
