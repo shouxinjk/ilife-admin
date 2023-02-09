@@ -199,7 +199,6 @@ public class Item extends DataEntity<Item> {
 		this.credit = credit;
 	}
 	
-	@Length(min=0, max=10, message="状态长度必须介于 0 和 10 之间")
 	public String getStatus() {
 		return status;
 	}

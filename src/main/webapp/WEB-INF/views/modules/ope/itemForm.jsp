@@ -34,10 +34,10 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">定制选项类别：</label>
+			<label class="control-label">所属类目：</label>
 			<div class="controls">
 				<sys:treeselect id="itemCategory" name="itemCategory.id" value="${item.itemCategory.id}" labelName="itemCategory.name" labelValue="${item.itemCategory.name}"
-					title="定制选项分类" url="/mod/itemCategory/treeData"  notAllowSelectRoot="true"  cssClass="required"/>
+					title="商品类目" url="/mod/itemCategory/treeData"  notAllowSelectRoot="true"  cssClass="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -71,6 +71,7 @@
 				<form:input path="url" htmlEscape="false" maxlength="1000" class="input-xlarge "/>
 			</div>
 		</div>
+		<!--		
 		<div class="control-group">
 			<label class="control-label">状态：</label>
 			<div class="controls">
@@ -78,7 +79,6 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>		
-		<!--
 		<div class="control-group">
 			<label class="control-label">LOGO：</label>
 			<div class="controls">

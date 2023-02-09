@@ -95,7 +95,9 @@
 				<th>搜索关键字</th>
 				<th>来源</th>
 				<th>URL</th>
+				<!--
 				<th>状态</th>
+				-->
 				<th>更新者</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="ope:item:edit"><th>操作</th></shiro:hasPermission>
@@ -125,9 +127,11 @@
 				<td>
 					${item.url}
 				</td>
+				<!--
 				<td>
 					${fns:getDictLabel(item.status, 'is_active', '无')}
 				</td>
+				-->
 				<td>
 					${item.updateBy.id}
 				</td>
