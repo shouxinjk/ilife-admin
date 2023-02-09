@@ -556,6 +556,18 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 		return result;
 	}
 	
+	private String getDefaultParentBrokerId() {
+		String defaultBrokerId = Global.getConfig("default_parent_broker_id");//固定达人ID 
+		Dict dict = new Dict();
+		dict.setType("sx_default");
+		dict.setValue("broker_id");
+		List<Dict> dicts = dictService.findList(dict);
+		if(dicts!=null&&dicts.size()>0) {
+			defaultBrokerId = dicts.get(0).getLabel();
+		}
+		return  defaultBrokerId;
+	}
+	
 	/**
 	 * 给指定ID的达人添加下级达人
 	 * 注意初始传递broker只有nickname、openid、avatarUrl
@@ -577,14 +589,7 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 		Broker parent = brokerService.get(id);
 		if(parent == null) {//注册为默认达人下级成员
 			result.put("description","Cannot find parent broker by id:"+id+". register as default broker's child");
-			String defaultBrokerId = "system";
-			Dict dict = new Dict();
-			dict.setType("sx_default");
-			dict.setValue("broker_id");
-			List<Dict> dicts = dictService.findList(dict);
-			if(dicts!=null&&dicts.size()>0) {
-				defaultBrokerId = dicts.get(0).getLabel();
-			}
+			String defaultBrokerId = getDefaultParentBrokerId();
 			parent = brokerService.get(defaultBrokerId);
 		}
 		broker.setParent(parent);
@@ -672,7 +677,7 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 				return b;
 			}else {//否则执行静默注册
 				//如果不存在，表示未注册的情况下直接发了链接，默认注册达人
-				String parentdBrokerId = Global.getConfig("default_parent_broker_id");//固定达人ID 
+				String parentdBrokerId = getDefaultParentBrokerId();
 				Broker parentBroker = brokerService.get(parentdBrokerId);
 //				broker = new Broker();
 				broker.setId(Util.md5(broker.getOpenid()));
@@ -695,7 +700,12 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 					nickname = broker.getNickname();
 				}
 				broker.setNickname(nickname);
-				brokerService.save(broker);
+				try {
+					brokerService.save(broker);
+				}catch(Exception ex) {
+					logger.error("error while saving broker silently.",ex);
+				}
+				
 				
 				/**
 				//添加徽章:仅学者、专家才需要，否则直接通过等级完成
@@ -723,7 +733,7 @@ public Map<String, Object> getBrokerByNickname(@RequestParam(required=true) Stri
 				JSONObject json = new JSONObject();
 				json.put("title", "静默达人自动注册");
 				json.put("name", nickname);
-				json.put("openid", Global.getConfig("default_parent_broker_openid"));//固定达人openid
+				json.put("openid", getDefaultParentBrokerId());//固定达人openid
 				HttpClientHelper.getInstance().post(
 						Global.getConfig("wechat.templateMessenge")+"/notify-parent-broker", 
 						json,null);//推送上级达人通知
