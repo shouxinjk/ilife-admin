@@ -38,10 +38,13 @@ public class AIHelper {
 			        .build();
 			List<CompletionChoice> choices = service.createCompletion(completionRequest).getChoices();
 			if(choices!=null && choices.size()>0) {
+				return choices.get(0).getText();
+				/**
 				return choices.get(0).getText().replaceAll("\\n","")
 						.replace(keyword+"？","").replace(keyword+"?","")
 						.replace(keyword+"：","").replace(keyword+":","")
 						.replace(keyword+" ","");
+				//**/
 			}
 			return "";
 	  }
