@@ -257,6 +257,7 @@ public class SolutionController extends BaseController {
 		}
 		if(params.getString("forNickname")!=null) {
 			solution.setForNickname(params.getString("forNickname"));
+			solution.setName(solution.getName()+" by "+params.getString("forNickname"));
 		}else {
 			solution.setForOpenid(null);
 		}
