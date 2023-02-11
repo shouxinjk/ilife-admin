@@ -29,7 +29,10 @@ public class AIHelper {
 	}
 	
 	  public String requestChatGPT(String keyword) {
-		  OpenAiService service = new OpenAiService(Global.getConfig("chatgpt.apikey"),120);
+		  int random = (int)Math.floor(Math.random()*100);
+		  String[] apiKeys = Global.getConfig("chatgpt.apikey").split(",");
+		  String apiKey = apiKeys[random%apiKeys.length];//随机获取一个
+		  OpenAiService service = new OpenAiService(apiKey,120);
 			CompletionRequest completionRequest = CompletionRequest.builder()
 			        .prompt(keyword)
 			        .model("text-davinci-003")
