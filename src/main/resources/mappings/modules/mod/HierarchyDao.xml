@@ -27,7 +27,7 @@
 	</sql>
 	
 	<sql id="hierarchyJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 	</sql>
 
 	<!--  根据ID获取能力模型：计算得到归一化值：取中间值，并归一化 -->

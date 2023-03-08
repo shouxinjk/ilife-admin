@@ -35,9 +35,9 @@
 		LEFT JOIN mod_broker b ON b.id = a.broker_id
 		LEFT JOIN wx_group g ON g.id = a.group_id
 		LEFT JOIN mod_persona pa ON pa.id = g.persona_id
-		LEFT JOIN sys_dict dt ON dt.type = "wx_group_task_type" and dt.value = a.type
-		LEFT JOIN sys_dict dgt ON dgt.type = "wx_group_type" and dgt.value = g.type
-		LEFT JOIN sys_dict dgs ON dgs.type = "active_inactive" and dgs.value = g.status
+		LEFT JOIN x_sys_dict dt ON dt.type = "wx_group_task_type" and dt.value = a.type
+		LEFT JOIN x_sys_dict dgt ON dgt.type = "wx_group_type" and dgt.value = g.type
+		LEFT JOIN x_sys_dict dgs ON dgs.type = "active_inactive" and dgs.value = g.status
 	</sql>
     
     <select id="getByNickname" resultType="WxGroupTask">

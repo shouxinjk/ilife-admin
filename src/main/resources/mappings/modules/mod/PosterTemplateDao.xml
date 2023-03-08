@@ -24,7 +24,7 @@
 	</sql>
 	
 	<sql id="posterTemplateJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_item_category c ON c.id = a.category_id	
 	</sql>
     

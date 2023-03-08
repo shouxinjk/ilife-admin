@@ -22,7 +22,7 @@
 	</sql>
 	
 	<sql id="platformSourceJoins">
-		LEFT JOIN sys_dict dict ON dict.`value` = a.platform and dict.type='platform'
+		LEFT JOIN x_sys_dict dict ON dict.`value` = a.platform and dict.type='platform'
 	</sql>
     
 	<select id="get" resultType="PlatformSource">

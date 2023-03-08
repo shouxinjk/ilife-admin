@@ -39,7 +39,7 @@
 	</sql>
 	
 	<sql id="clearingJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_order p ON p.id = a.order_id	
 		LEFT JOIN mod_profit_share_scheme q ON q.id = a.scheme_id	
 		LEFT JOIN mod_profit_share_item r ON r.id = a.scheme_item_id		

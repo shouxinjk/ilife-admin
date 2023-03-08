@@ -20,7 +20,7 @@
 	</sql>
 	
 	<sql id="cmsGuestbookJoins">
-		LEFT JOIN sys_user u ON u.id = a.re_user_id
+		LEFT JOIN x_sys_user u ON u.id = a.re_user_id
 	</sql>
     
 	<select id="get" resultType="Guestbook">

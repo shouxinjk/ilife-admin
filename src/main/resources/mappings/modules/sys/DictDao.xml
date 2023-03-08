@@ -5,14 +5,14 @@
 	<select id="get" resultType="Dict">
 		SELECT 
 			* 
-		FROM sys_dict 
+		FROM x_sys_dict 
 		WHERE id = #{id}
 	</select>
 	
 	<select id="findList" resultType="Dict">
 		SELECT 
 			* 
-		FROM sys_dict 
+		FROM x_sys_dict 
 		WHERE del_flag = #{DEL_FLAG_NORMAL} 
 		<if test="type != null and type != ''">
 			AND type = #{type}
@@ -35,7 +35,7 @@
 	<select id="findAllList" resultType="Dict">
 		SELECT 
 			* 
-		FROM sys_dict 
+		FROM x_sys_dict 
 		WHERE del_flag = #{DEL_FLAG_NORMAL} 
 		ORDER BY type, sort, update_date DESC
 	</select>
@@ -43,14 +43,14 @@
 	<select id="findTypeList" resultType="string">
 		SELECT 
 			type 
-		FROM sys_dict 
+		FROM x_sys_dict 
 		WHERE del_flag = #{DEL_FLAG_NORMAL} 
 		GROUP BY type
 		ORDER BY type
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO sys_dict(
+		INSERT INTO  x_sys_dict(
 			id, 
 			value, 
 			label, 
@@ -80,7 +80,7 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE sys_dict SET 
+		UPDATE x_sys_dict SET 
 			value = #{value}, 
 			label = #{label}, 
 			type = #{type}, 
@@ -93,7 +93,7 @@
 	</update>
 	
 	<update id="delete">
-		UPDATE sys_dict SET 
+		UPDATE x_sys_dict SET 
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

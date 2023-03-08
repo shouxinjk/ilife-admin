@@ -33,7 +33,7 @@
 	</sql>
 	
 	<sql id="testAuditJoins">
-		JOIN sys_user u ON u.id=a.user_id
+		JOIN x_sys_user u ON u.id=a.user_id
 		JOIN sys_office o ON o.id=a.office_id
     </sql>
     

@@ -52,7 +52,7 @@
 	</sql>	
 	
 	<sql id="occasionJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_occasion_category oc ON oc.id = a.category_id
 		LEFT JOIN mod_item_category c ON c.id = a.item_category_id
 	</sql>   

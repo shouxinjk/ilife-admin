@@ -44,7 +44,7 @@
 	</sql>
 	
 	<sql id="personaJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_persona p ON p.id = a.parent_id
 		LEFT JOIN mod_phase ph ON ph.id = a.phase_id
 		LEFT JOIN mod_hierarchy h ON h.id = a.hierarchy_id

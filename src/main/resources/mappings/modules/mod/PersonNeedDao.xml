@@ -22,8 +22,8 @@
 	</sql>
 	
 	<sql id="personNeedJoins">
-		LEFT JOIN sys_user cc ON cc.id = a.create_by
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user cc ON cc.id = a.create_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN ope_person p ON p.id = a.person_id
 		LEFT JOIN mod_motivation m ON m.id = a.need_id	
 	</sql>

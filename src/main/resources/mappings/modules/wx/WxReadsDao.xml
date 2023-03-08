@@ -21,7 +21,7 @@
 	</sql>
 	
 	<sql id="wxReadsJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by 
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by 
 		LEFT JOIN mod_broker bb ON bb.id = a.broker_id	
 		LEFT JOIN wx_article aa ON aa.id = a.article_id
 	</sql>

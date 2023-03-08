@@ -31,8 +31,8 @@
 	</sql>
 	
 	<sql id="personaMeasureJoins">
-		LEFT JOIN sys_user cc ON cc.id = a.create_by
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user cc ON cc.id = a.create_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_persona p ON p.id = a.persona_id
 		LEFT JOIN mod_user_measure m ON m.id = a.measure_id
 		LEFT JOIN mod_phase pha ON pha.id = a.phase_id	

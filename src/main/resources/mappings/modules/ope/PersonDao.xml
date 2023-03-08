@@ -38,7 +38,7 @@
 	</sql>
 	
 	<sql id="personJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_phase ph ON ph.id = a.phase_id
 		LEFT JOIN mod_persona pe ON pe.id = a.persona_id
 		LEFT JOIN mod_life_style ls ON ls.id = a.life_style_id

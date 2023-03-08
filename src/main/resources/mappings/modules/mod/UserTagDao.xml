@@ -26,7 +26,7 @@
 	</sql>
 	
 	<sql id="userTagJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_user_tag_category c ON c.id = a.user_tag_category
 		LEFT JOIN mod_user_measure m ON m.id = a.measure_id		
 	</sql>

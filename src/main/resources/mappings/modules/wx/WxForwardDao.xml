@@ -30,7 +30,7 @@
 	</sql>
 	
 	<sql id="wxForwardJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by 
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by 
 		LEFT JOIN mod_broker bbq ON bbq.id = a.requester	
 		LEFT JOIN mod_broker bbs ON bbs.id = a.responder
 		LEFT JOIN wx_article wxar ON wxar.id = a.subject_id	

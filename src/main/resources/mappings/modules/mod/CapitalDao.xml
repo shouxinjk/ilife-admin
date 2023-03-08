@@ -21,7 +21,7 @@
 	</sql>
 	
 	<sql id="capitalJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 	</sql>
     
 	<select id="get" resultType="Capital">

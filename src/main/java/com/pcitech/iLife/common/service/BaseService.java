@@ -178,7 +178,7 @@ public abstract class BaseService {
 		// 生成个人权限SQL语句
 		for (String where : StringUtils.split(userWheres, ",")){
 			if (Role.DATA_SCOPE_SELF.equals(dataScopeString)){
-				sqlString.append(" AND EXISTS (SELECT 1 FROM sys_user");
+				sqlString.append(" AND EXISTS (SELECT 1 FROM  x_sys_user ");
 				sqlString.append(" WHERE id='" + user.getId() + "'");
 				sqlString.append(" AND " + where + ")");
 			}

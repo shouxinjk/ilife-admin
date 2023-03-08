@@ -46,7 +46,7 @@
 	</sql>
 	
 	<sql id="measureJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_item_category c ON c.id = a.category
 		LEFT JOIN mod_item_category cc ON cc.id = a.auto_label_category
 		LEFT JOIN mod_tag_category tc ON tc.id = a.auto_label_tag_category

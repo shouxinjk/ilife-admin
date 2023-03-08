@@ -19,7 +19,7 @@
 	</sql>
 	
 	<sql id="settlementJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_broker p ON p.id = a.broker_id		
 	</sql>
     

@@ -22,7 +22,7 @@
 	</sql>
 	
 	<sql id="humanMarkedDictJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_item_category c ON c.id = a.category_id
 		LEFT JOIN mod_dict_meta dm ON dm.id = a.dict_id
 		LEFT JOIN mod_dict_value dv ON dv.id = a.value_id	

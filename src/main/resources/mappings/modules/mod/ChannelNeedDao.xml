@@ -23,8 +23,8 @@
 	</sql>
 	
 	<sql id="channelNeedJoins">
-		LEFT JOIN sys_user cc ON cc.id = a.create_by
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user cc ON cc.id = a.create_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_channel c ON c.id = a.channel_id
 		LEFT JOIN mod_motivation m ON m.id = a.need_id	
 	</sql>

@@ -115,12 +115,12 @@
 		LEFT JOIN sys_area ca ON ca.id = c.area_id
 		LEFT JOIN sys_office o ON o.id = a.office_id
 		LEFT JOIN sys_area oa ON oa.id = o.area_id
-		LEFT JOIN sys_user cu ON cu.id = c.primary_person
-		LEFT JOIN sys_user cu2 ON cu2.id = c.deputy_person
-		LEFT JOIN sys_user ou ON ou.id = o.primary_person
-		LEFT JOIN sys_user ou2 ON ou2.id = o.deputy_person<!-- 
-		LEFT JOIN sys_user_role ur ON ur.user_id = a.id
-        LEFT JOIN sys_role r ON r.id = ur.role_id -->
+		LEFT JOIN x_sys_user cu ON cu.id = c.primary_person
+		LEFT JOIN x_sys_user cu2 ON cu2.id = c.deputy_person
+		LEFT JOIN x_sys_user ou ON ou.id = o.primary_person
+		LEFT JOIN x_sys_user ou2 ON ou2.id = o.deputy_person<!-- 
+		LEFT JOIN x_sys_user_role  ur ON ur.user_id = a.id
+        LEFT JOIN x_sys_role r ON r.id = ur.role_id -->
     </sql>
 	
 	<!-- 根据编号获得用户 -->
@@ -128,7 +128,7 @@
 		SELECT
 			<include refid="userColumns"/><!-- ,
 			ro.office_id AS "roleList.officeList.id" -->
-		FROM sys_user a
+		FROM x_sys_user a
 		<include refid="userJoins"/><!-- 
 		LEFT JOIN sys_role_office ro ON ro.role_id = r.id -->
 		WHERE a.id = #{id}
@@ -139,7 +139,7 @@
 		SELECT
 			<include refid="userColumns"/><!-- ,
 			ro.office_id AS "roleList.officeList.id" -->
-		FROM sys_user a
+		FROM x_sys_user a
 		<include refid="userJoins"/><!-- 
 		LEFT JOIN sys_role_office ro ON ro.role_id = r.id -->
 		WHERE a.login_name = #{loginName} AND a.del_flag = #{DEL_FLAG_NORMAL}
@@ -149,10 +149,10 @@
 	<select id="findList" resultType="User">
 		SELECT
 			<include refid="userColumns"/>
-		FROM sys_user a
+		FROM x_sys_user a
 		<include refid="userJoins"/>
 		<if test="role != null and role.id != null and role.id != ''">
-			JOIN sys_user_role ur ON ur.user_id = a.id AND ur.role_id = #{role.id}
+			JOIN x_sys_user_role  ur ON ur.user_id = a.id AND ur.role_id = #{role.id}
 		</if>
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
 		<if test="company != null and company.id != null and company.id != ''">
@@ -199,7 +199,7 @@
 	<select id="findUserByOfficeId" resultType="User" useCache="true">
 		SELECT
 			a.id, a.name, a.login_name
-		FROM sys_user a
+		FROM x_sys_user a
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
 		<if test="office != null and office.id != null and office.id != ''">
 			AND a.office_id = #{office.id}
@@ -211,7 +211,7 @@
 	<select id="findAllList" resultType="User">
 		SELECT
 			<include refid="userColumns"/>
-		FROM sys_user a
+		FROM x_sys_user a
 		<include refid="userJoins"/>
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
 		ORDER BY c.code, o.code, a.name
@@ -221,13 +221,13 @@
 	<select id="findAllCount" resultType="long">
 		SELECT
 			COUNT(1)
-		FROM sys_user a
+		FROM x_sys_user a
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
 	</select>
 	
 	<!-- 插入用户 -->
 	<insert id="insert">
-		INSERT INTO sys_user(
+		INSERT INTO  x_sys_user (
 			id, 
 			company_id, 
 			office_id, 
@@ -272,7 +272,7 @@
 	
 	<!-- 更新用户 -->
 	<update id="update">
-		UPDATE sys_user SET 
+		UPDATE x_sys_user SET 
 			company_id = #{company.id}, 
 			office_id = #{office.id}, 
 			login_name = #{loginName}, 
@@ -293,12 +293,12 @@
 	
 	<!-- 删除用户和角色关联表数据 -->
 	<delete id="deleteUserRole">
-		DELETE FROM sys_user_role WHERE user_id = #{id}
+		DELETE FROM x_sys_user_role  WHERE user_id = #{id}
 	</delete>
 	
 	<!-- 插入用户和角色关联表数据 -->
 	<insert id="insertUserRole">
-		INSERT INTO sys_user_role(user_id, role_id)
+		INSERT INTO  x_sys_user _role(user_id, role_id)
 		<foreach collection="roleList" item="role" separator=" union all ">
 			SELECT #{id}, #{role.id}
 			<if test="dbName != 'mssql'">
@@ -309,7 +309,7 @@
 	
 	<!-- 更新用户信息  -->
 	<update id="updateUserInfo">
-		UPDATE sys_user SET 
+		UPDATE x_sys_user SET 
 			email = #{email}, 
 			phone = #{phone}, 
 			mobile = #{mobile}, 
@@ -322,14 +322,14 @@
 	
 	<!-- 更新用户密码 -->
 	<update id="updatePasswordById">
-		UPDATE sys_user SET 
+		UPDATE x_sys_user SET 
 			password = #{password} 
 		WHERE id = #{id}
 	</update>
 	
 	<!-- 更新登录信息，如登录IP、登录时间 -->
 	<update id="updateLoginInfo">
-		UPDATE sys_user SET 
+		UPDATE x_sys_user SET 
 			login_ip = #{loginIp}, 
 			login_Date = #{loginDate} 
 		WHERE id = #{id}
@@ -337,7 +337,7 @@
 	
 	<!-- 逻辑删除用户 -->
 	<update id="delete">
-		UPDATE sys_user SET 
+		UPDATE x_sys_user SET 
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

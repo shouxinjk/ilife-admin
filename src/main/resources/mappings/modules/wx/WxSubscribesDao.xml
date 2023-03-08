@@ -18,7 +18,7 @@
 	</sql>
 	
 	<sql id="wxSubscribesJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by 
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by 
 		LEFT JOIN mod_broker bb ON bb.id = a.broker_id	
 		LEFT JOIN wx_account aa ON aa.id = a.account_id	
 	</sql>

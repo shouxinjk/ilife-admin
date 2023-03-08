@@ -11,7 +11,7 @@
 	</sql>
 	
 	<sql id="leaveJoins">
-		JOIN sys_user u ON u.id = a.create_by
+		JOIN x_sys_user u ON u.id = a.create_by
 		JOIN sys_office o ON o.id = u.office_id
     </sql>
     

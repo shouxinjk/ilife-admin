@@ -19,7 +19,7 @@
 	</sql>
 	
 	<sql id="wxAccountJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by 
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by 
 		LEFT JOIN mod_broker b ON b.id = a.broker_id	
 	</sql>
     

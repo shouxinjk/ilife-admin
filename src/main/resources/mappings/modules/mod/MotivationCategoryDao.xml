@@ -18,7 +18,7 @@
 	</sql>
 	
 	<sql id="motivationCategoryJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_motivation_category p ON p.id = a.parent_id
 	</sql>
     

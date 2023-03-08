@@ -48,7 +48,7 @@ ${columnField?substring(0, columnField?last_index_of(","))}
 		<#-- 关联系统表 -->
 		<#list table.columnList as c>
 			<#if c.showType?? && c.showType == "userselect">
-		LEFT JOIN sys_user u${c_index + 1} ON u${c_index + 1}.id = a.${c.name}
+		LEFT JOIN x_sys_user u${c_index + 1} ON u${c_index + 1}.id = a.${c.name}
 			<#elseif c.showType?? && c.showType == "officeselect">
 		LEFT JOIN sys_office o${c_index + 1} ON o${c_index + 1}.id = a.${c.name}
 			<#elseif c.showType?? && c.showType == "areaselect">

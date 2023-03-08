@@ -25,7 +25,7 @@
 	</sql>
 	
 	<sql id="capabilityJoins">
-		LEFT JOIN sys_user uu ON uu.id = a.update_by
+		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
 		LEFT JOIN mod_capital c ON c.id = a.capital_id
 	</sql>
     

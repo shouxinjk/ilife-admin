@@ -39,7 +39,7 @@
 	<sql id="cmsCategoryDaoJoins">
 	    LEFT JOIN cms_category c ON c.id = a.parent_id
 		JOIN sys_office o ON o.id = a.office_id
-		JOIN sys_user u ON u.id = a.create_by
+		JOIN x_sys_user u ON u.id = a.create_by
 		JOIN cms_site s ON a.site_id = s.id
 	</sql>
     
@@ -75,7 +75,7 @@
 			o.name AS "office.name"
 		FROM cms_category a
 		JOIN sys_office o ON o.id = a.office_id
-		JOIN sys_user u ON u.id = a.create_by
+		JOIN x_sys_user u ON u.id = a.create_by
 		WHERE a.id = #{id}
 	</select>
 	
