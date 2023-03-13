@@ -4,9 +4,9 @@
     
 	<sql id="itemCategoryColumns">
 		a.id AS "id",
-		a.parent_id AS "parent.id",
+		a.pid AS "parent.id",
 		p.name AS "parent.name",
-		a.parent_ids AS "parentIds",
+		a.pids AS "parentIds",
 		a.name AS "name",
 		a.tags AS "tags",
 		a.alias AS "alias",
@@ -29,7 +29,7 @@
 	
 	<sql id="itemCategoryJoins">
 		LEFT JOIN x_sys_user uu ON uu.id = a.update_by
-		LEFT JOIN mod_item_category p ON p.id = a.parent_id
+		LEFT JOIN mod_item_category p ON p.id = a.pid
 	</sql>
     
 	<select id="get" resultType="ItemCategory">
@@ -78,7 +78,7 @@
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
 			<if test="parent != null and parent.id != null and parent.id != ''">
-				AND a.parent_id = #{parent.id}
+				AND a.pid = #{parent.id}
 			</if>					
 		</where>
 		<choose>
@@ -112,8 +112,8 @@
 	<insert id="insert">
 		INSERT INTO mod_item_category(
 			id,
-			parent_id,
-			parent_ids,
+			pid,
+			pids,
 			name,
 			tags,
 			alias,
@@ -157,8 +157,8 @@
 	
 	<update id="update">
 		UPDATE mod_item_category SET 	
-			parent_id = #{parent.id},
-			parent_ids = #{parentIds},
+			pid = #{parent.id},
+			pids = #{parentIds},
 			name = #{name},
 			tags = #{tags},
 			alias = #{alias},
@@ -179,7 +179,7 @@
 	<update id="delete">
 		UPDATE mod_item_category SET 
 			del_flag = #{DEL_FLAG_DELETE}
-		WHERE id = #{id} OR parent_ids LIKE 
+		WHERE id = #{id} OR pids LIKE 
 			<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
 			<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
@@ -192,7 +192,7 @@
 		<include refid="itemCategoryJoins"/>
 		<where>
 			<!-- a.del_flag = #{DEL_FLAG_NORMAL} AND  -->
-			a.parent_id = #{parentId}
+			a.pid = #{parentId}
 					
 		</where>		
 		order by a.sort
@@ -205,7 +205,7 @@
 		<include refid="itemCategoryJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL} 
-			AND a.parent_ids LIKE #{parentIds}
+			AND a.pids LIKE #{parentIds}
 					
 		</where>		
 		order by a.sort
@@ -213,8 +213,8 @@
 	
 	<update id="updateParentIds">
 		UPDATE mod_item_category SET 
-			parent_id = #{parent.id}, 
-			parent_ids = #{parentIds}
+			pid = #{parent.id}, 
+			pids = #{parentIds}
 		WHERE id = #{id}
 	</update>
 	
