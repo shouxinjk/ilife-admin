@@ -9,7 +9,7 @@
 		c.logo AS "category.logo",
 		a.name AS "name",
 		a.type AS "type",
-		a.`condition` AS "condition",
+		a.`criteria` AS "criteria",
 		a.expression AS "expression",
 		a.priority AS "priority",
 		a.status AS "status",
@@ -18,7 +18,7 @@
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
 		a.del_flag AS "delFlag",
-		a.condition_desc AS "conditionDesc",
+		a.criteria_desc AS "criteriaDesc",
 		a.description AS "description"
 	</sql>
 	
@@ -35,7 +35,7 @@
 		c.name AS "category.name",
 		a.name AS "name",
 		a.type AS "type",
-		a.`condition` AS "condition",
+		a.`criteria` AS "criteria",
 		a.expression AS "expression",
 		100*a.priority+(length(c.parent_ids)-length(replace(c.parent_ids,",","")) ) AS "priority",
 		a.status AS "status",
@@ -44,7 +44,7 @@
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
 		a.del_flag AS "delFlag",
-		a.condition_desc AS "conditionDesc",
+		a.criteria_desc AS "criteriaDesc",
 		a.description AS "description"
 		FROM mod_template a, mod_item_category c 
 		<where>
@@ -152,7 +152,7 @@
 			category_id,
 			name,
 			type,
-			`condition`,
+			`criteria`,
 			expression,
 			priority,
 			status,
@@ -161,14 +161,14 @@
 			update_by,
 			update_date,
 			del_flag,
-			condition_desc,
+			criteria_desc,
 			description
 		) VALUES (
 			#{id},
 			#{category.id},
 			#{name},
 			#{type},
-			#{condition},
+			#{criteria},
 			#{expression},
 			#{priority},
 			#{status},
@@ -177,7 +177,7 @@
 			#{updateBy.id},
 			#{updateDate},
 			#{delFlag},
-			#{conditionDesc},
+			#{criteriaDesc},
 			#{description}
 		)
 	</insert>
@@ -187,13 +187,13 @@
 			category_id = #{category.id},
 			name = #{name},
 			type = #{type},
-			`condition` = #{condition},
+			`criteria` = #{criteria},
 			expression = #{expression},
 			priority = #{priority},
 			status = #{status},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate},
-			condition_desc = #{conditionDesc}
+			criteria_desc = #{criteriaDesc}
 			description = #{description}
 		WHERE id = #{id}
 	</update>
