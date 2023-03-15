@@ -3,7 +3,7 @@
 <mapper namespace="com.pcitech.iLife.modules.diy.dao.ProposalSchemeDao">
     
 	<sql id="proposalSchemeColumns">
-		a.parent_id AS "parent.id",
+		a.pid AS "parent.id",
 		ps.name AS "parent.name",
 		a.id AS "id",
 		a.name AS "name",
@@ -27,7 +27,7 @@
 	</sql>
 	
 	<sql id="proposalSchemeJoins">
-		LEFT JOIN diy_proposal_scheme ps ON ps.id = a.parent_id
+		LEFT JOIN diy_proposal_scheme ps ON ps.id = a.pid
 		LEFT JOIN mod_broker b ON b.id = a.broker_id
 		LEFT JOIN diy_form f ON f.id = a.form_id
 		LEFT JOIN mod_item_category c ON c.id = a.category_id
@@ -56,7 +56,7 @@
 				AND a.category_id = #{categoryId}
 			</if>
 			<if test="parentId != null and parentId != ''">
-				AND a.parent_id = #{parentId}
+				AND a.pid = #{parentId}
 			</if>			
 			<if test="brokerId != null and brokerId != ''">
 				AND a.broker_id = #{brokerId}
@@ -90,7 +90,7 @@
 				AND a.category_id = #{category.id}
 			</if>
 			<if test="parent != null and parent.id != null and parent.id != ''">
-				AND a.parent_id = #{parent.id}
+				AND a.pid = #{parent.id}
 			</if>			
 			<if test="broker != null and broker.id != null and broker.id != ''">
 				AND a.broker_id = #{broker.id}
@@ -129,7 +129,7 @@
 	
 	<insert id="insert">
 		INSERT INTO diy_proposal_scheme(
-			parent_id,
+			pid,
 			id,
 			name,
 			description,
@@ -169,7 +169,7 @@
 	
 	<update id="update">
 		UPDATE diy_proposal_scheme SET 	
-			parent_id = #{parent.id},
+			pid = #{parent.id},
 			name = #{name},
 			description = #{description},
 			type = #{type},
