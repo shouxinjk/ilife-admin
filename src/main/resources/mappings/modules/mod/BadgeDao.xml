@@ -7,7 +7,7 @@
 		a.name AS "name",
 		a.description AS "description",
 		a.icon AS "icon",
-		a.key AS "key",
+		a.code AS "code",
 		a.level AS "level",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
@@ -40,8 +40,8 @@
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
-			<if test="key != null and key != ''">
-				AND a.key = #{key}
+			<if test="code != null and code != ''">
+				AND a.code = #{code}
 			</if>
 		</where>
 		<choose>
@@ -78,7 +78,7 @@
 			name,
 			description,
 			icon,
-			`key`,
+			code,
 			level,
 			create_by,
 			create_date,
@@ -90,7 +90,7 @@
 			#{name},
 			#{description},
 			#{icon},
-			#{key},
+			#{code},
 			#{level},
 			#{createBy.id},
 			#{createDate},
@@ -105,7 +105,7 @@
 			name = #{name},
 			description = #{description},
 			icon = #{icon},
-			`key` = #{key},
+			code = #{code},
 			level = #{level},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate}

@@ -28,8 +28,8 @@
 			<li><label>名称：</label>
 				<form:input path="name" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
-			<li><label>KEY：</label>
-				<form:select path="key" class="input-medium">
+			<li><label>CODE：</label>
+				<form:select path="code" class="input-medium">
 					<form:option value="" label=""/>
 					<form:options items="${fns:getDictList('badge_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
@@ -45,7 +45,7 @@
 				<th>名称</th>
 				<th>描述</th>
 				<th>图标</th>
-				<th>KEY</th>
+				<th>CODE</th>
 				<th>等级</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="mod:badge:edit"><th>操作</th></shiro:hasPermission>
@@ -64,7 +64,7 @@
 					${badge.icon}
 				</td>
 				<td>
-					${fns:getDictLabel(badge.key, 'badge_type', '')}
+					${fns:getDictLabel(badge.code, 'badge_type', '')}
 				</td>
 				<td>
 					${badge.level}

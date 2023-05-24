@@ -53,9 +53,9 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">KEY：</label>
+			<label class="control-label">CODE：</label>
 			<div class="controls">
-				<form:select path="key" class="input-xlarge ">
+				<form:select path="code" class="input-xlarge ">
 					<form:option value="" label=""/>
 					<form:options items="${fns:getDictList('badge_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>

@@ -128,7 +128,7 @@ public class CategoryBrokerController extends BaseController {
 		//检查数据
 		Badge badge = badgeService.get(categoryBroker.getBadge());
 		//如果为空则尝试根据key查询
-		if(badge == null && categoryBroker.getBadge().getKey()!=null && categoryBroker.getBadge().getKey().trim().length()>0) {
+		if(badge == null && categoryBroker.getBadge().getCode()!=null && categoryBroker.getBadge().getCode().trim().length()>0) {
 			List<Badge> badges = badgeService.findList(categoryBroker.getBadge());
 			if(badges.size()>0)
 				badge = badges.get(0);

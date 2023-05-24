@@ -18,7 +18,7 @@ public class Badge extends DataEntity<Badge> {
 	private String name;		// 名称
 	private String description;		// 描述
 	private String icon;		// 图标
-	private String key;		// KEY
+	private String code;		// CODE
 	private Integer level;		// 等级
 	
 	public Badge() {
@@ -56,13 +56,13 @@ public class Badge extends DataEntity<Badge> {
 		this.icon = icon;
 	}
 	
-	@Length(min=0, max=50, message="KEY长度必须介于 0 和 50 之间")
-	public String getKey() {
-		return key;
+	@Length(min=0, max=50, message="CODE长度必须介于 0 和 50 之间")
+	public String getCode() {
+		return code;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public Integer getLevel() {
