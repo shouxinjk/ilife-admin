@@ -11,7 +11,7 @@
 		b.openid AS "broker.openid",
 		a.badge_id AS "badge.id",
 		bb.name AS "badge.name",
-		bb.key AS "badge.key",
+		bb.code AS "badge.code",
 		bb.level AS "badge.level",
 		bb.icon AS "badge.icon",
 		bb.description AS "badge.description",
