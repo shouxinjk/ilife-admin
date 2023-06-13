@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pcitech.ilife.modules.mod.dao.SubscriptionDao">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.SubscriptionDao">
+    
+	<!-- 根据out_trade_no更新transaction_id及trade_state -->
+	<update id="updateWxTransactionInfoByTradeNo">
+		UPDATE subscription SET 	
+			trade_state = #{result_code},
+			transaction_code = #{transaction_id},
+			update_time = now()
+		WHERE trade_no = #{out_trade_no}
+	</update>	    
     
 	<sql id="subscriptionColumns">
 		a.id AS "id",

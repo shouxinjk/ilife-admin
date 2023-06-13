@@ -22,8 +22,11 @@ import com.github.binarywang.wx.util.XMLUtil;
 import com.github.binarywang.wxpay.bean.entpay.EntPayRequest;
 import com.github.binarywang.wxpay.bean.entpay.EntPayResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderV3Request;
 import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
+import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderV3Result;
+import com.github.binarywang.wxpay.bean.result.enums.TradeTypeEnum;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
@@ -32,12 +35,15 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
+import com.pcitech.iLife.modules.mod.service.SubscriptionService;
 import com.pcitech.iLife.modules.wx.entity.WxArticle;
 import com.pcitech.iLife.modules.wx.service.WxArticleService;
 import com.pcitech.iLife.modules.wx.service.WxPaymentAdService;
 import com.pcitech.iLife.modules.wx.service.WxPaymentPointService;
 import com.pcitech.iLife.modules.wx.service.WxPointsService;
 import com.pcitech.iLife.util.HttpClientHelper;
+
+import scala.Console;
 
 /**
  * 微信支付Controller
@@ -63,7 +69,10 @@ public class WechatPaymentController extends GenericController {
     private WxPaymentAdService wxPaymentAdService;
     @Autowired
     private WxPaymentPointService wxPaymentPointService;
-
+    @Autowired
+    private SubscriptionService subscriptionService;
+    
+    
     SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     /**
      * 用于返回预支付的结果 WxMpPrepayIdResult，一般不需要使用此接口
@@ -123,6 +132,41 @@ public class WechatPaymentController extends GenericController {
         }
         return result;
     }
+	
+
+    /**
+     * 发起微信支付，返回二维码链接
+     * PC端web站点微信支付调用此接口。前端根据qrcodeUrl生成二维码完成
+     */
+	@ResponseBody
+	@RequestMapping(value = "rest/qrcode-url", method = RequestMethod.POST)
+    public JSONObject getNativePayInfo(@RequestBody JSONObject json) {
+		JSONObject result = new JSONObject();
+		WxPayUnifiedOrderV3Request unifiedOrderRequest = new WxPayUnifiedOrderV3Request();
+		unifiedOrderRequest.setAppid(json.getString("appId"));//由前端传入，可以支持多个web站点
+		unifiedOrderRequest.setOutTradeNo(json.getString("out_trade_no"));
+		unifiedOrderRequest.setDescription(json.getString("decription"));
+		unifiedOrderRequest.setNotifyUrl(Global.getConfig("sx.callback.prefix")+"/wxPay/rest/callback");//微信支付完成后将调用回传数据：与微信内支付相同
+		
+		//设置金额
+		WxPayUnifiedOrderV3Request.Amount amount = new WxPayUnifiedOrderV3Request.Amount();
+		amount.setTotal(Integer.valueOf(json.getString("total_fee")));
+		amount.setCurrency("CNY");
+		unifiedOrderRequest.setAmount(amount);
+		
+
+        try {
+    		WxPayUnifiedOrderV3Result orderV3Result = payService.createOrderV3(TradeTypeEnum.NATIVE, unifiedOrderRequest);
+            result.put("success", true);
+            result.put("data", orderV3Result.getCodeUrl()); //直接返回URL
+        } catch (WxPayException e) {
+        	logger.error(e.getErrCodeDes());
+        	result.put("success", false);
+        	result.put("errcode", e.getErrCode());
+        	result.put("errmsg", e.getErrCodeDes());
+        }
+        return result;
+    }
 
     /**
      * 微信通知支付结果的回调地址，notify_url
@@ -155,9 +199,13 @@ public class WechatPaymentController extends GenericController {
                     	}else if(outTradeNo !=null && outTradeNo.startsWith("pac")) {//表示购买广告：公众号置顶
                     		wxPaymentAdService.updateWxTransactionInfoByTradeNo(params);
                     		purchaseType = "公众号置顶广告购买";
-                    	}else if(outTradeNo !=null && outTradeNo.startsWith("ppt")) {//表示购买阅豆
+                    	}else if(outTradeNo !=null && outTradeNo.startsWith("ppt")) {//表示购买阅豆：同时支持公众号、网页端发起。SaaS端根据云豆金额充值
                     		wxPaymentPointService.updateWxTransactionInfoByTradeNo(params);
-                    		purchaseType = "阅豆充值";
+                    		purchaseType = "云豆充值";
+                    	}else if(outTradeNo !=null && outTradeNo.startsWith("sub")) {//表示订阅或续费，同时支持公众号、网页端发起。SaaS端根据套餐类型直接支付
+                    		//需要建立订阅记录，包括
+                    		subscriptionService.updateWxTransactionInfoByTradeNo(params);
+                    		purchaseType = "订阅/续费";
                     	}else {
                     		//糟糕了，不做任何处理
                     		logger.warn("wrong out_trade_no.[out_trade_no]"+outTradeNo);
