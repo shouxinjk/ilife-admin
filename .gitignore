@@ -16,6 +16,7 @@
 /src/main/webapp/userfiles/*
 /src/main/resources/iLife.properties
 /src/main/resources/wx.properties
+src/main/resources/fastdfs-client.propertie
 src/main/resources/iLife.properties
 src/main/resources/wx.properties
 src/main/webapp/static/common/options.js

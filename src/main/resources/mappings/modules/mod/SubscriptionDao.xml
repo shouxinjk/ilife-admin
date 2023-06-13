@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.ilife.modules.mod.dao.SubscriptionDao">
+    
+	<sql id="subscriptionColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.sys_org_code AS "sysOrgCode",
+		a.tenant_id AS "tenantId",
+		a.app_id AS "appId",
+		a.plan_id AS "planId",
+		a.subscribe_type AS "subscribeType",
+		a.effective_on AS "effectiveOn",
+		a.expire_on AS "expireOn",
+		a.payment_amount AS "paymentAmount",
+		a.payment_time AS "paymentTime",
+		a.trade_no AS "tradeNo",
+		a.trade_state AS "tradeState",
+		a.transaction_code AS "transactionCode",
+		a.invoice_id AS "invoiceId"
+	</sql>
+	
+	<sql id="subscriptionJoins">
+	</sql>
+    
+	<select id="get" resultType="Subscription">
+		SELECT 
+			<include refid="subscriptionColumns"/>
+		FROM subscription a
+		<include refid="subscriptionJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Subscription">
+		SELECT 
+			<include refid="subscriptionColumns"/>
+		FROM subscription a
+		<include refid="subscriptionJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Subscription">
+		SELECT 
+			<include refid="subscriptionColumns"/>
+		FROM subscription a
+		<include refid="subscriptionJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO subscription(
+			id,
+			create_by,
+			create_time,
+			update_by,
+			update_time,
+			sys_org_code,
+			tenant_id,
+			app_id,
+			plan_id,
+			subscribe_type,
+			effective_on,
+			expire_on,
+			payment_amount,
+			payment_time,
+			trade_no,
+			trade_state,
+			transaction_code,
+			invoice_id
+		) VALUES (
+			#{id},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime},
+			#{sysOrgCode},
+			#{tenantId},
+			#{appId},
+			#{planId},
+			#{subscribeType},
+			#{effectiveOn},
+			#{expireOn},
+			#{paymentAmount},
+			#{paymentTime},
+			#{tradeNo},
+			#{tradeState},
+			#{transactionCode},
+			#{invoiceId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE subscription SET 	
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime},
+			sys_org_code = #{sysOrgCode},
+			tenant_id = #{tenantId},
+			app_id = #{appId},
+			plan_id = #{planId},
+			subscribe_type = #{subscribeType},
+			effective_on = #{effectiveOn},
+			expire_on = #{expireOn},
+			payment_amount = #{paymentAmount},
+			payment_time = #{paymentTime},
+			trade_no = #{tradeNo},
+			trade_state = #{tradeState},
+			transaction_code = #{transactionCode},
+			invoice_id = #{invoiceId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM subscription
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
