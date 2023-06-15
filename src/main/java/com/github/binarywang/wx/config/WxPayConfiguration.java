@@ -31,6 +31,15 @@ public class WxPayConfiguration {
 
     @Value("#{wxPayProperties.keyPath}")
     private String keyPath;
+    
+    @Value("#{wxPayProperties.apiV3Key}")
+    private String apiV3Key;
+    
+    @Value("#{wxPayProperties.privateKeyPath}")
+    private String privateKeyPath;
+    
+    @Value("#{wxPayProperties.privateCertPath}")
+    private String privateCertPath;
 
     @Bean
     public WxPayConfig payConfig() {
@@ -42,6 +51,10 @@ public class WxPayConfiguration {
         payConfig.setSubMchId(this.subMchId);
         payConfig.setKeyPath(this.keyPath);
 
+        payConfig.setApiV3Key(this.apiV3Key);
+        payConfig.setPrivateCertPath(this.privateCertPath);
+        payConfig.setPrivateKeyPath(this.privateKeyPath);
+        
         return payConfig;
     }
 
