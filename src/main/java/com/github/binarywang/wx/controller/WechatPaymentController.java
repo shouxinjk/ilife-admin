@@ -162,10 +162,12 @@ public class WechatPaymentController extends GenericController {
 		logger.error("build unified order request." + JSONObject.toJSONString(unifiedOrderRequest));
 
         try {
-    		WxPayUnifiedOrderV3Result orderV3Result = payService.createOrderV3(TradeTypeEnum.NATIVE, unifiedOrderRequest);
+        	//ClassCast 失败，直接采用JSONObject
+    		//WxPayUnifiedOrderV3Result orderV3Result = payService.createOrderV3(TradeTypeEnum.NATIVE, unifiedOrderRequest);
+        	String codeUrl = payService.createOrderV3(TradeTypeEnum.NATIVE, unifiedOrderRequest);
             result.put("success", true);
-            result.put("data", orderV3Result.getCodeUrl()); //直接返回URL
-            logger.error("generate wechatpay qrcode url done.", orderV3Result);
+            result.put("data", codeUrl); //直接返回URL
+            logger.error("generate wechatpay qrcode url done.", codeUrl);
         } catch (WxPayException e) {
         	logger.error(e.getErrCodeDes());
         	result.put("success", false);
