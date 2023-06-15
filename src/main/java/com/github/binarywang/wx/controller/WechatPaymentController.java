@@ -25,6 +25,7 @@ import com.github.binarywang.wxpay.bean.entpay.EntPayRequest;
 import com.github.binarywang.wxpay.bean.entpay.EntPayResult;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyV3Result;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderV3Request;
 import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult;
@@ -223,13 +224,14 @@ public class WechatPaymentController extends GenericController {
     public String getNativeCallbackData(@RequestBody String xmlData) {
 		logger.error("got pay result notify. \n"+xmlData);
 		try {
-		    final WxPayOrderNotifyResult notifyResult = payService.parseOrderNotifyResult(xmlData);
+		    final WxPayOrderNotifyV3Result notifyResult = payService.parseOrderNotifyV3Result(xmlData, null);
+		    logger.error("got parsed pay result notify. \n"+JSONObject.toJSONString(notifyResult));
 		    
 	    	//根据回传数据更改已经购买的商品状态：更改对应的记录状态。根据out_trade_no修改所有购买记录的状态，增加transaction_id
-	    	String outTradeNo = notifyResult.getOutTradeNo();
-	    	String transactionId = notifyResult.getTransactionId();
-	    	String resultCode = notifyResult.getResultCode();
-	    	Integer totalFee = notifyResult.getTotalFee();
+	    	String outTradeNo = notifyResult.getResult().getOutTradeNo();
+	    	String transactionId = notifyResult.getResult().getTransactionId();
+	    	String resultCode = notifyResult.getResult().getTradeState();
+	    	Integer totalFee = notifyResult.getResult().getAmount().getTotal();
 	    	
 		    // 根据结果更新购买记录，同时更新租户虚拟豆数量
 		    if("SUCCESS".equalsIgnoreCase(resultCode)){
