@@ -145,6 +145,7 @@ public class WechatPaymentController extends GenericController {
 	@ResponseBody
 	@RequestMapping(value = "rest/qrcode-url", method = RequestMethod.POST)
     public JSONObject getNativePayInfo(@RequestBody JSONObject json) {
+		logger.info("try generate wechatpay qrcode url.", json);
 		JSONObject result = new JSONObject();
 		WxPayUnifiedOrderV3Request unifiedOrderRequest = new WxPayUnifiedOrderV3Request();
 		//unifiedOrderRequest.setAppid(json.getString("appId"));//由前端传入，可以支持多个web站点
@@ -164,6 +165,7 @@ public class WechatPaymentController extends GenericController {
     		WxPayUnifiedOrderV3Result orderV3Result = payService.createOrderV3(TradeTypeEnum.NATIVE, unifiedOrderRequest);
             result.put("success", true);
             result.put("data", orderV3Result.getCodeUrl()); //直接返回URL
+            logger.info("generate wechatpay qrcode url done.", orderV3Result);
         } catch (WxPayException e) {
         	logger.error(e.getErrCodeDes());
         	result.put("success", false);
