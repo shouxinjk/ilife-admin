@@ -221,6 +221,7 @@ public class WechatPaymentController extends GenericController {
 	@Transactional(readOnly = false)
     @RequestMapping(value = "rest/native-callback")
     public String getNativeCallbackData(@RequestBody String xmlData) {
+		logger.error("got pay result notify. \n"+xmlData);
 		try {
 		    final WxPayOrderNotifyResult notifyResult = payService.parseOrderNotifyResult(xmlData);
 		    
