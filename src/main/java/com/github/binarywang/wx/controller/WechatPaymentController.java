@@ -23,6 +23,8 @@ import com.github.binarywang.wx.util.Sha1Util;
 import com.github.binarywang.wx.util.XMLUtil;
 import com.github.binarywang.wxpay.bean.entpay.EntPayRequest;
 import com.github.binarywang.wxpay.bean.entpay.EntPayResult;
+import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderV3Request;
 import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult;
@@ -155,7 +157,7 @@ public class WechatPaymentController extends GenericController {
 		unifiedOrderRequest.setAppid(payService.getConfig().getAppId());//采用公众号APPId
 		unifiedOrderRequest.setOutTradeNo(json.getString("out_trade_no"));
 		unifiedOrderRequest.setDescription(json.getString("decription"));
-		unifiedOrderRequest.setNotifyUrl(Global.getConfig("sx.callback.prefix")+"/wxPay/rest/callback");//微信支付完成后将调用回传数据：与微信内支付相同
+		unifiedOrderRequest.setNotifyUrl(Global.getConfig("sx.callback.prefix")+"/wxPay/rest/native-callback");//微信支付完成后将调用回传数据
 		
 		//设置金额
 		WxPayUnifiedOrderV3Request.Amount amount = new WxPayUnifiedOrderV3Request.Amount();
@@ -207,6 +209,108 @@ public class WechatPaymentController extends GenericController {
         
         return result;
     }
+	
+    /**
+     * 接收Native微信支付回调数据
+     * 
+     * 接收回调后根据out_trade_no建立或更新记录
+     *
+     * @param request
+     * @param response
+     */
+	@Transactional(readOnly = false)
+    @RequestMapping(value = "rest/native-callback")
+    public String getNativeCallbackData(@RequestBody String xmlData) {
+		try {
+		    final WxPayOrderNotifyResult notifyResult = payService.parseOrderNotifyResult(xmlData);
+		    
+	    	//根据回传数据更改已经购买的商品状态：更改对应的记录状态。根据out_trade_no修改所有购买记录的状态，增加transaction_id
+	    	String outTradeNo = notifyResult.getOutTradeNo();
+	    	String transactionId = notifyResult.getTransactionId();
+	    	String resultCode = notifyResult.getResultCode();
+	    	Integer totalFee = notifyResult.getTotalFee();
+	    	
+		    // 根据结果更新购买记录，同时更新租户虚拟豆数量
+		    if("SUCCESS".equalsIgnoreCase(resultCode)){
+		
+		    	//由于仅根据返回的prepayInfo更新，同时处理adPay及pointPay。其中adPay更新状态，pointPay则执行点数增加（仅执行一次）
+		    	//out_trade_no通过payAd、payPoint开头进行区分
+		    	Map<String,String> params = Maps.newHashMap();
+		    	params.put("out_trade_no", outTradeNo);
+		    	params.put("transaction_id", transactionId);
+		    	params.put("result_code", resultCode);
+		    	String purchaseType = "微信购买";
+		    	if(outTradeNo !=null && outTradeNo.startsWith("par")) {//表示购买广告：文章置顶
+		    		wxPaymentAdService.updateWxTransactionInfoByTradeNo(params);
+		    		purchaseType = "文章置顶广告购买";
+		    	}else if(outTradeNo !=null && outTradeNo.startsWith("pac")) {//表示购买广告：公众号置顶
+		    		wxPaymentAdService.updateWxTransactionInfoByTradeNo(params);
+		    		purchaseType = "公众号置顶广告购买";
+		    	}else if(outTradeNo !=null && outTradeNo.startsWith("ppt")) {//表示购买阅豆：同时支持公众号、网页端发起。SaaS端根据云豆金额充值
+		    		purchaseType = "云豆充值";
+		    		wxPaymentPointService.updateWxTransactionInfoByTradeNo(params);
+		    		//建立租户购买记录：支持前端查询构建，先根据购买out_trade_no查询是否已经存在购买记录
+		    		WxPaymentPoint wxPaymentPoint = new WxPaymentPoint();
+		    		wxPaymentPoint.setTradeNo(outTradeNo);
+		    		List<WxPaymentPoint> wxPaymentPoints = wxPaymentPointService.findList(wxPaymentPoint);
+		    		if(wxPaymentPoints!=null && wxPaymentPoints.size()>0) {
+		    			wxPaymentPoint = wxPaymentPoints.get(0);
+		        		//更新租户虚拟豆
+		    			TenantPoints tenantPoints = new TenantPoints();
+		    			tenantPoints.setId(""+wxPaymentPoint.getTenantId());//ID与tenantId完全一致
+		    			tenantPoints.setTenantId(wxPaymentPoint.getTenantId());
+						tenantPoints.setPoints(wxPaymentPoint.getPoints().getPoints()); //只需要设置新购买的增量
+						tenantPointsService.updatePoints(tenantPoints);
+						
+		    		}else { //如果不存在则直接忽略
+		    			logger.error("failed find wxPaymentPoint record.");
+	        			wxPaymentPoint.setAmount(totalFee);
+	        			wxPaymentPoint.setPoints(null);//无法获取支付points
+	        			wxPaymentPoint.setTradeNo(outTradeNo);
+	        			wxPaymentPoint.setTradeState(resultCode);
+	        			wxPaymentPoint.setTransactionId(transactionId);//默认为空，待微信支付后更新
+	        			wxPaymentPoint.setCreateDate(new Date());
+	        			wxPaymentPoint.setUpdateDate(new Date());
+	        			wxPaymentPoint.setPaymentDate(new Date());
+	        			wxPaymentPointService.save(wxPaymentPoint);//保存记录
+		    		}
+		    		
+		    	}else if(outTradeNo !=null && outTradeNo.startsWith("sub")) {//表示订阅或续费，同时支持公众号、网页端发起。SaaS端根据套餐类型直接支付
+		    		//需要建立订阅记录，包括
+		    		subscriptionService.updateWxTransactionInfoByTradeNo(params);
+		    		purchaseType = "订阅/续费";
+		    	}else {
+		    		//糟糕了，不做任何处理
+		    		logger.warn("wrong out_trade_no.[out_trade_no]"+outTradeNo);
+		    		purchaseType = "未知支付类型";
+		    	}
+		    	
+		    	//发送通知到微信
+		    	String amountStr = totalFee * 0.01 + "元";
+			    Map<String,String> header = new HashMap<String,String>();
+			    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
+			    JSONObject result = null;
+		    	JSONObject msg = new JSONObject();
+				msg.put("product", purchaseType);
+				msg.put("amount", amountStr);
+				msg.put("status", resultCode);
+				msg.put("time", fmt.format(new Date()));
+				msg.put("ext", "订单号："+outTradeNo);
+				msg.put("remark", "流水号："+transactionId);
+				result = HttpClientHelper.getInstance().post(
+						Global.getConfig("wechat.templateMessenge")+"/payment-success-notify", 
+						msg,header);
+	
+		        logger.info("out_trade_no: " + outTradeNo + " pay SUCCESS!");
+		    }else {
+		    	logger.info("out_trade_no: " + outTradeNo + ". pay result: "+resultCode);
+		    }
+		}catch(Exception ex) {
+			logger.error("error while parse native pay result",ex);
+		}
+	    return WxPayNotifyResponse.success("成功");
+	  }
+	
 
     /**
      * 微信通知支付结果的回调地址，notify_url
@@ -243,32 +347,6 @@ public class WechatPaymentController extends GenericController {
                     	}else if(outTradeNo !=null && outTradeNo.startsWith("ppt")) {//表示购买阅豆：同时支持公众号、网页端发起。SaaS端根据云豆金额充值
                     		purchaseType = "云豆充值";
                     		wxPaymentPointService.updateWxTransactionInfoByTradeNo(params);
-                    		//建立租户购买记录：支持前端查询构建，先根据购买out_trade_no查询是否已经存在购买记录
-                    		WxPaymentPoint wxPaymentPoint = new WxPaymentPoint();
-                    		wxPaymentPoint.setTradeNo(outTradeNo);
-                    		List<WxPaymentPoint> wxPaymentPoints = wxPaymentPointService.findList(wxPaymentPoint);
-                    		if(wxPaymentPoints!=null && wxPaymentPoints.size()>0) {
-                    			wxPaymentPoint = wxPaymentPoints.get(0);
-                        		//更新租户虚拟豆
-                    			TenantPoints tenantPoints = new TenantPoints();
-                    			tenantPoints.setId(""+wxPaymentPoint.getTenantId());//ID与tenantId完全一致
-                    			tenantPoints.setTenantId(wxPaymentPoint.getTenantId());
-                				tenantPoints.setPoints(wxPaymentPoint.getPoints().getPoints()); //只需要设置新购买的增量
-                				tenantPointsService.updatePoints(tenantPoints);
-                				
-                    		}else { //如果不存在则直接忽略
-                    			logger.error("failed find wxPaymentPoint record.");
-//                    			wxPaymentPoint.setAmount(wxPoint.getPrice());
-//                    			wxPaymentPoint.setPoints(wxPoint);
-//                    			wxPaymentPoint.setTradeNo(outTradeNo);
-//                    			wxPaymentPoint.setTradeState(kvm.get("result_code"));
-//                    			wxPaymentPoint.setTransactionId(kvm.get("transaction_id"));//默认为空，待微信支付后更新
-//                    			wxPaymentPoint.setCreateDate(new Date());
-//                    			wxPaymentPoint.setUpdateDate(new Date());
-//                    			wxPaymentPoint.setPaymentDate(new Date());
-//                    			wxPaymentPointService.save(wxPaymentPoint);//保存记录
-                    		}
-                    		
                     	}else if(outTradeNo !=null && outTradeNo.startsWith("sub")) {//表示订阅或续费，同时支持公众号、网页端发起。SaaS端根据套餐类型直接支付
                     		//需要建立订阅记录，包括
                     		subscriptionService.updateWxTransactionInfoByTradeNo(params);
