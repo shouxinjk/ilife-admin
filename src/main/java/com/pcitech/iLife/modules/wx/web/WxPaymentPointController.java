@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -115,6 +116,7 @@ public class WxPaymentPointController extends BaseController {
 	 * 3，wxPay：{result_code:xxx,out_trade_no:xxx}
 	 * 
 	 */
+	@Transactional(readOnly = false)
 	@ResponseBody
 	@RequestMapping(value = "rest/tenant-purchase", method = RequestMethod.POST)
 	public JSONObject purchasePointProductByTenant(@RequestBody JSONObject json) {
@@ -172,6 +174,7 @@ public class WxPaymentPointController extends BaseController {
 	 * 3，wxPay：{result_code:xxx,out_trade_no:xxx}
 	 * 
 	 */
+	@Transactional(readOnly = false)
 	@ResponseBody
 	@RequestMapping(value = "rest/purchase", method = RequestMethod.POST)
 	public JSONObject sellPointProduct(@RequestBody JSONObject json) {
