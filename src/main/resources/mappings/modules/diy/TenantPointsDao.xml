@@ -4,7 +4,7 @@
     
 	<!-- 更新租户余额。如果不存在则直接新增 -->
 	<update id="updatePoints">
-		INSERT INTO mod_3rd_category(
+		INSERT INTO diy_tenant_points(
 			id,
 			tenant_id,
 			points,
