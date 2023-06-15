@@ -5,6 +5,7 @@ package com.pcitech.iLife.modules.wx.web;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,8 @@ import com.pcitech.iLife.common.config.Global;
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.web.BaseController;
 import com.pcitech.iLife.common.utils.StringUtils;
+import com.pcitech.iLife.modules.diy.entity.TenantPoints;
+import com.pcitech.iLife.modules.diy.service.TenantPointsService;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.wx.entity.WxAdvertise;
@@ -53,7 +56,9 @@ public class WxPaymentPointController extends BaseController {
 	private BrokerService brokerService;
 	@Autowired
 	private WxPointsService wxPointsService;
-	
+    @Autowired
+    private TenantPointsService tenantPointsService;
+    
 	@ModelAttribute
 	public WxPaymentPoint get(@RequestParam(required=false) String id) {
 		WxPaymentPoint entity = null;
@@ -101,8 +106,65 @@ public class WxPaymentPointController extends BaseController {
 	}
 
 
+	/**
+	 * 租户购买虚拟豆
+	 * 支付成功后建立阅豆产品记录。由微信支付前端回传。参数：
+	 * 
+	 * 1，productId：阅豆产品ID
+	 * 2，tenantId： 租户ID
+	 * 3，wxPay：{result_code:xxx,out_trade_no:xxx}
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "rest/tenant-purchase", method = RequestMethod.POST)
+	public JSONObject purchasePointProductByTenant(@RequestBody JSONObject json) {
+		JSONObject result = new JSONObject();
+		Integer tenantId = json.getInteger("tenantId");
+		//获取TenantId
+		if(tenantId==null){
+			//糟糕了。竟然没有买主，这个就荒唐了，先记到平台租户下
+			tenantId = 0;
+			logger.warn("no tenantId commit.");
+			result.put("warn-tenantId", "no tenantId info.");
+		}
+		//获取阅豆产品
+		WxPoints wxPoint = wxPointsService.get(json.getString("productId").trim());
+		//建立购买记录：同时支持支付后回调，需要查询记录是否已经存在，根据out_trade_no完成
+		//更新租户points: 先根据购买out_trade_no查询得到租户及虚拟豆信息
+		WxPaymentPoint wxPaymentPoint = new WxPaymentPoint();
+		wxPaymentPoint.setTradeNo(json.getString("out_trade_no"));
+		List<WxPaymentPoint> wxPaymentPoints = wxPaymentPointService.findList(wxPaymentPoint);
+		if(wxPaymentPoints!=null && wxPaymentPoints.size()>0) { //购买记录已经存在：后端已经接收到微信支付callback
+			wxPaymentPoint = wxPaymentPoints.get(0);//使用已经存在的记录
+		}else { //否则新建记录
+			wxPaymentPoint.setAmount(wxPoint.getPrice());
+			wxPaymentPoint.setTenantId(json.getInteger("tenantId"));
+			wxPaymentPoint.setPoints(wxPoint);
+			wxPaymentPoint.setTradeNo(json.getString("out_trade_no"));
+			wxPaymentPoint.setTradeState(json.getString("result_code"));
+			wxPaymentPoint.setTransactionId(json.getString("transaction_id"));//默认为空，待微信支付后更新
+			wxPaymentPoint.setCreateDate(new Date());
+			wxPaymentPoint.setUpdateDate(new Date());
+			wxPaymentPoint.setPaymentDate(new Date());
+			wxPaymentPointService.save(wxPaymentPoint);//保存记录
+		}
+
+		//更新租户阅豆
+		TenantPoints tenantPoints = new TenantPoints();
+		tenantPoints.setId(""+json.getInteger("tenantId"));//ID与tenantId完全一致
+		tenantPoints.setTenantId(json.getInteger("tenantId"));
+		tenantPoints.setPoints(wxPoint.getPoints()); //只需要设置新购买的增量
+		tenantPointsService.updatePoints(tenantPoints);
+		//组织返回结果
+		result.put("success", true);
+		result.put("points", wxPoint.getPoints());
+		result.put("data", wxPaymentPoint);//返回的是临时记录
+		
+		return result;
+	}
 
 	/**
+	 * 达人购买虚拟豆
 	 * 支付成功后建立阅豆产品记录。由微信支付前端回传。参数：
 	 * 
 	 * 1，productId：阅豆产品ID
