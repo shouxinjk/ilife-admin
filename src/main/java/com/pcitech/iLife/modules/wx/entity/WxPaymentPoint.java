@@ -22,6 +22,7 @@ public class WxPaymentPoint extends DataEntity<WxPaymentPoint> {
 	private WxPoints points;		// 阅豆产品
 	private int amount;		// 付款金额
 	private Date paymentDate;		// 付款时间
+	private Integer tenantId; //租户ID
 	private String tradeNo;		// 商户订单号
 	private String tradeState;		// 交易状态
 	private String transactionId;		// 支付流水号
@@ -94,6 +95,14 @@ public class WxPaymentPoint extends DataEntity<WxPaymentPoint> {
 
 	public void setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
+	}
+
+	public Integer getTenantId() {
+		return tenantId;
+	}
+
+	public void setTenantId(Integer tenantId) {
+		this.tenantId = tenantId;
 	}
 	
 }

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.diy.dao.TenantPointsDao">
+    
+	<!-- 更新租户余额。如果不存在则直接新增 -->
+	<update id="updatePoints">
+		INSERT INTO mod_3rd_category(
+			id,
+			tenant_id,
+			points,
+			coins,
+			credits,
+			create_by,
+			create_time,
+			update_by,
+			update_time
+		) VALUES (
+			#{id},
+			#{tenantId},
+			#{points},
+			#{coins},
+			#{credits},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime}
+		)	
+		ON DUPLICATE KEY UPDATE 
+			points = points + #{points},
+			coins = coins + #{coins},
+			credits = credits + #{credits},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime}
+	</update>    
+    
+	<sql id="tenantPointsColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.sys_org_code AS "sysOrgCode",
+		a.tenant_id AS "tenantId",
+		a.points AS "points",
+		a.coins AS "coins",
+		a.credits AS "credits"
+	</sql>
+	
+	<sql id="tenantPointsJoins">
+	</sql>
+    
+	<select id="get" resultType="TenantPoints">
+		SELECT 
+			<include refid="tenantPointsColumns"/>
+		FROM diy_tenant_points a
+		<include refid="tenantPointsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="TenantPoints">
+		SELECT 
+			<include refid="tenantPointsColumns"/>
+		FROM diy_tenant_points a
+		<include refid="tenantPointsJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="TenantPoints">
+		SELECT 
+			<include refid="tenantPointsColumns"/>
+		FROM diy_tenant_points a
+		<include refid="tenantPointsJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO diy_tenant_points(
+			id,
+			create_by,
+			create_time,
+			update_by,
+			update_time,
+			sys_org_code,
+			tenant_id,
+			points,
+			coins,
+			credits
+		) VALUES (
+			#{id},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime},
+			#{sysOrgCode},
+			#{tenantId},
+			#{points},
+			#{coins},
+			#{credits}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE diy_tenant_points SET 	
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime},
+			sys_org_code = #{sysOrgCode},
+			tenant_id = #{tenantId},
+			points = #{points},
+			coins = #{coins},
+			credits = #{credits}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM diy_tenant_points
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

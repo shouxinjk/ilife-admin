@@ -34,9 +34,12 @@ import com.github.binarywang.wxpay.util.SignUtils;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.pcitech.iLife.common.config.Global;
+import com.pcitech.iLife.modules.diy.entity.TenantPoints;
+import com.pcitech.iLife.modules.diy.service.TenantPointsService;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.mod.service.SubscriptionService;
 import com.pcitech.iLife.modules.wx.entity.WxArticle;
+import com.pcitech.iLife.modules.wx.entity.WxPaymentPoint;
 import com.pcitech.iLife.modules.wx.service.WxArticleService;
 import com.pcitech.iLife.modules.wx.service.WxPaymentAdService;
 import com.pcitech.iLife.modules.wx.service.WxPaymentPointService;
@@ -71,7 +74,8 @@ public class WechatPaymentController extends GenericController {
     private WxPaymentPointService wxPaymentPointService;
     @Autowired
     private SubscriptionService subscriptionService;
-    
+    @Autowired
+    private TenantPointsService tenantPointsService;
     
     SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     /**
@@ -143,7 +147,8 @@ public class WechatPaymentController extends GenericController {
     public JSONObject getNativePayInfo(@RequestBody JSONObject json) {
 		JSONObject result = new JSONObject();
 		WxPayUnifiedOrderV3Request unifiedOrderRequest = new WxPayUnifiedOrderV3Request();
-		unifiedOrderRequest.setAppid(json.getString("appId"));//由前端传入，可以支持多个web站点
+		//unifiedOrderRequest.setAppid(json.getString("appId"));//由前端传入，可以支持多个web站点
+		unifiedOrderRequest.setAppid(payService.getConfig().getAppId());//采用公众号APPId
 		unifiedOrderRequest.setOutTradeNo(json.getString("out_trade_no"));
 		unifiedOrderRequest.setDescription(json.getString("decription"));
 		unifiedOrderRequest.setNotifyUrl(Global.getConfig("sx.callback.prefix")+"/wxPay/rest/callback");//微信支付完成后将调用回传数据：与微信内支付相同
@@ -200,8 +205,29 @@ public class WechatPaymentController extends GenericController {
                     		wxPaymentAdService.updateWxTransactionInfoByTradeNo(params);
                     		purchaseType = "公众号置顶广告购买";
                     	}else if(outTradeNo !=null && outTradeNo.startsWith("ppt")) {//表示购买阅豆：同时支持公众号、网页端发起。SaaS端根据云豆金额充值
-                    		wxPaymentPointService.updateWxTransactionInfoByTradeNo(params);
                     		purchaseType = "云豆充值";
+                    		wxPaymentPointService.updateWxTransactionInfoByTradeNo(params);
+                    		//更新租户points: 先根据购买out_trade_no查询得到租户及虚拟豆信息
+                    		WxPaymentPoint wxPaymentPoint = new WxPaymentPoint();
+                    		wxPaymentPoint.setTradeNo(outTradeNo);
+                    		List<WxPaymentPoint> wxPaymentPoints = wxPaymentPointService.findList(wxPaymentPoint);
+                    		if(wxPaymentPoints!=null && wxPaymentPoints.size()>0) {
+                    			TenantPoints tenantPoints = new TenantPoints();
+                    			tenantPoints.setId(""+wxPaymentPoints.get(0).getTenantId());//ID与tenantId完全一致
+                    			tenantPoints.setTenantId(wxPaymentPoints.get(0).getTenantId());
+                    			/**
+                    			//如果存在，则直接处理
+                    			List<TenantPoints> existedTenantPoints = tenantPointsService.findList(tenantPoints);
+                    			if (existedTenantPoints !=null && existedTenantPoints.size()>0) {
+                    				tenantPoints = existedTenantPoints.get(0);
+                    			}
+                    			//**/
+                				tenantPoints.setPoints(wxPaymentPoint.getPoints().getPoints()); //只需要设置新购买的增量
+                				tenantPointsService.updatePoints(tenantPoints);
+                    		}else {
+                    			logger.error("failed find wxPaymentPoint record.");
+                    		}
+                    		
                     	}else if(outTradeNo !=null && outTradeNo.startsWith("sub")) {//表示订阅或续费，同时支持公众号、网页端发起。SaaS端根据套餐类型直接支付
                     		//需要建立订阅记录，包括
                     		subscriptionService.updateWxTransactionInfoByTradeNo(params);
