@@ -318,7 +318,7 @@ public class WechatPaymentController extends GenericController {
 		    						subscription.getSalePackage().getName().trim().length()>0 ) {
 		    					purchaseType = "套餐:"+subscription.getSalePackage().getName();
 		    				}else {
-		    					purchaseType = "产品:"+subscription.getApp().getName()+" "+subscription.getPricePlan().getName();
+		    					purchaseType = "产品:"+subscription.getSoftware().getName()+" "+subscription.getPricePlan().getName();
 		    				}
 		    				//更新交易记录
 		    				params.put("transaction_code", transactionId); 

@@ -22,7 +22,7 @@ public class Subscription extends DataEntity<Subscription> {
 	private String sysOrgCode;		// 所属部门
 	private SysTenant tenant;		// 租户
 	private Broker broker;			//付款达人：可能为空
-	private StoSoftware app;		// 订阅内容
+	private StoSoftware software;		// 订阅内容
 	private StoPricePlan pricePlan;		// 单品订阅计划类型
 	private StoSalePackage salePackage; // 套餐类型
 	private String payerOpenid; //付款人openid
@@ -71,12 +71,12 @@ public class Subscription extends DataEntity<Subscription> {
 		this.sysOrgCode = sysOrgCode;
 	}
 	
-	public StoSoftware getApp() {
-		return app;
+	public StoSoftware getSoftware() {
+		return software;
 	}
 
-	public void setApp(StoSoftware app) {
-		this.app = app;
+	public void setApp(StoSoftware software) {
+		this.software = software;
 	}
 	
 	public StoPricePlan getPricePlan() {
