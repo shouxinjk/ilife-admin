@@ -50,7 +50,7 @@
 		left join mod_broker broker on broker.id = a.broker_id
 		left join sys_tenant tenant on tenant.id = a.tenant_id
 		left join sto_sale_package pkg on pkg.id = a.sale_package_id
-		left join sto_price_plan plan on plan.id = a.price_plan_id
+		left join sto_price_plan plan on plan.id = a.plan_id
 		left join sto_software app on app.id = a.app_id
 	</sql>
     
