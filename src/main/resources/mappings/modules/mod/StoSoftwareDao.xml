@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.StoSoftwareDao">
+    
+	<sql id="stoSoftwareColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.sys_org_code AS "sysOrgCode",
+		a.name AS "name",
+		a.type AS "type",
+		a.logo AS "logo",
+		a.code AS "code",
+		a.version AS "version",
+		a.description AS "description",
+		a.demo AS "demo",
+		a.status AS "status",
+		a.suite_ticket AS "suiteTicket",
+		a.suite_id AS "suiteId",
+		a.tenant_id AS "tenantId"
+	</sql>
+	
+	<sql id="stoSoftwareJoins">
+	</sql>
+    
+	<select id="get" resultType="StoSoftware">
+		SELECT 
+			<include refid="stoSoftwareColumns"/>
+		FROM sto_software a
+		<include refid="stoSoftwareJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="StoSoftware">
+		SELECT 
+			<include refid="stoSoftwareColumns"/>
+		FROM sto_software a
+		<include refid="stoSoftwareJoins"/>
+		<where>
+			
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="StoSoftware">
+		SELECT 
+			<include refid="stoSoftwareColumns"/>
+		FROM sto_software a
+		<include refid="stoSoftwareJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sto_software(
+			id,
+			create_by,
+			create_time,
+			update_by,
+			update_time,
+			sys_org_code,
+			name,
+			type,
+			logo,
+			code,
+			version,
+			description,
+			demo,
+			status,
+			suite_ticket,
+			suite_id,
+			tenant_id
+		) VALUES (
+			#{id},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime},
+			#{sysOrgCode},
+			#{name},
+			#{type},
+			#{logo},
+			#{code},
+			#{version},
+			#{description},
+			#{demo},
+			#{status},
+			#{suiteTicket},
+			#{suiteId},
+			#{tenantId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sto_software SET 	
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime},
+			sys_org_code = #{sysOrgCode},
+			name = #{name},
+			type = #{type},
+			logo = #{logo},
+			code = #{code},
+			version = #{version},
+			description = #{description},
+			demo = #{demo},
+			status = #{status},
+			suite_ticket = #{suiteTicket},
+			suite_id = #{suiteId},
+			tenant_id = #{tenantId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sto_software
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

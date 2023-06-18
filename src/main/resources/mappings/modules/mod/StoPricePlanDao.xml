@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.StoPricePlanDao">
+    
+	<sql id="stoPricePlanColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.sys_org_code AS "sysOrgCode",
+		a.business_type AS "businessType",
+		a.app_id AS "appId",
+		a.name AS "name",
+		a.duration_type AS "durationType",
+		a.price AS "price",
+		a.description AS "description",
+		a.priority AS "priority"
+	</sql>
+	
+	<sql id="stoPricePlanJoins">
+	</sql>
+    
+	<select id="get" resultType="StoPricePlan">
+		SELECT 
+			<include refid="stoPricePlanColumns"/>
+		FROM sto_price_plan a
+		<include refid="stoPricePlanJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="StoPricePlan">
+		SELECT 
+			<include refid="stoPricePlanColumns"/>
+		FROM sto_price_plan a
+		<include refid="stoPricePlanJoins"/>
+		<where>
+			
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="StoPricePlan">
+		SELECT 
+			<include refid="stoPricePlanColumns"/>
+		FROM sto_price_plan a
+		<include refid="stoPricePlanJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sto_price_plan(
+			id,
+			create_by,
+			create_time,
+			update_by,
+			update_time,
+			sys_org_code,
+			business_type,
+			app_id,
+			name,
+			duration_type,
+			price,
+			description,
+			priority
+		) VALUES (
+			#{id},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime},
+			#{sysOrgCode},
+			#{businessType},
+			#{appId},
+			#{name},
+			#{durationType},
+			#{price},
+			#{description},
+			#{priority}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sto_price_plan SET 	
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime},
+			sys_org_code = #{sysOrgCode},
+			business_type = #{businessType},
+			app_id = #{appId},
+			name = #{name},
+			duration_type = #{durationType},
+			price = #{price},
+			description = #{description},
+			priority = #{priority}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sto_price_plan
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

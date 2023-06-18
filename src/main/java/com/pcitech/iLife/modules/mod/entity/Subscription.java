@@ -20,9 +20,12 @@ public class Subscription extends DataEntity<Subscription> {
 	private Date createTime;		// 创建日期
 	private Date updateTime;		// 更新日期
 	private String sysOrgCode;		// 所属部门
-	private Integer tenantId;		// 租户
-	private String appId;		// 订阅内容
-	private String planId;		// 套餐类型
+	private SysTenant tenant;		// 租户
+	private Broker broker;			//付款达人：可能为空
+	private StoSoftware app;		// 订阅内容
+	private StoPricePlan pricePlan;		// 单品订阅计划类型
+	private StoSalePackage salePackage; // 套餐类型
+	private String payerOpenid; //付款人openid
 	private String subscribeType;		// 订阅类型
 	private Date effectiveOn;		// 生效时间
 	private Date expireOn;		// 失效时间
@@ -68,30 +71,45 @@ public class Subscription extends DataEntity<Subscription> {
 		this.sysOrgCode = sysOrgCode;
 	}
 	
-	public Integer getTenantId() {
-		return tenantId;
+	public StoSoftware getApp() {
+		return app;
 	}
 
-	public void setTenantId(Integer tenantId) {
-		this.tenantId = tenantId;
+	public void setApp(StoSoftware app) {
+		this.app = app;
 	}
 	
-	@Length(min=0, max=32, message="订阅内容长度必须介于 0 和 32 之间")
-	public String getAppId() {
-		return appId;
+	public StoPricePlan getPricePlan() {
+		return pricePlan;
 	}
 
-	public void setAppId(String appId) {
-		this.appId = appId;
+	public void setPricePlan(StoPricePlan pricePlan) {
+		this.pricePlan = pricePlan;
 	}
 	
-	@Length(min=0, max=32, message="套餐类型长度必须介于 0 和 32 之间")
-	public String getPlanId() {
-		return planId;
+	
+	public StoSalePackage getSalePackage() {
+		return salePackage;
 	}
 
-	public void setPlanId(String planId) {
-		this.planId = planId;
+	public void setSalePackage(StoSalePackage salePackage) {
+		this.salePackage = salePackage;
+	}
+	
+	public Broker getBroker() {
+		return broker;
+	}
+
+	public void setBroker(Broker broker) {
+		this.broker = broker;
+	}
+	
+	public String getPayerOpenid() {
+		return payerOpenid;
+	}
+
+	public void setPayerOpenid(String payerOpenid) {
+		this.payerOpenid = payerOpenid;
 	}
 	
 	@Length(min=0, max=32, message="订阅类型长度必须介于 0 和 32 之间")
@@ -172,6 +190,14 @@ public class Subscription extends DataEntity<Subscription> {
 
 	public void setInvoiceId(String invoiceId) {
 		this.invoiceId = invoiceId;
+	}
+
+	public SysTenant getTenant() {
+		return tenant;
+	}
+
+	public void setTenant(SysTenant tenant) {
+		this.tenant = tenant;
 	}
 	
 }

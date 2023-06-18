@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.SysTenantDao">
+    
+	<sql id="sysTenantColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.create_time AS "createTime",
+		a.create_by AS "createBy.id",
+		a.begin_date AS "beginDate",
+		a.end_date AS "endDate",
+		a.status AS "status",
+		a.trade AS "trade",
+		a.company_size AS "companySize",
+		a.company_address AS "companyAddress",
+		a.company_logo AS "companyLogo",
+		a.house_number AS "houseNumber",
+		a.work_place AS "workPlace",
+		a.secondary_domain AS "secondaryDomain",
+		a.login_bkgd_img AS "loginBkgdImg",
+		a.position AS "position",
+		a.department AS "department",
+		a.del_flag AS "delFlag",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.apply_status AS "applyStatus"
+	</sql>
+	
+	<sql id="sysTenantJoins">
+	</sql>
+    
+	<select id="get" resultType="SysTenant">
+		SELECT 
+			<include refid="sysTenantColumns"/>
+		FROM sys_tenant a
+		<include refid="sysTenantJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysTenant">
+		SELECT 
+			<include refid="sysTenantColumns"/>
+		FROM sys_tenant a
+		<include refid="sysTenantJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysTenant">
+		SELECT 
+			<include refid="sysTenantColumns"/>
+		FROM sys_tenant a
+		<include refid="sysTenantJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_tenant(
+			id,
+			name,
+			create_time,
+			create_by,
+			begin_date,
+			end_date,
+			status,
+			trade,
+			company_size,
+			company_address,
+			company_logo,
+			house_number,
+			work_place,
+			secondary_domain,
+			login_bkgd_img,
+			position,
+			department,
+			del_flag,
+			update_by,
+			update_time,
+			apply_status
+		) VALUES (
+			#{id},
+			#{name},
+			#{createTime},
+			#{createBy.id},
+			#{beginDate},
+			#{endDate},
+			#{status},
+			#{trade},
+			#{companySize},
+			#{companyAddress},
+			#{companyLogo},
+			#{houseNumber},
+			#{workPlace},
+			#{secondaryDomain},
+			#{loginBkgdImg},
+			#{position},
+			#{department},
+			#{delFlag},
+			#{updateBy.id},
+			#{updateTime},
+			#{applyStatus}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_tenant SET 	
+			name = #{name},
+			create_time = #{createTime},
+			begin_date = #{beginDate},
+			end_date = #{endDate},
+			status = #{status},
+			trade = #{trade},
+			company_size = #{companySize},
+			company_address = #{companyAddress},
+			company_logo = #{companyLogo},
+			house_number = #{houseNumber},
+			work_place = #{workPlace},
+			secondary_domain = #{secondaryDomain},
+			login_bkgd_img = #{loginBkgdImg},
+			position = #{position},
+			department = #{department},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime},
+			apply_status = #{applyStatus}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_tenant SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

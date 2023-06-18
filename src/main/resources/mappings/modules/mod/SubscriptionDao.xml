@@ -18,9 +18,23 @@
 		a.update_by AS "updateBy.id",
 		a.update_time AS "updateTime",
 		a.sys_org_code AS "sysOrgCode",
-		a.tenant_id AS "tenantId",
-		a.app_id AS "appId",
-		a.plan_id AS "planId",
+		
+		a.tenant_id AS "tenant.id",
+		tenant.name AS "tenant.name",
+		
+		a.app_id AS "software.id",
+		app.name AS "software.name",
+		
+		a.plan_id AS "pricePlan.id",
+		plan.name AS "pricePlan.name",
+		
+		a.sale_package_id AS "salePackage.id",
+		pkg.name AS "salePackage.name",
+		
+		a.broker_id AS "broker.id",
+		broker.nickname AS "broker.nickname",
+		
+		a.payer_openid AS "payerOpenid",
 		a.subscribe_type AS "subscribeType",
 		a.effective_on AS "effectiveOn",
 		a.expire_on AS "expireOn",
@@ -33,6 +47,11 @@
 	</sql>
 	
 	<sql id="subscriptionJoins">
+		left join mod_broker broker on broker.id = a.broker_id
+		left join sys_tenant tenant on tenant.id = a.tenant_id
+		left join sto_sale_package pkg on pkg.id = a.sale_package_id
+		left join sto_price_plan plan on plan.id = a.price_plan_id
+		left join sto_software app on app.id = a.software_id
 	</sql>
     
 	<select id="get" resultType="Subscription">
@@ -86,8 +105,11 @@
 			update_time,
 			sys_org_code,
 			tenant_id,
+			broker_id,
+			payer_openid,
 			app_id,
 			plan_id,
+			sale_package_id,
 			subscribe_type,
 			effective_on,
 			expire_on,
@@ -104,9 +126,12 @@
 			#{updateBy.id},
 			#{updateTime},
 			#{sysOrgCode},
-			#{tenantId},
-			#{appId},
-			#{planId},
+			#{tenant.id},
+			#{broker.id},
+			#{payerOpenid},
+			#{app.id},
+			#{pricePlan.id},
+			#{salePackage.id},
 			#{subscribeType},
 			#{effectiveOn},
 			#{expireOn},
@@ -125,9 +150,12 @@
 			update_by = #{updateBy.id},
 			update_time = #{updateTime},
 			sys_org_code = #{sysOrgCode},
-			tenant_id = #{tenantId},
-			app_id = #{appId},
-			plan_id = #{planId},
+			tenant_id = #{tenant.id},
+			broker_id = #{broker.id},
+			payer_openid = #{payerOpenid},
+			app_id = #{app.id},
+			plan_id = #{pricePlan.id},
+			sale_package_id = #{salePackage.id},
 			subscribe_type = #{subscribeType},
 			effective_on = #{effectiveOn},
 			expire_on = #{expireOn},

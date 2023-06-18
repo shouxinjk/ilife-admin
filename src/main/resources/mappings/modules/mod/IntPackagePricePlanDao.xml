@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.IntPackagePricePlanDao">
+    
+	<sql id="intPackagePricePlanColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.sys_org_code AS "sysOrgCode",
+		a.sale_package_id AS "salePackage.id",
+		pkg.name AS "salePackage.name",
+		
+		
+		a.software_id AS "software.id",
+		app.name AS "software.name",
+		
+		a.price_plan_id AS "pricePlan.id",
+		plan.name AS "pricePlan.name"
+	</sql>
+	
+	<sql id="intPackagePricePlanJoins">
+		left join sto_sale_package pkg on pkg.id = a.sale_package_id
+		left join sto_price_plan plan on plan.id = a.price_plan_id
+		left join sto_software app on app.id = a.software_id
+	</sql>
+    
+	<select id="get" resultType="IntPackagePricePlan">
+		SELECT 
+			<include refid="intPackagePricePlanColumns"/>
+		FROM int_package_price_plan a
+		<include refid="intPackagePricePlanJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="IntPackagePricePlan">
+		SELECT 
+			<include refid="intPackagePricePlanColumns"/>
+		FROM int_package_price_plan a
+		<include refid="intPackagePricePlanJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="IntPackagePricePlan">
+		SELECT 
+			<include refid="intPackagePricePlanColumns"/>
+		FROM int_package_price_plan a
+		<include refid="intPackagePricePlanJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO int_package_price_plan(
+			id,
+			create_by,
+			create_time,
+			update_by,
+			update_time,
+			sys_org_code,
+			sale_package_id,
+			software_id,
+			price_plan_id
+		) VALUES (
+			#{id},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime},
+			#{sysOrgCode},
+			#{salePackage.id},
+			#{software.id},
+			#{pricePlan.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE int_package_price_plan SET 	
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime},
+			sys_org_code = #{sysOrgCode},
+			sale_package_id = #{salePackage.id},
+			software_id = #{software.id},
+			price_plan_id = #{pricePlan.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM int_package_price_plan
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
