@@ -223,6 +223,77 @@ public class WechatPaymentController extends GenericController {
         return result;
     }
 	
+	 /**
+     * 对已经完成支付的记录补充业务信息
+     * 场景：前端发起支付后，后端接收到支付结果回调，前端在查询到支付成功后补充业务信息
+     */
+	@ResponseBody
+	@RequestMapping(value = "rest/subscription/pay-result-ext/{outTradeNo}", method = RequestMethod.POST)
+    public JSONObject patchSubscriptionNativePayResult(@PathVariable String outTradeNo, @RequestBody Subscription subscription) {
+		logger.error("try get wechatpay result."+ outTradeNo);
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		
+		//建立租户购买记录：支持前端查询构建，先根据购买out_trade_no查询是否已经存在购买记录
+		Subscription record = new Subscription();
+		record.setTradeNo(outTradeNo);
+		List<Subscription> subscriptions = subscriptionService.findList(record);
+		if(subscriptions == null || subscriptions.size() == 0) {
+			result.put("msg", "no record found by outTradeNo: "+outTradeNo);
+			return result;
+		}
+		
+		//仅更新必要信息
+		record = subscriptions.get(0);
+		record.setSoftware(subscription.getSoftware());
+		record.setBroker(subscription.getBroker());
+		record.setSalePackage(subscription.getSalePackage());
+		record.setPricePlan(subscription.getPricePlan());
+		subscriptionService.save(record);
+		
+		result.put("success", true);
+        return result;
+    }
+	
+	/**
+     * 对已经完成支付的记录补充业务信息
+     * 场景：前端发起支付后，后端接收到支付结果回调，前端在查询到支付成功后补充业务信息
+     */
+	@ResponseBody
+	@RequestMapping(value = "rest/points/pay-result-ext/{outTradeNo}", method = RequestMethod.POST)
+    public JSONObject patchPointsNativePayResult(@PathVariable String outTradeNo, @RequestBody WxPaymentPoint wxPaymentPoint) {
+		logger.error("try get wechatpay result."+ outTradeNo);
+		JSONObject result = new JSONObject();
+		result.put("success", false);
+		
+		//建立租户购买记录：支持前端查询构建，先根据购买out_trade_no查询是否已经存在购买记录
+		WxPaymentPoint record = new WxPaymentPoint();
+		record.setTradeNo(outTradeNo);
+		List<WxPaymentPoint> wxPaymentPoints = wxPaymentPointService.findList(wxPaymentPoint);
+		if(wxPaymentPoints==null || wxPaymentPoints.size()==0) {
+			result.put("msg", "no record found by outTradeNo: "+outTradeNo);
+			return result;
+		}
+		
+		//更新信息，并且添加购买的虚拟豆到对应租户
+		record = wxPaymentPoints.get(0);
+		record.setBroker(wxPaymentPoint.getBroker());
+		record.setPoints(wxPaymentPoint.getPoints());
+		record.setTenantId(wxPaymentPoint.getTenantId());
+		wxPaymentPointService.save(record);
+		
+		//更新租户虚拟豆
+		TenantPoints tenantPoints = new TenantPoints();
+		tenantPoints.setId(""+wxPaymentPoint.getTenantId());//ID与tenantId完全一致
+		tenantPoints.setTenantId(wxPaymentPoint.getTenantId());
+		tenantPoints.setPoints(wxPaymentPoint.getPoints().getPoints()); //只需要设置新购买的增量
+		tenantPointsService.updatePoints(tenantPoints);
+		
+		result.put("success", true);
+        
+        return result;
+    }
+	
     /**
      * 接收Native微信支付回调数据
      * 

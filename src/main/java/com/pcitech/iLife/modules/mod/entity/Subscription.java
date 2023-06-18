@@ -75,7 +75,7 @@ public class Subscription extends DataEntity<Subscription> {
 		return software;
 	}
 
-	public void setApp(StoSoftware software) {
+	public void setSoftware(StoSoftware software) {
 		this.software = software;
 	}
 	

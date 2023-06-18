@@ -85,7 +85,16 @@
 		FROM subscription a
 		<include refid="subscriptionJoins"/>
 		<where>
-			
+			1 = 1
+			<if test="tradeNo != null and tradeNo != ''">
+				AND a.trade_no = #{tradeNo}
+			</if>
+			<if test="tradeState != null and tradeState != ''">
+				AND a.trade_state = #{tradeState}
+			</if>			
+			<if test="transactionCode != null and transactionCode != ''">
+				AND a.transaction_code = #{transactionCode}
+			</if>
 		</where>		
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
