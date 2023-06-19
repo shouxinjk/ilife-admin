@@ -27,6 +27,7 @@ import com.github.binarywang.wxpay.bean.entpay.EntPayResult;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyV3Result;
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyV3Result.DecryptNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderV3Request;
 import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult;
@@ -203,7 +204,7 @@ public class WechatPaymentController extends GenericController {
 	@ResponseBody
 	@RequestMapping(value = "rest/pay-result/{outTradeNo}", method = RequestMethod.POST)
     public JSONObject checkNativePayResult(@PathVariable String outTradeNo) {
-		logger.error("try get wechatpay result."+ outTradeNo);
+		logger.debug("try get wechatpay result."+ outTradeNo);
 		JSONObject result = new JSONObject();
 		result.put("success", false);
 		
@@ -211,7 +212,16 @@ public class WechatPaymentController extends GenericController {
         	WxPayOrderQueryV3Result orderResult = payService.queryOrderV3(null, outTradeNo);
             result.put("success", true);
             result.put("data", orderResult); //直接返回URL
-            logger.error("generate wechatpay qrcode url done."+JSONObject.toJSONString(orderResult));
+            logger.debug("generate wechatpay qrcode url done."+JSONObject.toJSONString(orderResult));
+            
+            //更新检查结果：仅补充transaction信息缺失记录
+	    	String transactionId = orderResult.getTransactionId();
+	    	String resultCode = orderResult.getTradeState();
+	    	Integer totalFee = orderResult.getAmount().getTotal();
+	    	String openid = orderResult.getPayer().getOpenid();//获取支付openid：注意是绑定的APPId下的openid
+	    	
+            updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid);
+            
         } catch (WxPayException e) {
         	logger.error(e.getErrCodeDes());
         	result.put("success", false);
@@ -223,76 +233,182 @@ public class WechatPaymentController extends GenericController {
         return result;
     }
 	
-	 /**
-     * 对已经完成支付的记录补充业务信息
-     * 场景：前端发起支付后，后端接收到支付结果回调，前端在查询到支付成功后补充业务信息
-     */
-	@ResponseBody
-	@RequestMapping(value = "rest/subscription/pay-result-ext/{outTradeNo}", method = RequestMethod.POST)
-    public JSONObject patchSubscriptionNativePayResult(@PathVariable String outTradeNo, @RequestBody Subscription subscription) {
-		logger.error("try get wechatpay result."+ outTradeNo);
-		JSONObject result = new JSONObject();
-		result.put("success", false);
-		
-		//建立租户购买记录：支持前端查询构建，先根据购买out_trade_no查询是否已经存在购买记录
-		Subscription record = new Subscription();
-		record.setTradeNo(outTradeNo);
-		List<Subscription> subscriptions = subscriptionService.findList(record);
-		if(subscriptions == null || subscriptions.size() == 0) {
-			result.put("msg", "no record found by outTradeNo: "+outTradeNo);
-			return result;
-		}
-		
-		//仅更新必要信息
-		record = subscriptions.get(0);
-		record.setSoftware(subscription.getSoftware());
-		record.setBroker(subscription.getBroker());
-		record.setSalePackage(subscription.getSalePackage());
-		record.setPricePlan(subscription.getPricePlan());
-		subscriptionService.save(record);
-		
-		result.put("success", true);
-        return result;
-    }
+	private void updateNatviePayResult(String outTradeNo, String transactionId, String resultCode, Integer totalFee,String openid) {
+		boolean notify = false; //默认认为无需发送通知，仅在新建记录时通知
+
+	    logger.debug("got parsed pay result notify."+
+	    		"\noutTradeNo="+outTradeNo+
+	    		"\ntransactionId="+transactionId+
+	    		"\nresultCode="+resultCode+
+	    		"\ntotalFee="+totalFee+
+	    		"\nopenid="+openid);
+	    
+    	//根据回传数据更改已经购买的商品状态：更改对应的记录状态。根据out_trade_no修改所有购买记录的状态，增加transaction_id
+    	Broker broker = brokerService.getByOpenid(openid);
+    	
+	    // 根据结果更新购买记录，同时更新租户虚拟豆数量
+	    if("SUCCESS".equalsIgnoreCase(resultCode)){
 	
-	/**
-     * 对已经完成支付的记录补充业务信息
-     * 场景：前端发起支付后，后端接收到支付结果回调，前端在查询到支付成功后补充业务信息
-     */
-	@ResponseBody
-	@RequestMapping(value = "rest/points/pay-result-ext/{outTradeNo}", method = RequestMethod.POST)
-    public JSONObject patchPointsNativePayResult(@PathVariable String outTradeNo, @RequestBody WxPaymentPoint wxPaymentPoint) {
-		logger.error("try get wechatpay result."+ outTradeNo);
-		JSONObject result = new JSONObject();
-		result.put("success", false);
-		
-		//建立租户购买记录：支持前端查询构建，先根据购买out_trade_no查询是否已经存在购买记录
-		WxPaymentPoint record = new WxPaymentPoint();
-		record.setTradeNo(outTradeNo);
-		List<WxPaymentPoint> wxPaymentPoints = wxPaymentPointService.findList(wxPaymentPoint);
-		if(wxPaymentPoints==null || wxPaymentPoints.size()==0) {
-			result.put("msg", "no record found by outTradeNo: "+outTradeNo);
-			return result;
-		}
-		
-		//更新信息，并且添加购买的虚拟豆到对应租户
-		record = wxPaymentPoints.get(0);
-		record.setBroker(wxPaymentPoint.getBroker());
-		record.setPoints(wxPaymentPoint.getPoints());
-		record.setTenantId(wxPaymentPoint.getTenantId());
-		wxPaymentPointService.save(record);
-		
-		//更新租户虚拟豆
-		TenantPoints tenantPoints = new TenantPoints();
-		tenantPoints.setId(""+wxPaymentPoint.getTenantId());//ID与tenantId完全一致
-		tenantPoints.setTenantId(wxPaymentPoint.getTenantId());
-		tenantPoints.setPoints(wxPaymentPoint.getPoints().getPoints()); //只需要设置新购买的增量
-		tenantPointsService.updatePoints(tenantPoints);
-		
-		result.put("success", true);
-        
-        return result;
-    }
+	    	//由于仅根据返回的prepayInfo更新，同时处理adPay及pointPay。其中adPay更新状态，pointPay则执行点数增加（仅执行一次）
+	    	//out_trade_no通过payAd、payPoint开头进行区分
+	    	Map<String,String> params = Maps.newHashMap();
+	    	params.put("out_trade_no", outTradeNo);
+	    	params.put("transaction_id", transactionId);
+	    	params.put("result_code", resultCode);
+	    	String purchaseType = "微信购买";
+	    	if(outTradeNo !=null && outTradeNo.startsWith("ppt")) {//表示购买阅豆：同时支持公众号、网页端发起。SaaS端根据云豆金额充值
+	    		purchaseType = "虚拟豆充值";
+	    		//建立租户购买记录：支持前端查询构建，先根据购买out_trade_no查询是否已经存在购买记录
+	    		WxPaymentPoint wxPaymentPoint = new WxPaymentPoint();
+	    		wxPaymentPoint.setTradeNo(outTradeNo);
+	    		List<WxPaymentPoint> wxPaymentPoints = wxPaymentPointService.findList(wxPaymentPoint);
+	    		if(wxPaymentPoints!=null && wxPaymentPoints.size()>0) {
+	    			wxPaymentPoint = wxPaymentPoints.get(0);
+	    			//判断是否已经更新transactionId，如果有则表示已经更新过，不需重复处理
+	    			if(wxPaymentPoint.getTransactionId()==null || wxPaymentPoint.getTransactionId().trim().length()<10) {
+	    				//通知信息
+	    				notify = true;
+	    				purchaseType = wxPaymentPoint.getPoints().getName();
+	    				//更新交易记录
+			    		wxPaymentPointService.updateWxTransactionInfoByTradeNo(params);
+		        		//更新租户虚拟豆
+		    			TenantPoints tenantPoints = new TenantPoints();
+		    			tenantPoints.setId(""+wxPaymentPoint.getTenantId());//ID与tenantId完全一致
+		    			tenantPoints.setTenantId(wxPaymentPoint.getTenantId());
+						tenantPoints.setPoints(wxPaymentPoint.getPoints().getPoints()); //只需要设置新购买的增量
+						tenantPointsService.updatePoints(tenantPoints);
+	    			}else {
+	    				//已经处理过了就不做任何处理
+	    			}
+					
+	    		}else { //如果不存交易记录则直接新建：注意数据有缺失，无法获取Product信息
+    				//通知信息
+    				notify = true;
+    				
+	    			logger.debug("failed find wxPaymentPoint record.");
+	    			wxPaymentPoint.setBroker(broker);
+        			wxPaymentPoint.setAmount(totalFee);
+        			wxPaymentPoint.setPoints(null);//无法获取支付points
+        			wxPaymentPoint.setTradeNo(outTradeNo);
+        			wxPaymentPoint.setTradeState(resultCode);
+        			wxPaymentPoint.setTransactionId(transactionId);//默认为空，待微信支付后更新
+        			wxPaymentPoint.setCreateDate(new Date());
+        			wxPaymentPoint.setUpdateDate(new Date());
+        			wxPaymentPoint.setPaymentDate(new Date());
+        			wxPaymentPointService.save(wxPaymentPoint);//保存记录
+	    		}
+	    		
+	    	}else if(outTradeNo !=null && outTradeNo.startsWith("sub")) {//表示订阅或续费，同时支持公众号、网页端发起。SaaS端根据套餐类型直接支付
+	    		//需要建立订阅记录，包括
+	    		purchaseType = "订阅/续费";
+	    		//建立租户购买记录：支持前端查询构建，先根据购买out_trade_no查询是否已经存在购买记录
+	    		Subscription subscription = new Subscription();
+	    		subscription.setTradeNo(outTradeNo);
+	    		List<Subscription> subscriptions = subscriptionService.findList(subscription);
+	    		if(subscriptions!=null && subscriptions.size()>0) {
+	    			subscription = subscriptions.get(0);
+	    			//判断是否已经更新transactionId，如果有则表示已经更新过，不需重复处理
+	    			if(subscription.getTransactionCode()==null || subscription.getTransactionCode().trim().length()<10) {
+	    				//通知信息
+	    				notify = true;
+	    				if(subscription.getSalePackage()!=null && 
+	    						subscription.getSalePackage().getName()!=null && 
+	    						subscription.getSalePackage().getName().trim().length()>0 ) {
+	    					purchaseType = "套餐:"+subscription.getSalePackage().getName();
+	    				}else {
+	    					purchaseType = "产品:"+subscription.getSoftware().getName()+" "+subscription.getPricePlan().getName();
+	    				}
+	    				//更新交易记录
+	    				params.put("transaction_code", transactionId); 
+	    				subscriptionService.updateWxTransactionInfoByTradeNo(params);
+	    				//建立租户下订阅记录：tenantSoftware列表：已经存在则更新到期时间，如果不存在则建立记录
+	    				IntPackagePricePlan pkgPricePlan = new IntPackagePricePlan();
+	    				pkgPricePlan.setSalePackage(subscription.getSalePackage());
+	    				List<IntPackagePricePlan> intPkgPricePlans = intPackagePricePlanService.findList(pkgPricePlan);
+	    				for(IntPackagePricePlan intPkgPricePlan:intPkgPricePlans) {
+	    					//建立或更新记录到期时间
+	    					//根据tenantId softwareId pricePlanId查询记录，如果存在则更新，否则新建
+	    					IntTenantSoftware intTenantSoftware = new IntTenantSoftware();
+	    					intTenantSoftware.setSalePackageId(subscription.getSalePackage().getId());
+	    					try {
+	    						intTenantSoftware.setTenantId(Integer.parseInt(subscription.getTenant().getId()));
+	    					}catch(Exception ex) {}
+	    					intTenantSoftware.setPricePlanId(intPkgPricePlan.getPricePlan().getId());
+	    					intTenantSoftware.setPricePlanId(intPkgPricePlan.getSoftware().getId());
+	    					List<IntTenantSoftware> intTenantSoftwares = intTenantSoftwareService.findList(intTenantSoftware);
+	    					if(intTenantSoftwares!=null&&intTenantSoftwares.size()>0) {
+	    						intTenantSoftware = intTenantSoftwares.get(0);//存在则取第一条，更新到期时间
+	    						
+	    						intTenantSoftware.setUpdateDate(new Date());
+	    						intTenantSoftware.setUpdateTime(new Date());
+	    					}else {
+	    						intTenantSoftware.setIsNewRecord(true);//新建记录
+	    						String id = Util.md5(subscription.getSalePackage().getId()+
+	    								intPkgPricePlan.getSoftware().getId()+
+	    								intPkgPricePlan.getPricePlan().getId()+
+	    								subscription.getTenant().getId());
+	    						intTenantSoftware.setId(id);
+	    						intTenantSoftware.setCreateDate(new Date());
+	    						intTenantSoftware.setCreateTime(new Date());
+	    					}
+	    					//修改到期时间：今天开始计算，直接计算一年
+	    					Calendar cal = Calendar.getInstance();
+	    					cal.setTime(new Date());//从当前时间开始
+	    					cal.add(Calendar.YEAR, 1);//增加一年
+	    					cal.add(Calendar.DATE, 1);//增加一天
+	    					intTenantSoftware.setExpireOn(cal.getTime());
+	    					intTenantSoftwareService.save(intTenantSoftware);
+	    				}
+
+	    			}else {
+	    				//已经处理过了就不做任何处理
+	    			}
+					
+	    		}else { //如果不存交易记录则直接新建：仅做一笔记录，不能与业务数据应对
+    				//通知信息
+    				notify = true;
+    				
+	    			logger.debug("failed find subscription record.");
+	    			//subscription.setBroker(broker);
+        			subscription.setPaymentAmount(totalFee);
+        			subscription.setTradeNo(outTradeNo);
+        			subscription.setTradeState(resultCode);
+        			subscription.setTransactionCode(transactionId);//默认为空，待微信支付后更新
+        			subscription.setCreateDate(new Date());
+        			subscription.setUpdateDate(new Date());
+        			subscription.setPaymentTime(new Date());
+        			subscriptionService.save(subscription);//保存记录
+	    		}
+	    	}else {
+	    		//糟糕了，不做任何处理
+	    		logger.warn("wrong out_trade_no.[out_trade_no]"+outTradeNo);
+	    		purchaseType = "未知支付类型";
+	    	}
+	    	
+	    	//发送通知到微信：由于多次通知，仅第一次接收回调时发送通知，否则不发送
+	    	if(notify) {
+		    	String amountStr = totalFee * 0.01 + "元";
+			    Map<String,String> header = new HashMap<String,String>();
+			    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
+			    JSONObject result = null;
+		    	JSONObject msg = new JSONObject();
+				msg.put("product", purchaseType);
+				msg.put("amount", amountStr);
+				msg.put("status", resultCode);
+				msg.put("time", fmt.format(new Date()));
+				msg.put("ext", "订单号："+outTradeNo);
+				msg.put("remark", "流水号："+transactionId);
+				result = HttpClientHelper.getInstance().post(
+						Global.getConfig("wechat.templateMessenge")+"/payment-success-notify", 
+						msg,header);
+	    	}
+
+	        logger.debug("out_trade_no: " + outTradeNo + " pay SUCCESS!");
+	    }else {
+	    	logger.debug("out_trade_no: " + outTradeNo + ". pay result: "+resultCode);
+	    }
+
+	}
 	
     /**
      * 接收Native微信支付回调数据
@@ -305,181 +421,18 @@ public class WechatPaymentController extends GenericController {
 	@Transactional(readOnly = false)
     @RequestMapping(value = "rest/native-callback")
     public String nativeCallback(@RequestBody String xmlData) {
-		logger.error("got pay result notify. \n"+xmlData);
-		boolean notify = false; //默认认为无需发送通知，仅在新建记录时通知
+		logger.debug("got pay result notify from wechat. \n"+xmlData);
 		try {
 		    final WxPayOrderNotifyV3Result notifyResult = payService.parseOrderNotifyV3Result(xmlData, null);
-		    logger.error("got parsed pay result notify. \n"+JSONObject.toJSONString(notifyResult));
+		    logger.debug("got parsed pay result notify. \n"+JSONObject.toJSONString(notifyResult));
 		    
-	    	//根据回传数据更改已经购买的商品状态：更改对应的记录状态。根据out_trade_no修改所有购买记录的状态，增加transaction_id
 	    	String outTradeNo = notifyResult.getResult().getOutTradeNo();
 	    	String transactionId = notifyResult.getResult().getTransactionId();
 	    	String resultCode = notifyResult.getResult().getTradeState();
 	    	Integer totalFee = notifyResult.getResult().getAmount().getTotal();
 	    	String openid = notifyResult.getResult().getPayer().getOpenid();//获取支付openid：注意是绑定的APPId下的openid
-	    	Broker broker = brokerService.getByOpenid(openid);
-	    	
-		    // 根据结果更新购买记录，同时更新租户虚拟豆数量
-		    if("SUCCESS".equalsIgnoreCase(resultCode)){
-		
-		    	//由于仅根据返回的prepayInfo更新，同时处理adPay及pointPay。其中adPay更新状态，pointPay则执行点数增加（仅执行一次）
-		    	//out_trade_no通过payAd、payPoint开头进行区分
-		    	Map<String,String> params = Maps.newHashMap();
-		    	params.put("out_trade_no", outTradeNo);
-		    	params.put("transaction_id", transactionId);
-		    	params.put("result_code", resultCode);
-		    	String purchaseType = "微信购买";
-		    	if(outTradeNo !=null && outTradeNo.startsWith("ppt")) {//表示购买阅豆：同时支持公众号、网页端发起。SaaS端根据云豆金额充值
-		    		purchaseType = "虚拟豆充值";
-		    		//建立租户购买记录：支持前端查询构建，先根据购买out_trade_no查询是否已经存在购买记录
-		    		WxPaymentPoint wxPaymentPoint = new WxPaymentPoint();
-		    		wxPaymentPoint.setTradeNo(outTradeNo);
-		    		List<WxPaymentPoint> wxPaymentPoints = wxPaymentPointService.findList(wxPaymentPoint);
-		    		if(wxPaymentPoints!=null && wxPaymentPoints.size()>0) {
-		    			wxPaymentPoint = wxPaymentPoints.get(0);
-		    			//判断是否已经更新transactionId，如果有则表示已经更新过，不需重复处理
-		    			if(wxPaymentPoint.getTransactionId()==null || wxPaymentPoint.getTransactionId().trim().length()<10) {
-		    				//通知信息
-		    				notify = true;
-		    				purchaseType = wxPaymentPoint.getPoints().getName();
-		    				//更新交易记录
-				    		wxPaymentPointService.updateWxTransactionInfoByTradeNo(params);
-			        		//更新租户虚拟豆
-			    			TenantPoints tenantPoints = new TenantPoints();
-			    			tenantPoints.setId(""+wxPaymentPoint.getTenantId());//ID与tenantId完全一致
-			    			tenantPoints.setTenantId(wxPaymentPoint.getTenantId());
-							tenantPoints.setPoints(wxPaymentPoint.getPoints().getPoints()); //只需要设置新购买的增量
-							tenantPointsService.updatePoints(tenantPoints);
-		    			}else {
-		    				//已经处理过了就不做任何处理
-		    			}
-						
-		    		}else { //如果不存交易记录则直接新建：注意数据有缺失，无法获取Product信息
-	    				//通知信息
-	    				notify = true;
-	    				
-		    			logger.error("failed find wxPaymentPoint record.");
-		    			wxPaymentPoint.setBroker(broker);
-	        			wxPaymentPoint.setAmount(totalFee);
-	        			wxPaymentPoint.setPoints(null);//无法获取支付points
-	        			wxPaymentPoint.setTradeNo(outTradeNo);
-	        			wxPaymentPoint.setTradeState(resultCode);
-	        			wxPaymentPoint.setTransactionId(transactionId);//默认为空，待微信支付后更新
-	        			wxPaymentPoint.setCreateDate(new Date());
-	        			wxPaymentPoint.setUpdateDate(new Date());
-	        			wxPaymentPoint.setPaymentDate(new Date());
-	        			wxPaymentPointService.save(wxPaymentPoint);//保存记录
-		    		}
-		    		
-		    	}else if(outTradeNo !=null && outTradeNo.startsWith("sub")) {//表示订阅或续费，同时支持公众号、网页端发起。SaaS端根据套餐类型直接支付
-		    		//需要建立订阅记录，包括
-		    		purchaseType = "订阅/续费";
-		    		//建立租户购买记录：支持前端查询构建，先根据购买out_trade_no查询是否已经存在购买记录
-		    		Subscription subscription = new Subscription();
-		    		subscription.setTradeNo(outTradeNo);
-		    		List<Subscription> subscriptions = subscriptionService.findList(subscription);
-		    		if(subscriptions!=null && subscriptions.size()>0) {
-		    			subscription = subscriptions.get(0);
-		    			//判断是否已经更新transactionId，如果有则表示已经更新过，不需重复处理
-		    			if(subscription.getTransactionCode()==null || subscription.getTransactionCode().trim().length()<10) {
-		    				//通知信息
-		    				notify = true;
-		    				if(subscription.getSalePackage()!=null && 
-		    						subscription.getSalePackage().getName()!=null && 
-		    						subscription.getSalePackage().getName().trim().length()>0 ) {
-		    					purchaseType = "套餐:"+subscription.getSalePackage().getName();
-		    				}else {
-		    					purchaseType = "产品:"+subscription.getSoftware().getName()+" "+subscription.getPricePlan().getName();
-		    				}
-		    				//更新交易记录
-		    				params.put("transaction_code", transactionId); 
-		    				subscriptionService.updateWxTransactionInfoByTradeNo(params);
-		    				//建立租户下订阅记录：tenantSoftware列表：已经存在则更新到期时间，如果不存在则建立记录
-		    				IntPackagePricePlan pkgPricePlan = new IntPackagePricePlan();
-		    				pkgPricePlan.setSalePackage(subscription.getSalePackage());
-		    				List<IntPackagePricePlan> intPkgPricePlans = intPackagePricePlanService.findList(pkgPricePlan);
-		    				for(IntPackagePricePlan intPkgPricePlan:intPkgPricePlans) {
-		    					//建立或更新记录到期时间
-		    					//根据tenantId softwareId pricePlanId查询记录，如果存在则更新，否则新建
-		    					IntTenantSoftware intTenantSoftware = new IntTenantSoftware();
-		    					intTenantSoftware.setSalePackageId(subscription.getSalePackage().getId());
-		    					try {
-		    						intTenantSoftware.setTenantId(Integer.parseInt(subscription.getTenant().getId()));
-		    					}catch(Exception ex) {}
-		    					intTenantSoftware.setPricePlanId(intPkgPricePlan.getPricePlan().getId());
-		    					intTenantSoftware.setPricePlanId(intPkgPricePlan.getSoftware().getId());
-		    					List<IntTenantSoftware> intTenantSoftwares = intTenantSoftwareService.findList(intTenantSoftware);
-		    					if(intTenantSoftwares!=null&&intTenantSoftwares.size()>0) {
-		    						intTenantSoftware = intTenantSoftwares.get(0);//存在则取第一条，更新到期时间
-		    						
-		    						intTenantSoftware.setUpdateDate(new Date());
-		    						intTenantSoftware.setUpdateTime(new Date());
-		    					}else {
-		    						intTenantSoftware.setIsNewRecord(true);//新建记录
-		    						String id = Util.md5(subscription.getSalePackage().getId()+
-		    								intPkgPricePlan.getSoftware().getId()+
-		    								intPkgPricePlan.getPricePlan().getId()+
-		    								subscription.getTenant().getId());
-		    						intTenantSoftware.setId(id);
-		    						intTenantSoftware.setCreateDate(new Date());
-		    						intTenantSoftware.setCreateTime(new Date());
-		    					}
-		    					//修改到期时间：今天开始计算，直接计算一年
-		    					Calendar cal = Calendar.getInstance();
-		    					cal.setTime(new Date());//从当前时间开始
-		    					cal.add(Calendar.YEAR, 1);//增加一年
-		    					cal.add(Calendar.DATE, 1);//增加一天
-		    					intTenantSoftware.setExpireOn(cal.getTime());
-		    					intTenantSoftwareService.save(intTenantSoftware);
-		    				}
-
-		    			}else {
-		    				//已经处理过了就不做任何处理
-		    			}
-						
-		    		}else { //如果不存交易记录则直接新建：仅做一笔记录，不能与业务数据应对
-	    				//通知信息
-	    				notify = true;
-	    				
-		    			logger.debug("failed find subscription record.");
-		    			//subscription.setBroker(broker);
-	        			subscription.setPaymentAmount(totalFee);
-	        			subscription.setTradeNo(outTradeNo);
-	        			subscription.setTradeState(resultCode);
-	        			subscription.setTransactionCode(transactionId);//默认为空，待微信支付后更新
-	        			subscription.setCreateDate(new Date());
-	        			subscription.setUpdateDate(new Date());
-	        			subscription.setPaymentTime(new Date());
-	        			subscriptionService.save(subscription);//保存记录
-		    		}
-		    	}else {
-		    		//糟糕了，不做任何处理
-		    		logger.warn("wrong out_trade_no.[out_trade_no]"+outTradeNo);
-		    		purchaseType = "未知支付类型";
-		    	}
-		    	
-		    	//发送通知到微信：由于多次通知，仅第一次接收回调时发送通知，否则不发送
-		    	if(notify) {
-			    	String amountStr = totalFee * 0.01 + "元";
-				    Map<String,String> header = new HashMap<String,String>();
-				    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
-				    JSONObject result = null;
-			    	JSONObject msg = new JSONObject();
-					msg.put("product", purchaseType);
-					msg.put("amount", amountStr);
-					msg.put("status", resultCode);
-					msg.put("time", fmt.format(new Date()));
-					msg.put("ext", "订单号："+outTradeNo);
-					msg.put("remark", "流水号："+transactionId);
-					result = HttpClientHelper.getInstance().post(
-							Global.getConfig("wechat.templateMessenge")+"/payment-success-notify", 
-							msg,header);
-		    	}
-	
-		        logger.info("out_trade_no: " + outTradeNo + " pay SUCCESS!");
-		    }else {
-		    	logger.info("out_trade_no: " + outTradeNo + ". pay result: "+resultCode);
-		    }
+		    
+		    updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid);
 		}catch(Exception ex) {
 			logger.error("error while parse native pay result",ex);
 		}
