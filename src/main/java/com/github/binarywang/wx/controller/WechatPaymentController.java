@@ -313,12 +313,12 @@ public class WechatPaymentController extends GenericController {
 	    			if(subscription.getTransactionCode()==null || subscription.getTransactionCode().trim().length()<10) {
 	    				//通知信息
 	    				notify = true;
-	    				if(subscription.getSalePackage()!=null && 
-	    						subscription.getSalePackage().getName()!=null && 
-	    						subscription.getSalePackage().getName().trim().length()>0 ) {
+	    				if(subscription.getSalePackage()!=null ) {
 	    					purchaseType = "套餐:"+subscription.getSalePackage().getName();
-	    				}else {
+	    				}else if( subscription.getSoftware()!=null && subscription.getPricePlan() != null) {
 	    					purchaseType = "产品:"+subscription.getSoftware().getName()+" "+subscription.getPricePlan().getName();
+	    				}else {
+	    					logger.error("failed get subscription type");
 	    				}
 	    				//更新交易记录
 	    				params.put("transaction_code", transactionId); 
