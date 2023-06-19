@@ -214,13 +214,15 @@ public class WechatPaymentController extends GenericController {
             result.put("data", orderResult); //直接返回URL
             logger.debug("generate wechatpay qrcode url done."+JSONObject.toJSONString(orderResult));
             
-            //更新检查结果：仅补充transaction信息缺失记录
-	    	String transactionId = orderResult.getTransactionId();
-	    	String resultCode = orderResult.getTradeState();
-	    	Integer totalFee = orderResult.getAmount().getTotal();
-	    	String openid = orderResult.getPayer().getOpenid();//获取支付openid：注意是绑定的APPId下的openid
-	    	
-            updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid);
+            if("SUCCESS".equalsIgnoreCase(orderResult.getTradeState())) {
+	            //更新检查结果：仅补充transaction信息缺失记录
+		    	String transactionId = orderResult.getTransactionId();
+		    	String resultCode = orderResult.getTradeState();
+		    	Integer totalFee = orderResult.getAmount().getTotal();
+		    	String openid = orderResult.getPayer().getOpenid();//获取支付openid：注意是绑定的APPId下的openid
+		    	
+	            updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid);
+            }
             
         } catch (WxPayException e) {
         	logger.error(e.getErrCodeDes());
