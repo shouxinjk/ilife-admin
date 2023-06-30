@@ -23,9 +23,9 @@ import com.pcitech.iLife.modules.mod.entity.SysTenant;
 import com.pcitech.iLife.modules.mod.service.SysTenantService;
 
 /**
- * 租户Controller
+ * 系统租户Controller
  * @author ilife
- * @version 2023-06-18
+ * @version 2023-06-30
  */
 @Controller
 @RequestMapping(value = "${adminPath}/mod/sysTenant")
@@ -68,7 +68,7 @@ public class SysTenantController extends BaseController {
 			return form(sysTenant, model);
 		}
 		sysTenantService.save(sysTenant);
-		addMessage(redirectAttributes, "保存租户成功");
+		addMessage(redirectAttributes, "保存系统租户成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/sysTenant/?repage";
 	}
 	
@@ -76,7 +76,7 @@ public class SysTenantController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(SysTenant sysTenant, RedirectAttributes redirectAttributes) {
 		sysTenantService.delete(sysTenant);
-		addMessage(redirectAttributes, "删除租户成功");
+		addMessage(redirectAttributes, "删除系统租户成功");
 		return "redirect:"+Global.getAdminPath()+"/mod/sysTenant/?repage";
 	}
 

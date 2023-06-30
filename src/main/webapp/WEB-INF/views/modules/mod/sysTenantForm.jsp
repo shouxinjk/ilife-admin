@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>租户管理</title>
+	<title>系统租户管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -27,8 +27,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mod/sysTenant/">租户列表</a></li>
-		<li class="active"><a href="${ctx}/mod/sysTenant/form?id=${sysTenant.id}">租户<shiro:hasPermission name="mod:sysTenant:edit">${not empty sysTenant.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:sysTenant:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/mod/sysTenant/">系统租户列表</a></li>
+		<li class="active"><a href="${ctx}/mod/sysTenant/form?id=${sysTenant.id}">系统租户<shiro:hasPermission name="mod:sysTenant:edit">${not empty sysTenant.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="mod:sysTenant:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="sysTenant" action="${ctx}/mod/sysTenant/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>

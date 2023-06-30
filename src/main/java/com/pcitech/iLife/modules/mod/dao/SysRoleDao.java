@@ -5,14 +5,14 @@ package com.pcitech.iLife.modules.mod.dao;
 
 import com.pcitech.iLife.common.persistence.CrudDao;
 import com.pcitech.iLife.common.persistence.annotation.MyBatisDao;
-import com.pcitech.iLife.modules.mod.entity.SysTenant;
+import com.pcitech.iLife.modules.mod.entity.SysRole;
 
 /**
- * 系统租户DAO接口
+ * 系统角色DAO接口
  * @author ilife
  * @version 2023-06-30
  */
 @MyBatisDao
-public interface SysTenantDao extends CrudDao<SysTenant> {
+public interface SysRoleDao extends CrudDao<SysRole> {
 	
 }

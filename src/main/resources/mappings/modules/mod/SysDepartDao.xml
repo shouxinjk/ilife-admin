@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.SysDepartDao">
+    
+	<sql id="sysDepartColumns">
+		a.id AS "id",
+		a.parent_id AS "parent.id",
+		a.depart_name AS "departName",
+		a.depart_name_en AS "departNameEn",
+		a.depart_name_abbr AS "departNameAbbr",
+		a.depart_order AS "departOrder",
+		a.description AS "description",
+		a.org_category AS "orgCategory",
+		a.org_type AS "orgType",
+		a.org_code AS "orgCode",
+		a.mobile AS "mobile",
+		a.fax AS "fax",
+		a.address AS "address",
+		a.memo AS "memo",
+		a.status AS "status",
+		a.del_flag AS "delFlag",
+		a.qywx_identifier AS "qywxIdentifier",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.tenant_id AS "tenantId",
+		a.iz_leaf AS "izLeaf"
+	</sql>
+	
+	<sql id="sysDepartJoins">
+	</sql>
+    
+	<select id="get" resultType="SysDepart">
+		SELECT 
+			<include refid="sysDepartColumns"/>
+		FROM sys_depart a
+		<include refid="sysDepartJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysDepart">
+		SELECT 
+			<include refid="sysDepartColumns"/>
+		FROM sys_depart a
+		<include refid="sysDepartJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysDepart">
+		SELECT 
+			<include refid="sysDepartColumns"/>
+		FROM sys_depart a
+		<include refid="sysDepartJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_depart(
+			id,
+			parent_id,
+			depart_name,
+			depart_name_en,
+			depart_name_abbr,
+			depart_order,
+			description,
+			org_category,
+			org_type,
+			org_code,
+			mobile,
+			fax,
+			address,
+			memo,
+			status,
+			del_flag,
+			qywx_identifier,
+			create_by,
+			create_time,
+			update_by,
+			update_time,
+			tenant_id,
+			iz_leaf
+		) VALUES (
+			#{id},
+			#{parent.id},
+			#{departName},
+			#{departNameEn},
+			#{departNameAbbr},
+			#{departOrder},
+			#{description},
+			#{orgCategory},
+			#{orgType},
+			#{orgCode},
+			#{mobile},
+			#{fax},
+			#{address},
+			#{memo},
+			#{status},
+			#{delFlag},
+			#{qywxIdentifier},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime},
+			#{tenantId},
+			#{izLeaf}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_depart SET 	
+			parent_id = #{parent.id},
+			depart_name = #{departName},
+			depart_name_en = #{departNameEn},
+			depart_name_abbr = #{departNameAbbr},
+			depart_order = #{departOrder},
+			description = #{description},
+			org_category = #{orgCategory},
+			org_type = #{orgType},
+			org_code = #{orgCode},
+			mobile = #{mobile},
+			fax = #{fax},
+			address = #{address},
+			memo = #{memo},
+			status = #{status},
+			qywx_identifier = #{qywxIdentifier},
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime},
+			tenant_id = #{tenantId},
+			iz_leaf = #{izLeaf}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_depart SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

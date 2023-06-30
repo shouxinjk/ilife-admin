@@ -10,9 +10,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pcitech.iLife.common.persistence.DataEntity;
 
 /**
- * 租户Entity
+ * 系统租户Entity
  * @author ilife
- * @version 2023-06-18
+ * @version 2023-06-30
  */
 public class SysTenant extends DataEntity<SysTenant> {
 	

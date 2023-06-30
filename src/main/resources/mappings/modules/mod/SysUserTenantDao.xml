@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.SysUserTenantDao">
+    
+	<sql id="sysUserTenantColumns">
+		a.id AS "id",
+		a.user_id AS "userId",
+		a.tenant_id AS "tenantId",
+		a.status AS "status",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime"
+	</sql>
+	
+	<sql id="sysUserTenantJoins">
+		LEFT JOIN x_sys_user u2 ON u2.id = a.user_id
+	</sql>
+    
+	<select id="get" resultType="SysUserTenant">
+		SELECT 
+			<include refid="sysUserTenantColumns"/>
+		FROM sys_user_tenant a
+		<include refid="sysUserTenantJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysUserTenant">
+		SELECT 
+			<include refid="sysUserTenantColumns"/>
+		FROM sys_user_tenant a
+		<include refid="sysUserTenantJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysUserTenant">
+		SELECT 
+			<include refid="sysUserTenantColumns"/>
+		FROM sys_user_tenant a
+		<include refid="sysUserTenantJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_user_tenant(
+			id,
+			user_id,
+			tenant_id,
+			status,
+			create_by,
+			create_time,
+			update_by,
+			update_time
+		) VALUES (
+			#{id},
+			#{userId},
+			#{tenantId},
+			#{status},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_user_tenant SET 	
+			user_id = #{userId},
+			tenant_id = #{tenantId},
+			status = #{status},
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_user_tenant
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

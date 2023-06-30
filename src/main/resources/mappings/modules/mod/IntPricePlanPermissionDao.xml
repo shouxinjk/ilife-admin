@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.IntPricePlanPermissionDao">
+    
+	<sql id="intPricePlanPermissionColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.sys_org_code AS "sysOrgCode",
+		a.price_plan_id AS "pricePlanId",
+		a.role_id AS "roleId",
+		a.sale_package_id AS "salePackageId"
+	</sql>
+	
+	<sql id="intPricePlanPermissionJoins">
+	</sql>
+    
+	<select id="get" resultType="IntPricePlanPermission">
+		SELECT 
+			<include refid="intPricePlanPermissionColumns"/>
+		FROM int_price_plan_permission a
+		<include refid="intPricePlanPermissionJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="IntPricePlanPermission">
+		SELECT 
+			<include refid="intPricePlanPermissionColumns"/>
+		FROM int_price_plan_permission a
+		<include refid="intPricePlanPermissionJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="IntPricePlanPermission">
+		SELECT 
+			<include refid="intPricePlanPermissionColumns"/>
+		FROM int_price_plan_permission a
+		<include refid="intPricePlanPermissionJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO int_price_plan_permission(
+			id,
+			create_by,
+			create_time,
+			update_by,
+			update_time,
+			sys_org_code,
+			price_plan_id,
+			role_id,
+			sale_package_id
+		) VALUES (
+			#{id},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime},
+			#{sysOrgCode},
+			#{pricePlanId},
+			#{roleId},
+			#{salePackageId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE int_price_plan_permission SET 	
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime},
+			sys_org_code = #{sysOrgCode},
+			price_plan_id = #{pricePlanId},
+			role_id = #{roleId},
+			sale_package_id = #{salePackageId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM int_price_plan_permission
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -35,6 +35,42 @@ public class Subscription extends DataEntity<Subscription> {
 	private String tradeState;		// 交易状态
 	private String transactionCode;		// 支付流水号
 	private String invoiceId;		// 发票
+	public String getBusinessType() {
+		return businessType;
+	}
+
+	public void setBusinessType(String businessType) {
+		this.businessType = businessType;
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserPhone() {
+		return userPhone;
+	}
+
+	public void setUserPhone(String userPhone) {
+		this.userPhone = userPhone;
+	}
+
+	private String businessType;		// 业务类型： 旅游、体检……
+	private String userType;		// 用户类型：person、team、company
+	private String userName;		// 用户全称：订阅时输入的公司全称或用户姓名
+	private String userPhone;		// 用户电话：订阅时输入的电话
 	
 	public Subscription() {
 		super();

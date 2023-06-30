@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.SysUserDao">
+    
+	<sql id="sysUserColumns">
+		a.id AS "id",
+		a.username AS "username",
+		a.realname AS "realname",
+		a.password AS "password",
+		a.salt AS "salt",
+		a.avatar AS "avatar",
+		a.birthday AS "birthday",
+		a.sex AS "sex",
+		a.email AS "email",
+		a.phone AS "phone",
+		a.org_code AS "orgCode",
+		a.status AS "status",
+		a.del_flag AS "delFlag",
+		a.third_id AS "thirdId",
+		a.third_type AS "thirdType",
+		a.activiti_sync AS "activitiSync",
+		a.work_no AS "workNo",
+		a.post AS "post",
+		a.telephone AS "telephone",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.user_identity AS "user.id",
+		a.depart_ids AS "departIds",
+		a.client_id AS "clientId",
+		a.login_tenant_id AS "loginTenantId",
+		a.bpm_status AS "bpmStatus",
+		u24.nameentity AS "user.nameentity"
+	</sql>
+	
+	<sql id="sysUserJoins">
+		LEFT JOIN x_sys_user u24 ON u24.id = a.user_identity
+	</sql>
+    
+	<select id="get" resultType="SysUser">
+		SELECT 
+			<include refid="sysUserColumns"/>
+		FROM sys_user a
+		<include refid="sysUserJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysUser">
+		SELECT 
+			<include refid="sysUserColumns"/>
+		FROM sys_user a
+		<include refid="sysUserJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysUser">
+		SELECT 
+			<include refid="sysUserColumns"/>
+		FROM sys_user a
+		<include refid="sysUserJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_user(
+			id,
+			username,
+			realname,
+			password,
+			salt,
+			avatar,
+			birthday,
+			sex,
+			email,
+			phone,
+			org_code,
+			status,
+			del_flag,
+			third_id,
+			third_type,
+			activiti_sync,
+			work_no,
+			post,
+			telephone,
+			create_by,
+			create_time,
+			update_by,
+			update_time,
+			user_identity,
+			depart_ids,
+			client_id,
+			login_tenant_id,
+			bpm_status
+		) VALUES (
+			#{id},
+			#{username},
+			#{realname},
+			#{password},
+			#{salt},
+			#{avatar},
+			#{birthday},
+			#{sex},
+			#{email},
+			#{phone},
+			#{orgCode},
+			#{status},
+			#{delFlag},
+			#{thirdId},
+			#{thirdType},
+			#{activitiSync},
+			#{workNo},
+			#{post},
+			#{telephone},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime},
+			#{user.id},
+			#{departIds},
+			#{clientId},
+			#{loginTenantId},
+			#{bpmStatus}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_user SET 	
+			username = #{username},
+			realname = #{realname},
+			password = #{password},
+			salt = #{salt},
+			avatar = #{avatar},
+			birthday = #{birthday},
+			sex = #{sex},
+			email = #{email},
+			phone = #{phone},
+			org_code = #{orgCode},
+			status = #{status},
+			third_id = #{thirdId},
+			third_type = #{thirdType},
+			activiti_sync = #{activitiSync},
+			work_no = #{workNo},
+			post = #{post},
+			telephone = #{telephone},
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime},
+			user_identity = #{user.id},
+			depart_ids = #{departIds},
+			client_id = #{clientId},
+			login_tenant_id = #{loginTenantId},
+			bpm_status = #{bpmStatus}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_user SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

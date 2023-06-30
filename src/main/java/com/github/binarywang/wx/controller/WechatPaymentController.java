@@ -46,12 +46,28 @@ import com.pcitech.iLife.modules.diy.entity.TenantPoints;
 import com.pcitech.iLife.modules.diy.service.TenantPointsService;
 import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.entity.IntPackagePricePlan;
+import com.pcitech.iLife.modules.mod.entity.IntPricePlanPermission;
 import com.pcitech.iLife.modules.mod.entity.IntTenantSoftware;
+import com.pcitech.iLife.modules.mod.entity.StoSalePackage;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.mod.service.IntPackagePricePlanService;
+import com.pcitech.iLife.modules.mod.service.IntPricePlanPermissionService;
 import com.pcitech.iLife.modules.mod.service.IntTenantSoftwareService;
+import com.pcitech.iLife.modules.mod.service.StoSalePackageService;
 import com.pcitech.iLife.modules.mod.entity.Subscription;
+import com.pcitech.iLife.modules.mod.entity.SysDepart;
+import com.pcitech.iLife.modules.mod.entity.SysRole;
+import com.pcitech.iLife.modules.mod.entity.SysTenant;
+import com.pcitech.iLife.modules.mod.entity.SysUser;
+import com.pcitech.iLife.modules.mod.entity.SysUserRole;
+import com.pcitech.iLife.modules.mod.entity.SysUserTenant;
 import com.pcitech.iLife.modules.mod.service.SubscriptionService;
+import com.pcitech.iLife.modules.mod.service.SysDepartService;
+import com.pcitech.iLife.modules.mod.service.SysRoleService;
+import com.pcitech.iLife.modules.mod.service.SysTenantService;
+import com.pcitech.iLife.modules.mod.service.SysUserRoleService;
+import com.pcitech.iLife.modules.mod.service.SysUserService;
+import com.pcitech.iLife.modules.mod.service.SysUserTenantService;
 import com.pcitech.iLife.modules.wx.entity.WxArticle;
 import com.pcitech.iLife.modules.wx.entity.WxPaymentPoint;
 import com.pcitech.iLife.modules.wx.service.WxArticleService;
@@ -59,6 +75,7 @@ import com.pcitech.iLife.modules.wx.service.WxPaymentAdService;
 import com.pcitech.iLife.modules.wx.service.WxPaymentPointService;
 import com.pcitech.iLife.modules.wx.service.WxPointsService;
 import com.pcitech.iLife.util.HttpClientHelper;
+import com.pcitech.iLife.util.PasswordUtil;
 import com.pcitech.iLife.util.Util;
 
 import scala.Console;
@@ -95,6 +112,22 @@ public class WechatPaymentController extends GenericController {
     private IntPackagePricePlanService intPackagePricePlanService;
     @Autowired
     private IntTenantSoftwareService intTenantSoftwareService;
+    @Autowired
+    private StoSalePackageService stoSalePackageService;
+    @Autowired
+    private SysTenantService sysTenantService;
+    @Autowired
+    private SysUserTenantService sysUserTenantService;
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
+    @Autowired
+    private SysRoleService sysRoleService;
+    @Autowired
+    private SysUserService sysUserService;
+    @Autowired
+    private SysDepartService sysDepartService;
+    @Autowired
+    private IntPricePlanPermissionService intPricePlanPermissionService;
     
     SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     /**
@@ -301,7 +334,7 @@ public class WechatPaymentController extends GenericController {
 	    		}
 	    		
 	    	}else if(outTradeNo !=null && outTradeNo.startsWith("sub")) {//表示订阅或续费，同时支持公众号、网页端发起。SaaS端根据套餐类型直接支付
-	    		//需要建立订阅记录，包括
+	    		//需要建立订阅记录，包括初次订阅及续费。默认付款人为租户管理员。
 	    		purchaseType = "订阅/续费";
 	    		//建立租户购买记录：支持前端查询构建，先根据购买out_trade_no查询是否已经存在购买记录
 	    		Subscription subscription = new Subscription();
@@ -353,15 +386,46 @@ public class WechatPaymentController extends GenericController {
 	    						intTenantSoftware.setCreateDate(new Date());
 	    						intTenantSoftware.setCreateTime(new Date());
 	    					}
-	    					//修改到期时间：今天开始计算，直接计算一年
+	    					//修改到期时间：对于到期前续费，在原有到期日期之上增加一年，否则直接从今天开始增加一年
+	    					Date expireDate = intTenantSoftware.getExpireOn();
+	    					if( expireDate == null)
+	    						expireDate = new Date();
 	    					Calendar cal = Calendar.getInstance();
-	    					cal.setTime(new Date());//从当前时间开始
+	    					cal.setTime(expireDate);//从到期日期或者当前时间开始计算
 	    					cal.add(Calendar.YEAR, 1);//增加一年
 	    					cal.add(Calendar.DATE, 1);//增加一天
 	    					intTenantSoftware.setExpireOn(cal.getTime());
 	    					intTenantSoftwareService.save(intTenantSoftware);
 	    				}
-
+	    				
+	    				//对于初次订阅，需要建立租户、默认部门、默认管理员用户，并且根据授权模板建立租户专有角色（不同bizType下授权不同）
+	    				StoSalePackage salePackage = stoSalePackageService.get(subscription.getSalePackage());
+	    				if(salePackage!=null) {
+	    					JSONObject accountInfo = register(subscription,salePackage, openid);
+	    					//到期时间设置为1年后
+	    					Calendar cal = Calendar.getInstance();
+	    					cal.setTime(new Date());//从到期日期或者当前时间开始计算
+	    					cal.add(Calendar.YEAR, 1);//增加一年
+	    					//发送管理员通知：包含登录信息：用户名、密码
+	    					Map<String,String> header = new HashMap<String,String>();
+	    				    header.put("Authorization","Basic aWxpZmU6aWxpZmU=");
+	    			    	JSONObject msg = new JSONObject();
+	    					msg.put("openid", openid);
+	    					msg.put("title", "恭喜，套餐订阅成功！");
+	    					msg.put("company", subscription.getUserName());
+	    					msg.put("package", salePackage.getName());
+	    					msg.put("username", accountInfo.get("username"));
+	    					msg.put("password", accountInfo.get("password"));
+	    					msg.put("expireOn", fmt.format(cal.getTime()));
+	    					msg.put("remark", "请登录后修改密码并妥善保管");
+	    					
+	    					HttpClientHelper.getInstance().post(
+	    							Global.getConfig("wechat.templateMessenge")+"/notify-mp-tenant-ready", 
+	    							msg,header);
+	    				}else {
+	    					logger.error("sale package not found.[data]"+subscription.getSalePackage());
+	    				}
+	    				
 	    			}else {
 	    				//已经处理过了就不做任何处理
 	    			}
@@ -410,6 +474,133 @@ public class WechatPaymentController extends GenericController {
 	    	logger.debug("out_trade_no: " + outTradeNo + ". pay result: "+resultCode);
 	    }
 
+	}
+	
+	//完成新用户、新租户建立及权限分配
+	//处理逻辑：
+	//1，根据subscription获取salePackage，并查询得到订阅类型：个人、团队、企业
+	//2，对于团队或企业订阅，则完成租户、部门、管理员用户建立。当前支付用户为租户管理员，否则当前用户加入平台租户下
+	//3，对用户授权
+	private JSONObject register(Subscription subscription, StoSalePackage salePackage, String openid) {
+		JSONObject result = new JSONObject();//放置开通的账户信息
+		//根据支付用户openid查找或建立系统用户
+		SysUser sysUser = sysUserService.get(openid);//根据openid查找
+		if( sysUser == null) { //创建新用户
+			sysUser = new SysUser();
+			
+			//构建4位随机数
+			char prefix =(char)(int)(Math.random()*26+97);//采用随机字母前缀
+			int id = (int)Math.random()*100000;
+			String username = ""+prefix+id;
+					
+			sysUser.setId(openid);
+			sysUser.setUsername( username ); //随机命名
+			sysUser.setRealname(subscription.getUserName());
+			sysUser.setEmail(username+"@ilife.com");
+			sysUser.setPhone(subscription.getUserPhone());
+			sysUser.setStatus("1");
+//			sysUser.setDelFlag("0");
+			sysUser.setWorkNo(openid);
+			
+			//设置默认密码
+			String salt = Util.get8bitCode();
+			String passwd = Util.get8bitCode();
+			String password = PasswordUtil.encrypt(username, passwd, salt);
+			
+			sysUser.setSalt( salt );
+			sysUser.setPassword( password );
+			
+			sysUserService.save(sysUser);
+			
+			result.put("username", username);
+			result.put("password", password);
+			
+		}
+		
+		//获取订阅的salePackage
+		
+		
+		//设置平台用户角色
+		SysTenant sysTenant = sysTenantService.get("0");//默认获取平台租户
+		if("person".equalsIgnoreCase(subscription.getUserType())) {
+			//个人用户关联到平台租户
+			SysUserTenant userTenant = new SysUserTenant();
+			String tid = Util.md5(openid+sysTenant.getId());
+			userTenant.setId(tid);
+			userTenant.setUserId(openid);
+			userTenant.setTenantId(sysTenant.getId());
+			sysUserTenantService.save(userTenant);
+			
+			//个人用户授权为普通用户: code 固定为 platform_outsource
+			String sysRoleCode = "platform_outsource";
+			SysRole sysRole = new SysRole();
+			sysRole.setRoleCode(sysRoleCode);
+			List<SysRole> sysRoles = sysRoleService.findList(sysRole);
+			if(sysRoles!= null && sysRoles.size()>0) {
+				sysRole = sysRoles.get(0);
+				SysUserRole userRole = new SysUserRole();
+				String rid = Util.md5(openid+sysRole.getId());//固定为指定role
+				userRole.setId(rid);
+				userRole.setRoleId(sysRole.getId());
+				userRole.setUserId(openid);
+				sysUserRoleService.save(userRole);
+			}else {
+				logger.error("fatal error: no default platform_outsource role.");
+			}
+		}else if("team".equalsIgnoreCase(subscription.getUserType()) || "company".equalsIgnoreCase(subscription.getUserType())) {
+			//企业或团队客户则创建租户、部门、管理员
+			//TBC：当前认为初次订阅中才带入userType信息，只要带入该信息则直接创建新租户
+			//构建ID：日期+分钟+随机值
+			Integer now = (int) System.currentTimeMillis() / 1000;
+			Integer r = (int) Math.random() * 100000;
+			Integer id = now+r;
+			
+			sysTenant = new SysTenant();
+			sysTenant.setId(""+id);
+			sysTenant.setName(subscription.getUserName());
+			sysTenant.setTrade(subscription.getBusinessType());
+			sysTenant.setDepartment("1");
+			sysTenant.setApplyStatus(1);
+			sysTenantService.save(sysTenant);
+			
+			//将支付用户关联到新建立的租户下
+			SysUserTenant userTenant = new SysUserTenant();
+			String tid = Util.md5(openid+sysTenant.getId());
+			userTenant.setId(tid);
+			userTenant.setUserId(openid);
+			userTenant.setTenantId(sysTenant.getId());
+			sysUserTenantService.save(userTenant);
+			
+			//建立租户顶级部门
+			SysDepart sysDepart = new SysDepart();
+			sysDepart.setId(tid);//和租户ID一致
+			sysDepart.setDepartName(subscription.getUserName());
+			sysDepart.setDepartOrder("0");
+			sysDepart.setOrgCategory("1");
+			sysDepart.setTenantId(tid);
+			sysDepart.setOrgCode(Util.get6bitCode());//随机设置6位短码
+			sysDepartService.save(sysDepart);
+			
+			//授权系统用户为租户管理员：根据salePackageId查询intPricePlanPermission
+			IntPricePlanPermission intPricePlanPermission = new IntPricePlanPermission();
+			intPricePlanPermission.setSalePackageId(salePackage.getId());
+			List<IntPricePlanPermission> intPricePlanPermissions = intPricePlanPermissionService.findList(intPricePlanPermission);
+			if(intPricePlanPermissions.size()>0) {
+				String roleId = intPricePlanPermissions.get(0).getRoleId();
+				SysUserRole userRole = new SysUserRole();
+				String rid = Util.md5(openid+roleId);//设置为salePackage指定的roleId
+				userRole.setId(rid);
+				userRole.setRoleId(roleId);
+				userRole.setUserId(openid);
+				sysUserRoleService.save(userRole);
+			}else {
+				logger.error("fatal error: no permission found on sale package.");
+			}
+			
+		}else {
+			//其他则认为是续订，不作任何处理
+		}
+		return result;
 	}
 	
     /**

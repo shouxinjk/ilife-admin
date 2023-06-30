@@ -43,7 +43,11 @@
 		a.trade_no AS "tradeNo",
 		a.trade_state AS "tradeState",
 		a.transaction_code AS "transactionCode",
-		a.invoice_id AS "invoiceId"
+		a.invoice_id AS "invoiceId",
+		a.business_type AS "businessType",
+		a.user_type AS "userType",
+		a.user_name AS "userName",
+		a.user_phone AS "userPhone"
 	</sql>
 	
 	<sql id="subscriptionJoins">
@@ -127,7 +131,11 @@
 			trade_no,
 			trade_state,
 			transaction_code,
-			invoice_id
+			invoice_id,
+			business_type,
+			user_type,
+			user_name,
+			user_phone
 		) VALUES (
 			#{id},
 			#{createBy.id},
@@ -149,7 +157,11 @@
 			#{tradeNo},
 			#{tradeState},
 			#{transactionCode},
-			#{invoiceId}
+			#{invoiceId},
+			#{businessType},
+			#{userType},
+			#{userName},
+			#{userPhone}
 		)
 	</insert>
 	
@@ -173,7 +185,11 @@
 			trade_no = #{tradeNo},
 			trade_state = #{tradeState},
 			transaction_code = #{transactionCode},
-			invoice_id = #{invoiceId}
+			invoice_id = #{invoiceId},
+			business_type = #{businessType},
+			user_type = #{userType},
+			user_name = #{userName},
+			user_phone = #{userPhone}
 		WHERE id = #{id}
 	</update>
 	

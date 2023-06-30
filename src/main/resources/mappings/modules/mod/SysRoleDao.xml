@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.SysRoleDao">
+    
+	<sql id="sysRoleColumns">
+		a.id AS "id",
+		a.role_name AS "roleName",
+		a.role_code AS "roleCode",
+		a.description AS "description",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.tenant_id AS "tenantId"
+	</sql>
+	
+	<sql id="sysRoleJoins">
+	</sql>
+    
+	<select id="get" resultType="SysRole">
+		SELECT 
+			<include refid="sysRoleColumns"/>
+		FROM sys_role a
+		<include refid="sysRoleJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysRole">
+		SELECT 
+			<include refid="sysRoleColumns"/>
+		FROM sys_role a
+		<include refid="sysRoleJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysRole">
+		SELECT 
+			<include refid="sysRoleColumns"/>
+		FROM sys_role a
+		<include refid="sysRoleJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_role(
+			id,
+			role_name,
+			role_code,
+			description,
+			create_by,
+			create_time,
+			update_by,
+			update_time,
+			tenant_id
+		) VALUES (
+			#{id},
+			#{roleName},
+			#{roleCode},
+			#{description},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime},
+			#{tenantId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_role SET 	
+			role_name = #{roleName},
+			role_code = #{roleCode},
+			description = #{description},
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime},
+			tenant_id = #{tenantId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_role
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

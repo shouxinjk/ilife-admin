@@ -10,38 +10,38 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.pcitech.iLife.common.persistence.Page;
 import com.pcitech.iLife.common.service.CrudService;
-import com.pcitech.iLife.modules.mod.entity.SysTenant;
-import com.pcitech.iLife.modules.mod.dao.SysTenantDao;
+import com.pcitech.iLife.modules.mod.entity.SysUser;
+import com.pcitech.iLife.modules.mod.dao.SysUserDao;
 
 /**
- * 系统租户Service
+ * SaaS用户Service
  * @author ilife
  * @version 2023-06-30
  */
 @Service
 @Transactional(readOnly = true)
-public class SysTenantService extends CrudService<SysTenantDao, SysTenant> {
+public class SysUserService extends CrudService<SysUserDao, SysUser> {
 
-	public SysTenant get(String id) {
+	public SysUser get(String id) {
 		return super.get(id);
 	}
 	
-	public List<SysTenant> findList(SysTenant sysTenant) {
-		return super.findList(sysTenant);
+	public List<SysUser> findList(SysUser sysUser) {
+		return super.findList(sysUser);
 	}
 	
-	public Page<SysTenant> findPage(Page<SysTenant> page, SysTenant sysTenant) {
-		return super.findPage(page, sysTenant);
-	}
-	
-	@Transactional(readOnly = false)
-	public void save(SysTenant sysTenant) {
-		super.save(sysTenant);
+	public Page<SysUser> findPage(Page<SysUser> page, SysUser sysUser) {
+		return super.findPage(page, sysUser);
 	}
 	
 	@Transactional(readOnly = false)
-	public void delete(SysTenant sysTenant) {
-		super.delete(sysTenant);
+	public void save(SysUser sysUser) {
+		super.save(sysUser);
+	}
+	
+	@Transactional(readOnly = false)
+	public void delete(SysUser sysUser) {
+		super.delete(sysUser);
 	}
 	
 }

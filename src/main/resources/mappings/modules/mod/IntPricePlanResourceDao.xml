@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pcitech.iLife.modules.mod.dao.IntPricePlanResourceDao">
+    
+	<sql id="intPricePlanResourceColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.sys_org_code AS "sysOrgCode",
+		a.price_plan_id AS "pricePlanId",
+		a.resource_id AS "resourceId",
+		a.amount AS "amount",
+		a.price AS "price",
+		a.sale_package_id AS "salePackageId"
+	</sql>
+	
+	<sql id="intPricePlanResourceJoins">
+	</sql>
+    
+	<select id="get" resultType="IntPricePlanResource">
+		SELECT 
+			<include refid="intPricePlanResourceColumns"/>
+		FROM int_price_plan_resource a
+		<include refid="intPricePlanResourceJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="IntPricePlanResource">
+		SELECT 
+			<include refid="intPricePlanResourceColumns"/>
+		FROM int_price_plan_resource a
+		<include refid="intPricePlanResourceJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="IntPricePlanResource">
+		SELECT 
+			<include refid="intPricePlanResourceColumns"/>
+		FROM int_price_plan_resource a
+		<include refid="intPricePlanResourceJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO int_price_plan_resource(
+			id,
+			create_by,
+			create_time,
+			update_by,
+			update_time,
+			sys_org_code,
+			price_plan_id,
+			resource_id,
+			amount,
+			price,
+			sale_package_id
+		) VALUES (
+			#{id},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime},
+			#{sysOrgCode},
+			#{pricePlanId},
+			#{resourceId},
+			#{amount},
+			#{price},
+			#{salePackageId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE int_price_plan_resource SET 	
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime},
+			sys_org_code = #{sysOrgCode},
+			price_plan_id = #{pricePlanId},
+			resource_id = #{resourceId},
+			amount = #{amount},
+			price = #{price},
+			sale_package_id = #{salePackageId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM int_price_plan_resource
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
