@@ -55,8 +55,8 @@
 				<td>
 					<img src="${viewTemplate.logo}" width="60"/>			
 				</td>
-				<td>${fns:getDictLabel(viewTemplate.type, 'viewTemplateType', '-')}</td>
-				<td>${fns:getDictLabel(viewTemplate.subType, 'viewTemplateFormat', '-')}</td>
+				<td>${fns:getDictLabel(viewTemplate.type, 'viewTemplateType', viewTemplate.type)}</td>
+				<td>${fns:getDictLabel(viewTemplate.subType, 'viewTemplateFormat', viewTemplate.subType)}</td>
 				<td>${viewTemplate.priority}</td>
 				<td>${viewTemplate.description}</td>
 				<td>

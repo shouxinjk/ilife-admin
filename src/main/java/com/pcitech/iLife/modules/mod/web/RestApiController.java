@@ -459,6 +459,52 @@ public class RestApiController extends BaseController {
 		return result;
 	}
 	
+	/**
+	 * 生成HTML物料：适配AMIS返回结果。逻辑与material-html完全相同，仅返回结果适配
+	 * 返回结果：
+	   {
+		  "status": 0,
+		  "msg": "",
+		  "data": {
+		    "xxx": "xxxx",
+		    "xxx": "xxxx",
+		    "xxx": "xxxx",
+		  }
+		}
+	 */
+	@ResponseBody
+	@RequestMapping(value = "material-html-amis", method = RequestMethod.POST)
+	public JSONObject genHtmlArticleAmis(@RequestBody JSONObject json, HttpServletRequest request, HttpServletResponse response, Model model) {
+		JSONObject result = new JSONObject();
+		logger.debug("start generate html.[json]"+json.toJSONString());
+
+		//获取对应的viewTemplate，并从字符串加载模板
+		ViewTemplate viewTemplate = viewTemplateService.get(json.getString("templateId"));
+		try {
+			Configuration cfg = new Configuration();
+			cfg.setDefaultEncoding(Charset.forName("UTF-8").name());
+			String expr = org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(viewTemplate.getExpression());
+	        Template t = new Template(viewTemplate.getId(), new StringReader(expr),cfg);
+	        //生成html并直接返回
+	        StringWriter writer = new StringWriter();
+	        t.process(json, writer);
+	        
+	        JSONObject data = new JSONObject();
+	        data.put("html", writer.getBuffer().toString());
+	        result.put("data",data);
+			result.put("success",true);
+			result.put("status",0);
+			result.put("msg","内容已生成");
+	        writer.close();
+		}catch(Exception ex) {
+			result.put("success",false);
+			result.put("status",1);
+			result.put("msg","生成内容出错。"+ex.getMessage());
+			logger.error("generate html error.",ex);
+		}
+		return result;
+	}
+	
 	//参数为： {prompt: xxx}
 	@ResponseBody
 	@RequestMapping(value = "chatgpt", method = RequestMethod.POST)
