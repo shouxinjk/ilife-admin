@@ -460,6 +460,8 @@ public class RestApiController extends BaseController {
 	}
 	
 	/**
+	 * @deprecated
+	 * 当前未启用
 	 * 生成HTML物料：适配AMIS返回结果。逻辑与material-html完全相同，仅返回结果适配
 	 * 返回结果：
 	   {

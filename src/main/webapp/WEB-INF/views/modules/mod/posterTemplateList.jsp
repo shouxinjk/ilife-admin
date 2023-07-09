@@ -90,7 +90,7 @@
 					${fns:getDictLabel(posterTemplate.status, 'active_inactive', '-')}
 				</td>
 				<td>
-					${posterTemplate.condition}
+					${posterTemplate.criteria}
 				</td>
 				<!--td>
 					${posterTemplate.options}

@@ -22,7 +22,7 @@ public class PosterTemplate extends DataEntity<PosterTemplate> {
 	private ItemCategory category;		// 适用类目，仅对单品有效
 	private String code;		// 海报编号。对应设计器编码
 	private String status;		// 状态：active启用，inactive禁用
-	private String condition;		// 适用条件
+	private String criteria;		// 适用条件
 	private String options;		// 参数配置json
 	private Integer priority;		// 优先级
 	
@@ -95,14 +95,6 @@ public class PosterTemplate extends DataEntity<PosterTemplate> {
 		this.status = status;
 	}
 	
-	public String getCondition() {
-		return condition;
-	}
-
-	public void setCondition(String condition) {
-		this.condition = condition;
-	}
-	
 	public String getOptions() {
 		return options;
 	}
@@ -111,6 +103,14 @@ public class PosterTemplate extends DataEntity<PosterTemplate> {
 		this.options = options;
 	}
 	
+	public String getCriteria() {
+		return criteria;
+	}
+
+	public void setCriteria(String criteria) {
+		this.criteria = criteria;
+	}
+
 	public Integer getPriority() {
 		return priority;
 	}

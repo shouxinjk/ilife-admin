@@ -86,7 +86,7 @@
 		<div class="control-group">
 			<label class="control-label">适用条件：</label>
 			<div class="controls">
-				<form:textarea path="condition" htmlEscape="false" rows="4" class="input-xxlarge "/>
+				<form:textarea path="criteria" htmlEscape="false" rows="4" class="input-xxlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
