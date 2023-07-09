@@ -37,7 +37,7 @@
 		a.type AS "type",
 		a.`criteria` AS "criteria",
 		a.expression AS "expression",
-		100*a.priority+(length(c.parent_ids)-length(replace(c.parent_ids,",","")) ) AS "priority",
+		100*a.priority+(length(c.pids)-length(replace(c.pids,",","")) ) AS "priority",
 		a.status AS "status",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
@@ -56,7 +56,7 @@
 			<if test="categoryId != null and categoryId != ''">
 				AND c.id = #{categoryId}
 			</if>								
-			and (a.category_id=c.id or find_in_set(a.category_id,c.parent_ids)>0 ) 
+			and (a.category_id=c.id or find_in_set(a.category_id,c.pids)>0 ) 
 		</where>
 		ORDER BY priority DESC
 	</select>
