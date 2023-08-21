@@ -500,7 +500,9 @@ public class WechatPaymentController extends GenericController {
 			sysUser.setPhone(subscription.getUserPhone());
 			sysUser.setStatus("1");
 //			sysUser.setDelFlag("0");
-			sysUser.setWorkNo(openid);
+//			sysUser.setWorkNo(openid);
+			sysUser.setThirdType("mp");//设置关联的服务号openid
+			sysUser.setThirdId(openid);
 			
 			//设置默认密码
 			String salt = Util.get8bitCode();
