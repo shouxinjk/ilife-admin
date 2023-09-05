@@ -27,6 +27,24 @@ public class IntTenantSoftware extends DataEntity<IntTenantSoftware> {
 	private Date expireOn;		// 截止时间
 	private String code;		// CODE
 	private String salePackageId;		// 产品套餐
+	private String extForm;		// 配置表单
+	private String extInfo;		// 配置参数
+	
+	public String getExtForm() {
+		return extForm;
+	}
+
+	public void setExtForm(String extForm) {
+		this.extForm = extForm;
+	}
+
+	public String getExtInfo() {
+		return extInfo;
+	}
+
+	public void setExtInfo(String extInfo) {
+		this.extInfo = extInfo;
+	}
 	
 	public IntTenantSoftware() {
 		super();

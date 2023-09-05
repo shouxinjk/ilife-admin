@@ -15,7 +15,9 @@
 		a.effective_on AS "effectiveOn",
 		a.expire_on AS "expireOn",
 		a.code AS "code",
-		a.sale_package_id AS "salePackageId"
+		a.sale_package_id AS "salePackageId",
+		a.ext_form AS "extForm",
+		a.ext_info AS "extInfo"
 	</sql>
 	
 	<sql id="intTenantSoftwareJoins">
@@ -77,7 +79,9 @@
 			effective_on,
 			expire_on,
 			code,
-			sale_package_id
+			sale_package_id,
+			extForm,
+			extInfo
 		) VALUES (
 			#{id},
 			#{createBy.id},
@@ -91,7 +95,9 @@
 			#{effectiveOn},
 			#{expireOn},
 			#{code},
-			#{salePackageId}
+			#{salePackageId},
+			#{extForm},
+			#{extInfo}
 		)
 	</insert>
 	
@@ -107,7 +113,9 @@
 			effective_on = #{effectiveOn},
 			expire_on = #{expireOn},
 			code = #{code},
-			sale_package_id = #{salePackageId}
+			sale_package_id = #{salePackageId},
+			extForm = #{extForm},
+			extInfo = #{extInfo}
 		WHERE id = #{id}
 	</update>
 	

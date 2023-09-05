@@ -19,7 +19,9 @@
 		a.status AS "status",
 		a.suite_ticket AS "suiteTicket",
 		a.suite_id AS "suiteId",
-		a.tenant_id AS "tenantId"
+		a.tenant_id AS "tenantId",
+		a.ext_form AS "extForm",
+		a.ext_info AS "extInfo"
 	</sql>
 	
 	<sql id="stoSoftwareJoins">
@@ -91,7 +93,9 @@
 			status,
 			suite_ticket,
 			suite_id,
-			tenant_id
+			tenant_id,
+			extForm,
+			extInfo
 		) VALUES (
 			#{id},
 			#{createBy.id},
@@ -109,7 +113,9 @@
 			#{status},
 			#{suiteTicket},
 			#{suiteId},
-			#{tenantId}
+			#{tenantId},
+			#{extForm},
+			#{extInfo}
 		)
 	</insert>
 	
@@ -129,7 +135,9 @@
 			status = #{status},
 			suite_ticket = #{suiteTicket},
 			suite_id = #{suiteId},
-			tenant_id = #{tenantId}
+			tenant_id = #{tenantId},
+			extForm = #{extForm},
+			extInfo = #{extInfo}
 		WHERE id = #{id}
 	</update>
 	

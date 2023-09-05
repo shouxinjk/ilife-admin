@@ -15,7 +15,9 @@
 		a.duration_type AS "durationType",
 		a.price AS "price",
 		a.description AS "description",
-		a.priority AS "priority"
+		a.priority AS "priority",
+		a.ext_form AS "extForm",
+		a.ext_info AS "extInfo"
 	</sql>
 	
 	<sql id="stoPricePlanJoins">
@@ -83,7 +85,9 @@
 			duration_type,
 			price,
 			description,
-			priority
+			priority,
+			extForm,
+			extInfo
 		) VALUES (
 			#{id},
 			#{createBy.id},
@@ -97,7 +101,9 @@
 			#{durationType},
 			#{price},
 			#{description},
-			#{priority}
+			#{priority},
+			#{extForm},
+			#{extInfo}
 		)
 	</insert>
 	
@@ -113,7 +119,9 @@
 			duration_type = #{durationType},
 			price = #{price},
 			description = #{description},
-			priority = #{priority}
+			priority = #{priority},
+			extForm = #{extForm},
+			extInfo = #{extInfo}
 		WHERE id = #{id}
 	</update>
 	

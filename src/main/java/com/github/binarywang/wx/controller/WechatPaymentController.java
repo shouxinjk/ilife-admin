@@ -48,12 +48,16 @@ import com.pcitech.iLife.modules.mod.entity.Broker;
 import com.pcitech.iLife.modules.mod.entity.IntPackagePricePlan;
 import com.pcitech.iLife.modules.mod.entity.IntPricePlanPermission;
 import com.pcitech.iLife.modules.mod.entity.IntTenantSoftware;
+import com.pcitech.iLife.modules.mod.entity.StoPricePlan;
 import com.pcitech.iLife.modules.mod.entity.StoSalePackage;
+import com.pcitech.iLife.modules.mod.entity.StoSoftware;
 import com.pcitech.iLife.modules.mod.service.BrokerService;
 import com.pcitech.iLife.modules.mod.service.IntPackagePricePlanService;
 import com.pcitech.iLife.modules.mod.service.IntPricePlanPermissionService;
 import com.pcitech.iLife.modules.mod.service.IntTenantSoftwareService;
+import com.pcitech.iLife.modules.mod.service.StoPricePlanService;
 import com.pcitech.iLife.modules.mod.service.StoSalePackageService;
+import com.pcitech.iLife.modules.mod.service.StoSoftwareService;
 import com.pcitech.iLife.modules.mod.entity.Subscription;
 import com.pcitech.iLife.modules.mod.entity.SysDepart;
 import com.pcitech.iLife.modules.mod.entity.SysRole;
@@ -114,6 +118,10 @@ public class WechatPaymentController extends GenericController {
     private IntTenantSoftwareService intTenantSoftwareService;
     @Autowired
     private StoSalePackageService stoSalePackageService;
+    @Autowired
+    private StoPricePlanService stoPricePlanService;
+    @Autowired
+    private StoSoftwareService stoSoftwareService;
     @Autowired
     private SysTenantService sysTenantService;
     @Autowired
@@ -361,6 +369,10 @@ public class WechatPaymentController extends GenericController {
 	    				pkgPricePlan.setSalePackage(subscription.getSalePackage());
 	    				List<IntPackagePricePlan> intPkgPricePlans = intPackagePricePlanService.findList(pkgPricePlan);
 	    				for(IntPackagePricePlan intPkgPricePlan:intPkgPricePlans) {
+	    					//得到pricePlan记录，获取ext配置表单及配置数据。支持优先获取pricePlan扩展信息，其次获取software扩展信息
+	    					StoPricePlan stoPricePlan = stoPricePlanService.get(intPkgPricePlan.getPricePlan());
+	    					StoSoftware stoSoftware = stoSoftwareService.get(intPkgPricePlan.getSoftware());
+	    					StoSalePackage stoSalePackage = stoSalePackageService.get(intPkgPricePlan.getSalePackage());
 	    					//建立或更新记录到期时间
 	    					//根据tenantId softwareId pricePlanId查询记录，如果存在则更新，否则新建
 	    					IntTenantSoftware intTenantSoftware = new IntTenantSoftware();
@@ -373,7 +385,6 @@ public class WechatPaymentController extends GenericController {
 	    					List<IntTenantSoftware> intTenantSoftwares = intTenantSoftwareService.findList(intTenantSoftware);
 	    					if(intTenantSoftwares!=null&&intTenantSoftwares.size()>0) {
 	    						intTenantSoftware = intTenantSoftwares.get(0);//存在则取第一条，更新到期时间
-	    						
 	    						intTenantSoftware.setUpdateDate(new Date());
 	    						intTenantSoftware.setUpdateTime(new Date());
 	    					}else {
@@ -383,6 +394,22 @@ public class WechatPaymentController extends GenericController {
 	    								intPkgPricePlan.getPricePlan().getId()+
 	    								subscription.getTenant().getId());
 	    						intTenantSoftware.setId(id);
+	    						//设置ext扩展信息，优先pricePlan上的ext配置，其次software上的ext配置
+	    						if(stoPricePlan.getExtForm() !=null && stoPricePlan.getExtForm().trim().length()>0) {
+	    							intTenantSoftware.setExtForm(stoPricePlan.getExtForm());
+	    							intTenantSoftware.setExtInfo(stoPricePlan.getExtInfo());
+	    						}else if(stoSoftware.getExtForm() !=null && stoSoftware.getExtForm().trim().length()>0) {
+	    							intTenantSoftware.setExtForm(stoSoftware.getExtForm());
+	    							intTenantSoftware.setExtInfo(stoSoftware.getExtInfo());
+	    							//注意：software扩展信息包含auditInfo及extInfo两部分，仅需要处理extInfo部分
+	    							try {
+	    								JSONObject extInfo = JSONObject.parseObject(stoSoftware.getExtInfo());
+	    								if(extInfo.getJSONObject("extInfo")!=null)
+	    									intTenantSoftware.setExtInfo( JSONObject.toJSONString(extInfo.getJSONObject("extInfo")) );
+	    							}catch(Exception ex) {
+	    								logger.error("failed parse extInfo.",ex);
+	    							}
+	    						}
 	    						intTenantSoftware.setCreateDate(new Date());
 	    						intTenantSoftware.setCreateTime(new Date());
 	    					}
@@ -392,8 +419,29 @@ public class WechatPaymentController extends GenericController {
 	    						expireDate = new Date();
 	    					Calendar cal = Calendar.getInstance();
 	    					cal.setTime(expireDate);//从到期日期或者当前时间开始计算
-	    					cal.add(Calendar.YEAR, 1);//增加一年
-	    					cal.add(Calendar.DATE, 1);//增加一天
+	    					if(stoSalePackage !=null) { //在订阅套餐时，直接根据salePackage设置
+	    						if("year".equalsIgnoreCase( stoSalePackage.getDurationType() )){
+	    							cal.add(Calendar.YEAR, 1);//增加一年
+	    						}else if("half-year".equalsIgnoreCase( stoSalePackage.getDurationType() )){
+	    							cal.add(Calendar.MONTH, 6);//增加半年
+	    						}else if("quarter".equalsIgnoreCase( stoSalePackage.getDurationType() )){
+	    							cal.add(Calendar.MONTH, 3);//增加一个季度
+	    						}else if("month".equalsIgnoreCase( stoSalePackage.getDurationType() )){
+	    							cal.add(Calendar.MONTH, 1);//增加一个月
+	    						}
+	    					}else if(stoPricePlan !=null) { //在单独订阅时，根据pricePlan设置
+	    						if("year".equalsIgnoreCase( stoPricePlan.getDurationType() )){
+	    							cal.add(Calendar.YEAR, 1);//增加一年
+	    						}else if("half-year".equalsIgnoreCase( stoPricePlan.getDurationType() )){
+	    							cal.add(Calendar.MONTH, 6);//增加半年
+	    						}else if("quarter".equalsIgnoreCase( stoPricePlan.getDurationType() )){
+	    							cal.add(Calendar.MONTH, 3);//增加一个季度
+	    						}else if("month".equalsIgnoreCase( stoPricePlan.getDurationType() )){
+	    							cal.add(Calendar.MONTH, 1);//增加一个月
+	    						}
+	    					}else {//这个应该是出错了，默认设置为7天，是试用期
+	    						cal.add(Calendar.DATE, 7);//设置试用
+	    					}
 	    					intTenantSoftware.setExpireOn(cal.getTime());
 	    					intTenantSoftwareService.save(intTenantSoftware);
 	    				}

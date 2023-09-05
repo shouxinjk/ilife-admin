@@ -27,6 +27,24 @@ public class StoPricePlan extends DataEntity<StoPricePlan> {
 	private Integer price;		// 套餐价格
 	private String description;		// 描述
 	private Integer priority;		// 级别
+	private String extForm;		// 配置表单
+	private String extInfo;		// 配置参数
+	
+	public String getExtForm() {
+		return extForm;
+	}
+
+	public void setExtForm(String extForm) {
+		this.extForm = extForm;
+	}
+
+	public String getExtInfo() {
+		return extInfo;
+	}
+
+	public void setExtInfo(String extInfo) {
+		this.extInfo = extInfo;
+	}
 	
 	public StoPricePlan() {
 		super();

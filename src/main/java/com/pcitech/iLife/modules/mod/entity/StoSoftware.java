@@ -31,7 +31,25 @@ public class StoSoftware extends DataEntity<StoSoftware> {
 	private String suiteTicket;		// 企微票据
 	private String suiteId;		// 企微套件
 	private Integer tenantId;		// 租户
+	private String extForm;		// 配置表单
+	private String extInfo;		// 配置参数
 	
+	public String getExtForm() {
+		return extForm;
+	}
+
+	public void setExtForm(String extForm) {
+		this.extForm = extForm;
+	}
+
+	public String getExtInfo() {
+		return extInfo;
+	}
+
+	public void setExtInfo(String extInfo) {
+		this.extInfo = extInfo;
+	}
+
 	public StoSoftware() {
 		super();
 	}
