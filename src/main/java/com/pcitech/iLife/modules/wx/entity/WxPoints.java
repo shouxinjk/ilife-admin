@@ -18,7 +18,7 @@ public class WxPoints extends DataEntity<WxPoints> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// 产品名称
 	private int points;		// 虚拟豆数量
-	private int price;		// 价格
+	private java.math.BigDecimal price;		// 价格
 	private String discount;		// 优惠策略
 	private String status="active";		// 状态
 	
@@ -48,11 +48,11 @@ public class WxPoints extends DataEntity<WxPoints> {
 		this.points = points;
 	}
 	
-	public int getPrice() {
+	public java.math.BigDecimal getPrice() {
 		return price;
 	}
 
-	public void setPrice(int price) {
+	public void setPrice(java.math.BigDecimal price) {
 		this.price = price;
 	}
 	

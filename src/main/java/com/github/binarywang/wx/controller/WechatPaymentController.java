@@ -1,5 +1,6 @@
 package com.github.binarywang.wx.controller;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -330,7 +331,9 @@ public class WechatPaymentController extends GenericController {
     				
 	    			logger.debug("failed find wxPaymentPoint record.");
 	    			wxPaymentPoint.setBroker(broker);
-        			wxPaymentPoint.setAmount(totalFee);
+	    	        BigDecimal totalFeeDecimal = new BigDecimal(""+totalFee);
+	    	        BigDecimal ratio = new BigDecimal("0.01");
+        			wxPaymentPoint.setAmount(totalFeeDecimal.multiply(ratio));
         			wxPaymentPoint.setPoints(null);//无法获取支付points
         			wxPaymentPoint.setTradeNo(outTradeNo);
         			wxPaymentPoint.setTradeState(resultCode);

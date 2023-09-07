@@ -181,7 +181,7 @@ public class WxToppingController extends BaseController {
 		}
 		topping.setAdvertiseTimeFrom(advertiseTimeFrom);
 		topping.setAdvertiseTimeTo(advertiseTimeTo);
-		topping.setAdvertisePrice(points);//单位为分
+		topping.setAdvertisePrice(points);//单位为
 		topping.setAdvertiseType("points");
 		topping.setAdvertiseWeight(1);//固定为权重为1，仅高于0
 		topping.setSubjectType(subjectType );

@@ -3,6 +3,7 @@
  */
 package com.pcitech.iLife.modules.wx.web;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -157,7 +158,10 @@ public class WxPaymentAdController extends BaseController {
 			ad.setTransactionId("");//TODO:根据微信支付返回结果补充
 			WxAdvertise advertise = wxAdvertiseService.get(item.getString("id"));
 			ad.setAdvertise(advertise);
-			ad.setAmount(advertise.getPrice());
+//			ad.setAmount(advertise.getPrice());
+			BigDecimal priceDecimal = new BigDecimal(""+advertise.getPrice());
+	        BigDecimal ratio = new BigDecimal("0.01");
+	        ad.setAmount(priceDecimal.multiply(ratio));
 			try {
 				ad.setAdvertiseDate(dateFormatShort.parse(item.getString("date")));
 			}catch(Exception ex) {
