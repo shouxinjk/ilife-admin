@@ -31,7 +31,8 @@
 		a.client_id AS "clientId",
 		a.login_tenant_id AS "loginTenantId",
 		a.bpm_status AS "bpmStatus",
-		u24.nameentity AS "user.nameentity"
+		<!-- u24.nameentity AS "user.nameentity" -->
+		u24.name AS "user.name"
 	</sql>
 	
 	<sql id="sysUserJoins">
