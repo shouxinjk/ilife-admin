@@ -80,8 +80,8 @@
 			expire_on,
 			code,
 			sale_package_id,
-			extForm,
-			extInfo
+			ext_form,
+			ext_info
 		) VALUES (
 			#{id},
 			#{createBy.id},
@@ -114,8 +114,8 @@
 			expire_on = #{expireOn},
 			code = #{code},
 			sale_package_id = #{salePackageId},
-			extForm = #{extForm},
-			extInfo = #{extInfo}
+			ext_form = #{extForm},
+			ext_info = #{extInfo}
 		WHERE id = #{id}
 	</update>
 	

@@ -86,8 +86,8 @@
 			price,
 			description,
 			priority,
-			extForm,
-			extInfo
+			ext_form,
+			ext_info
 		) VALUES (
 			#{id},
 			#{createBy.id},
@@ -120,8 +120,8 @@
 			price = #{price},
 			description = #{description},
 			priority = #{priority},
-			extForm = #{extForm},
-			extInfo = #{extInfo}
+			ext_form = #{extForm},
+			ext_info = #{extInfo}
 		WHERE id = #{id}
 	</update>
 	

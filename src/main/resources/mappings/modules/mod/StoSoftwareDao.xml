@@ -94,8 +94,8 @@
 			suite_ticket,
 			suite_id,
 			tenant_id,
-			extForm,
-			extInfo
+			ext_form,
+			ext_info
 		) VALUES (
 			#{id},
 			#{createBy.id},
@@ -136,8 +136,8 @@
 			suite_ticket = #{suiteTicket},
 			suite_id = #{suiteId},
 			tenant_id = #{tenantId},
-			extForm = #{extForm},
-			extInfo = #{extInfo}
+			ext_form = #{extForm},
+			ext_info = #{extInfo}
 		WHERE id = #{id}
 	</update>
 	
