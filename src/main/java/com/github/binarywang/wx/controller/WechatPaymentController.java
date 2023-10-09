@@ -366,10 +366,16 @@ public class WechatPaymentController extends GenericController {
 	    			if(subscription.getTransactionCode()==null || subscription.getTransactionCode().trim().length()<10) {
 	    				//通知信息
 	    				notify = true;
-	    				if(subscription.getSalePackage()!=null ) {
+	    				
+	    				//仅在套餐订阅时才需要检查是否创建租户
+	    				boolean checkUser = false;
+	    				if(subscription.getSalePackage()!=null && subscription.getSalePackage().getId()!=null ) {
 	    					purchaseType = "More+定制 "+subscription.getSalePackage().getName();
-	    				}else if( subscription.getSoftware()!=null && subscription.getPricePlan() != null) {
+	    					checkUser = true; 
+	    				}else if( subscription.getSoftware()!=null && subscription.getPricePlan() != null && subscription.getSoftware().getId()!=null) {
 	    					purchaseType = "More+定制 "+subscription.getSoftware().getName()+" "+subscription.getPricePlan().getName();
+	    				}else if( subscription.getPricePlan() != null && subscription.getPricePlan().getId() != null) {
+	    					purchaseType = "More+定制 "+subscription.getSoftware().getName();
 	    				}else {
 	    					logger.error("failed get subscription type");
 	    				}
