@@ -2,7 +2,6 @@ package com.github.binarywang.wx.controller;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.joda.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -265,7 +265,7 @@ public class WechatPaymentController extends GenericController {
 		    	String openid = orderResult.getPayer().getOpenid();//获取支付openid：注意是绑定的APPId下的openid
 		    	
 		    	Instant instant = Instant.parse(orderResult.getSuccessTime()); //时间戳为rfc3339字符串 2018-06-08T10:34:56+08:00
-		    	Date paymentTime = Date.from(instant);
+		    	Date paymentTime = instant.toDate();
 		    	
 	            updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid, paymentTime);
 	            
@@ -697,7 +697,7 @@ public class WechatPaymentController extends GenericController {
 	    	Integer totalFee = notifyResult.getResult().getAmount().getTotal();
 	    	String openid = notifyResult.getResult().getPayer().getOpenid();//获取支付openid：注意是绑定的APPId下的openid
 	    	Instant instant = Instant.parse(notifyResult.getResult().getSuccessTime()); //时间戳为rfc3339字符串 2018-06-08T10:34:56+08:00
-	    	Date paymentTime = Date.from(instant);
+	    	Date paymentTime = instant.toDate();
 	    	
 		    updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid, paymentTime);
 		    
