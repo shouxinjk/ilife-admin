@@ -2,6 +2,7 @@ package com.github.binarywang.wx.controller;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -263,7 +264,11 @@ public class WechatPaymentController extends GenericController {
 		    	Integer totalFee = orderResult.getAmount().getTotal();
 		    	String openid = orderResult.getPayer().getOpenid();//获取支付openid：注意是绑定的APPId下的openid
 		    	
-	            updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid);
+		    	Instant instant = Instant.parse(orderResult.getSuccessTime()); //时间戳为rfc3339字符串 2018-06-08T10:34:56+08:00
+		    	Date paymentTime = Date.from(instant);
+		    	
+	            updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid, paymentTime);
+	            
             }
             
         } catch (WxPayException e) {
@@ -277,7 +282,7 @@ public class WechatPaymentController extends GenericController {
         return result;
     }
 	
-	private void updateNatviePayResult(String outTradeNo, String transactionId, String resultCode, Integer totalFee,String openid) {
+	private void updateNatviePayResult(String outTradeNo, String transactionId, String resultCode, Integer totalFee,String openid, Date paymentTime) {
 		boolean notify = false; //默认认为无需发送通知，仅在新建记录时通知
 
 	    logger.debug("got parsed pay result notify."+
@@ -285,7 +290,9 @@ public class WechatPaymentController extends GenericController {
 	    		"\ntransactionId="+transactionId+
 	    		"\nresultCode="+resultCode+
 	    		"\ntotalFee="+totalFee+
-	    		"\nopenid="+openid);
+	    		"\nopenid="+openid+
+	    		"\npaymentTime="+paymentTime
+	    		);
 	    
     	//根据回传数据更改已经购买的商品状态：更改对应的记录状态。根据out_trade_no修改所有购买记录的状态，增加transaction_id
     	Broker broker = brokerService.getByOpenid(openid);
@@ -358,15 +365,25 @@ public class WechatPaymentController extends GenericController {
 	    				//通知信息
 	    				notify = true;
 	    				if(subscription.getSalePackage()!=null ) {
-	    					purchaseType = "套餐:"+subscription.getSalePackage().getName();
+	    					purchaseType = "More+定制 "+subscription.getSalePackage().getName();
 	    				}else if( subscription.getSoftware()!=null && subscription.getPricePlan() != null) {
-	    					purchaseType = "产品:"+subscription.getSoftware().getName()+" "+subscription.getPricePlan().getName();
+	    					purchaseType = "More+定制 "+subscription.getSoftware().getName()+" "+subscription.getPricePlan().getName();
 	    				}else {
 	    					logger.error("failed get subscription type");
 	    				}
 	    				//更新交易记录
 	    				params.put("transaction_code", transactionId); 
-	    				subscriptionService.updateWxTransactionInfoByTradeNo(params);
+	    				logger.debug("try update subscription record. " + params);
+//	    				subscriptionService.updateWxTransactionInfoByTradeNo(params);
+	    				
+	    				subscription.setTransactionCode(transactionId);
+	    				subscription.setPaymentAmount(totalFee);
+	    				subscription.setTradeState(resultCode);
+	    				subscription.setPayerOpenid(openid);
+	    				subscription.setPaymentTime(paymentTime);
+	    				
+	    				logger.debug("try update subscription record. " + subscription);
+	    				subscriptionService.save(subscription);
 	    				//建立租户下订阅记录：tenantSoftware列表：已经存在则更新到期时间，如果不存在则建立记录
 	    				IntPackagePricePlan pkgPricePlan = new IntPackagePricePlan();
 	    				pkgPricePlan.setSalePackage(subscription.getSalePackage());
@@ -452,6 +469,8 @@ public class WechatPaymentController extends GenericController {
 	    				//对于初次订阅，需要建立租户、默认部门、默认管理员用户，并且根据授权模板建立租户专有角色（不同bizType下授权不同）
 	    				StoSalePackage salePackage = stoSalePackageService.get(subscription.getSalePackage());
 	    				if(salePackage!=null) {
+	    					//不发送付款成功通知：避免重复受到通知消息
+	    					notify = false; 
 	    					JSONObject accountInfo = register(subscription,salePackage, openid);
 	    					//到期时间设置为1年后
 	    					Calendar cal = Calendar.getInstance();
@@ -464,7 +483,7 @@ public class WechatPaymentController extends GenericController {
 	    					msg.put("openid", openid);
 	    					msg.put("title", "恭喜，套餐订阅成功！");
 	    					msg.put("company", subscription.getUserName());
-	    					msg.put("package", salePackage.getName());
+	    					msg.put("package", "More+定制 "+salePackage.getName());
 	    					msg.put("username", accountInfo.get("username"));
 	    					msg.put("password", accountInfo.get("password"));
 	    					msg.put("expireOn", fmt.format(cal.getTime()));
@@ -677,8 +696,11 @@ public class WechatPaymentController extends GenericController {
 	    	String resultCode = notifyResult.getResult().getTradeState();
 	    	Integer totalFee = notifyResult.getResult().getAmount().getTotal();
 	    	String openid = notifyResult.getResult().getPayer().getOpenid();//获取支付openid：注意是绑定的APPId下的openid
+	    	Instant instant = Instant.parse(notifyResult.getResult().getSuccessTime()); //时间戳为rfc3339字符串 2018-06-08T10:34:56+08:00
+	    	Date paymentTime = Date.from(instant);
+	    	
+		    updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid, paymentTime);
 		    
-		    updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid);
 		}catch(Exception ex) {
 			logger.error("error while parse native pay result",ex);
 		}
