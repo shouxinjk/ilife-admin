@@ -17,5 +17,5 @@ import com.pcitech.iLife.modules.wx.entity.WxPaymentPoint;
 @MyBatisDao
 public interface WxPaymentPointDao extends CrudDao<WxPaymentPoint> {
 	//更新微信支付记录状态
-	public void updateWxTransactionInfoByTradeNo(Map<String,String> params);
+	public void updateWxTransactionInfoByTradeNo(Map<String,Object> params);
 }

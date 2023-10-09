@@ -6,7 +6,9 @@
 	<update id="updateWxTransactionInfoByTradeNo">
 		UPDATE subscription SET 	
 			trade_state = #{result_code},
-			transaction_code = #{transaction_id},
+			transaction_code = #{transaction_code},
+			payment_amount = #{payment_amount},
+			payment_time = #{payment_time},
 			update_time = now()
 		WHERE trade_no = #{out_trade_no}
 	</update>	    

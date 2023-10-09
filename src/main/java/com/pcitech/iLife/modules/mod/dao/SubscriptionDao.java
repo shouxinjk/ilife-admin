@@ -17,5 +17,5 @@ import com.pcitech.iLife.modules.mod.entity.Subscription;
 @MyBatisDao
 public interface SubscriptionDao extends CrudDao<Subscription> {
 	//更新微信支付记录状态 
-	public void updateWxTransactionInfoByTradeNo(Map<String,String> params);
+	public void updateWxTransactionInfoByTradeNo(Map<String,Object> params);
 }

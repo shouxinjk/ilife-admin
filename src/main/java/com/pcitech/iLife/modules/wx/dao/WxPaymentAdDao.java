@@ -21,7 +21,7 @@ public interface WxPaymentAdDao extends CrudDao<WxPaymentAd> {
 	public List<WxPaymentAd> findSoldAds(int days);
 	
 	//更新微信支付记录状态
-	public void updateWxTransactionInfoByTradeNo(Map<String,String> params);
+	public void updateWxTransactionInfoByTradeNo(Map<String,Object> params);
 	
 	//查询缺少TransactionId的记录，包括paymentAd及paymentPoint
 	public List<String> findItemsWithoutTransactionId();

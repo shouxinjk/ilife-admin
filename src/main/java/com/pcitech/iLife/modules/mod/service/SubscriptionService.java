@@ -25,7 +25,7 @@ public class SubscriptionService extends CrudService<SubscriptionDao, Subscripti
 	
 	//更新微信支付记录状态
 	@Transactional(readOnly = false)
-	public void updateWxTransactionInfoByTradeNo(Map<String,String> params) {
+	public void updateWxTransactionInfoByTradeNo(Map<String,Object> params) {
 		dao.updateWxTransactionInfoByTradeNo(params);
 	}
 	

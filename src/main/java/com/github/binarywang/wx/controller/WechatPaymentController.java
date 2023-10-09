@@ -302,10 +302,12 @@ public class WechatPaymentController extends GenericController {
 	
 	    	//由于仅根据返回的prepayInfo更新，同时处理adPay及pointPay。其中adPay更新状态，pointPay则执行点数增加（仅执行一次）
 	    	//out_trade_no通过payAd、payPoint开头进行区分
-	    	Map<String,String> params = Maps.newHashMap();
+	    	Map<String,Object> params = Maps.newHashMap();
 	    	params.put("out_trade_no", outTradeNo);
-	    	params.put("transaction_id", transactionId);
+	    	params.put("transaction_code", transactionId);//转存为transactionCode
 	    	params.put("result_code", resultCode);
+	    	params.put("payment_time", paymentTime);
+	    	params.put("payment_amount", totalFee);
 	    	String purchaseType = "微信购买";
 	    	if(outTradeNo !=null && outTradeNo.startsWith("ppt")) {//表示购买阅豆：同时支持公众号、网页端发起。SaaS端根据云豆金额充值
 	    		purchaseType = "虚拟豆充值";
@@ -372,18 +374,21 @@ public class WechatPaymentController extends GenericController {
 	    					logger.error("failed get subscription type");
 	    				}
 	    				//更新交易记录
-	    				params.put("transaction_code", transactionId); 
+	    				params.put("transaction_id", transactionId); 
 	    				logger.debug("try update subscription record. " + params);
-//	    				subscriptionService.updateWxTransactionInfoByTradeNo(params);
+	    				subscriptionService.updateWxTransactionInfoByTradeNo(params);
 	    				
-	    				subscription.setTransactionCode(transactionId);
-	    				subscription.setPaymentAmount(totalFee);
-	    				subscription.setTradeState(resultCode);
-	    				subscription.setPayerOpenid(openid);
-	    				subscription.setPaymentTime(paymentTime);
+//	    				subscription.setTransactionCode(transactionId);
+//	    				subscription.setTransactionCode(transactionId);
+//	    				subscription.setPaymentAmount(totalFee);
+//	    				subscription.setTradeState(resultCode);
+//	    				subscription.setPayerOpenid(openid);
+//	    				subscription.setPaymentTime(paymentTime);
+//	    				subscription.setUpdateDate(new Date());
+//	    				
+//	    				logger.debug("try update subscription record. " + subscription);
+//	    				subscriptionService.save(subscription);
 	    				
-	    				logger.debug("try update subscription record. " + subscription);
-	    				subscriptionService.save(subscription);
 	    				//建立租户下订阅记录：tenantSoftware列表：已经存在则更新到期时间，如果不存在则建立记录
 	    				IntPackagePricePlan pkgPricePlan = new IntPackagePricePlan();
 	    				pkgPricePlan.setSalePackage(subscription.getSalePackage());
@@ -729,7 +734,7 @@ public class WechatPaymentController extends GenericController {
                     	
                     	//根据回传数据更改已经购买的商品状态：更改对应的记录状态。根据out_trade_no修改所有购买记录的状态，增加transaction_id
                     	String outTradeNo = kvm.get("out_trade_no");
-                    	Map<String,String> params = Maps.newHashMap();
+                    	Map<String,Object> params = Maps.newHashMap();
                     	params.put("out_trade_no", outTradeNo);
                     	params.put("transaction_id", kvm.get("transaction_id"));
                     	params.put("result_code", kvm.get("result_code"));
@@ -806,7 +811,7 @@ public class WechatPaymentController extends GenericController {
     	try {
 			WxPayOrderQueryResult result = payService.queryOrder(null, outTradeNo);
 			if(result!=null) {
-            	Map<String,String> params = Maps.newHashMap();
+            	Map<String,Object> params = Maps.newHashMap();
             	params.put("out_trade_no", outTradeNo);
             	params.put("transaction_id", result.getTransactionId());
             	params.put("result_code", result.getResultCode());
