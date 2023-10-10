@@ -380,18 +380,19 @@ public class WechatPaymentController extends GenericController {
 	    				
 	    				//更新交易记录
 	    				logger.debug("try update subscription record. " + params);
-	    				subscriptionService.updateWxTransactionInfoByTradeNo(params);
+//	    				subscriptionService.updateWxTransactionInfoByTradeNo(params);
 	    				
-//	    				subscription.setTransactionCode(transactionId);
-//	    				subscription.setTransactionCode(transactionId);
-//	    				subscription.setPaymentAmount(totalFee);
-//	    				subscription.setTradeState(resultCode);
-//	    				subscription.setPayerOpenid(openid);
-//	    				subscription.setPaymentTime(paymentTime);
-//	    				subscription.setUpdateDate(new Date());
-//	    				
-//	    				logger.debug("try update subscription record. " + subscription);
-//	    				subscriptionService.save(subscription);
+	    				subscription.setTransactionCode(transactionId);
+	    				subscription.setPaymentAmount(totalFee);
+	    				subscription.setTradeState(resultCode);
+	    				subscription.setPayerOpenid(openid);
+	    				subscription.setPaymentTime(paymentTime);
+	    				subscription.setUpdateDate(new Date());
+	    				subscription.setUpdateTime(new Date());
+	    				subscription.setBroker(brokerService.getByOpenid(openid));
+	    				
+	    				logger.debug("try update subscription record. " + subscription);
+	    				subscriptionService.save(subscription);
 	    				
 	    				//建立租户下订阅记录：tenantSoftware列表：已经存在则更新到期时间，如果不存在则建立记录
 	    				IntPackagePricePlan pkgPricePlan = new IntPackagePricePlan();
@@ -405,7 +406,8 @@ public class WechatPaymentController extends GenericController {
 	    					//建立或更新记录到期时间
 	    					//根据tenantId softwareId pricePlanId查询记录，如果存在则更新，否则新建
 	    					IntTenantSoftware intTenantSoftware = new IntTenantSoftware();
-	    					intTenantSoftware.setSalePackageId(subscription.getSalePackage().getId());
+	    					if(subscription.getSalePackage()!=null && subscription.getSalePackage().getId() != null) //仅在套餐订阅时有该数值
+	    						intTenantSoftware.setSalePackageId(subscription.getSalePackage().getId());
 	    					try {
 	    						intTenantSoftware.setTenantId(Integer.parseInt(subscription.getTenant().getId()));
 	    					}catch(Exception ex) {}
