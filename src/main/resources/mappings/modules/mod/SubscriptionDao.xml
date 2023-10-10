@@ -90,7 +90,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY create_time desc
+				ORDER BY a.create_time desc
 			</otherwise>
 		</choose>
 	</select>
@@ -117,7 +117,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY create_time desc
+				ORDER BY a.create_time desc
 			</otherwise>
 		</choose>
 	</select>

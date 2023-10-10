@@ -711,7 +711,7 @@ public class WechatPaymentController extends GenericController {
 		    updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid, paymentTime);
 		    
 		}catch(Exception ex) {
-			logger.error("error while parse native pay result",ex);
+			logger.error("error while save native pay result",ex);
 		}
 	    return WxPayNotifyResponse.success("成功");
 	  }
