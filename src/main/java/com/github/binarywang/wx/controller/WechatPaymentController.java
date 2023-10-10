@@ -259,20 +259,20 @@ public class WechatPaymentController extends GenericController {
             result.put("success", true);
             result.put("data", orderResult); //直接返回URL
             logger.debug("generate wechatpay qrcode url done."+JSONObject.toJSONString(orderResult));
-            
-            if("SUCCESS".equalsIgnoreCase(orderResult.getTradeState())) {
-	            //更新检查结果：仅补充transaction信息缺失记录
-		    	String transactionId = orderResult.getTransactionId();
-		    	String resultCode = orderResult.getTradeState();
-		    	Integer totalFee = orderResult.getAmount().getTotal();
-		    	String openid = orderResult.getPayer().getOpenid();//获取支付openid：注意是绑定的APPId下的openid
-		    	
-		    	Instant instant = Instant.parse(orderResult.getSuccessTime()); //时间戳为rfc3339字符串 2018-06-08T10:34:56+08:00
-		    	Date paymentTime = instant.toDate();
-		    	
-	            updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid, paymentTime);
-	            
-            }
+            //此处仅查询结果，无需处理更新。支付结果更新在NativeCallback内完成
+//            if("SUCCESS".equalsIgnoreCase(orderResult.getTradeState())) {
+//	            //更新检查结果：仅补充transaction信息缺失记录
+//		    	String transactionId = orderResult.getTransactionId();
+//		    	String resultCode = orderResult.getTradeState();
+//		    	Integer totalFee = orderResult.getAmount().getTotal();
+//		    	String openid = orderResult.getPayer().getOpenid();//获取支付openid：注意是绑定的APPId下的openid
+//		    	
+//		    	Instant instant = Instant.parse(orderResult.getSuccessTime()); //时间戳为rfc3339字符串 2018-06-08T10:34:56+08:00
+//		    	Date paymentTime = instant.toDate();
+//		    	
+//	            updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid, paymentTime);
+//	            
+//            }
             
         } catch (WxPayException e) {
         	logger.error(e.getErrCodeDes());
