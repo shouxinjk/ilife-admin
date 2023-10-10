@@ -6,7 +6,7 @@
 	<update id="updateWxTransactionInfoByTradeNo">
 		UPDATE subscription SET 	
 			trade_state = #{result_code},
-			transaction_code = #{transaction_code},
+			transaction_code = #{transaction_id},
 			payment_amount = #{payment_amount},
 			payment_time = #{payment_time},
 			update_time = now()
@@ -74,13 +74,23 @@
 		FROM subscription a
 		<include refid="subscriptionJoins"/>
 		<where>
-			
+			1 = 1
+			<if test="tradeNo != null and tradeNo != ''">
+				AND a.trade_no = #{tradeNo}
+			</if>
+			<if test="tradeState != null and tradeState != ''">
+				AND a.trade_state = #{tradeState}
+			</if>			
+			<if test="transactionCode != null and transactionCode != ''">
+				AND a.transaction_code = #{transactionCode}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY create_time desc
 			</otherwise>
 		</choose>
 	</select>
@@ -107,6 +117,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY create_time desc
 			</otherwise>
 		</choose>
 	</select>

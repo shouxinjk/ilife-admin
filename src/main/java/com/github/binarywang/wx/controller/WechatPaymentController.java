@@ -304,7 +304,7 @@ public class WechatPaymentController extends GenericController {
 	    	//out_trade_no通过payAd、payPoint开头进行区分
 	    	Map<String,Object> params = Maps.newHashMap();
 	    	params.put("out_trade_no", outTradeNo);
-	    	params.put("transaction_code", transactionId);//转存为transactionCode
+	    	params.put("transaction_id", transactionId);
 	    	params.put("result_code", resultCode);
 	    	params.put("payment_time", paymentTime);
 	    	params.put("payment_amount", totalFee);
@@ -368,10 +368,8 @@ public class WechatPaymentController extends GenericController {
 	    				notify = true;
 	    				
 	    				//仅在套餐订阅时才需要检查是否创建租户
-	    				boolean checkUser = false;
 	    				if(subscription.getSalePackage()!=null && subscription.getSalePackage().getId()!=null ) {
 	    					purchaseType = "More+定制 "+subscription.getSalePackage().getName();
-	    					checkUser = true; 
 	    				}else if( subscription.getSoftware()!=null && subscription.getPricePlan() != null && subscription.getSoftware().getId()!=null) {
 	    					purchaseType = "More+定制 "+subscription.getSoftware().getName()+" "+subscription.getPricePlan().getName();
 	    				}else if( subscription.getPricePlan() != null && subscription.getPricePlan().getId() != null) {
@@ -379,8 +377,8 @@ public class WechatPaymentController extends GenericController {
 	    				}else {
 	    					logger.error("failed get subscription type");
 	    				}
+	    				
 	    				//更新交易记录
-	    				params.put("transaction_id", transactionId); 
 	    				logger.debug("try update subscription record. " + params);
 	    				subscriptionService.updateWxTransactionInfoByTradeNo(params);
 	    				
