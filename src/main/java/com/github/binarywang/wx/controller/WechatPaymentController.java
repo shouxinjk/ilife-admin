@@ -7,6 +7,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -369,11 +372,11 @@ public class WechatPaymentController extends GenericController {
 	    				
 	    				//仅在套餐订阅时才需要检查是否创建租户
 	    				if(subscription.getSalePackage()!=null && subscription.getSalePackage().getId()!=null ) {
-	    					purchaseType = "More+定制 "+subscription.getSalePackage().getName();
-	    				}else if( subscription.getSoftware()!=null && subscription.getPricePlan() != null && subscription.getSoftware().getId()!=null) {
-	    					purchaseType = "More+定制 "+subscription.getSoftware().getName()+" "+subscription.getPricePlan().getName();
-	    				}else if( subscription.getPricePlan() != null && subscription.getPricePlan().getId() != null) {
-	    					purchaseType = "More+定制 "+subscription.getSoftware().getName();
+	    					purchaseType = "More+"+subscription.getSalePackage().getName();
+	    				}else if( subscription.getPricePlan() != null && subscription.getSoftware().getId()!=null) {
+	    					purchaseType = "More+"+subscription.getPricePlan().getName();
+	    				}else if( subscription.getSoftware() != null && subscription.getSoftware().getId() != null) {
+	    					purchaseType = "More+"+subscription.getSoftware().getName();
 	    				}else {
 	    					logger.error("failed get subscription type");
 	    				}
@@ -698,24 +701,36 @@ public class WechatPaymentController extends GenericController {
     @RequestMapping(value = "rest/native-callback")
     public String nativeCallback(@RequestBody String xmlData) {
 		logger.debug("got pay result notify from wechat. \n"+xmlData);
-		try {
-		    final WxPayOrderNotifyV3Result notifyResult = payService.parseOrderNotifyV3Result(xmlData, null);
-		    logger.debug("got parsed pay result notify. \n"+JSONObject.toJSONString(notifyResult));
-		    
-	    	String outTradeNo = notifyResult.getResult().getOutTradeNo();
-	    	String transactionId = notifyResult.getResult().getTransactionId();
-	    	String resultCode = notifyResult.getResult().getTradeState();
-	    	Integer totalFee = notifyResult.getResult().getAmount().getTotal();
-	    	String openid = notifyResult.getResult().getPayer().getOpenid();//获取支付openid：注意是绑定的APPId下的openid
-	    	Instant instant = Instant.parse(notifyResult.getResult().getSuccessTime()); //时间戳为rfc3339字符串 2018-06-08T10:34:56+08:00
-	    	Date paymentTime = instant.toDate();
-	    	
-		    updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid, paymentTime);
-		    
-		}catch(Exception ex) {
-			logger.error("error while save native pay result",ex);
-		}
-	    return WxPayNotifyResponse.success("成功");
+		
+		//异步处理结果回调，避免多次重复发送通知
+		Callable<JSONObject> doUpdateNativeResult = new Callable<JSONObject>() {
+  		  @Override
+  		  public JSONObject call() throws Exception {         			  
+  			try {
+  			    final WxPayOrderNotifyV3Result notifyResult = payService.parseOrderNotifyV3Result(xmlData, null);
+  			    logger.debug("got parsed pay result notify. \n"+JSONObject.toJSONString(notifyResult));
+  			    
+  		    	String outTradeNo = notifyResult.getResult().getOutTradeNo();
+  		    	String transactionId = notifyResult.getResult().getTransactionId();
+  		    	String resultCode = notifyResult.getResult().getTradeState();
+  		    	Integer totalFee = notifyResult.getResult().getAmount().getTotal();
+  		    	String openid = notifyResult.getResult().getPayer().getOpenid();//获取支付openid：注意是绑定的APPId下的openid
+  		    	Instant instant = Instant.parse(notifyResult.getResult().getSuccessTime()); //时间戳为rfc3339字符串 2018-06-08T10:34:56+08:00
+  		    	Date paymentTime = instant.toDate();
+  		    	
+  			    updateNatviePayResult(outTradeNo, transactionId, resultCode, totalFee, openid, paymentTime);
+  			    
+  			}catch(Exception ex) {
+  				logger.error("error while save native pay result",ex);
+  			}
+  		    return new JSONObject();
+  		  }
+  		};
+  		FutureTask<JSONObject> futureTask = new FutureTask<JSONObject>(doUpdateNativeResult);
+  		new Thread(futureTask).start(); //立即启动
+		
+  		//立即回复微信支付结果通知：TODO 需要检验支付金额是否匹配
+	    return WxPayNotifyResponse.success("OK");//返回微信支付处理结果，避免多次重复发送
 	  }
 	
 
