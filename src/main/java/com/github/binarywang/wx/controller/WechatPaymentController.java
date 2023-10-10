@@ -551,6 +551,7 @@ public class WechatPaymentController extends GenericController {
 				result = HttpClientHelper.getInstance().post(
 						Global.getConfig("wechat.templateMessenge")+"/payment-success-notify", 
 						msg,header);
+				logger.debug("send notify msg done."+ result);
 	    	}
 
 	        logger.debug("out_trade_no: " + outTradeNo + " pay SUCCESS!");
