@@ -58,6 +58,7 @@ import com.pcitech.iLife.modules.ope.entity.Performance;
 import com.pcitech.iLife.modules.ope.service.PerformanceService;
 import com.pcitech.iLife.modules.sys.entity.Dict;
 import com.pcitech.iLife.modules.sys.service.DictService;
+import com.pcitech.iLife.thirdparty.DifyService;
 import com.pcitech.iLife.util.AIHelper;
 import com.pcitech.iLife.util.FastDFSUtils;
 import com.pcitech.iLife.util.HttpClientHelper;
@@ -94,6 +95,9 @@ public class RestApiController extends BaseController {
 	private OccasionService occasionService;
 	@Autowired
 	private MotivationService motivationService;
+	@Autowired
+	DifyService difyService;
+	
 	//获取所有board
 	@ResponseBody
 	@RequestMapping(value = "boards")
@@ -517,7 +521,15 @@ public class RestApiController extends BaseController {
 			result.put("text", "问题不能为空哦~~");
 			return result;
 		}
-		String answer = AIHelper.getInstance().requestChatGPT(json.getString("prompt").trim());
+//		String answer = AIHelper.getInstance().requestChatGPT(json.getString("prompt").trim());
+		//得到AI结果，返回客服消息
+		String answer = "";
+		JSONObject aiResp = difyService.getAnswer("mp", json.getString("prompt").trim());
+			if(aiResp.getString("answer")==null || aiResp.getString("answer").trim().length()==0) {
+				answer = "AI智能助手当前不在线~~";
+			}else {
+				answer = aiResp.getString("answer");
+			}
 		if(answer == null || answer.trim().length()==0) {
 			result.put("text", "ChatGPT都被你问倒了，半天都没说话，换一个试试呢");
 		}else {

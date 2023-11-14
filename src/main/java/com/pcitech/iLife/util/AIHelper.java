@@ -9,15 +9,20 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSONObject;
 import com.pcitech.iLife.common.config.Global;
+import com.pcitech.iLife.thirdparty.DifyService;
 import com.theokanning.openai.OpenAiService;
 import com.theokanning.openai.completion.CompletionChoice;
 import com.theokanning.openai.completion.CompletionRequest;
 
 public class AIHelper {
 	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	DifyService difyService;
 	
 	private static AIHelper helper = null;
 	
@@ -50,5 +55,9 @@ public class AIHelper {
 				//**/
 			}
 			return "";
+	  }
+	  
+	  public JSONObject requestDify(String user, String keyword) {
+		  return difyService.getAnswer(user, keyword);
 	  }
 }

@@ -415,7 +415,7 @@ public class WechatPaymentController extends GenericController {
 	    						intTenantSoftware.setTenantId(Integer.parseInt(subscription.getTenant().getId()));
 	    					}catch(Exception ex) {}
 	    					intTenantSoftware.setPricePlanId(intPkgPricePlan.getPricePlan().getId());
-	    					intTenantSoftware.setPricePlanId(intPkgPricePlan.getSoftware().getId());
+	    					intTenantSoftware.setSoftwareId(intPkgPricePlan.getSoftware().getId());
 	    					List<IntTenantSoftware> intTenantSoftwares = intTenantSoftwareService.findList(intTenantSoftware);
 	    					if(intTenantSoftwares!=null&&intTenantSoftwares.size()>0) {
 	    						intTenantSoftware = intTenantSoftwares.get(0);//存在则取第一条，更新到期时间
